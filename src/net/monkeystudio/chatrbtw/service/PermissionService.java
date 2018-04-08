@@ -1,8 +1,9 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.admin.controller.req.res.AddUpdateRes;
 import net.monkeystudio.admin.controller.resp.ResForResp;
+import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.Res;
 import net.monkeystudio.chatrbtw.entity.Role;
 import net.monkeystudio.chatrbtw.mapper.ResMapper;
@@ -10,7 +11,6 @@ import net.monkeystudio.utils.CommonUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public class PermissionService {
      */
     private String roleArrToRoleStr(List<String> roleList){
         StringBuilder sb = new StringBuilder();
-        if(CollectionUtils.isEmpty(roleList)){
+        if(ListUtil.isEmpty(roleList)){
             return "";
         }
         for (String role:roleList){

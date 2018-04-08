@@ -194,6 +194,8 @@
   <select id="selectByParamMap" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/> FROM  e_money_withdraw_record
     <include refid="Base_Where"/>
+    order BY
+    apply_time desc
   </select>
 
   <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >

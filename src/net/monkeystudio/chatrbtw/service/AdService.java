@@ -17,7 +17,6 @@ import net.monkeystudio.utils.CommonUtils;
 import net.monkeystudio.utils.JsonHelper;
 import net.monkeystudio.wx.service.WxPubAuthorizerRefreshTokenService;
 import net.monkeystudio.wx.service.WxPubService;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +43,11 @@ public class AdService {
     //图片形式的广告
     public final static Integer AD_IMAGE_TYPE = 3 ;
 
-    //问问搜广告
-    public final static Integer AD_ASK_SEARCH_TYPE = 4;
 
-    //聊天过程中主动推送
-    public final static Integer CHAT_PUSH_TYPE = 1;
+    //广告推送类型-问问搜
+    public final static Integer AD_PUSH_TYPE_ASK_SEARCH = 1;
+    //广告推送类型-智能聊
+    public final static Integer AD_PUSH_TYPE_SMART_CHAT = 0;
 
     //缓存时间30分钟
     private final static Integer AD_CACHE_PERIOD = 60 * 30;
@@ -185,7 +184,7 @@ public class AdService {
     public void updateAd(AdUpdateReq req){
         //修改前的广告
         Ad oldAd = this.getAdById(req.getId());
-        /*cache中的数据需要包含db中ad的左右字段,但adUpdateReq中的更新字段只有部分,导致出问题.*/
+
         Ad ad = new Ad();
 
         //上传广告图片和封面图片并返回地址
@@ -364,7 +363,7 @@ public class AdService {
 
         List<RAdWxPub> list = this.rAdWxPubMapper.selectByParamMap(param);
 
-        boolean isEmpty = CollectionUtils.isEmpty(list);
+        boolean isEmpty = ListUtil.isEmpty(list);
 
         //若表中有数据先delete再insert
         if(!isEmpty){
@@ -443,7 +442,7 @@ public class AdService {
      * @return
      */
     private boolean isAskSearchAd(Ad ad){
-        return AD_ASK_SEARCH_TYPE.equals(ad.getAdType());
+        return AD_PUSH_TYPE_ASK_SEARCH.equals(ad.getPushType());
     }
 
     /**
@@ -481,7 +480,7 @@ public class AdService {
 
             if(AD_PUSH_CLOSE.equals(ad.getIsOpen())
                     ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)
-                    ||  this.isAskSearchAd(ad)
+                    ||  isAskSearchAd(ad)
                     ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())
                     ||  WX_PUB_AD_PUSH_EXCLUDE.equals(obj.getIsExclude())
                      ){
@@ -509,7 +508,7 @@ public class AdService {
 
         List<Ad> ads = new ArrayList<>();
 
-        if(CollectionUtils.isEmpty(rAdWxPubs)){
+        if(ListUtil.isEmpty(rAdWxPubs)){
             return ads;
         }
         List<Integer> ids = rAdWxPubs.stream().map(RAdWxPub::getAdId).collect(Collectors.toList());
@@ -607,17 +606,16 @@ public class AdService {
 
     /**
      * 判断广告当前的投放状态
+     *
      * @param ad
-     * @return 1:预投放 2:投放中 3:已结束
+     * @return 0:未投放 1:预投放 2:投放中 3:已结束
      */
     public Integer getAdPushState(Ad ad){
 
         long now = new Date().getTime();
 
-        //long值为0即ad.getCloseTime == null
         long preTime = 0;
         long pushTime = 0;
-        long closeTime = 0;
 
         if(ad.getPrePushTime() != null){
             preTime = ad.getPrePushTime().getTime();
@@ -625,29 +623,22 @@ public class AdService {
         if(ad.getPushTime() != null){
             pushTime = ad.getPushTime().getTime();
         }
-        if(ad.getCloseTime() != null){
-            closeTime = ad.getCloseTime().getTime();
-        }
 
-        //广告是否已经填写结束时间,因为广告投放结束时间是后续确定的,所以有可能为null,单纯时间比较会出问题.
-        if(closeTime != 0){
+        if(AD_PUSH_CLOSE.equals(ad.getIsOpen())){
+
+            return AD_PUSH_STATE_CLOSE;
+
+        }else if(AD_PUSH_OPEN.equals(ad.getIsOpen())){
             if(now < preTime){
+
                 return AD_PUSH_STATE_NOT_YET;
+
             }else if (now >= preTime && now < pushTime) {
+
                 return AD_PUSH_STATE_PREPUSH;
 
-            } else if (now >= pushTime && now < closeTime) {
-                return AD_PUSH_STATE_PUSHING;
-
-            } else if (now >= closeTime) {
-                return AD_PUSH_STATE_CLOSE;
-            }
-        }else{
-            if(now < preTime){
-                return AD_PUSH_STATE_NOT_YET;
-            }else if (now >= preTime && now < pushTime) {
-                return AD_PUSH_STATE_PREPUSH;
             } else if (now >= pushTime) {
+
                 return AD_PUSH_STATE_PUSHING;
             }
         }
@@ -662,7 +653,7 @@ public class AdService {
      */
     public Ad getAskSearchAdByWxPub(WxPub wxPub){
         //如果是非认证公众号
-        if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY  == wxPub.getVerifyTypeInfo()
+        if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY.intValue()  == wxPub.getVerifyTypeInfo().intValue()
                 || !wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
             return null;
         }
@@ -673,17 +664,24 @@ public class AdService {
 
         List<RAdWxPub> ret = rAdWxPubMapper.selectByParamMap(param);
 
-        if(CollectionUtils.isEmpty(ret)){
+        if(ListUtil.isEmpty(ret)){
             return null;
         }
    
         //过滤出问问搜广告集
-        List<Integer> adIds = ret.stream().filter(obj -> AD_ASK_SEARCH_TYPE.equals((this.getAdById(obj.getAdId()).getAdType())))
+        List<Integer> adIds = ret.stream().filter(obj -> AD_PUSH_TYPE_ASK_SEARCH.equals((this.getAdById(obj.getAdId()).getPushType())))
                 .map(RAdWxPub::getAdId).collect(Collectors.toList());
 
         Ad ad = this.getAdById(adIds.get(RandomUtil.randomIndex(adIds.size())));
 
         return ad;
+    }
+
+    public void clearCache(){
+        List<Ad> ads = adMapper.selectAll();
+        List<Integer> ids = ads.stream().map(Ad::getId).collect(Collectors.toList());
+        for(Integer id:ids)
+        redisCacheTemplate.del(this.getCacheKeyById(id));
     }
 
 

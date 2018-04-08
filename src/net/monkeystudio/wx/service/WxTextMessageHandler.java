@@ -1,36 +1,29 @@
 package net.monkeystudio.wx.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import net.monkeystudio.base.utils.BeanUtils;
-import net.monkeystudio.base.utils.HtmlTagUtil;
-import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
-import net.monkeystudio.chatrbtw.service.*;
-import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
-import net.monkeystudio.chatrbtw.service.bean.textmessage.RespStrAndType;
-import net.monkeystudio.chatrbtw.service.bean.wxpubarticle.PushArticleListItem;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.wx.vo.thirtparty.AuthorizerInfo;
-import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.XmlUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
+import net.monkeystudio.chatrbtw.service.*;
+import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
+import net.monkeystudio.chatrbtw.service.bean.wxpubarticle.PushArticleListItem;
+import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
+import net.monkeystudio.wx.vo.thirtparty.AuthorizerInfo;
+import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
 import net.monkeystudio.wx.vo.thirtparty.WxThirtPartAuthorizationResp;
 import net.monkeystudio.wx.vo.thirtparty.WxThirtyPartauthorizerInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 微信文本消息处理
@@ -623,9 +616,6 @@ public class WxTextMessageHandler {
         String content = textMsgRec.getContent();
         String wxPubOriginId = textMsgRec.getToUserName();
         String wxfanOpenId = textMsgRec.getFromUserName();
-        /*String content = "元太";
-        String wxPubOriginId = "gh_902e0d566cd9";
-        String wxfanOpenId = "oRQue0zoz-0A1bnum5qc-Iq0cLvw";*/
 
         List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNews(wxPubOriginId, content, WX_PUB_ARTICLE_PUSH_COUNT);
 
@@ -682,6 +672,10 @@ public class WxTextMessageHandler {
             contentBuffer.append(HtmlTagUtil.generateATag(url,"点击查看"));
             contentBuffer.append("\n");
             contentBuffer.append("\n");
+
+            if(i == WX_PUB_ARTICLE_PUSH_COUNT - 1){
+                break;
+            }
         }
 
 

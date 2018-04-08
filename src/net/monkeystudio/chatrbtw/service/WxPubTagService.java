@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.req.AddUpdateWxPubTag;
 import net.monkeystudio.base.req.ListPaginationReq;
+import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.RAdWxPubMapper;
 import net.monkeystudio.chatrbtw.mapper.RAdWxPubTagMapper;
@@ -108,7 +109,7 @@ public class WxPubTagService {
      */
     @Transactional
     public void cudTagsForWxPub(Integer wxPubId,List<Integer> tagIds){
-        if(CollectionUtils.isEmpty(tagIds)){
+        if(ListUtil.isEmpty(tagIds)){
             return;
         }
         //wePubId->WxPub
