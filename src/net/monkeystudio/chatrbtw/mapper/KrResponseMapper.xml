@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.KrResponseMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.KrResponse">
+    <id column="id" jdbcType="INTEGER" property="id" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.KrResponse">
+    <result column="response" jdbcType="LONGVARCHAR" property="response" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="media_id" jdbcType="VARCHAR" property="mediaId" />
+    <result column="wx_pub_origin_id" jdbcType="VARCHAR" property="wxPubOriginId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id
+  </sql>
+  <sql id="Blob_Column_List">
+    response,type,media_id,wx_pub_origin_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from e_kr_response
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from e_kr_response
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from e_kr_response
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.KrResponse" useGeneratedKeys="true" keyProperty="id">
+    insert into e_kr_response (id, response,type,media_id,wx_pub_origin_id)
+    values (#{id,jdbcType=INTEGER}, #{response,jdbcType=LONGVARCHAR}, #{type,jdbcType=VARCHAR}, #{mediaId,jdbcType=VARCHAR}, #{wxPubOriginId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.KrResponse">
+    insert into e_kr_response
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="response != null">
+        response,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="mediaId != null">
+        media_id,
+      </if>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="response != null">
+        #{response,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaId != null">
+        #{mediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="wxPubOriginId != null">
+        #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.KrResponse">
+    update e_kr_response
+    <set>
+      <if test="response != null">
+        response = #{response,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="mediaId != null">
+        media_id = #{mediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="net.monkeystudio.chatrbtw.entity.KrResponse">
+    update e_kr_response
+    set response = #{response,jdbcType=LONGVARCHAR},
+    type = #{type,jdbcType=VARCHAR},
+    media_id = #{mediaId,jdbcType=VARCHAR},
+    wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>

@@ -1,0 +1,256 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #fff;
+    font-family: "Microsoft Yahei", Arial;
+    font-size: 14px;
+    height: 100%;
+    width: 100%;
+}
+
+input, button {
+    outline: none;
+}
+input{
+    font-size: 14px;
+}
+img {
+    border: none;
+}
+
+a {
+    text-decoration: none;
+    color: #21B5FF;
+}
+
+a:hover {
+    color: #6afaff;
+}
+
+::-webkit-input-placeholder {
+    color: #dedede;
+}
+
+:-moz-placeholder {
+    color: #dedede;
+}
+
+::-moz-placeholder {
+    color: #dedede;
+}
+
+:-ms-input-placeholder {
+    color: #dedede;
+}
+
+#center {
+    margin-top: 108px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 800px;
+}
+
+.logo {
+    margin-bottom: 36px;
+}
+
+.logo > span {
+    float: right;
+    position: relative;
+    top: 6px;
+}
+
+.content {
+    border-radius: 23px;
+    box-shadow: 0 0 40px 5px rgba(33, 181, 255, 0.3);
+}
+
+.content > div > div {
+    text-align: center;
+}
+
+.content input {
+    width: 330px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 23px;
+    padding-left: 20px;
+    border: 1px solid #dedede;
+}
+
+.content button {
+    width: 330px;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 23px;
+    text-align: center;
+    border: none;
+    font-size: 18px;
+    background-color: #21B5FF;
+    color: #fff;
+    cursor: pointer;
+}
+
+.title {
+    height: 70px;
+    line-height: 70px;
+    text-align: center;
+    background-color: #21B5FF;
+    border-top-left-radius: 23px;
+    border-top-right-radius: 23px;
+    font-size: 24px;
+    color: #fff;
+}
+
+.email-logo {
+    padding: 36px 0;
+    text-align: center;
+}
+.success .email-logo{
+    padding: 40px 0;
+}
+.find {
+    padding-bottom: 50px;
+}
+.code-box{
+    display: inline-block;
+    text-align: left;
+    width: 330px;
+}
+.email {
+    padding-bottom: 26px;
+}
+
+.alter {
+    padding-top: 10px;
+    padding-bottom: 32px;
+}
+.success{
+    padding-bottom: 46px;
+}
+.find .message {
+    padding: 45px 0;
+    font-size: 18px;
+    color: #21B5FF;
+}
+
+.alter .message {
+    font-size: 18px;
+    color: #21B5FF;
+    padding: 20px 0;
+}
+
+.find input {
+    margin-bottom: 22px;
+}
+.alter>div>div{
+    position: relative;
+}
+#code{
+    width: 166px;
+}
+#code+div{
+    border-radius:23px;
+    -weibkit-border-radius: 23px;
+    -ms-border-radius: 23px;
+    -moz-border-radius: 23px;
+    float: right;
+    width: 135px;
+    height: 46px;
+    line-height: 46px;
+    overflow: hidden;
+    background: #000;
+    cursor: pointer;
+}
+#code+div>img{
+    position: relative;
+    top:-2px;
+    left:-2px;
+    height: 50px;
+    width: 139px;
+}
+.alter input {
+    margin-bottom: 16px;
+}
+
+.email .message {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    width: 410px;
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 18px;
+}
+
+.again {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    width: 350px;
+    text-align: left;
+    color: #D2D2D2;
+    font-size: 14px;
+}
+
+#login {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    width: 330px;
+    height: 46px;
+    line-height: 46px;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    background-color: #21B5FF;
+    border-radius: 23px;
+}
+.tip{
+    position: absolute;
+    top:-13px;
+    left:70px;
+    box-shadow: 0 0 15px 4px #eff6fb;
+    display:table;
+    display: none;
+}
+.tip:after{
+    content: "";
+    position: absolute;
+    top:29px;
+    right: -17px;
+    border: 7px solid transparent;
+    border-left: 10px solid #fff;
+}
+.tip>div {
+    display:table-cell;
+    vertical-align:middle;
+    width: 145px;
+    height: 74px;
+    border-radius: 5px;
+    padding:0 18px 0 14px;
+    background-color: #fff;
+    color: #555;
+    text-align: left;
+}
+.tip+b{
+    position: absolute;
+    top:13px;
+    right:190px;
+    width: 19px;
+    height: 19px;
+    display: none;
+}
+input:focus+.tip{
+    display: block;
+}
+.alter .success{
+    background: url("../images/success.png") no-repeat;
+}
+.alter .fail{
+    background: url("../images/fail.png") no-repeat;
+}

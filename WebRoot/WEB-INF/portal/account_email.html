@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KeenDo| 发送邮箱成功</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
+    <script src="${base}/res/vendor/jquery-3.1.1.min.js"></script>
+    <script src="${base}/res/vendor/vue.js"></script>
+    <script src="${base}/res/js/config.js"></script>
+    <link rel="stylesheet" href="${base}/res/portal/css/account.css"/>
+</head>
+<body>
+<div id="center">
+    <div class="logo">
+        <a href="${base}/index.html"><img src="${base}/res/portal/images/logo_blue.png" alt="金豆传媒"></a>
+        <span>已有账号，<a href="/login.html">马上登录</a></span>
+    </div>
+    <div class="content">
+        <div class="title">
+            账号安全
+        </div>
+        <div>
+            <div class="email-logo">
+                <img src="${base}/res/portal/images/email_big.png" alt="金豆传媒">
+            </div>
+            <div class="email">
+                <div>
+                    <div class="message">
+                        我们已向您的注册邮箱<span id="email">{{email}}</span>发送了一封密码找回邮箱，
+                        请您注意接收邮件
+                    </div>
+                </div>
+                <div class="again">
+                    请注意查收邮件，并按照邮件中的提示操作，完成认证。<br/>
+                    没有收到？<a href="javascript:;" @click="sendClick">重新发送</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${base}/res/portal/js/account_email.js"></script>
+</body>
+</html>

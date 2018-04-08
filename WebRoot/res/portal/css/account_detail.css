@@ -1,0 +1,725 @@
+.relative {
+    position: relative;
+}
+
+.detail-list {
+    padding-top: 40px;
+    height: 122px;
+}
+
+.detail-list > .active {
+    border-bottom-color: #29a7fd;
+}
+
+.dis {
+    color: #dbdbdb !important;
+    cursor: default !important;
+}
+
+.detail-list > div {
+    float: left;
+    width: 182px;
+    padding-bottom: 34px;
+    border-bottom: 5px solid transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.detail-list > div:not(:first-child) .list {
+    border-left: 1px solid #e2e2e2;
+}
+
+.list {
+    width: 182px;
+    height: 48px;
+    text-align: center;
+    font-size: 14px;
+    position: relative;
+}
+
+.list > img {
+    width: 42px;
+    height: 42px;
+    border-radius: 21px;
+    vertical-align: middle;
+    margin-right: 10px;
+    margin-top: 3px;
+}
+
+.list div {
+    height: 28px;
+    line-height: 28px;
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.list div > i {
+    font-size: 28px;
+    color: #29A7FD;
+}
+
+.list-message {
+    position: relative;
+    top: 2px;
+    border-top: 1px solid #e2e2e2;
+    padding-top: 2px;
+}
+
+.list-message h3 {
+    padding: 16px 0;
+}
+
+.list-message h3 span {
+    font-size: 10px;
+    font-weight: normal;
+    margin-left: 8px;
+    color: #bfbfbf
+}
+
+.page {
+    margin-top: 18px;
+    float: right;
+}
+
+.page > li {
+    display: inline-block;
+}
+
+.page button {
+    padding: 3px 5px;
+    border: none;
+    background-color: #fff;
+}
+
+.page button:hover, .page .page-active {
+    color: #28A7FD;
+}
+
+.earnings-header {
+    text-align: center;
+}
+
+.earnings-header > div {
+    font-size: 24px;
+    color: #e84e4e;
+}
+
+.earnings-header > div > span {
+    font-size: 12px;
+    margin-left: 6px;
+    color: #000;
+}
+
+.earnings-header p {
+    padding: 5px 0 24px;
+    font-size: 12px;
+}
+
+.number {
+    text-align: center;
+    padding: 6px;
+    border: 1px solid #e7eef3;
+    margin-top: -3px;
+    margin-bottom: 23px;
+}
+
+.number-list {
+    display: inline-block;
+    width: 50%;
+}
+
+.number-list > p {
+    font-size: 36px;
+    padding-top: 14px;
+}
+
+.number-list div {
+    padding-bottom: 6px;
+}
+
+.number b {
+    display: inline-block;
+    width: 9px;
+    height: 12px;
+    position: relative;
+}
+
+.number .up {
+    background: url("../images/up.png") no-repeat;
+    top: 1px;
+}
+
+.number .down {
+    background: url("../images/down.png") no-repeat;
+    top: 2px;
+}
+
+.number > .number-list:last-child {
+    float: right;
+    border-left: 1px solid #e7eef3;
+}
+
+.number + h2 {
+    font-size: 16px;
+    font-weight: normal;
+    padding-bottom: 14px;
+}
+
+.earnings {
+    color: #363636;
+    padding-bottom: 60px;
+}
+
+.revenue-stats {
+    background-color: #eff6fb;
+    font-size: 14px;
+    padding: 8px 15px;
+}
+
+.revenue-stats input {
+    width: 170px;
+    padding: 5px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+    text-align: center;
+    border: none;
+}
+
+.revenue-stats > div {
+    display: inline-block;
+    position: relative;
+    margin-left: 68px;
+}
+
+.no-data {
+    text-align: center;
+    color: #8eb2c7;
+}
+
+.no-data .icon-zanwushuju {
+    margin: 64px 0 26px;
+    font-size: 72px;
+    display: inline-block;
+    color: #8eb2c7;
+}
+
+.income-list li {
+    padding: 0 14px 0 11px;
+    height: 62px;
+    line-height: 62px;
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.income-page {
+    text-align: right;
+    margin-top: 10px;
+    padding-right: 16px;
+}
+
+.income-page button {
+    padding: 6px 5px;
+    border: none;
+    background-color: #fff;
+}
+
+.income-page button.active {
+    color: #28A7FD;
+}
+
+.income-page button:hover {
+    color: #28A7FD;
+}
+
+.web-page {
+    display: inline-block;
+}
+
+.chart-query {
+    background-color: #eff6fb;
+    font-size: 12px;
+    padding: 6px 15px;
+}
+
+.chart-query > span {
+    padding: 8px 0;
+    margin-right: 41px;
+}
+
+.chart-query > button {
+    width: 60px;
+    background: transparent;
+    border: none;
+    padding: 5px;
+    margin-right: 11px;
+    font-size: 12px;
+}
+
+.chart-query > .active {
+    background-color: #8eb2c7;
+    color: #fff;
+}
+
+.chart-query > div {
+    display: inline-block;
+    position: relative;
+}
+
+.chart-query input {
+    width: 170px;
+    padding: 5px 6px;
+    font-size: 12px;
+    margin-left: 8px;
+    border-radius: 3px;
+    text-align: center;
+    border: none;
+}
+
+.chart-query > div > i {
+    position: absolute;
+    right: 4px;
+    top: 6px;
+}
+
+#chart_man, #chart_num {
+    width: 912px;
+    height: 390px;
+    padding: 10px 5px;
+}
+
+.settings {
+    padding-bottom: 12px;
+}
+
+.settings a {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    padding: 20px 0 10px;
+    font-size: 16px;
+    color: #000;
+    border-bottom: 2px solid transparent;
+    margin-right: 41px;
+    font-weight: normal;
+}
+
+.settings a.active, .settings a:hover {
+    color: #28a7fd;
+    border-bottom-color: #28a7fd;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e2e2e2;
+    /*padding: 20px 0 10px;*/
+    margin-bottom: 28px;
+}
+
+.attr-btn-box {
+    padding-top: 65px;
+    text-align: center;
+}
+
+.attr-btn-box > button {
+    width: 118px;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+}
+
+.attr-btn-box > button:first-child {
+    background-color: #28a7fd;
+    margin-right: 10px;
+}
+
+.attr-btn-box > button:last-child {
+    background-color: #e84e4e
+}
+
+.settings h3 {
+    padding-top: 0;
+    padding-bottom: 12px;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.settings h4 {
+    color: #bfbfbf;
+    font-size: 12px;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+
+.settings h3 > p {
+    float: right;
+    width: 30px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #8C8C8C;
+    margin-right: 11px;
+    position: relative;
+    transition: all .3s linear;
+}
+
+.settings h3 > .active {
+    background-color: #28a7fd;
+}
+
+.settings h3 > p > span {
+    position: absolute;
+    top: 1px;
+    left: -7px;
+    width: 14px;
+    height: 14px;
+    background-color: #fff;
+    border-radius: 7px;
+    transition: all .3s linear;
+}
+
+.settings h3 > .active > span {
+    left: 7px;
+}
+
+.settings h3 > p > input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 16px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.reply-list {
+    border-top: 1px solid #e2e2e2;
+    padding-bottom: 29px;
+    padding-top: 31px;
+}
+
+.reply-list input {
+    width: 200px;
+    height: 28px;
+    line-height: 28px;
+    background: #eff6fb url("../images/query.png") no-repeat 10px;
+    border: none;
+    padding-left: 35px;
+    border-radius: 3px;
+}
+
+.reply-list button {
+    width: 80px;
+    height: 28px;
+    line-height: 28px;
+    border-radius: 3px;
+    background-color: #28a7fd;
+    color: #fff;
+    font-size: 12px;
+    border: none;
+    text-align: center;
+    float: right;
+}
+
+.textarea-control {
+    padding: 10px 0;
+    position: relative;
+}
+
+.textarea-control > span {
+    float: left;
+    width: 100px;
+    text-align: left;
+    padding-top: 10px;
+}
+
+.textarea-control > textarea {
+    width: 641px;
+    height: 112px;
+    resize: none;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.textarea-bottom {
+    margin-left: 100px;
+    position: relative;
+    top: -4px;
+    width: 641px;
+    border: 1px solid #e2e2e2;
+    border-top: none;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.textarea-bottom:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.textarea-bottom > span {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 4px;
+    left: 8px;
+    background: url("../images/phiz.png") no-repeat;
+    cursor: pointer;
+}
+
+.textarea-bottom .qq-face {
+    position: absolute;
+    top: 20px;
+    left: 4px;
+    padding: 10px;
+    background-color: #fff;
+    width: 384px;
+    border: 1px solid #eff6fb;
+    box-shadow: 0 0 15px 6px #eff6fb;
+}
+
+.textarea-bottom > div:last-child {
+    float: right;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 8px;
+    font-size: 12px;
+    color: #bfbfbf;
+}
+
+.qq-face img {
+    cursor: pointer;
+}
+
+.btn-select, .span-select {
+    display: inline-block;
+    position: relative;
+}
+
+.span-select > span {
+    position: relative;
+    top: 2px;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: url("../images/radius.png") no-repeat;
+}
+
+.span-select > .active {
+    background-image: url("../images/radius_blue.png");
+}
+
+.span-select > input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 56px;
+    height: 28px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+}
+
+.span-select > label {
+    padding-top: 3px;
+    margin-left: 12px;
+    margin-right: 41px;
+    cursor: pointer;
+}
+
+.btn-box {
+    text-align: center;
+    padding-top: 8px;
+}
+
+.btn-box > button {
+    width: 80px;
+    height: 28px;
+    line-height: 28px;
+    border: none;
+    margin-right: 20px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 12px;
+}
+
+.btn-box > button:first-child {
+    background-color: #28a7fd;
+}
+
+.btn-box > button:nth-child(2) {
+    background-color: #e84e4e;
+}
+
+.settings table {
+    color: #727272;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    font-size: 14px;
+}
+
+.settings th {
+    height: 44px;
+    line-height: 44px;
+    background-color: #eff6fb;
+    color: #727272;
+    text-align: left;
+    font-weight: normal;
+    padding-left: 10px;
+}
+
+.settings tbody tr {
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.settings td {
+    height: 44px;
+    background-color: #fff;
+    padding-left: 10px;
+}
+
+.settings td span {
+    display: inline-block;
+    width: 400px;
+    height: 43px;
+    line-height: 43px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden
+}
+
+.settings td button {
+    border: none;
+    color: #8eb2c7;
+    background-color: #fff;
+    margin-right: 14px;
+}
+
+.settings td button:hover {
+    color: #28a7fd;
+}
+
+.no-reply {
+    padding: 44px 0;
+    text-align: center;
+    color: #bfbfbf;
+    font-size: 12px;
+}
+
+.add-reply, .reply-detail {
+    position: absolute;
+    top: 46px;
+    left: 0;
+    right: 0;
+    padding: 11px 10px 21px 27px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 5px #eff6fb;
+}
+
+#delete {
+    position: absolute;
+    right: -56px;
+    display: none;
+    width: 200px;
+    padding: 10px;
+    box-shadow: 0 0 15px 6px #eff6fb;
+    background-color: #fff;
+}
+
+#delete:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    border: 8px solid transparent;
+    border-bottom-color: #fff;
+}
+
+#delete button {
+    width: 86px;
+    height: 28px;
+    line-height: 28px;
+    border: none;
+    border-radius: 3px;
+    text-align: center;
+    margin-top: 20px;
+    color: #fff;
+    font-size: 12px;
+}
+
+#delete :nth-child(2) {
+    background-color: #28a7fd;
+}
+
+#delete :nth-child(3) {
+    background-color: #e84e4e;
+}
+
+#relative {
+    position: relative;
+}
+
+dt, dd {
+    padding: 10px 0;
+}
+
+dt {
+    float: left;
+    color: #727272;
+}
+
+dd {
+    width: 90%;
+    margin-left: 76px;
+    word-break: break-all;
+}
+
+.reply-title {
+    text-align: center;
+    padding: 6px 0;
+}
+
+#account_detail .icon-icon-question {
+    vertical-align: middle;
+    margin-left: 5px;
+    color: #8eb2c7;
+    position: absolute;
+    bottom: -4px;
+    right: 30px;
+}
+
+#tip-text {
+    width: 100px;
+    padding: 5px 0;
+    font-size: 14px;
+    color: #8eb2c7;
+    background-color: #fff;
+    border-radius: 10px;
+    position: absolute;
+    top: 30px;
+    left: -65px;
+    display: none;
+    box-shadow: 0 0 10px #d7eeff;
+}
+
+.icon-icon-question:hover #tip-text {
+    display: block;
+}
+
+#tip-text:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border: 6px solid;
+    border-color: transparent transparent #fff transparent;
+    position: absolute;
+    top: -11px;
+    left: 46px;
+}

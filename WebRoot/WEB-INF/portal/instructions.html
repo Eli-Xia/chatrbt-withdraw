@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>KeenDo | 问问搜</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
+    <link rel="stylesheet" href="${base}/res/portal/css/index.css"/>
+    <style>
+      .container {
+        background-color: #fff;
+        padding-bottom: 97px;
+      }
+      .container h1 {
+        font-size: 22px;
+        width: 1150px;
+        margin: 0 auto;
+        padding: 46px 0 38px;
+        border-bottom: 1px solid #e7eef3;
+        text-align: center;
+      }
+      .content-wrap {
+        width: 810px;
+        margin: 36px auto;
+        font-size: 16px;
+        line-height: 36px;
+      }
+      .indent {
+        text-indent: 32px;
+      }
+      .content {
+        margin-top: 36px;
+      }
+    </style>
+</head>
+<body id="index">
+<header>
+    <div>
+        <a class="logo" href="${base}/home.html">
+            <img src="${base}/res/portal/images/logo_small.png" alt="金豆传媒">
+        </a>
+        <div class="user-message">
+            <img src="${base}/res/portal/images/default_small.png" alt="金豆传媒">
+            <a href="javascript:;" @click="confirmShow('确认要退出？')">退出</a>
+            <div>
+
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <h1>金豆智能平台结算说明</h1>
+    <div class="content-wrap">
+        <p class="indent">当您的累计结算金额达到提现标准1000元时，可以在每月初的2号-4号发起提现申请。我们收到申请后，将在每月10号前（如遇法定节假日，将会推迟）对您的收入进行财务结算。核对无误后，请按结算金额开具增值税专用发票，加盖公司发票专用章后邮寄给我司指定邮寄地址。我司收到正确发票后会在30个工作日内汇入贵司账户。<br> 
+          如遇节假日，打款时间顺延，具体到账时间以银行通知为准。
+        </p>
+        <div class="content">
+            <h4>我司开票资料如下：</h4>
+            <ul>
+              <li>本户名称：深圳金豆传媒科技有限公司</li>
+              <li>纳税人识别号：91440300MA5DKBQ88X</li>
+              <li>开票地址电话：深圳市南山区粤海街道高新区中钢科技园M-6栋二层B房间  (0755) 3656 1282</li>
+              <li>开户行：中国农业银行深圳白石洲支行</li>
+              <li>开户帐号：41003000040023886</li>
+              <li>货物或应税劳务名称：可选择“广告费、广告发布费、广告服务费”</li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <h4>开票注意事项：</h4>
+            <ul>
+              <li>1.增值税专用发票邮寄须包含发票联及抵扣联并加盖公司发票专用章</li>
+              <li>2.结算金额均为含税金额</li>
+              <li>3.我司增值税开票资料索要请联系 xiaoyao@keendo.cn</li>
+              <li>4.发票收寄进度查询请提供发票快递单号并发送至邮箱 xiaoyao@keendo.cn</li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <ul>
+                <li>收件人：深圳金豆传媒科技有限公司</li>
+                <li>邮寄地址：深圳市南山区粤海街道高新区中钢科技园M-6栋二层B房间</li>
+                <li>邮编：518000</li>
+                <li>联系电话：18576486310</li>
+              </ul>
+        </div>
+
+        <p class="line">------------------------------------</p>
+
+        <ul>
+          <li>如您核对后，对结算数据有异议请按如下格式及时发邮件联系我们：）</li>
+          <li>邮件地址：xiaoyao@keendo.cn </li>
+          <li>标题：【广告结算问题反馈】+公司名称</li>
+          <li>邮件内容：</li>
+          <li>【问题描述】</li>
+          <li>【联系方式】</li>
+        </ul>
+    </div>
+</div>
+<footer>
+    <!-- <p><a href="">联系我们</a><a href="">关于我们</a></p> -->
+    <p><a href="http://www.miibeian.gov.cn/">许可证号：粤ICP备17103036号&nbsp;&nbsp;&nbsp;&nbsp;Copyright © 2017 - 2018 Keendo&nbsp;&nbsp;&nbsp;&nbsp;All Rights Reserved</a></p>
+</footer>
+<!--报错  信息框-->
+<div id="msg_layer">
+    <div class="success-msg">
+        <div class="dialog_img">
+            <img src="${base}/res/portal/images/dialog_success.png">
+        </div>
+        <div class="content"></div>
+        <p>
+            <button @click="msgHide">关&nbsp;&nbsp;闭</button>
+        </p>
+    </div>
+    <div class="err-msg">
+        <div class="dialog_img">
+            <img src="${base}/res/portal/images/dialog_err.png">
+        </div>
+        <div class="content"></div>
+        <p>
+            <button @click="msgHide">关&nbsp;&nbsp;闭</button>
+        </p>
+    </div>
+</div>
+<!-- 确认框 -->
+<div id="confirm_layer">
+    <div>
+        <div class="dialog_img">
+            <img src="${base}/res/portal/images/dialog_warn.png">
+        </div>
+        <div id="confirm_content"></div>
+        <p>
+            <button @click="confirmHide">取&nbsp;&nbsp;消</button>
+            <button @click="logout">确&nbsp;&nbsp;定</button>
+        </p>
+    </div>
+</div>
+<script src="${base}/res/vendor/jquery-3.1.1.min.js"></script>
+<script src="${base}/res/vendor/vue.js"></script>
+<script src="${base}/res/js/config.js"></script>
+<script src="${base}/res/js/global.js"></script>
+<script src="${base}/res/portal/js/index.js"></script>
+<script src="${base}/res/portal/js/status.js"></script>
+</body>
+</html>

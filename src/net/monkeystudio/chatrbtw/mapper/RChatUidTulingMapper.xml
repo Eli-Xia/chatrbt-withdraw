@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RChatUidTulingMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.RChatUidTuling">
+    <id column="chat_uid" jdbcType="INTEGER" property="chatUid" />
+    <result column="tuling_robot_id" jdbcType="INTEGER" property="tulingRobotId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    chat_uid, tuling_robot_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from r_chat_uid_tuling
+    where chat_uid = #{chatUid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from r_chat_uid_tuling
+    where chat_uid = #{chatUid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RChatUidTuling">
+    insert into r_chat_uid_tuling (chat_uid, tuling_robot_id)
+    values (#{chatUid,jdbcType=INTEGER}, #{tulingRobotId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.RChatUidTuling">
+    insert into r_chat_uid_tuling
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="chatUid != null">
+        chat_uid,
+      </if>
+      <if test="tulingRobotId != null">
+        tuling_robot_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="chatUid != null">
+        #{chatUid,jdbcType=INTEGER},
+      </if>
+      <if test="tulingRobotId != null">
+        #{tulingRobotId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.RChatUidTuling">
+    update r_chat_uid_tuling
+    <set>
+      <if test="tulingRobotId != null">
+        tuling_robot_id = #{tulingRobotId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where chat_uid = #{chatUid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RChatUidTuling">
+    update r_chat_uid_tuling
+    set tuling_robot_id = #{tulingRobotId,jdbcType=INTEGER}
+    where chat_uid = #{chatUid,jdbcType=INTEGER}
+  </update>
+</mapper>

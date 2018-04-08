@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task-3.0.xsd
+
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd"
+>
+
+    <!-- 数据源 -->
+    <context:property-placeholder location="/WEB-INF/conf/mysql.properties,/WEB-INF/conf/redis.properties" file-encoding="utf-8"/>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${db.driver}"></property>
+        <property name="url" value="${db.url}"></property>
+        <property name="password" value="${db.password}"></property>
+        <property name="username" value="${db.username}"></property>
+        <property name="maxActive" value="${db.maxActive}"></property>
+        <property name="maxIdle" value="${db.maxIdle}"></property>
+        <property name="maxWait" value="${db.maxWait}"></property>
+        <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"></property>
+    </bean>
+    <!---->
+
+
+
+    <!-- 自定义AOP支持 -->
+    <aop:aspectj-autoproxy/>
+
+    <bean class="net.monkeystudio.base.redis.bean.RedisDataSource" id="redisCacheDataSource">
+        <property value="${redis.cache.ip}" name="ip"/>
+        <property value="${redis.cache.maxIdle}" name="maxIdle"/>
+        <property value="${redis.cache.maxTotal}" name="maxTotal"/>
+        <property value="${redis.cache.maxWaitMillis}" name="maxWaitMillis"/>
+        <property value="${redis.cache.minEvictableIdleTimeMillis}" name="minEvictableIdleTimeMillis"/>
+        <property value="${redis.cache.password}" name="password"/>
+        <property value="${redis.cache.port}" name="port"/>
+        <property value="true" name="testOnBorrow"/>
+        <property value="${redis.cache.timeout}" name="timeout"/>
+    </bean>
+
+
+    <!-- 开启事务注解驱动 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- 事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="/WEB-INF/conf/mybatis-config.xml"></property>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="net.monkeystudio;"/>
+    </bean>
+
+    <!-- 目前短信服务用到  
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"></bean>-->
+
+    <!--  线程池 -->
+    <bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5"/>
+        <property name="keepAliveSeconds" value="30000"/>
+        <property name="maxPoolSize" value="1000"/>
+        <property name="queueCapacity" value="200"/>
+    </bean>
+
+    <!-- 邮件服务  -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.sina.com"/>
+        <property name="protocol" value="smtp"/>
+        <!-- 465 for Gamil -->
+        <property name="port" value="25"/>
+        <property name="username" value="xxx@sina.com"/>
+        <property name="password" value="xxx"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.ssl.enable">true</prop> 
+                <!-- true for Gamil -->
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- saimiri-core -->
+    <bean id="cfgService" class="net.monkeystudio.service.CfgService"></bean>
+    <bean id="emailService" class="net.monkeystudio.service.EmailService"></bean>
+    <bean id="respHelper" class="net.monkeystudio.utils.RespHelper"></bean>
+    <bean id="userService" class="net.monkeystudio.service.UserService"></bean>
+    <!--自动扫描定时任务-->
+    <task:annotation-driven/>
+
+
+    <!-- 配置kaptcha验证码 -->
+    <bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+        <property name="config">
+            <bean class="com.google.code.kaptcha.util.Config">
+                <constructor-arg type="java.util.Properties">
+                    <props>
+                        <prop key="kaptcha.image.width">100</prop>
+                        <prop key="kaptcha.image.height">50</prop>
+                        <prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.DefaultNoise</prop>
+                        <prop key="kaptcha.textproducer.char.string">0123456789abcdefghijklmnopqrstuvwxyz</prop>
+                        <prop key="kaptcha.textproducer.char.length">4</prop>
+                        <prop key="kaptcha.textproducer.font.names">Arial</prop>
+                    </props>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+</beans>
+
+
+
+
+
+

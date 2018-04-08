@@ -1,0 +1,93 @@
+<div id="ad_check" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 715px !important;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="divue">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">ID为 {{arr.id}} 的广告详情</h4>
+            </div>
+            <div class="modal-body">
+                <div class="el-row">
+                    <div>id</div>
+                    <div>{{arr.id}}</div>
+                </div>
+                <div class="el-row">
+                    <div>广告类型</div>
+                    <div>{{arr.adType | formatAdType}}</div>
+                </div>
+                <div class="el-row">
+                    <div>推送类型</div>
+                    <div>{{arr.pushType | formatPushType}}</div>
+                </div>
+                <div class="el-row">
+                    <div>创建时间</div>
+                    <div>{{arr.createAt | formatTimeStamp}}</div>
+                </div>
+                <div class="el-row">
+                    <div>是否关闭</div>
+                    <div>{{arr.isOpen | closeStateType}}</div>
+                </div>
+                <div class="el-row" v-if="arr.isOpen==0">
+                    <div>关闭时间</div>
+                    <div>{{arr.closeTime | formatTimeStamp}}</div>
+                </div>
+                <div class="el-row">
+                    <div>预投放时间</div>
+                    <div>{{arr.prePushTime | formatTimeStamp}}</div>
+                </div>
+                <div class="el-row">
+                    <div>投放时间</div>
+                    <div>{{arr.pushTime | formatTimeStamp}}</div>
+                </div>
+                <div class="el-row">
+                    <div>展示标题</div>
+                    <div>{{arr.portalTitle}}</div>
+                </div>
+                <div class="el-row">
+                    <div>展示内容</div>
+                    <div>{{arr.portalContent}}</div>
+                </div>
+                <div class="el-row" v-if="arr.adType==1 || arr.adType==4">
+                    <div>广告标题</div>
+                    <div>{{arr.title}}</div>
+                </div>
+                <div class="el-row" v-if="arr.adType==1 || arr.adType==4">
+                    <div>广告描述</div>
+                    <div>{{arr.description}}</div>
+                </div>
+                <div class="el-row" v-if="arr.adType==2">
+                    <div>文本内容</div>
+                    <div>{{arr.textContent}}</div>
+                </div>
+                <div class="el-row" v-if="arr.adType==1 || arr.adType==4">
+                    <div>url地址</div>
+                    <div>{{arr.url}}</div>
+                </div>
+                <div class="el-row">
+                    <div>广告展示图</div>
+                    <div><img :src="arr.coverPic"></div>
+                </div>
+                <div class="el-row" v-if="arr.adType!=2">
+                    <div>微信推送图</div>
+                    <div><img :src="arr.picUrl"></div>
+                </div>
+                <div class="el-row">
+                    <div>点击单价</div>
+                    <div>{{arr.income}}</div>
+                </div>
+                <div class="el-row">
+                    <div>点击次数</div>
+                    <div>{{arr.clickAmount}}</div>
+                </div>
+                <div class="el-row">
+                    <div>推荐描述</div>
+                    <div>{{arr.adRecommendStatement}}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" @click="redectShow(arr.id)">编辑</button>
+            </div>
+        </div>
+    </div>
+</div>

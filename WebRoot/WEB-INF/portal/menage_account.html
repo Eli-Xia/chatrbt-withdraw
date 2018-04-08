@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="${base}/res/portal/css/menage_account.css"/>
+<div id="menage_account">
+    <div class="query">
+        <input type="text" placeholder="搜索已接入公众号" @keyup.enter="queryList" v-model="wxPubNickname">
+    </div>
+    <div class="list-box">
+        <div class="add" onclick="loadMainContent('${base}/join_account.html')">
+            <div>
+                <img src="${base}/res/portal/images/add_big.png">
+            </div>
+            <p>添加</p>
+        </div>
+        <div class="list" v-for="item in list" @click="accountDetail(item.originId)">
+            <div>
+                <img :src="item.headImgUrl==null?imgUrl:item.headImgUrl">
+            </div>
+            <p class="text">{{item.nickname}}</p>
+        </div>
+    </div>
+</div>
+<script src="${base}/res/portal/js/menage_account.js" type="text/javascript" charset="utf-8"></script>

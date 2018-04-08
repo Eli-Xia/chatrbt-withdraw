@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="${base}/res/css/wx_pub_mgr.css">
+<link rel="stylesheet" href="${base}/res/css/wx_pub_news_mgr.css">
+
+<div id="wx_pub_mgr">
+    <div id="modal_box">
+        <#include "/templates/modal_pub_tag.html" encoding="utf-8">
+    </div>
+    <div class="box" v-if="!showDetail">
+        <div class="box-body">
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>原始ID</th>
+                    <th style="text-align: center;">认证</th>
+                    <th>公众号昵称</th>
+                    <th>公众号主昵称</th>
+                    <th>AppID</th>
+                    <th>接入状态</th>
+                    <th>接入时间</th>
+                    <th>标签</th>
+                    <th class="gw-tr-width">操作</th>
+                </tr>
+                </thead>
+                <tbody class="gw-tbody">
+                <tr v-for="item in wxPubList">
+                    <td>{{item.id}}</td>
+                    <td>{{item.originId}}</td>
+                    <td style="text-align: center;"><img class="verify" src="${base}/res/images/verify.png" alt="V" v-if="item.verifyTypeInfo==0"></td>
+                    <td>{{item.nickname}}</td>
+                    <td>{{item.userNickName}}</td>
+                    <td>{{item.appId}}</td>
+                    <td>{{item.status | formatStatus}}</td>
+                    <td>{{item.createTime | formateTimeStamp}}</td>
+                    <td><span @click="editModalShow(item.id, item.tags)" class="edit-btn">编辑</span> <span class="current-tag" v-for="tag in item.tags">{{tag.name}}</span></td>
+                    <td class="gw-list-item-oper">
+                        <button type="button" class="btn btn-block btn-info btn-xs btn-gw-show"
+                                @click="onBtnSetAdm(item.nickname, item.originId)">素材
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav class="deco-pagination-container">
+            <ul class="page">
+                <li>
+                    <button href="#" aria-label="Previous" class="lastPage" @click="lastPage">
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
+                <li id="page">
+
+                </li>
+                <li>
+                    <button href="#" aria-label="Next" class="nextPage" @click="nextPage">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </div><!-- /.box-body -->
+
+    <!-- 公众号素材管理 -->
+    <div class="wx-news-wrap" v-if="showDetail">
+        <button type="button" class="btn btn-primary right" @click="showDetail = false">返回</button>
+
+        <span id="pub-name">公众号：{{curName}}</span>
+        <wx-news-mgr :wx-originid="originId" :wx-pubname="curName" :requery="queryList"></wx-news-mgr>
+    </div>
+
+</div>
+
+<script src="${base}/res/js/wx_pub_news_mgr.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/js/wx_pub_mgr.js" type="text/javascript" charset="utf-8"></script>

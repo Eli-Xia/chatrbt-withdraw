@@ -1,0 +1,106 @@
+#join_account {
+
+}
+
+#join_account > section {
+    padding-bottom: 31px;
+}
+
+.border-top {
+    border-top: 1px solid #e7f9fe;
+    padding-top: 3px;
+}
+
+h3 {
+    padding: 26px 0;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+h3 > p {
+    float: right;
+    width: 30px;
+    height: 16px;
+    border-radius: 8px;
+    border: 1px solid #28a7fd;
+    background-color: #8C8C8C;
+    margin-right: 41px;
+    position: relative;
+    transition: all .3s linear;
+}
+h3 >.active{
+    background-color: #28a7fd;
+}
+h3 >p > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    background-color: #fff;
+    border-radius: 7px;
+    transition: all .3s linear;
+}
+h3 >.active > span {
+    left:14px;
+}
+h3 >p> input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 16px;
+    opacity: 0;
+    filter: alpha(opacity:0);
+}
+.btn-select, .span-select {
+    display: inline-block;
+    position: relative;
+}
+.span-select > span {
+    position: relative;
+    top: 2px;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: url("../images/radius.png") no-repeat;
+}
+
+.span-select > .active {
+    background-image: url("../images/radius_blue.png");
+}
+
+.span-select > input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 56px;
+    height: 28px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+}
+
+.span-select > label {
+    padding-top: 3px;
+    margin-left: 12px;
+    margin-right: 41px;
+    cursor: pointer;
+}
+
+.btn-center {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.btn-center > button {
+    width: 200px;
+    height: 40px;
+    line-height: 38px;
+    color: #fff;
+    font-size: 16px;
+    background-color: #28a7fd;
+    border: 1px solid #28a7fd;
+    border-radius: 3px;
+    cursor: pointer;
+}

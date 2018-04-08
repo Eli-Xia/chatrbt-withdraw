@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="${base}/res/css/ad_mgr.css">
+<div id="ad_mgr">
+    <div id="modal_box">
+        <#include "/templates/modal_ad_redact.html" encoding="utf-8">
+        <#include "/templates/modal_ad_check.html" encoding="utf-8">
+        <#include "/templates/modal_ad_add.html" encoding="utf-8">
+        <#include "/templates/modal_ad_put.html" encoding="utf-8">
+    </div>
+    <div class="box" style="padding: 10px">
+        <h3 style="text-align: center;">
+            <button class="btn btn-success" style="float: left" @click="addShow">添加</button>
+            广告列表
+        </h3>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>别名</th>
+                <th style="width: 100px">广告类型</th>
+                <th style="width: 100px">推送类型</th>
+                <th>推荐描述</th>
+                <th>点击单价</th>
+                <th>用户点击数</th>
+                <th>点击次数</th>
+                <th>状态</th>
+                <th style="width: 140px">创建时间</th>
+                <th style="width: 240px">操作</th>
+            </tr>
+            </thead>
+            <tbody class="gw-tbody">
+            <tr v-for="(index,item) in list">
+                <td>{{item.id}}</td>
+                <td>{{item.alias}}</td>
+                <td>{{item.adType | formatAdType}}</td>
+                <td>{{item.pushType | formatPushType}}</td>
+                <td>{{item.adRecommendStatement}}</td>
+                <td>{{item.income}}</td>
+                <td>{{item.totalClickCount}}</td>
+                <td>{{item.clickAmount}}</td>
+                <td>{{item.pushState | pushStateType}}</td>
+                <td>{{item.createAt | formatTimeStamp}}</td>
+                <td class="gw-list-item-oper">
+                    <button type="button" class="btn btn-warning btn-xs btn-gw-show" @click="pushModal(item.id)">
+                        投放
+                    </button>
+                    <button type="button" class="btn btn-primary btn-xs btn-gw-show" @click="redectShow(item.id,1)">
+                        编辑
+                    </button>
+                    <button type="button" class="btn btn-block btn-info btn-xs btn-gw-show" @click="modalShow(item.id)">
+                        查看
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <nav class="deco-pagination-container">
+            <ul class="page">
+                <li>
+                    <button href="#" aria-label="Previous" class="lastPage" @click="lastPage">
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
+                <li id="page">
+
+                </li>
+                <li>
+                    <button href="#" aria-label="Next" class="nextPage" @click="nextPage">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script src="${base}/res/js/ad_mgr.js" type="text/javascript" charset="utf-8"></script>

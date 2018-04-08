@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RAdWxPubTagMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.RAdWxPubTag" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ad_id" property="adId" jdbcType="INTEGER" />
+    <result column="wx_pub_tag_id" property="wxPubTagId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ad_id, wx_pub_tag_id
+  </sql>
+  <sql id="Base_Where">
+    <where>
+      <if test="id != null">
+        and id = #{id}
+      </if>
+      <if test="adId != null">
+        and ad_id = #{adId}
+      </if>
+      <if test="tagId != null">
+        and wx_pub_tag_id = #{tagId}
+      </if>
+
+    </where>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from r_ad_wx_pub_tag
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from r_ad_wx_pub_tag
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPubTag" >
+    insert into r_ad_wx_pub_tag (id, ad_id, wx_pub_tag_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{adId,jdbcType=INTEGER}, #{wxPubTagId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPubTag" >
+    insert into r_ad_wx_pub_tag
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="adId != null" >
+        ad_id,
+      </if>
+      <if test="wxPubTagId != null" >
+        wx_pub_tag_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="adId != null" >
+        #{adId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubTagId != null" >
+        #{wxPubTagId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPubTag" >
+    update r_ad_wx_pub_tag
+    <set >
+      <if test="adId != null" >
+        ad_id = #{adId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubTagId != null" >
+        wx_pub_tag_id = #{wxPubTagId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPubTag" >
+    update r_ad_wx_pub_tag
+    set ad_id = #{adId,jdbcType=INTEGER},
+      wx_pub_tag_id = #{wxPubTagId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <delete id="deleteByAdId" parameterType="java.lang.Integer" >
+    delete from r_ad_wx_pub_tag
+    where ad_id = #{adId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="batchInsert"  parameterType="java.util.List" >
+    insert into r_ad_wx_pub_tag (ad_id,wx_pub_tag_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.adId}, #{item.wxPubTagId})
+    </foreach>
+  </insert>
+
+  <select id="selectByParamMap" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM r_ad_wx_pub_tag
+    <include refid="Base_Where"/>
+  </select>
+
+
+  <select id="selectByAdId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> FROM  r_ad_wx_pub_tag WHERE  ad_id = #{adId}
+  </select>
+</mapper>

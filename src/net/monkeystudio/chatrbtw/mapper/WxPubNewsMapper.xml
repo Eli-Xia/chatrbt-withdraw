@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxPubNewsMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.WxPubNews">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="wx_pub_origin_id" jdbcType="VARCHAR" property="wxPubOriginId" />
+    <result column="material_id" jdbcType="INTEGER" property="materialId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="thumb_media_id" jdbcType="VARCHAR" property="thumbMediaId" />
+    <result column="show_cover_pic" jdbcType="INTEGER" property="showCoverPic" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="url2" jdbcType="VARCHAR" property="url2" />
+    <result column="content_source_url" jdbcType="VARCHAR" property="contentSourceUrl" />
+    <result column="thumb_url" jdbcType="VARCHAR" property="thumbUrl" />
+    <result column="need_open_comment" jdbcType="INTEGER" property="needOpenComment" />
+    <result column="only_fans_can_comment" jdbcType="INTEGER" property="onlyFansCanComment" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.WxPubNewsWithBLOBs">
+    <result column="digest" jdbcType="LONGVARCHAR" property="digest" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, wx_pub_origin_id, material_id, title, thumb_media_id, show_cover_pic, author, url, url2, content_source_url, 
+    thumb_url, need_open_comment, only_fans_can_comment, create_time, update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    digest, content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from e_wx_pub_news
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_wx_pub_news
+    where 1=1
+    <if test="wxPubOriginId != null">
+        and wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+    </if>
+    <if test="title != null">
+        and title like CONCAT(CONCAT('%',#{title}),'%')
+    </if>
+    order by create_time desc
+    limit #{startIndex},#{pageSize}
+  </select>
+  <select id="count" parameterType="map" resultType="java.lang.Integer">
+    select 
+    	count(*)
+    from e_wx_pub_news
+    where 1=1
+    <if test="wxPubOriginId != null">
+        and wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+    </if>
+    <if test="title != null">
+        and title like CONCAT(CONCAT('%',#{title}),'%')
+    </if>
+  </select>
+  <select id="selectByTitle" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_wx_pub_news
+    where wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+    and title like CONCAT(CONCAT('%',#{title}),'%')
+    limit #{maxRetCount}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from e_wx_pub_news
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByMaterialId" parameterType="java.lang.Integer">
+    delete from e_wx_pub_news
+    where material_id = #{materialId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByWxPubOriginId" parameterType="java.lang.String">
+    delete from e_wx_pub_news
+    where wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxPubNewsWithBLOBs">
+    insert into e_wx_pub_news (id, wx_pub_origin_id, material_id, 
+      title, thumb_media_id, show_cover_pic, 
+      author, url, url2,content_source_url, 
+      thumb_url, need_open_comment, only_fans_can_comment, 
+      create_time, update_time, digest, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{wxPubOriginId, jdbcType=VARCHAR},#{materialId,jdbcType=INTEGER}, 
+      #{title,jdbcType=VARCHAR}, #{thumbMediaId,jdbcType=VARCHAR}, #{showCoverPic,jdbcType=INTEGER}, 
+      #{author,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{url2,jdbcType=VARCHAR}, #{contentSourceUrl,jdbcType=VARCHAR}, 
+      #{thumbUrl,jdbcType=VARCHAR}, #{needOpenComment,jdbcType=INTEGER}, #{onlyFansCanComment,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{digest,jdbcType=LONGVARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.WxPubNewsWithBLOBs">
+    insert into e_wx_pub_news
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id,
+      </if>
+      <if test="materialId != null">
+        material_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="thumbMediaId != null">
+        thumb_media_id,
+      </if>
+      <if test="showCoverPic != null">
+        show_cover_pic,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="url2 != null">
+        url2,
+      </if>
+      <if test="contentSourceUrl != null">
+        content_source_url,
+      </if>
+      <if test="thumbUrl != null">
+        thumb_url,
+      </if>
+      <if test="needOpenComment != null">
+        need_open_comment,
+      </if>
+      <if test="onlyFansCanComment != null">
+        only_fans_can_comment,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="digest != null">
+        digest,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null">
+        #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="materialId != null">
+        #{materialId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbMediaId != null">
+        #{thumbMediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="showCoverPic != null">
+        #{showCoverPic,jdbcType=INTEGER},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="url2 != null">
+        #{url2,jdbcType=VARCHAR},
+      </if>
+      <if test="contentSourceUrl != null">
+        #{contentSourceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbUrl != null">
+        #{thumbUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="needOpenComment != null">
+        #{needOpenComment,jdbcType=INTEGER},
+      </if>
+      <if test="onlyFansCanComment != null">
+        #{onlyFansCanComment,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="digest != null">
+        #{digest,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.WxPubNewsWithBLOBs">
+    update e_wx_pub_news
+    <set>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="materialId != null">
+        material_id = #{materialId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbMediaId != null">
+        thumb_media_id = #{thumbMediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="showCoverPic != null">
+        show_cover_pic = #{showCoverPic,jdbcType=INTEGER},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="url2 != null">
+        url2 = #{url2,jdbcType=VARCHAR},
+      </if>
+      <if test="contentSourceUrl != null">
+        content_source_url = #{contentSourceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbUrl != null">
+        thumb_url = #{thumbUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="needOpenComment != null">
+        need_open_comment = #{needOpenComment,jdbcType=INTEGER},
+      </if>
+      <if test="onlyFansCanComment != null">
+        only_fans_can_comment = #{onlyFansCanComment,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="digest != null">
+        digest = #{digest,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="net.monkeystudio.chatrbtw.entity.WxPubNewsWithBLOBs">
+    update e_wx_pub_news
+    set wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      material_id = #{materialId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      thumb_media_id = #{thumbMediaId,jdbcType=VARCHAR},
+      show_cover_pic = #{showCoverPic,jdbcType=INTEGER},
+      author = #{author,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      url2 = #{url2,jdbcType=VARCHAR},
+      content_source_url = #{contentSourceUrl,jdbcType=VARCHAR},
+      thumb_url = #{thumbUrl,jdbcType=VARCHAR},
+      need_open_comment = #{needOpenComment,jdbcType=INTEGER},
+      only_fans_can_comment = #{onlyFansCanComment,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      digest = #{digest,jdbcType=LONGVARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxPubNews">
+    update e_wx_pub_news
+    set wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      material_id = #{materialId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      thumb_media_id = #{thumbMediaId,jdbcType=VARCHAR},
+      show_cover_pic = #{showCoverPic,jdbcType=INTEGER},
+      author = #{author,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      url2 = #{url2,jdbcType=VARCHAR},
+      content_source_url = #{contentSourceUrl,jdbcType=VARCHAR},
+      thumb_url = #{thumbUrl,jdbcType=VARCHAR},
+      need_open_comment = #{needOpenComment,jdbcType=INTEGER},
+      only_fans_can_comment = #{onlyFansCanComment,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

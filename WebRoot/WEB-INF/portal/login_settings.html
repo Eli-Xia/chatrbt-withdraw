@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="${base}/res/portal/css/login_settings.css"/>
+<div id="login_settings">
+    <section v-if="hide">
+        <h3>
+            账号信息
+        </h3>
+        <div class="form-control">
+                    <span>
+                        邮箱
+                    </span>
+            <input type="text" :disabled="disabled">
+            <div class="float" @click="disToggle">
+                <b :class="disabled==true?'':active"></b>
+                <p>一个月内只能申请修改一次</p>
+            </div>
+        </div>
+        <div class="btn-box">
+            <button>
+                发送邮件
+            </button>
+        </div>
+    </section>
+    <section class="border-top">
+        <h3>
+            安全设置
+        </h3>
+        <div class="form-control">
+                    <span>
+                        当前密码
+                    </span>
+            <input type="password" v-model="curPassword" id="cur_password">
+        </div>
+        <div class="form-control">
+                    <span>
+                        新密码
+                    </span>
+            <input type="password" v-model="newPassword" id="new_password">
+        </div>
+        <div class="form-control">
+                    <span>
+                        确认新密码
+                    </span>
+            <input type="password" v-model="newPasswordCopy" id="password_copy">
+        </div>
+        <div class="btn-box">
+            <button @click="surePassword">
+                保&nbsp;&nbsp;&nbsp;&nbsp;存
+            </button>
+        </div>
+    </section>
+</div>
+<script src="${base}/res/portal/js/login_settings.js"></script>

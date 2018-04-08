@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxPubMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.WxPub">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="origin_id" jdbcType="VARCHAR" property="originId" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="chatbot_name" jdbcType="VARCHAR" property="chatbotName" />
+    <result column="head_img_url" jdbcType="VARCHAR" property="headImgUrl" />
+    <result column="verify_type_info" jdbcType="INTEGER" property="verifyTypeInfo" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, origin_id, nickname, app_id, user_id, create_time, chatbot_name , head_img_url , verify_type_info
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_wx_pub
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_wx_pub
+    order by create_time desc
+    limit #{startIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+  </select>
+  <select id="count" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from e_wx_pub
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from e_wx_pub
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxPub">
+    insert into e_wx_pub (
+    id,
+    origin_id,
+    nickname,
+    app_id,
+    user_id,
+    create_time,
+    chatbot_name ,
+    head_img_url ,
+    verify_type_info)
+    values 
+    	(#{id,jdbcType=INTEGER}, 
+    	 #{originId,jdbcType=VARCHAR}, 
+    	 #{nickname,jdbcType=VARCHAR}, 
+         #{appId,jdbcType=VARCHAR}, 
+         #{userId,jdbcType=INTEGER},
+         #{createTime,jdbcType=TIMESTAMP}, 
+         #{chatbotName,jdbcType=VARCHAR},
+         #{headImgUrl,jdbcType=VARCHAR},
+         #{verifyTypeInfo,jdbcType=INTEGER}
+         )
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.WxPub">
+    insert into e_wx_pub
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="originId != null">
+        origin_id,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="appId != null">
+        app_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="chatbotName != null">
+        chatbot_name,
+      </if>
+      <if test="headImgUrl != null">
+        head_img_url,
+      </if>
+      <if test="verifyTypeInfo != null">
+        verify_type_info,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="originId != null">
+        #{originId,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="chatbotName != null">
+        #{chatbotName,jdbcType=VARCHAR},
+      </if>
+      <if test="headImgUrl != null">
+        #{headImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTypeInfo != null">
+        #{verifyTypeInfo,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.WxPub">
+    update e_wx_pub
+    <set>
+      <if test="originId != null">
+        origin_id = #{originId,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="chatbotName != null">
+        chatbot_name = #{chatbotName,jdbcType=VARCHAR},
+      </if>
+      <if test="chatbotName != null">
+        head_img_url = #{chatbotName,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTypeInfo != null">
+        verify_type_info = #{verifyTypeInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxPub">
+    update e_wx_pub
+    set origin_id = #{originId,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      chatbot_name = #{chatbotName,jdbcType=VARCHAR},
+      head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+      verify_type_info = #{verifyTypeInfo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByOrginId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from e_wx_pub
+        where origin_id = #{originId,jdbcType=INTEGER}
+  </select>
+
+  <update id="updateByOriginId" parameterType="net.monkeystudio.chatrbtw.entity.WxPub">
+    update e_wx_pub
+    set origin_id = #{originId,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      chatbot_name = #{chatbotName},
+      head_img_url = #{headImgUrl},
+      verify_type_info = #{verifyTypeInfo}
+    where origin_id = #{originId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByAppId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from e_wx_pub
+        where app_id = #{appId}
+  </select>
+
+
+  <select id="selectByUserIdAndWxPubNickname" parameterType="map" resultMap="BaseResultMap">
+    select
+      <include refid="Base_Column_List"></include>
+    from e_wx_pub
+      where
+        user_id = #{userId}
+        <if test="wxPubNickname != null">
+          and nickname like  '%${wxPubNickname}%'
+        </if>
+    order by
+      create_time desc
+  </select>
+
+  <select id="selectByUserId" parameterType="map" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"></include>
+    from e_wx_pub
+    where
+        user_id = #{userId}
+  </select>
+
+
+  <select id="selectByTagId"  resultMap="BaseResultMap">
+    SELECT e.id, e.origin_id, e.nickname, e.app_id, e.user_id, e.create_time, e.chatbot_name , e.head_img_url , e.verify_type_info FROM e_wx_pub e JOIN r_wx_pub_tag r
+    ON e.id = r.wx_pub_id where r.tag_id = #{tagId}
+  </select>
+
+
+
+
+</mapper>

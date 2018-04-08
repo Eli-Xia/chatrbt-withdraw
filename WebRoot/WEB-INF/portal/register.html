@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>KeenDo| 注册</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
+    <link rel="stylesheet" href="${base}/res/portal/css/register.css"/>
+    <script src="${base}/res/vendor/jquery-3.1.1.min.js"></script>
+    <script src="${base}/res/vendor/vue.js"></script>
+    <script src="${base}/res/js/config.js"></script>
+</head>
+<body>
+<div class="large">
+    <img src="${base}/res/portal/images/login_big.png" alt="金豆传媒">
+    <img src="${base}/res/portal/images/hello.png" id="hello" alt="金豆传媒">
+    <img src="${base}/res/portal/images/dialog_box.png" id="dialog" alt="金豆传媒">
+    <div id="center">
+        <a href="${base}/index.html" class="login-img">
+            <img src="${base}/res/portal/images/logo.png" alt="金豆传媒"/>
+        </a>
+        <div class="login">
+            <div id="err_msg" v-if="show">
+                <img src="${base}/res/portal/images/err.png" alt="金豆传媒">
+                <span>{{msg}}</span>
+            </div>
+            <div class="input-text">
+                <input type="text" placeholder="输入邮箱进行注册" id="user_email" v-model="email" v-on:blur="blur('user_email',email,regEmail)"/>
+                <span></span>
+                <div class="tip">
+                    <div>
+                        请输入正确的邮箱格式
+                    </div>
+                </div>
+                <b>
+
+                </b>
+            </div>
+            <div class="input-text">
+                <input type="text" placeholder="输入昵称" id="nickname" v-model="nickname" v-on:blur="blur('nickname',nickname,regNick)"/>
+                <span></span>
+                <div class="tip">
+                    <div>
+                        昵称不能包含特殊字符，建议使用公司名
+                    </div>
+                </div>
+                <b>
+
+                </b>
+            </div>
+            <div class="input-ps">
+                <input type="password" placeholder="设置密码" id="password" v-model="password" @blur="blur('password',password,regPassword)"/>
+                <span></span>
+                <div class="tip">
+                    <div>
+                        6~16位字符，必须包含英文字母、数字
+                    </div>
+                </div>
+                <b></b>
+            </div>
+            <div class="input-ps">
+                <input type="password" placeholder="确认密码" id="password_clone" v-model="passwordCopy" @blur="copyReg('password_clone')"/>
+                <span></span>
+                <div class="tip">
+                    <div>
+                        请输入与上面相同的密码
+                    </div>
+                </div>
+                <b></b>
+            </div>
+            <div>
+                <input type="text" placeholder="验证码" id="code" v-model="code">
+                <div title="点击换验证码" @click="requireCode">
+                    <img id="codeImg">
+                </div>
+                <div class="tip">
+                    <div>
+                        请输入右边的验证码，若看不清楚请点击更换验证码
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button id="register" @click="registerClick">注&nbsp;&nbsp;册</button>
+            </div>
+            <div>
+                <a href="${base}/login.html">
+                    已有账号？登录
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${base}/res/portal/js/register.js"></script>
+<!--[if lt IE 10]>
+<script >
+    $(function(){
+        var timer=setInterval(animate,0);
+    });
+    var animateIndex=0;
+    function animate(){
+        if(animateIndex){
+            $("#hello").animate({
+                top:'29%'
+            },1000);
+            $("#dialog").animate({
+                top:'46%'
+            },1000);
+            animateIndex=0
+        }else{
+            $("#hello").animate({
+                top: '27%'
+            },1000);
+            $("#dialog").animate({
+                top:'47%'
+            },1000);
+            animateIndex=1
+        }
+    }
+</script>
+<![endif]-->
+</body>
+</html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ResMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.Res" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="res" property="res" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="allow_roles" property="allowRoles" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id,name,allow_roles,res,description
+  </sql>
+
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Res" >
+    insert into e_res (name,allow_roles, res,
+      description)
+    values (#{name,jdbcType=VARCHAR},#{allowRoles,jdbcType=VARCHAR}, #{res,jdbcType=VARCHAR},
+      #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.Res" >
+    insert into e_res
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="res != null" >
+        res,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="res != null" >
+        #{res,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    SELECT * FROM e_res
+  </select>
+
+  <delete id="delete" parameterType="map">
+    delete from e_res where id = #{id}
+  </delete>
+
+  <update id="update" >
+    update e_res  r
+    set
+    r.name = #{name,jdbcType=VARCHAR},
+    r.allow_roles = #{allowRoles,jdbcType=VARCHAR},
+    r.description = #{description,jdbcType=VARCHAR},
+    r.res = #{res,jdbcType=VARCHAR}
+    where
+    id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"></include>
+    from
+    e_res
+
+    limit
+    #{startIndex},#{pageSize}
+  </select>
+
+  <select id="count" resultType="java.lang.Integer">
+    select
+    count(id)
+    from
+    e_res
+  </select>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    SELECT * FROM e_res WHERE  id = #{id}
+  </select>
+
+
+</mapper>

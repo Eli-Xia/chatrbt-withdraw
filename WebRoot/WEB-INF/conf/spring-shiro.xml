@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+                        http://www.springframework.org/schema/aop 
+    					http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+
+    <!-- 数据库保存的密码是使用MD5算法加密的，所以这里需要配置一个密码匹配对象 -->
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.SimpleCredentialsMatcher">
+    </bean>
+
+    <!-- 缓存管理 -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"></bean>
+
+
+    <!--Realm充当了Shiro与应用安全数据间的“桥梁”或者“连接器”。
+    也就是说，当对用户执行认证（登录）和授权（访问控制）验证时，Shiro会从应用配置的Realm中查找用户及其权限信息。 -->
+    <bean id="realm" class="net.monkeystudio.shiro.MyRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"></property>
+    </bean>
+
+    <!-- Shiro安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="realm"></property>
+        <property name="cacheManager" ref="cacheManager"></property>
+    </bean>
+
+    <bean id="authInfoLoader" class="net.monkeystudio.shiro.AuthInfoLoader"/>
+
+    <!--扩展后的shiroFilter，支持以其他方式加载权限配置信息，例如重数据库加载-->
+    <bean id="shiroFilter" class="net.monkeystudio.shiro.MyShiroFilterFactoryBean">
+
+        <!-- Shiro的核心安全接口，这个属性是必须的 -->
+        <property name="securityManager" ref="securityManager"></property>
+        <!-- 要求登录时的链接(登录页面地址)，非必须的属性，默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->
+        <property name="loginUrl" value="/login.html"></property>
+        <!-- 登录成功后要跳转的连接(本例中此属性用不到，因为登录成功后的处理逻辑在LoginController里硬编码) -->
+        <!-- <property name="successUrl" value="/" ></property> -->
+
+        <!-- 用户访问未对其授权的资源时，所显示的连接 -->
+        <!--<property name="unauthorizedUrl" value="/errorpage/405"></property>-->
+        <!--自定义的权限配置信息加载器，与下面的filterChainDefinitions可以同时使用，加载器中加载的内容会覆盖filterChainDefinitions中定义的内容-->
+        <property name="authInfoLoader" ref="authInfoLoader"></property>
+        <property name="filterChainDefinitions">
+            <value>
+            </value>
+        </property>
+    </bean>
+
+
+
+</beans>

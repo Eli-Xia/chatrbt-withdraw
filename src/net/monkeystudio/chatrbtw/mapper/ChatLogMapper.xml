@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatLogMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatLog">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="wx_pub_origin_id" jdbcType="VARCHAR" property="wxPubOriginId" />
+    <result column="user_openid" jdbcType="VARCHAR" property="userOpenid" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="reply_id" jdbcType="INTEGER" property="replyId" />
+    <result column="reply_src" jdbcType="VARCHAR" property="replySrc" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.ChatLog">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, wx_pub_origin_id, user_openid, create_time, reply_id, reply_src
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from e_chat_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from e_chat_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatLog" useGeneratedKeys="true" keyProperty="id">
+    insert into e_chat_log (id, wx_pub_origin_id, user_openid, 
+      create_time, reply_id, reply_src, content
+      )
+    values (#{id,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{userOpenid,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{replyId,jdbcType=INTEGER}, #{replySrc,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatLog">
+    insert into e_chat_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id,
+      </if>
+      <if test="userOpenid != null">
+        user_openid,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="replyId != null">
+        reply_id,
+      </if>
+      <if test="replySrc != null">
+        reply_src,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null">
+        #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="userOpenid != null">
+        #{userOpenid,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="replyId != null">
+        #{replyId,jdbcType=INTEGER},
+      </if>
+      <if test="replySrc != null">
+        #{replySrc,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatLog">
+    update e_chat_log
+    <set>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="userOpenid != null">
+        user_openid = #{userOpenid,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="replyId != null">
+        reply_id = #{replyId,jdbcType=INTEGER},
+      </if>
+      <if test="replySrc != null">
+        reply_src = #{replySrc,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="net.monkeystudio.chatrbtw.entity.ChatLog">
+    update e_chat_log
+    set wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      user_openid = #{userOpenid,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      reply_id = #{replyId,jdbcType=INTEGER},
+      reply_src = #{replySrc,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatLog">
+    update e_chat_log
+    set wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      user_openid = #{userOpenid,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      reply_id = #{replyId,jdbcType=INTEGER},
+      reply_src = #{replySrc,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByCreateTime" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      e_chat_log
+    WHERE
+       create_time &gt; #{startTime}
+    AND
+       create_time &lt; #{endTime}
+    AND
+      reply_id is NULL
+  </select>
+
+  <select id="countByTime" parameterType="map" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM
+      e_chat_log
+    WHERE
+      create_time &gt;= #{startTime}
+    AND
+      create_time &lt; #{endTime}
+    AND
+      wx_pub_origin_id = #{wxPubOpneId}
+    AND
+      user_openid = #{userOpenId}
+  </select>
+
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List"/>
+      ,<include refid="Blob_Column_List"/>
+    FROM
+      e_chat_log
+    WHERE 1=1
+    order by create_time desc
+    LIMIT #{startIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+  </select>
+  
+  <select id="count" parameterType="map" resultType="java.lang.Integer">
+    SELECT
+      count(*)
+    FROM
+      e_chat_log
+  </select>
+
+
+  <select id="selectByWxPubOriginId" parameterType="map" resultMap="ResultMapWithBLOBs">
+    SELECT
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    FROM
+      e_chat_log
+    where wx_pub_origin_id = #{wxPubOriginId}
+    order by create_time desc
+    LIMIT #{startIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+
+
+  </select>
+
+  <select id="countByWxPubOriginId" parameterType="map" resultType="java.lang.Integer">
+    select
+      count(id)
+    from
+      e_chat_log
+    where wx_pub_origin_id = #{wxPubOriginId}
+  </select>
+
+
+    <select id="getYesterdayTotalChatNum" resultType="map">
+      SELECT wx_pub_origin_id AS originid,count(1)totalchatnum FROM e_chat_log WHERE DATEDIFF(create_time,NOW()) = -1  AND reply_id IS null  GROUP BY wx_pub_origin_id
+    </select>
+
+
+    <select id="getYesterdayTotalChatMan" resultType="map">
+      SELECT wx_pub_origin_id AS originid,COUNT(DISTINCT user_openid) AS totalchatman FROM e_chat_log WHERE DATEDIFF(create_time,NOW()) = -1 GROUP BY wx_pub_origin_id
+    </select>
+
+<!--统计指定公众号昨日聊天人数-->
+  <select id="getYstdTotalChatMan" resultType="java.lang.Long">
+      SELECT COUNT(DISTINCT user_openid) FROM e_chat_log WHERE  DATEDIFF(create_time,NOW()) = -1  AND  wx_pub_origin_id = #{originId}
+  </select>
+<!--统计指定公众号昨日聊天次数-->
+  <select id="getYstdTotalChatNum" resultType="java.lang.Long">
+    SELECT count(1) FROM e_chat_log WHERE DATEDIFF(create_time,NOW()) = -1  AND reply_id IS NULL AND wx_pub_origin_id = #{originId}
+
+  </select>
+
+
+  <!--统计指定公众号前天的聊天人数-->
+  <select id="get2DaysAgoTotalChatMan" resultType="java.lang.Long">
+          SELECT COUNT(DISTINCT user_openid) FROM e_chat_log WHERE  DATEDIFF(create_time,NOW()) = -2  AND  wx_pub_origin_id = #{originId}
+
+  </select>
+
+  <!--统计指定公众号前天的聊天次数-->
+  <select id="get2DaysAgoTotalChatNum" resultType="java.lang.Long">
+        SELECT count(1) FROM e_chat_log WHERE DATEDIFF(create_time,NOW()) = -2  AND reply_id IS NULL AND wx_pub_origin_id = #{originId}
+
+  </select>
+
+
+
+  <select id="totalChatManChartByDate" resultType="Map">
+    select  date(create_time) AS chatlogtime,COUNT(DISTINCT user_openid) AS chatman FROM e_chat_log
+    where date(create_time) BETWEEN #{beginDate} AND #{endDate} AND wx_pub_origin_id = #{originId}
+    GROUP BY date(create_time)
+  </select>
+
+  <select id="totalChatNumChartByDate" resultType="Map">
+    select date(e_chat_log.create_time) AS chatlogtime, count(1) AS chatnum from e_chat_log where reply_id is NULL
+    AND wx_pub_origin_id = #{originId}
+    AND  date(e_chat_log.create_time) BETWEEN #{beginDate} AND #{endDate}
+    group by date(e_chat_log.create_time)
+  </select>
+
+
+  <select id="totalChatManAndNumByDateFromAllWxPub" resultType="Map">
+      SELECT
+          p.perdate AS createtime ,
+          (CASE WHEN c.totalchatnum IS NULL THEN 0 ELSE c.totalchatnum END) AS totalchatnum,
+          (CASE WHEN c.totalchatman IS NULL THEN 0 ELSE c.totalchatman END ) AS totalchatman
+      FROM
+      (
+          select @num:=@num+1,date(adddate(#{beginDate}, INTERVAL @num DAY)) as perdate
+          from e_chat_log,(select @num:=-1) t where date(adddate(#{beginDate}, INTERVAL @num DAY)) &lt; date(#{endDate})
+      ) p
+      LEFT JOIN
+      (
+          SELECT date(create_time) AS createtime,count(1) AS totalchatnum ,count(distinct user_openid) AS totalchatman
+          FROM e_chat_log
+          WHERE
+            reply_id IS NOT NULL
+            AND
+            date(e_chat_log.create_time) BETWEEN #{beginDate} AND #{endDate}
+         GROUP BY createtime
+      ) c
+      ON p.perdate = c.createtime
+
+</select>
+
+
+
+
+</mapper>

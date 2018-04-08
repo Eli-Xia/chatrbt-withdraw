@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>KeenDo | 后台系统</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
+    <link rel="stylesheet" href="${base}/res/portal/css/index.css"/>
+    <link rel="stylesheet" href="${base}/res/portal/css/iconfont.css"/>
+    <link rel="stylesheet" href="${base}/res/vendor/laydate/daterangepicker.css"/>
+</head>
+<body id="index">
+<header>
+    <div>
+        <a class="logo" href="${base}/home.html">
+            <img src="${base}/res/portal/images/logo_small.png" alt="金豆传媒">
+        </a>
+        <div class="user-message">
+            <img src="${base}/res/portal/images/default_small.png" alt="金豆传媒">
+            <a href="javascript:;" @click="confirmShow('确认要退出？')">退出</a>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <aside>
+        <!--<div>-->
+        <!--<img src="${base}/res/portal/images/home.png" alt="微信公众号">-->
+        <!--主页-->
+        <!--</div>-->
+        <ul>
+            <li class="first-class active" @click="changeTab($event, '${base}/home_page.html')">
+                <div>
+                    <i class="iconfont icon-shouye"></i>
+                    <span>主页</span>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <i class="iconfont icon-weixin"></i>
+                    <span>公众号</span>
+                </div>
+                <ul>
+                    <li id="join" @click="changeTab($event, '${base}/join_account.html')">接入公众号</li>
+                    <li id="manage-account" @click="changeTab($event, '${base}/menage_account.html')">管理公众号</li>
+                </ul>
+            </li>
+            <li class="first-class" @click="changeTab($event, '${base}/ads_hall.html')">
+                <div>
+                    <i class="iconfont icon-guanggaodating"></i>
+                    <span>广告大厅</span>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <i class="iconfont icon-tubiao"></i>
+                    <span>收益</span>
+                </div>
+                <ul>
+                    <li @click="changeTab($event, '${base}/revenue_count.html')">收益统计</li>
+                    <li @click="changeTab($event, '${base}/settlement_center.html')">结算中心</li>
+                </ul>
+            </li>
+            <li>
+                <div>
+                    <i class="iconfont icon-yonghu"></i>
+                    <span>设置</span>
+                </div>
+                <ul>
+                    <li @click="changeTab($event, '${base}/account_settings.html')">账号设置</li>
+                    <li @click="changeTab($event, '${base}/login_settings.html')">登录设置</li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+    <div id="center"></div>
+    <div id="layer">
+        <div>
+            <img src="${base}/res/portal/images/loading.gif">
+            <p>加载中...请稍后</p>
+        </div>
+    </div>
+</div>
+<footer>
+    <!-- <p><a href="">联系我们</a><a href="">关于我们</a></p> -->
+    <p><a href="http://www.miibeian.gov.cn/">许可证号：粤ICP备17103036号&nbsp;&nbsp;&nbsp;&nbsp;Copyright © 2017 - 2018 Keendo&nbsp;&nbsp;&nbsp;&nbsp;All
+        Rights Reserved</a></p>
+</footer>
+<!--报错  信息框-->
+<div id="msg_layer">
+    <div class="success-msg">
+        <div class="dialog_img">
+            <i class="iconfont icon-zhengque"></i>
+        </div>
+        <div class="content"></div>
+        <p>
+            <button @click="msgHide">确&nbsp;&nbsp;定</button>
+        </p>
+    </div>
+    <div class="err-msg">
+        <div class="dialog_img">
+            <i class="iconfont icon-cuowu"></i>
+        </div>
+        <div class="content"></div>
+        <p>
+            <button @click="msgHide">确&nbsp;&nbsp;定</button>
+        </p>
+    </div>
+</div>
+<!-- 确认框 -->
+<div id="confirm_layer">
+    <div>
+        <div class="dialog_img">
+            <i class="iconfont icon-jinggao"></i>
+        </div>
+        <div id="confirm_content"></div>
+        <p>
+            <button @click="confirmHide">取&nbsp;&nbsp;消</button>
+            <button @click="logout">确&nbsp;&nbsp;定</button>
+        </p>
+    </div>
+</div>
+<div id="global_layer"></div>
+<script src="${base}/res/vendor/jquery-3.1.1.min.js"></script>
+<script src="${base}/res/vendor/vue.js"></script>
+<script src="${base}/res/js/config.js"></script>
+<script src="${base}/res/js/saimiri-pagination.js"></script>
+<script src="${base}/res/js/global.js"></script>
+<script src="${base}/res/vendor/laydate/moment.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/vendor/laydate/daterangepicker.js" type="text/javascript" charset="utf-8"
+        async="async"></script>
+<script src="${base}/res/vendor/echarts3/echarts.min.js" type="text/javascript" charset="utf-8" async="async"></script>
+<script src="${base}/res/portal/js/index.js"></script>
+<script src="${base}/res/portal/js/status.js"></script>
+</body>
+</html>

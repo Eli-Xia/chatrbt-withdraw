@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxPubKeywordStatusMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.WxPubKeywordStatus" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="origin_id" property="originId" jdbcType="VARCHAR" />
+    <result column="switch_status" property="switchStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from `e_wx_pub_keyword_status`
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxPubKeywordStatus" useGeneratedKeys="true" keyProperty="id" >
+    insert into `e_wx_pub_keyword_status` (origin_id, switch_status)
+    values (#{originId,jdbcType=VARCHAR}, #{switchStatus,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxPubKeywordStatus" >
+    update `e_wx_pub_keyword_status`
+    set origin_id = #{originId,jdbcType=VARCHAR},
+      switch_status = #{switchStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, origin_id, switch_status
+    from `e_wx_pub_keyword_status`
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+        select id, origin_id, switch_status
+        from `e_wx_pub_keyword_status`
+        </select>
+
+
+<select id="getKeywordSwitchByOriginId" resultType="java.lang.Integer">
+SELECT  switch_status FROM  `e_wx_pub_keyword_status` WHERE  origin_id = #{originId}
+
+</select>
+
+  <update id="updateByOriginId" >
+    update `e_wx_pub_keyword_status`
+    set
+    switch_status = #{status}
+    where origin_id = #{originId}
+  </update>
+
+  <select id="getOriginIdListFromWxPub" resultType="map">
+    SELECT  origin_id as originid FROM  e_wx_pub
+  </select>
+  <select id="getOriginIdListFromWxPubKwStatus" resultType="map">
+    SELECT  origin_id AS  originid FROM  e_wx_pub_keyword_status
+  </select>
+
+  <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+    insert into e_wx_pub_keyword_status (origin_id,switch_status)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.originId,jdbcType=VARCHAR}, #{item.switchStatus,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+</mapper>

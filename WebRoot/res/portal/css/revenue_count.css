@@ -1,0 +1,229 @@
+.revenue-wrap h3 {
+    height: 16px;
+    line-height: 16px;
+    font-size: 16px;
+    margin: 31px 0 15px;
+}
+
+.yesterday-count {
+    border: 1px solid #e7eef3;
+    text-align: center;
+    padding: 17px 0;
+}
+
+.yesterday-count span {
+    font-size: 36px;
+    margin: 13px 0;
+    color: #e84e4e;
+}
+
+.chart-wrap .revenue-detail {
+    background-color: #eff6fb;
+    font-size: 14px;
+    padding: 8px 15px;
+    color: #363636;
+}
+
+.revenue-detail input {
+    width: 170px;
+    padding: 5px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+    text-align: center;
+    border: none;
+}
+
+.revenue-detail span {
+    padding-top: 3px;
+}
+
+.revenue-detail > .time-box {
+    display: inline-block;
+    position: relative;
+    margin-left: 68px;
+}
+
+.revenue-detail .right {
+    padding-top: 3px;
+}
+
+.revenue-detail .right span {
+    margin-left: 33px;
+}
+
+.revenue-list li {
+    padding: 0 14px 0 11px;
+    height: 62px;
+    line-height: 62px;
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.revenue-list .right span {
+    margin-right: 33px;
+}
+
+.revenue-list b {
+    font-weight: normal;
+    color: #28a7fd;
+    cursor: pointer;
+}
+
+.income-page {
+    text-align: right;
+    margin-top: 10px;
+    padding-right: 16px;
+    padding-bottom: 15px;
+}
+
+.income-page button {
+    padding: 6px 5px;
+    border: none;
+    background-color: #fff;
+}
+
+.income-page button.active {
+    color: #28A7FD;
+}
+
+.income-page button:hover {
+    color: #28A7FD;
+}
+
+.web-page {
+    display: inline-block;
+}
+
+.no-data {
+    text-align: center;
+    color: #8eb2c7;
+}
+
+.no-data .icon-zanwushuju {
+    margin: 64px 0 26px;
+    font-size: 72px;
+    display: inline-block;
+    color: #8eb2c7;
+}
+
+.icon-icon-question {
+    vertical-align: middle;
+    margin-left: 5px;
+    color: #8eb2c7;
+    position: relative;
+}
+
+.detail-layer {
+    position: absolute;
+    right: 227px;
+    top: 149px;
+    width: 600px;
+    height: 555px;
+    background-color: #fff;
+    z-index: 110;
+    border-radius: 3px;
+}
+
+.income-time {
+    padding: 0 24px;
+    height: 47px;
+    line-height: 47px;
+    border-bottom: 1px solid #e2e2e2;
+    color: #363636;
+}
+
+.total {
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 33px;
+    height: 125px;
+}
+
+.total h2 {
+    font-size: 36px;
+    height: 36px;
+    line-height: 36px;
+    font-weight: normal;
+    color: #e84e4e;
+}
+
+.total h2 span {
+    font-size: 14px;
+    margin-left: 12px;
+    color: #363636;
+}
+
+.total p {
+    color: #8eb2c7;
+    height: 14px;
+    line-height: 14px;
+    margin-top: 9px;
+}
+
+.total-title {
+    background-color: #eff6fb;
+    height: 37px;
+    line-height: 37px;
+    padding-left: 70px;
+    padding-right: 41px;
+}
+
+.total-list li {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 24px;
+    padding-right: 40px;
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.total-list li:hover {
+    background-color: #e84e4e;
+    color: #fff;
+}
+
+.total-list li img {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.total-list li .right {
+    color: #e84e4e;
+}
+
+.total-list li:hover .right {
+    color: #fff;
+}
+
+.total-footer {
+    position: absolute;
+    right: 0;
+    bottom: 20px;
+    padding-right: 25px;
+}
+
+.total-footer .right button {
+    width: 80px;
+    text-align: center;
+    margin-right: 16px;
+    height: 28px;
+    font-size: 12px;
+    padding: 5px 0;
+    background-color: #28A7FD;
+    color: #fff;
+    border: 1px solid #28A7FD;
+}
+
+.no-account {
+    padding: 10px;
+    color: #8eb2c7;
+    text-align: center;
+}
+
+.no-account .icon-zanwushuju {
+    margin: 64px 0 26px;
+    font-size: 72px;
+    display: inline-block;
+    color: #8eb2c7;
+}

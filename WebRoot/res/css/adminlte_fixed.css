@@ -1,0 +1,19 @@
+.main-sidebar, .left-side{
+	padding-top: 18px;
+}
+
+.user-panel>.info>p{
+	margin-top: 9px;
+}
+
+.navbar-nav>.user-menu>.dropdown-menu>li.user-header>img{
+	margin: auto;
+}
+
+.profile-user-img{
+	background: #a1a1ad;
+}
+
+.login-page, .register-page {
+    background: #d7f7f5;
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RRobotCharacterMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RRobotCharacter">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="chat_robot_id" property="chatRobotId" jdbcType="INTEGER" />
+        <result column="chat_robot_character_id" property="chatRobotCharacterId" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, chat_robot_id, chat_robot_character_id
+    </sql>
+
+    <insert id="insert">
+        insert into r_robot_character (chat_robot_id,chat_robot_character_id)
+        value (#{chatRobotId} , #{chatRobotCharacterId} )
+    </insert>
+
+    <delete id="deleteByChatRobotId" parameterType="map" >
+        delete from r_robot_character where chat_robot_id = #{chatRobotId}
+    </delete>
+
+    <select id="selectByChatRobotId" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            r_robot_character
+        where
+            chat_robot_id = #{chatRobotId}
+
+    </select>
+
+</mapper>

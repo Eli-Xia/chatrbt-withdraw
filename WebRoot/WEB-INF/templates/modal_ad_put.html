@@ -1,0 +1,83 @@
+<div id="ad_put" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="tag-list">
+                    <button v-for="item in tagsAllList" @click="selectTags(item.id,item.name)"
+                            :class="tagIds.indexOf(item.id)!=-1?'btn-28a7fd':''">
+                        {{item.name}}
+                    </button>
+                </div>
+                <div class="tag-box" v-if="ofTagsList.length>0">
+                    <p>已选标签</p>
+                    <div v-for="item in ofTagsList">
+                        <button @click="activeTag(item.id,item.name)"
+                                :class="activeTagName==item.name?'btn-d58512':'btn-28a7fd'">
+                            {{item.name}}
+                        </button>
+                        <span @click="selectTags(item.id,item.name)">X</span>
+                    </div>
+                </div>
+                <div v-else class="tag-box">
+                    点击左侧选择标签
+                </div>
+                <div class="account-box">
+                    <div v-if="activeTagName">
+                        <div class="account-header">
+                            <button class="btn-d58512">
+                                {{activeTagName}}
+                            </button>
+                        </div>
+                        <div>
+                            <input type="text" placeholder="搜索" class="form-control" v-model="queryKey"
+                                   @keyup.enter="queryAccounts">
+                        </div>
+                        <div class="account-main" v-show="wxPubsList.length>0">
+                            <p @click="allTarget"><span>全选</span><i class="fa"
+                                                                    :class="allActive==true?'fa-check-square':'fa-circle-o'"></i>
+                            </p>
+                            <div>
+                                <ul>
+                                    <li v-for="(index,item) in wxPubsList" @click="updateWxPubIds(item.id)"
+                                        v-if="index>=minIndex && index<maxIndex">
+                                        <i class="fa"
+                                           :class="wxPubIds.indexOf(item.id)!=-1?'fa-check-square':'fa-circle-o'"></i>
+                                        {{item.nickname}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="account_page">
+                                <div>
+                                    <button title="上一页" @click="lastWebPage"><i class="fa fa-angle-double-left"></i></button>
+                                    <div class="web-page">
+                                        <web-page></web-page>
+                                    </div>
+                                    <button title="下一页" @click="nextWebPage"><i class="fa fa-angle-double-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="account-main">
+                            <p>
+                                无相关公众号
+                            </p>
+                        </div>
+                    </div>
+                    <div v-else>
+                        请点击左侧的标签
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"
+                        style="padding: 6px 12px;font-size: 14px">取消
+                </button>
+                <button type="button" class="btn btn-success" @click="putSubmit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>

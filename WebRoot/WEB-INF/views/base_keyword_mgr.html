@@ -1,0 +1,124 @@
+<link rel="stylesheet" href="${base}/res/css/base_keyword_mgr.css">
+<div id="key_mgr">
+    <div class="box" style="padding: 10px">
+        <div class="input-box">
+            <input id="search" type="text" placeholder="搜索关键词" v-model="searchKeyWord">
+            <button class="btn btn-primary" @click="queryList(1)">搜索</button>
+            <button class="btn btn-default" @click="resetKey">重置</button>
+            <button class="btn btn-primary right" @click="addModel">添加回复</button>
+            <div class="upload-wrap right">
+                <img src="${base}/res/images/loading.gif" v-show="showLoading" alt="loading">
+                <a class="btn btn-warning" id="upload-btn">上传Excel<input type="file" id="upload" @change="uploadFile" name="upload"></a>
+            </div>
+            
+        </div>
+        <div class="key_list">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style="min-width: 110px">关键词</th>
+                    <th>回复内容</th>
+                    <th style="width: 150px">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(index,item) in keyList">
+                    <td>{{item.keywordsId}}</td>
+                    <td>{{item.keywords}}</td>
+                    <td>
+                        <span>{{item.response}}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-xs" @click="detailModel(index)">
+                            详情
+                        </button>
+                        <button class="btn btn-info btn-xs" @click="alterModel(index)">
+                            编辑
+                        </button>
+                        <button class="btn btn-danger btn-xs" @click="delReply(index,item.keywordsId)">
+                            删除
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div id="key_detail" v-if="detailShow==true">
+                <dt>关键词</dt>
+                <dd>{{keyList[detailIndex].keywords}}</dd>
+                <dt>回复</dt>
+                <dd>{{keyList[detailIndex].response}}</dd>
+                <div class="btn-box">
+                    <button @click="hideDetail">
+                        关&nbsp;&nbsp;闭
+                    </button>
+                </div>
+            </div>
+            <div id="key_alter" v-if="alterShow==true">
+                <div class="model-header">
+                    <span>关键词</span>
+                    <input type="text" v-model="keyword">
+                </div>
+                <div class="textarea-control">
+                                <span>
+                                        回复内容
+                                </span>
+                    <textarea cols="30" rows="10" maxlength="300" v-model="replyContent" class="reply-text"></textarea>
+                </div>
+                <div class="btn-box">
+                    <button @click="updateReply">
+                        保&nbsp;&nbsp;存
+                    </button>
+                    <button @click="hideAlter">
+                        取&nbsp;&nbsp;消
+                    </button>
+                </div>
+            </div>
+            <div id="key_add" v-if="addShow==true">
+                <div class="model-header">
+                                    <span>
+                                             关键词
+                                    </span>
+                    <input type="text" v-model="keyword">
+                </div>
+                <div class="textarea-control">
+                                <span>
+                                        回复内容
+                                </span>
+                    <textarea cols="30" rows="10" maxlength="300" v-model="replyContent" class="reply-text"></textarea>
+                </div>
+                <div class="btn-box">
+                    <button @click="saveReply">
+                        保&nbsp;&nbsp;存
+                    </button>
+                    <button @click="hideAdd">
+                        取&nbsp;&nbsp;消
+                    </button>
+                </div>
+            </div>
+        </div>
+        <nav class="deco-pagination-container">
+            <ul class="page">
+                <li>
+                    <button>首页</button>
+                </li>
+                <li>
+                    <button href="#" aria-label="Previous" class="lastPage" @click="lastPage">
+                        <span aria-hidden="true">&laquo;</span>
+                    </button>
+                </li>
+                <li id="page"></li>
+                <li>
+                    <button href="#" aria-label="Next" class="nextPage" @click="nextPage">
+                        <span aria-hidden="true">&raquo;</span>
+                    </button>
+                </li>
+                <li>
+                    <button>尾页</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+</div>
+<script src="${base}/res/js/base_keyword_mgr.js" type="text/javascript" charset="utf-8"></script>

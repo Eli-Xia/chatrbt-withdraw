@@ -1,0 +1,294 @@
+<link rel="stylesheet" href="${base}/res/portal/css/settlement_center.css"/>
+<link rel="stylesheet" href="${base}/res/portal/js/component/radio/radio.css"/>
+<link rel="stylesheet" href="${base}/res/portal/js/component/select/select.css"/>
+
+<div id="settlement-wrap">
+    <div class="tabs">
+       <span class="income-manage" @click="tabId=1" :class="{active:tabId==1}">收益管理</span>
+       <span class="settlement-setting" @click="tabId=2" :class="{active:tabId==2}">结算设置</span>
+    </div>
+
+    <!-- 收益管理 -->
+    <section v-show="tabId==1" id="income-wrap">
+        <div class="tip" v-if="settingStatus==1">
+            <i class="icon iconfont icon-jinggao"></i>
+            <span>提示：请尽快绑定银行卡，以免影响提现。&nbsp;<a href="javascript:;" @click="tabId = 2">去绑定</a></span>
+        </div>
+        
+        <ul class="statistics">
+            <li>
+                <span class="num lighter">{{availableAmount || 0}}</span>
+                <p>可提现金额（元）</p>
+                <button @click="toggleWithdrawModel" :class="{enable: switchVal===0 || availableAmount<minAmount}" :disabled="switchVal===0 || availableAmount<minAmount">提 现</button>
+            </li>
+            <li>
+                <span class="num lighter">{{alreadyWithdrawAmount || 0}}</span>
+                <p>已提现金额（元）</p>
+            </li>
+            <li>
+                <span class="num lighter">{{totalAmount || 0}}</span>
+                <p>总收益（元）</p>
+            </li>
+        </ul>
+        <div class="withdraw-tips">
+            <p>1  提现要求：成功绑定银行卡，且可手动提现金额大于1000元</p>
+            <p>2  提现时间：每月2日-4日</p>
+            <p>3  提现到账：具体详情请查看<a href="${base}/instructions.html" target="_blank">结算说明</a></p>
+        </div>
+        <div class="withdraw-record">
+            <h3>提现记录</h3>
+            <table class="withdraw-table">
+                <thead>
+                    <tr>
+                        <th>提现日期</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th style="width:7%">查看</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in withdrawRecord">
+                        <td>{{item.applyTime | formatDateTime}}</td>
+                        <td>{{item.amount}}</td>
+                        <td>{{item.state==3?'提现成功':'提现进行中'}}</td>
+                        <td style="width:7%"><a @click="toggleDetailModel(item.id)">查看</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-if="withdrawRecord.length === 0" class="no-data">
+                <i class="icon iconfont icon-zanwushuju"></i>
+                <p>暂无数据</p>
+            </div>
+        </div>
+    </section>
+    <!-- end 收益管理 -->
+
+    <!-- 结算设置 -->
+    <section v-if="tabId==2" id="setting-wrap">
+        <div class="tip tip-warning">
+            <i class="icon iconfont icon-jinggao"></i>
+            <span>提示：同一个账号只允许绑定一个银行账号。</span>
+        </div>
+
+        <form id="form" class="form-horizontal" role="form">
+            <span id="edit-btn" v-if="settingStatus===3" @click="modifyAccount">修改</span>
+            <div class="row">
+                <label class="form-label align-top" for="">账户类型</label>
+                <div v-if="settingStatus!==3" class="radio-wrap">
+                    <k-radio :checked="accountInfo.accountType" @change="accountInfo.accountType = $event.target.value" value='0'>公司账户</k-radio> <br> <br>
+                    <k-radio :checked="accountInfo.accountType" @change="accountInfo.accountType = $event.target.value" value='1'>个人账户</k-radio>
+                </div>
+                <span class="info" v-if="settingStatus===3">{{myAccount.accountType===1?'个人账户':'公司账户'}}</span>
+            </div>
+            <div v-if="accountInfo.accountType=='1'" class="personal-account">
+                <div class="row upload-wrap">
+                    <label class="form-label required" for="">委托人收款证明<span>*</span></label>
+                    <a v-if="settingStatus!==3" id="upload-btn">
+                        
+                        <img id="preview" v-show="imgsrc" :src="imgsrc" alt="收款证明">
+                        <span :class="{on: imgsrc}">重新上传</span>
+                        <input type="file" id="upload" @change="previewImg" name="upload">
+                    </a>
+                    <span class="instructions" v-if="settingStatus!==3">请上传<a href="/api/settlement/download/certification " target="_blank" download>委托个人收款证明</a><br>支持jpg、jpeg、png格式，大小5M以内</span>
+                    <span class="info" v-show="settingStatus===3"><img id="sensitive-pic" src="/api/settlement/sensitive-pic" alt="收款证明"></span>
+                </div>
+                <div class="row">
+                    <label class="form-label required" for="">开户人名称<span>*</span></label>
+                    <input v-if="settingStatus!==3" v-model="accountInfo.accountHolder" type="text" name="" id="">
+                    <span class="info" v-if="settingStatus===3">{{myAccount.accountHolder}}</span>
+                </div>
+                <div class="row">
+                    <label class="form-label required" for="">开户人身份证号<span>*</span></label>
+                    <input v-if="settingStatus!==3" v-model="accountInfo.idNumber"  type="text" @blur="idCardTest($event)">
+                    <span class="info" v-if="settingStatus===3">{{myAccount.idNumber}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <label class="form-label required" for="">开户名称<span>*</span></label>
+                <input v-if="settingStatus!==3" v-model="accountInfo.accountName" type="text" name="" id="" @blur="checkData($event, '开户名称')">
+                <span class="info" v-if="settingStatus===3">{{myAccount.accountName}}</span>
+            </div>
+            <div class="row">
+                <label class="form-label required" for="">开户银行<span>*</span></label>
+                <k-select id="bankname" v-if="settingStatus!==3" value="bankId" @change="changeSelect" placeholder="请选择" :selected="myAccount.bank.bankName">
+                    <k-option v-for="item in banks" :key="item.id" 
+                              :value="item.id" :label="item.bankName" 
+                              :class="{selected: value==item.id}"
+                    />
+                </k-select>
+                <!-- <span>{{accountInfo.bankId}}</span> -->
+                <span class="info" v-if="settingStatus===3">{{myAccount.bank.bankName}}</span>
+            </div>
+            <div class="row">
+                <label class="form-label required" for="">所在地<span>*</span></label>
+                <div v-if="settingStatus!==3" class="address-wrap">
+                    <k-select value="provinceCode" @change="changeSelect" placeholder="请选择" :selected="myAccount.province.name">
+                        <k-option v-for="item in provinces" :key="item.code" 
+                                    :value="item.code" :label="item.name" 
+                                    :class="{selected: value==item.code}"
+                        />
+                    </k-select>
+                    <!-- <span>{{accountInfo.provinceCode}}</span> -->
+                    <k-cascader value="cityCode" @change="changeSelect" placeholder="请选择" :selected="myAccount.city.name">
+                        <k-option v-for="item in proCities" :key="item.code" 
+                                    :value="item.code" :label="item.name" 
+                                    :class="{selected: value==item.code}"
+                        />
+                    </k-cascader>
+                    <!-- <span>{{accountInfo.cityCode}}</span> -->
+                </div>
+                <span class="info" v-if="settingStatus===3">{{myAccount.province.name}} {{myAccount.city.name}}</span>
+            </div>
+            <div class="row">
+                <label class="form-label required" for="">开户支行<span>*</span></label>
+                <input v-if="settingStatus!==3" v-model="accountInfo.bankForkName" type="text" name="" id="" @blur="checkData($event, '开户支行')">
+                <span v-if="settingStatus!==3" class="instructions">请填写开户支行全称，例如：中国农业银行深圳白石洲支行<br>如有疑问，可联系银行客服查询</span>
+                <span class="info" v-if="settingStatus===3">{{myAccount.bankForkName}}</span>
+            </div>
+            <div class="row">
+                <label class="form-label required" for="">银行账号<span>*</span></label>
+                <input v-if="settingStatus!==3" v-model="accountInfo.accountNumber" type="number" id="account-number" @blur="checkData($event, '银行账号')">
+                <span v-if="settingStatus!==3" class="instructions">务必确保银行账号和开户名称对应无误</span>
+                <span class="info" v-if="settingStatus===3">{{myAccount.accountNumber}}</span>
+            </div>
+            <div v-if="settingStatus!==3" class="row">
+                <label class="form-label required" for="">确认银行账号<span>*</span></label>
+                <input type="text" name="" id="confirmPwd" @blur="checkAccountNum($event)">
+                <span v-if="settingStatus!==3" class="instructions">务必确保两次输入银行账号完全相同</span>
+            </div>
+            <div class="row">
+                <label class="form-label required" for="">联系邮箱<span>*</span></label>
+                <input v-if="settingStatus!==3" v-model="accountInfo.email" type="email" name="" id="" required>
+                <span v-if="settingStatus!==3" class="instructions">用于接收对账单信息</span>
+                <span class="info" v-if="settingStatus===3">{{myAccount.email}}</span>
+            </div>
+            <div class="error" v-show="errInfo">{{errInfo}}</div>
+            <div class="btn-wrap">
+                <button v-if="settingStatus!==3" id="save-info" @click.prevent="saveHandler">保&nbsp;&nbsp;存</button>
+                <button v-if="settingStatus===2" id="cancel" @click="cancelModify">取&nbsp;&nbsp;消</button>
+            </div>
+        </form>
+
+        <!-- 图例说明 -->
+        <div class="illustrate text-box">
+            <h3>开票信息（需开增值税专用发票）</h3>
+            <div class="info">
+                <div class="row">
+                    <span class="info-label">公司名称</span>
+                    <span>深圳金豆传媒科技有限公司</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">纳税人识别号</span>
+                    <span>91440300MA5DKBQ88X</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">地址</span>
+                    <span>深圳市南山区粤海街道高新区中钢科技园M-6栋二层B房间</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">联系电话</span>
+                    <span>(0755) 3656 1282</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">开户银行名称</span>
+                    <span>中国农业银行深圳白石洲支行</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">开户账号</span>
+                    <span>41003000040023886</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">发票示例</span>
+                    <a v-if="!isCollapse" @click="isCollapse=true">收起</a>
+                    <a v-if="isCollapse" @click="isCollapse=false">展开</a>
+                </div>
+            </div>
+            <img v-if="!isCollapse" src="${base}/res/portal/images/invoice.png" alt="发票示例">
+        </div>
+        <!-- 寄件信息 -->
+        <div class="delivery-info text-box">
+            <h3>寄件信息</h3>
+            <div class="info">
+                <div class="row">
+                    <span class="info-label">收件人</span>
+                    <span>深圳金豆传媒科技有限公司</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">联系方式</span>
+                    <span>18576486310</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">邮编</span>
+                    <span>518000</span>
+                </div>
+                <div class="row">
+                    <span class="info-label">地址</span>
+                    <span>深圳市南山区粤海街道高新区中钢科技园M-6栋二层B房间</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 提现详情 -->
+    <div class="detail-layer" v-if="detailModel">
+        <button class="close-btn" @click="toggleDetailModel">×</button>
+        <div class="progress">
+            <h3>提现进度</h3>
+            <ul class="progress-box">
+                <li class="active"><i></i><p>提现申请</p></li>
+                <li class="active"><i></i><p>发票邮寄</p></li>
+                <li :class="{active: incomeDetail.state > 1, during: incomeDetail.state == 1}"><i></i><p>收到发票</p></li>
+                <li :class="{active: incomeDetail.state > 2, during: incomeDetail.state == 2}"><i></i><p>打款完成</p></li>
+            </ul>
+        </div>
+        <div class="info-box">
+            <p><span class="title">提现时间</span><span>{{incomeDetail.applyTime | formatDateTime}}</span></p>
+            <p><span class="title">提现金额</span>￥<em>{{incomeDetail.applyAmount}}</em></p>
+            <p><span class="title">到账时间</span><span>{{incomeDetail.remitTime | formatDateTime}}</span></p>
+        </div>
+    </div>
+    <!-- end 提现详情 -->
+    <!-- 提现弹窗 -->
+    <div v-show="withdrawModel" class="withdraw-layer">
+        <button class="close-btn" @click="toggleWithdrawModel">×</button>
+        <div class="withdraw-box">
+            <h3>提现金额</h3>
+            <p id="withdraw-money"><input type="number" v-model="withdrawMoney" @input="formatAmount($event.target.value)"></p>
+            <p>可提现余额：￥{{availableAmount}} <a id="withdraw-all" @click="withdrawMoney=availableAmount">全部提现</a></p>
+        </div>
+        <div class="progress">
+            <h3>提现流程</h3>
+            <ul class="progress-box">
+                <li class="active"><i></i><p>提现申请</p></li>
+                <li class="during"><i></i><p>发票邮寄</p></li>
+                <li><i></i><p>收到发票</p></li>
+                <li><i></i><p>打款完成</p></li>
+            </ul>
+        </div>
+        <div class="btns">
+            <button id="withdraw-btn"
+                @click="withdrawHandler"
+                :disabled="availableAmount<minAmount" 
+                :class="{enable: availableAmount<minAmount}"
+            >
+            提&nbsp;&nbsp;现
+        </button>
+            <button class="cancel" @click="toggleWithdrawModel">取&nbsp;&nbsp;消</button>
+        </div>
+    </div>
+    <!-- end 提现弹窗 -->
+   <div id="list_layer">
+        <div>
+            <img src="${base}/res/portal/images/loading.gif">
+            <p>加载中...请稍后</p>
+        </div>
+    </div>
+   <!-- end 结算设置 -->
+</div>
+
+
+
+<script src="${base}/res/portal/js/component/radio/radio.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/portal/js/component/select/select.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/portal/js/component/select/cascader.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/portal/js/component/select/option.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/portal/js/settlement_center.js" type="text/javascript" charset="utf-8"></script>

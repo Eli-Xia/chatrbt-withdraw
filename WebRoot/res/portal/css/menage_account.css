@@ -1,0 +1,73 @@
+#menage_account{
+
+}
+.query{
+    padding: 17px 0;
+    text-align: center;
+}
+.query>input{
+    width: 360px;
+    height: 28px;
+    line-height: 28px;
+    background:#EFF6FB url("../images/query.png") no-repeat 6px 5px;
+    padding-left: 30px;
+    border: none;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #97b8cc;
+}
+.list-box{
+    border-top: 1px solid #f4fafe;
+    padding: 0 5px;
+}
+.list-box>div:not(:nth-child(6n)){
+    margin-right: 36px;
+}
+.list,.add{
+    display: inline-block;
+    float: left;
+    width: 120px;
+    height: 160px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 34px;
+    font-size:12px;
+    padding:30px 0;
+    box-shadow: 0 0 20px 8px #eff6fb;
+    cursor: pointer;
+}
+.add>div,.list>div{
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.list>div{
+    margin: 0 auto 13px;
+    border: 4px solid #fff;
+}
+.list img{
+    width: 100%;
+    height: 100%;
+}
+.list:hover{
+    background-color: #ffd553;
+}
+.list .text{
+    font-size: 12px;
+    width: 100px;
+    height: 17px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+.add>div{
+    margin: 0 auto 13px;
+    background-color:#EFF6FB;
+}
+.add>div>img{
+    position: relative;
+    top:10px;
+}
+.add:hover>div{
+    background-color:#28A7FD;
+}

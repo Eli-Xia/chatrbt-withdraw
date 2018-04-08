@@ -1,0 +1,42 @@
+<!-- Modal -->
+<div id="modal_edit_user"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{modalEditUser.title}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="username" class="control-label">用户名:</label>
+          <input type="text" class="form-control" id="username" v-model="modalEditUser.username">
+        </div>
+        <div class="form-group">
+          <label for="nickname" class="control-label">昵称:</label>
+          <input type="text" class="form-control" id="nickname" v-model="modalEditUser.nickname">
+        </div>
+        <div class="form-group">
+          <label for="password" class="control-label">密码:</label>
+          <input type="password" class="form-control" id="password" v-model="modalEditUser.password">
+        </div>
+        <div class="form-group">
+          <label for="password2" class="control-label">确认密码:</label>
+          <input type="password" class="form-control" id="password2" v-model="modalEditUser.password2">
+        </div>
+        <div class="form-group">
+          <label class="control-label">修改角色:</label>
+          <div class="user-role">
+            <span v-for="role in roleList" class="{{role.active ? 'active' : ''}}" @click="selectRole(role.code)">{{role.name}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div style="color: red;">{{modalEditUser.errInfo}}</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" @click="onSaveUser">保存</button>
+      </div>
+    </div>
+  </div>
+</div>

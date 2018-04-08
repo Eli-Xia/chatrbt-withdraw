@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.AdClickLogMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.AdClickLog">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
+        <result column="click_time" property="clickTime" jdbcType="TIMESTAMP" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="ad_id" property="adId" jdbcType="INTEGER" />
+        <result column="wx_pub_origin_Id" property="wxPubOriginId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="clickCountResultMap" type="net.monkeystudio.chatrbtw.mapper.bean.adclicklog.AdClickLogDailyCount">
+        <result column="click_date" property="clickDate" jdbcType="TIMESTAMP" />
+        <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, wx_fan_id, click_time, create_time, ad_id  ,wx_pub_origin_Id
+    </sql>
+
+
+    <select id="selectAdId" resultType="java.lang.Integer" parameterType="map">
+        select
+            ad_id
+        FROM
+            e_ad_click_log
+        where
+            1=1
+            <if test="startTime != null">
+                and click_time <![CDATA[  >  ]]> #{startTime}
+            </if>
+
+            <if test="endTime != null">
+                and click_time <![CDATA[  <  ]]> #{endTime}
+            </if>
+        and
+            wx_pub_origin_Id = #{wxPubOriginId}
+        group by
+            ad_id
+    </select>
+
+
+    <select id="countDayAdClick" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(wx_fan_id)
+            FROM (SELECT wx_fan_id as wx_fan_id
+                FROM e_ad_click_log
+                WHERE 1 = 1
+                    <if test="startTime != null">
+                        and    click_time <![CDATA[  >  ]]> #{startTime}
+                    </if>
+
+                    <if test="endTime != null">
+                        and     click_time <![CDATA[  <  ]]> #{endTime}
+                    </if>
+                    and     ad_id = #{adId}
+                    and     wx_pub_origin_Id = #{wxPubOriginId}
+                GROUP BY wx_fan_id ) m
+    </select>
+
+    <select id="selectByPage" parameterType="map" resultMap="baseResultMap">
+
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_ad_click_log
+        order by
+            click_time desc
+        limit
+        #{startIndex},#{pageSize}
+
+
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select
+            count(id)
+        from
+            e_ad_click_log
+    </select>
+
+    <select id="countDaily" parameterType="map" resultType="map" resultMap="clickCountResultMap">
+        SELECT
+            date_format( click_time, "%Y-%m-%d" ) as click_date , COUNT( id ) as click_count
+        FROM e_ad_click_log
+        where
+            click_time <![CDATA[  >  ]]> #{startTime}
+            and click_time <![CDATA[  <  ]]> #{endTime}
+            and ad_id = #{adId}
+        GROUP BY date_format( click_time, "%Y-%m-%d" )
+    </select>
+
+
+    <select id="countTotalByAdId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT count(wx_fan_id)
+        FROM
+            (SELECT wx_fan_id as wx_fan_id
+            FROM e_ad_click_log
+            WHERE
+                ad_id = #{adId}
+            GROUP BY wx_fan_id ) m
+    </select>
+</mapper>

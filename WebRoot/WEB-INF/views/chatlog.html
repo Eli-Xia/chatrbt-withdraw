@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="${base}/res/css/chatlog.css">
+<div id="chatlog">
+  <div class="box">
+    <div class="box-header" v-if="show">
+      <div class="form-inline">
+        <input type="text" placeholder="请输入要查询的公众号" v-model="accounts">
+        <div class="date-box">
+          <input type="text" placeholder="请选择日期" id="lay_date">
+        </div>
+        <button class="btn btn-success" @click="queryCondition(1)">查询</button>
+        <button class="btn btn-primary" @click="clearCondition">清空</button>
+      </div>
+    </div>
+    <div class="box-body">
+      <table id="example1" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>公众号ID</th>
+          <th>用户ID</th>
+          <th>内容</th>
+          <th class="gw-tr-width"  style="width: 140px">时间</th>
+        </tr>
+        </thead>
+        <tbody class="gw-tbody">
+        <tr  v-for = "item in list">
+          <td>{{item.id}}</td>
+          <td>{{item.wxPubOriginId}}</td>
+          <td>{{item.userOpenid}}</td>
+          <td>{{item.replyId|notNullToR}}{{item.content}}</td>
+          <td>{{item.createTime | formateTimeStamp}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <nav class="deco-pagination-container">
+      <ul class="page">
+        <li>
+          <button>首页</button>
+        </li>
+        <li>
+          <button href="#" aria-label="Previous" class="lastPage" @click="lastPage">
+            <span aria-hidden="true">&laquo;</span>
+          </button>
+        </li>
+        <li id="page">
+
+        </li>
+        <li>
+          <button href="#" aria-label="Next" class="nextPage" @click="nextPage">
+            <span aria-hidden="true">&raquo;</span>
+          </button>
+        </li>
+        <li>
+          <button>尾页</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script src="${base}/res/js/chatlog.js" type="text/javascript" charset="utf-8"></script>

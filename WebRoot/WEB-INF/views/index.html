@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>KEEN DO</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <#include "/templates/global.html" encoding="utf-8">
+
+    <!-- AdminLTE Skins. 
+         Choose a skin from the css/skins folder instead of downloading all of them to reduce the load.
+      -->
+    <link rel="stylesheet" href="${base}/res/vendor/adminlte/dist/css/skins/_all-skins.min.css">
+
+    <!--<link rel="stylesheet" href="${base}/res/css/base.css">-->
+    <link rel="stylesheet" href="${base}/res/css/public.css">
+    <link rel="stylesheet" href="${base}/res/vendor/laydate/daterangepicker.css"/>
+    <script src="${base}/res/vendor/echarts3/echarts.min.js" type="text/javascript" charset="utf-8" async="async"></script>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper" id="wrapper">
+    <!-- 头部 -->
+    <header class="main-header" id="main-header">
+        <!-- Logo -->
+        <a href="index.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">KEEN DO</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>KEEN DO</b></span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <!-- usermenu -->
+            <div class="navbar-custom-menu">
+                <#if user??>
+                <ul class="nav navbar-nav">
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <img :src="avatar" class="user-image" alt="Avatar">
+                            <span class="hidden-xs">${user.nickname}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img :src="avatar" class="img-circle" alt="Avatar">
+                                <p>${user.nickname}<small></small></p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" onclick="loadMainContent('${base}/admin/account.html')"
+                                       class="btn btn-default btn-flat">设置</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a @click="logout" id="admin-logout" class="btn btn-default btn-flat">退出</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <#else>
+                <ul id="login">
+                    <a href="${base}/admin/login.html" style="color: white; margin-top: 12px; margin-right: 32px;">登录</a>
+                </ul>
+            </#if>
+</div>
+</nav>
+</header>
+<!--侧边栏 Left side column. contains the logo and sidebar -->
+<aside id="main_sidebar" class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img :src="avatar" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>${user.nickname}</p>
+                <!-- <a href="#"><i class="fa fa-circle text-success"></i> Online</a> -->
+            </div>
+        </div>
+
+        <!-- 侧边栏-菜单sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu" v-for="nav in navList">
+            <!--<li class="header">MAIN NAVIGATION</li>-->
+            <li class="treeview">
+                <a href="{{nav.link? `${base}`+nav.link : null}}">
+                    <i class="fa fa-dashboard"></i>
+                    <span>{{nav.text}}</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul v-if="nav.children"  class="treeview-menu">
+                    <li class="active" v-for="e in nav.children">
+                        <a href="javascript:;" onclick="loadMainContent( '${base}{{e.link}}' )">
+                            <i class="fa fa-circle-o"></i>{{e.text}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section><!-- /.sidebar -->
+</aside>
+
+<!-- 内容部分+面包屑导航Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div id="main_content" class="content"></div><!-- /.content -->
+</div><!-- /.content-wrapper -->
+</div>
+<#include "/templates/footer.html" encoding="utf-8">
+<script src="${base}/res/vendor/laydate/moment.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="${base}/res/vendor/laydate/daterangepicker.js" type="text/javascript" charset="utf-8" async="async"></script>
+<script src="${base}/res/js/index.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    // $("#main_content").load('http://localhost:8080/hosp/home.html');
+    var loadMainContent = function(path){
+        // if(path=='/admin/chatlog.html'){
+        //     alert("尚未开通!");
+        //     return;
+        // }
+        $("#main_content").empty();
+        $("#main_content").load(path);
+    }
+</script>
+</body>
+</html>

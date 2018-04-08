@@ -1,0 +1,16 @@
+.user-role span {
+    padding: 5px 10px;
+    border: 1px solid #3c8dbc;
+    color: #333333;
+    margin-right: 10px;
+}
+.user-role span.active {
+    background-color: #3c8dbc;
+    color: #ffffff;
+}
+#role-status span:after {
+    content: ' / ';
+}
+#role-status span:last-of-type:after {
+    content: '';
+}

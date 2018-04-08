@@ -1,0 +1,58 @@
+#login_settings{
+
+}
+/*.border-top{*/
+    /*margin-top: 31px;*/
+    /*!*border-top: 1px solid #e7eef3;*!*/
+    /*padding-top: 5px;*/
+/*}*/
+h3 {
+    padding: 26px 0;
+    font-weight: 500;
+    font-size: 16px;
+}
+.form-control input[type='text'],.form-control input[type='password'] {
+    width: 356px;
+    height: 28px;
+    line-height: 28px;
+    padding-left: 6px;
+    border: 1px solid #e2e2e2;
+    border-radius: 3px;
+}
+.float{
+    float: right;
+    margin-top: -8px;
+}
+.float>b{
+    float: right;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    background:url("../images/pen.png") no-repeat;
+}
+.float>b.active{
+    background:url("../images/pen_blue.png") no-repeat;
+}
+.float>p{
+    color:#bfbfbf;
+    font-size: 12px;
+    clear: both;
+}
+.float>.active+p{
+    color:#8eb2c7;
+}
+
+.btn-box{
+    text-align: center;
+    padding-top: 9px;
+}
+.btn-box>button{
+    width: 120px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    background-color:#28a7fd ;
+    border: 1px solid #28a7fd;
+    color: #fff;
+    font-size: 16px;
+}

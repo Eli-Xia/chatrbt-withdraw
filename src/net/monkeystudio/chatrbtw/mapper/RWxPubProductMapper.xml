@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RWxPubProductMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RWxPubProduct">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, wx_pub_origin_id, product_id, status
+    </sql>
+        
+    <insert id="insert" parameterType="map" >
+        insert into r_wx_pub_product
+            (wx_pub_origin_id, product_id, status)
+        values
+            (
+                #{wxPubOriginId},
+                #{productId} ,
+                #{status}
+            )
+    </insert>
+
+
+    <select id="selectByWxPubAndProduct" resultMap="baseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List" />
+        from
+            r_wx_pub_product
+        where
+            wx_pub_origin_id = #{wxPubOriginId}
+        and
+            product_id = #{productId}
+    </select>
+    
+</mapper>

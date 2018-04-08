@@ -1,0 +1,516 @@
+/* 配置 */
+input::-webkit-input-placeholder {
+    font-size: 14px;
+    color: #bfbfbf !important; 
+}
+input:-moz-placeholder {
+    font-size: 14px;
+    color: #bfbfbf !important; 
+}
+input::-moz-placeholder {
+    font-size: 14px;
+    color: #bfbfbf !important; 
+}
+input:-ms-input-placeholder {
+    font-size: 14px;
+    color: #bfbfbf !important; 
+}
+
+.align-top {
+    vertical-align: top;
+}
+#list_layer {
+    top: 410px;
+}
+
+#account-number::-webkit-outer-spin-button,  
+#account-number::-webkit-inner-spin-button{  
+    -webkit-appearance: none !important;  
+    margin: 0;  
+}  
+/* end 配置 */
+
+#settlement-wrap {
+    margin: 24px 0;
+}
+.tabs {
+    border-bottom: 1px solid #f3f8fb;
+}
+.tabs span {
+    display: inline-block;
+    padding: 8px 0;
+    font-size: 16px;
+    margin-right: 56px;
+    border-bottom: 2px solid #fff;
+    cursor: pointer;
+}
+.tabs span.active {
+    color: #28a7fd;
+    border-bottom: 2px solid #28a7fd;
+}
+.tip {
+    margin-top: 16px;
+    padding: 10px;
+    background-color: #fad7d4;
+    font-size: 12px;
+}
+.tip.tip-warning {
+    background-color: #cfecff;
+}
+.icon-jinggao {
+    margin-right: 4px;
+    vertical-align: middle;
+    color: #e84e4e;
+    font-weight: bold;
+}
+.tip a {
+    color: #8eb2c7;
+}
+.statistics {
+    margin-top: 16px;
+    border: 1px solid #e7eef3;
+    padding: 21px 0;
+    white-space: nowrap;
+}
+.statistics li {
+    width: 33%;
+    height: 103px;
+    display: inline-block;
+    border-right: 1px solid #e7eef3;
+    vertical-align: top;
+    text-align: center;
+}
+.statistics li:last-of-type {
+    border-right: none;
+}
+li .num {
+    font-size: 36px;
+}
+li > p {
+    margin-bottom: 13px;
+}
+.statistics button {
+    width: 80px;
+    height: 28px;
+    background-color: #28a7fd;
+    border-radius: 3px;
+    border: none;
+    color: #fff;
+}
+button.enable {
+    background-color: #bfbfbf !important;
+    cursor: auto;
+}
+.withdraw-tips {
+    margin-top: 48px;
+    font-size: 12px;
+    color: #878787;
+    font-weight: 300;
+    line-height: 1.5;
+}
+.withdraw-tips a, .withdraw-tips a:visited {
+    color: #28a7fd;
+}
+.withdraw-record { margin-top: 42px; }
+.withdraw-record h3 {
+    font-size: 16px;
+}
+.withdraw-record table {
+    margin-top: 10px;
+    text-align: left;
+}
+.withdraw-table thead {
+    background-color: #eff6fb;
+}
+thead th {
+    width: 25%;
+    padding: 14px;
+    font-size: 12px;
+    color: #363636;
+    font-weight: normal;
+}
+thead th:last-of-type, tbody td:last-of-type {
+    text-align: center;
+}
+.withdraw-table tbody {
+    background-color: #fff;
+}
+tbody tr:nth-child(odd) {
+    background-color: #fff;
+}
+.withdraw-table td {
+    width: 25%;
+    padding: 14px;
+    font-size: 14px;
+    color: #363636;
+}
+.withdraw-table td a {
+    cursor: pointer;
+    color: #28a7fd;
+}
+
+.no-data {
+    text-align: center;
+    color: #8eb2c7;
+}
+.no-data .icon-zanwushuju {
+    margin: 64px 0 26px;
+    font-size: 72px;
+    display: inline-block;
+    color: #8eb2c7;
+}
+.detail-layer {
+    width: 600px;
+    height: 320px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    background-color: #fff;
+    z-index: 110;
+    border-radius: 3px;
+}
+.close-btn {
+    float: right;
+    text-align: center;
+    font-size: 20px;
+    padding: 5px 15px;
+    border: none;
+    color: #979797;
+    background-color: #fff;
+    line-height: 1;
+}
+.progress {
+    padding: 24px 40px;
+    text-align: center;
+    line-height: 1;
+    border-bottom: 1px solid #e7eef3;
+}
+.progress h3 {
+    font-size: 18px;
+    font-weight: normal;
+}
+.progress-box {
+    margin-top: 32px;
+    display: flex;
+    justify-content: space-between;
+}
+.progress-box li {
+    color: #979797;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    position: relative;
+}
+.progress-box li:before {
+    content: '';
+    width: 115px;
+    height: 3px;
+    border-radius: 1px;
+    background: #e7eef3;
+    position: absolute;
+    right: 53px;
+    top: 12px;
+}
+.progress-box li.active:before {
+    background: #28a7fd;
+}
+.progress-box li.during:before {
+    background: linear-gradient(to right, #28a7fd, #e7eef3);
+}
+
+.progress-box li:first-of-type:before {
+    display: none;
+}
+
+.progress-box li.active {
+    color: #28a7fd;
+}
+.progress-box li i {
+    margin-bottom: 17px;
+    display: block;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #e7eef3;
+    border-radius: 50%;
+    position: relative;
+}
+.progress-box li i:before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background-color: #e7eef3;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.progress-box li.active i {
+    border: 2px solid #28a7fd;
+}
+.progress-box li.active i:before {
+    background-color: #28a7fd;
+}
+.info-box {
+    padding: 23px 40px 0;
+}
+.info-box > p {
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 21px;
+}
+.info-box > p .title {
+    margin-right: 34px;
+}
+.info-box em {
+    color: #e84e4e;
+    font-style: normal;
+}
+.withdraw-layer {
+    width: 600px;
+    height: 416px;
+    border-radius: 3px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    background-color: #fff;
+    z-index: 110;
+}
+.withdraw-box {
+    text-align: center;
+    padding: 24px 40px;
+    border-bottom: 1px solid #e7eef3;
+}
+.withdraw-box h3 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 22px;
+    text-align: center;
+}
+#withdraw-money {
+    width: 260px;
+    height: 50px;
+    position: relative;
+    padding-left: 43px;
+    margin: 0 auto 5px;
+    border: solid 1px #e7eef3;
+    text-align: right;
+    overflow: hidden;
+}
+#withdraw-money input {
+    width: 216px;
+    height: 50px;
+    font-size: 36px;
+    font-weight: 300;
+    color: #e84e4e;
+    text-align: left;
+    border: none;
+}
+#withdraw-money:before {
+    content: '￥';
+    color: #363636;
+    position: absolute;
+    font-size: 36px;
+    font-weight: 300;
+    top: 0;
+    left: 4px;
+}
+#withdraw-all {
+    font-size: 14px;
+    font-weight: 300;
+    color: #28a7fd;
+    cursor: pointer;
+}
+.withdraw-layer .progress {
+    height: 160px;
+}
+.withdraw-layer .btns {
+    height: 94px;
+    text-align: center;
+}
+.withdraw-layer .btns button {
+    width: 118px;
+    height: 34px;
+    margin: 30px 15px 0;
+    background-color: #28a7fd;
+    color: #fff;
+    border: none;
+}
+.withdraw-layer .btns .cancel {
+    background-color: #e84e4e;
+}
+
+/*****
+** 结算设置 
+*****/
+#edit-btn {
+    float: right;
+    color: #28a7fd;
+    cursor: pointer;
+}
+form {
+    border-bottom: 1px solid #f3f8fb;
+}
+form .row {
+    margin: 20px 0;
+}
+.row > .form-label{
+    width: 130px;
+    display: inline-block;
+}
+.row > input {
+    width: 355px;
+    height: 28px;
+    border-radius: 3px;
+    border: 1px solid #e7eef3;
+    padding: 5px 10px;
+    color: #333333;
+}
+form .info {
+    font-size: 14px;
+    color: #878787;
+}
+.radio-wrap, .address-wrap {
+    display: inline-block;
+}
+.form-label > span {
+    color: #e84e4e;
+    margin-left: 4px;
+}
+form .error {
+    color: #e84e4e;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+input.has-error {
+    border: 1px solid #e84e4e;
+}
+input.has-success {
+    border: 1px solid #00a65a;
+}
+#bankname {
+    width: 355px;
+}
+.btn-wrap {
+    width: 490px;
+    margin-bottom: 35px;
+    text-align: right;
+}
+.btn-wrap button {
+    width: 118px;
+    height: 34px;
+    color: #fff;
+    background-color: #28a7fd;
+    margin-left: 25px;
+    border: none;
+}
+button#cancel {
+    background-color: #e84e4e;
+}
+.instructions {
+    display: inline-block;
+    margin-left: 12px;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: 300;
+    color: #878787;
+}
+
+/* 开票信息 */
+.illustrate {
+    font-weight: 300;
+    border-bottom: solid 1px #f3f8fb;
+    padding-bottom: 29px;
+}
+.text-box h3 {
+    margin: 26px 0 16px;
+    font-size: 16px;
+    font-weight: 300;
+}
+.text-box .info {
+    font-size: 14px;
+}
+.text-box .row {
+    line-height: 2.28;
+}
+.text-box .info-label {
+    width: 120px;
+    display: inline-block;
+}
+.illustrate a {
+    color: #28A7FD;
+    cursor: pointer;
+}
+.illustrate img {
+    width: 940px;
+    display: block;
+}
+.delivery-info {
+    padding-bottom: 34px;
+    font-weight: 300;
+}
+
+/* 上传收款证明 */
+#upload-btn {
+    display: inline-block;
+    width: 85px;
+    height: 86px;
+    border: 1px solid #e7eef3;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+}
+#upload-btn:before {
+    content: '+';
+    font-size: 50px;
+    position: absolute;
+    top: 0;
+    left: 31%;
+    font-weight: 100;
+    color: #bfbfbf;
+}
+#upload {
+    width: 83px;
+    height: 83px;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+.upload-wrap img {
+    display: inline-block;
+    width: 83px;
+    height: 84px;
+}
+.upload-wrap label {
+    vertical-align: top;
+}
+.upload-wrap .instructions {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 16px;
+}
+#upload-btn > span {
+    color: #363636;
+    background-color: #ccc;
+    width: 100%;
+    height: 20px;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    transition: all .3s;
+}
+#upload-btn:hover > span.on {
+    opacity: 1;
+}

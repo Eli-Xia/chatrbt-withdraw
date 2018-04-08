@@ -1,0 +1,137 @@
+<div id="ad_add" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="divue">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">添加广告</h4>
+            </div>
+            <div class="modal-body">
+                <div class="el-row">
+                    <div>广告类型</div>
+                    <div>
+                        <select v-model="arr.adType">
+                            <option value="1">图文类型</option>
+                            <option value="2">文本类型</option>
+                            <option value="3">图片类型</option>
+                            <option value="4">问问搜类型</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div>推送类型</div>
+                    <div>
+                        <select v-model="arr.pushType">
+                            <option value="1">聊天时推送</option>
+                            <option value="2">48小时推送</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div><span>*</span>广告别名</div>
+                    <div>
+                        <input type="text" v-model="arr.alias">
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div><span>*</span>展示标题</div>
+                    <div>
+                        <input type="text" v-model="arr.portalTitle">
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div><span>*</span>展示内容</div>
+                    <div>
+                        <input type="text" v-model="arr.portalContent">
+                    </div>
+                </div>
+                <div v-if="arr.adType==1 || arr.adType==4" class="el-row">
+                    <div><span>*</span>广告标题</div>
+                    <div>
+                        <input type="text" v-model="arr.title">
+                    </div>
+                </div>
+                <div v-if="arr.adType==1 || arr.adType==4" class="el-row">
+                    <div><span>*</span>广告描述</div>
+                    <div>
+                        <input type="text" v-model="arr.description">
+                    </div>
+                </div>
+                <div v-if="arr.adType==2" class="el-row">
+                    <div><span>*</span>文本内容</div>
+                    <div>
+                        <input type="text" v-model="arr.textContent">
+                    </div>
+                </div>
+                <div v-if="arr.adType==1 || arr.adType==4" class="el-row">
+                    <div><span>*</span>url地址</div>
+                    <div>
+                        <input type="text" v-model="arr.url">
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div><span>*</span>广告展示图</div>
+                    <div class="upload">
+                        <button class="btn btn-success">上传图片</button>
+                        <input type="file" id="portal_file">
+                        <span>图片大小 206*130 px</span>
+                    </div>
+                </div>
+                <div v-if="portalImg" class="el-row">
+                    <div>
+                        展示图预览
+                    </div>
+                    <div>
+                        <img :src="portalImg">
+                    </div>
+                </div>
+                <div v-show="arr.adType!=2" class="el-row">
+                    <div><span>*</span>微信投放图</div>
+                    <div class="upload">
+                        <button class="btn btn-success">上传图片</button>
+                        <input type="file" id="push_file">
+                        <span>图片大小 900*500 px</span>
+                    </div>
+                </div>
+                <div v-if="pushImg && arr.adType!=2" class="el-row">
+                    <div>
+                        投放图预览
+                    </div>
+                    <div>
+                        <img :src="pushImg">
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div>推荐描述</div>
+                    <div>
+                        <input type="text" v-model="arr.adRecommendStatement">
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div>投放时间</div>
+                    <div class="chart-query">
+                        <div>
+                            <input type="text" id="push_time" readonly v-model="arr.pushTime">
+                        </div>
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div><span>*</span>点击单价</div>
+                    <div class="form-group">
+                        <input type="number" v-model="income" min="0">
+                    </div>
+                </div>
+                <div class="el-row">
+                    <div><span>*</span>点击次数</div>
+                    <div class="form-group">
+                        <input type="number" v-model="clickAmount" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" @click="addAd">确认</button>
+            </div>
+        </div>
+    </div>
+</div>

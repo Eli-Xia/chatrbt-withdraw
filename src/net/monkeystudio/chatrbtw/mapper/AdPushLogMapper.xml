@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.AdPushLogMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.AdPushLog">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="wx_pub_app_id" property="wxPubOpenId" jdbcType="VARCHAR" />
+        <result column="wx_fan_open_id" property="wxUserOpenId" jdbcType="VARCHAR" />
+        <result column="push_ad_timestamp" property="pushAdTimestamp" jdbcType="INTEGER" />
+        <result column="ad_id" property="adId" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, wx_pub_app_id, wx_fan_open_id,, push_ad_timestamp ,ad_id
+    </sql>
+
+    <resultMap id="pushCountResultMap" type="net.monkeystudio.chatrbtw.mapper.bean.adpushLog.AdPushLogDailyCount">
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+        <result column="count" property="count" jdbcType="INTEGER" />
+    </resultMap>
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AdPushLog">
+    insert into e_ad_push_log (id, wx_pub_app_id, wx_fan_open_id,push_ad_timestamp , ad_id)
+    values
+    	(
+             #{id,jdbcType=INTEGER},
+             #{wxPubAppId,jdbcType=VARCHAR},
+             #{wxFanOpenId,jdbcType=VARCHAR},
+             #{pushAdTimestamp,jdbcType=INTEGER},
+             #{adId,jdbcType=INTEGER}
+        )
+    </insert>
+
+
+    <select id="countDaily" parameterType="map" resultMap="pushCountResultMap">
+        SELECT
+            from_unixtime( push_ad_timestamp, "%Y-%m-%d" ) as `date` , COUNT( id ) as `count`
+        FROM e_ad_push_log
+        where ad_id = #{adId}
+            and push_ad_timestamp <![CDATA[  >  ]]> #{startTime}
+            and push_ad_timestamp <![CDATA[  <  ]]> #{endTime}
+        GROUP BY from_unixtime( push_ad_timestamp, "%Y-%m-%d" )
+    </select>
+
+
+</mapper>

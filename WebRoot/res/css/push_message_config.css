@@ -1,0 +1,115 @@
+#wx_push_config{
+    padding: 20px 10px;
+    background-color: #fff;
+    border-top: 3px solid #d2d6de;
+}
+.text{
+    display: inline-block;
+    *display:inline;
+    *zoom:1;
+    width: 150px;
+    height: 30px;
+    line-height: 30px;
+    text-align: right;
+    font-weight: normal;
+    margin-right: 10px;
+}
+.input-default{
+    width: 50px;
+    height: 30px;
+    line-height: 30px;
+}
+.remark{
+    font-size: 14px;
+    color: #D2D6DE;
+    margin-left: 10px;
+}
+#wx_push_config>div{
+    margin-bottom: 10px;
+}
+label{
+    margin-left: 5px;
+}
+.percent>input{
+    width: 100px;
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+}
+.percent>span{
+    position: relative;
+    left: -40px;
+    color: #8c8c8c;
+    height: 30px;
+    line-height: 30px;
+}
+.select-box{
+    height: 47px;
+}
+.check-box{
+    position: relative;
+    top:10px;
+    display: inline-block;
+    *display:inline;
+    *zoom:1;
+    width: 75px;
+    height: 33px;
+    border-radius: 30px;
+    overflow: hidden;
+}
+.check-box>img{
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: 10;
+}
+.check-box >div{
+    position:relative;
+    left:0;
+    width: 120px;
+    height: 33px;
+    background-color: #3c8dbc;
+    text-align: center;
+    transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+    -ms-transition: all .3s linear;
+    -moz-transition: all .3s linear;
+}
+.check-box>.left{
+    left: -45px;
+    background-color: #b1b1b1;
+}
+.check-box>input{
+    position: absolute;
+    width: 75px;
+    height: 33px;
+    opacity: 0;
+    filter: alpha(opacity=50);
+    z-index: 50;
+}
+.check-box .on{
+    position: absolute;
+    top:6px;
+    left:10px;
+    font-size: 16px;
+}
+.check-box b{
+    display: inline-block;
+    *display:inline;
+    *zoom:1;
+    /* background: url("../images/input_radius.png") no-repeat; */
+    width: 26px;
+    height: 26px;
+    background-color: #fff;
+    box-shadow: 2px 2px 10px #848282;
+    border-radius: 50%;
+    position: relative;
+    left:0;
+    top:4px;
+}
+.check-box .off{
+    position: absolute;
+    top:6px;
+    right:10px;
+    font-size: 16px;
+}

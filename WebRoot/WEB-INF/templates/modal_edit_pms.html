@@ -1,0 +1,43 @@
+<!-- Modal -->
+<div id="modal_edit_pms"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">{{modalEditPms.title}}</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group has-feedback">
+                    <label for="name" class="control-label">资源名称：</label>
+                    <input type="text" class="form-control" id="name" v-model="modalEditPms.name" @blur="blurHandler">
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="res" class="control-label">资源：</label>
+                    <input type="text" class="form-control" id="res" v-model="modalEditPms.res" @blur="blurHandler">
+                </div>
+                <div class="form-group">
+                    <div class="checkbox" >
+                        <label v-for="role in roleList" track-by="code">
+                            <input type="checkbox" name="" id="" value="{{role.code}}" v-model="currentRoles">
+                            <span>{{role.name}}</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description" class="control-label">描述：</label>
+                    <input type="text" class="form-control" id="description" v-model="modalEditPms.description">
+                </div>
+                <div class="form-group">
+                    <div style="color: red;">{{modalEditPms.errInfo}}</div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" @click="saveHandler">保存</button>
+            </div>
+        </div>
+    </div>
+</div>

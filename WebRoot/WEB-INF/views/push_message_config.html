@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="${base}/res/css/push_message_config.css">
+<div id="wx_push_config">
+    <div class="percent">
+        <b class="text">选择推送比例:</b>
+        <input type="number" v-model="ratio">
+        <span>%</span>
+    </div>
+    <div class="select-box">
+        <b class="text">是否推送广告:</b>
+        <div class="check-box">
+            <input type="checkbox" class="check" v-model="adSwitch">
+            <div :class="adSwitch==true?'':left">
+                <span class="on"></span>
+                <b></b>
+                <span class="off"></span>
+            </div>
+        </div>
+    </div>
+    <div class="select-box">
+        <b class="text">聊天次数:</b>
+        <input type="number" class="input-default" v-model="configs.chatPushAdCount" min="1">
+        <span class="remark">聊天达到多少次数推送广告</span>
+    </div>
+    <b class="text"></b><button class="btn btn-success" @click="configSum">提交</button>
+</div>
+<script src="${base}/res/js/push_message_config.js" type="text/javascript" charset="utf-8"></script>

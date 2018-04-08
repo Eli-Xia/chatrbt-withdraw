@@ -1,0 +1,462 @@
+<link rel="stylesheet" href="${base}/res/portal/css/account_detail.css"/>
+<div id="account_detail">
+    <div class="detail-list">
+        <div :class="showId==1?active:''" @click="showModel(1)">
+            <div class="list">
+                <img :src="topList.wxPubHeadImgUrl==null?imgUrl:topList.wxPubHeadImgUrl">
+                <span style="position: relative;top:3px">
+                    {{topList.wxPubNickname}}
+                </span>
+            </div>
+        </div>
+        <div :class="showId==2?active:''" @click="showModel(2)">
+            <div class="list">
+                <div class="lighter">{{topList.yesterdayIncome}}</div>
+                <span>收益统计(元)</span>
+                <span class="icon iconfont icon-icon-question">
+                    <p id="tip-text">详情请前往<br>广告大厅查看</p>
+                </span>
+            </div>
+        </div>
+        <div :class="showId==3?active:''" @click="showModel(3)">
+            <div class="list">
+                <div class="lighter">{{topList.yesterdayChatMan}}</div>
+                <span>聊天人数(人)</span>
+            </div>
+        </div>
+        <div :class="showId==4?active:''" @click="showModel(4)">
+            <div class="list">
+                <div class="lighter">{{topList.yesterdayChatNum}}</div>
+                <span>聊天次数(条)</span>
+            </div>
+        </div>
+        <div @click="showModel(5)" :class="showId==5?active:''">
+            <div class="list">
+                <div><i class="iconfont icon-jiqiren"></i></div>
+                <span>机器人定制</span>
+            </div>
+        </div>
+    </div>
+    <div class="list-message">
+        <section class="chat" v-if="showId==1">
+            <h3>聊天纪录<span>（类型&nbsp;&nbsp;A：用户回答&nbsp;&nbsp;R：系统回答）</span></h3>
+            <div v-show="list.length>0">
+                <table class="table-bordered">
+                    <thead>
+                    <tr>
+                        <th style="width: 230px">用户ID</th>
+                        <th style="width: 50px">类型</th>
+                        <th>内容</th>
+                        <th style="width:160px">时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="item in list">
+                        <td>{{item.wxFanOpenId}}</td>
+                        <td>{{item.type | roleType}}</td>
+                        <td>{{item.content}}</td>
+                        <td>{{item.createTime | formatTimeStamp}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <ul class="page">
+                    <li><button>首页</button></li>
+                    <li>
+                        <button class="lastPage" @click="lastPage(1)" title="上一页">
+                            <span>&laquo;</span>
+                        </button>
+                    </li>
+                    <li id="page"></li>
+                    <li>
+                        <button class="nextPage" @click="nextPage(1)" title="下一页">
+                            <span>&raquo;</span>
+                        </button>
+                    </li>
+                    <li><button>尾页</button></li>
+                </ul>
+            </div>
+            <div v-else>
+                <div class="chart-main">
+                    <div class="no-data">
+                        <i class="icon iconfont icon-zanwushuju"></i>
+                        <p>暂无聊天记录</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="earnings" v-show="showId==2">
+            <h3>收益统计</h3>
+            <div class="number">
+                <div class="number-list">
+                    <p class="lighter">{{yesterdayIncome}}</p>
+                    <div>
+                        <span>昨日收益（元）</span>
+                        <!--<b :class="{up:addMenNum>0,down:addMenNum<0}"></b>-->
+                    </div>
+                </div>
+                <div class="number-list">
+                    <p class="lighter">{{totalIncome}}</p>
+                    <div>
+                        <span>历史总收益（元）</span>
+                    </div>
+                </div>
+            </div>
+            <div class="revenue-stats">
+                <span>时间</span>
+                <div>
+                    <input type="text" id="income_time" readonly>
+                </div>
+                <span class="right">总收益</span>
+            </div>
+            <div class="income-main">
+                <div class="no-data" v-if="incomeList.length == 0">
+                    <i class="icon iconfont icon-zanwushuju"></i>
+                    <p>暂无数据</p>
+                </div>
+                <div class="income-list" v-if="incomeList.length > 0">
+                    <ul>
+                        <li v-for="(index,item) in incomeList">
+                            <span>{{item.date | formatDateTime}}</span>
+                            <span class="right">{{item.income}}</span>
+                        </li>
+                    </ul>
+                    <div class="income-page">
+                        <button title="首页">首页</button>
+                        <button title="上一页">&laquo;</button>
+                        <div class="web-page"><button class="active">1</button></div>
+                        <button title="下一页">&raquo;</button>
+                        <button title="尾页">尾页</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="number-people" v-show="showId==3">
+            <h3>昨日数据</h3>
+            <div class="number">
+                <div class="number-list">
+                    <p class="lighter">{{yesterdayMenNum}}</p>
+                    <div>
+                        <span>聊天人数</span>
+                    </div>
+                </div>
+                <div class="number-list">
+                    <p class="lighter">{{addMenNum}}</p>
+                    <div>
+                        <span>新增人数</span>
+                        <b :class="{up:addMenNum>0,down:addMenNum<0}"></b>
+                    </div>
+                </div>
+            </div>
+            <h2>趋势图</h2>
+            <div class="chart-query">
+                <span>时间:</span>
+                <button :class="menActive==1?active:''" @click="intTime(1)">7日</button>
+                <button :class="menActive==2?active:''" @click="intTime(2)">1月</button>
+                <div>
+                    <input type="text" id="people_time">
+                </div>
+            </div>
+            <div class="chart-main">
+                <div id="chart_man"></div>
+            </div>
+        </section>
+        <section class="number-chat" v-show="showId==4">
+            <h3>昨日数据</h3>
+            <div class="number">
+                <div class="number-list">
+                    <p class="lighter">{{yesterdayChatNum}}</p>
+                    <div>
+                        <span>聊天次数</span>
+                    </div>
+                </div>
+                <div class="number-list">
+                    <p class="lighter">{{addChatNum}}</p>
+                    <div>
+                        <span>新增次数</span>
+                        <b :class="{up:addChatNum>0,down:addChatNum<0}"></b>
+                    </div>
+                </div>
+            </div>
+            <h2>趋势图</h2>
+            <div class="chart-query">
+                <span>时间:</span>
+                <button :class="chatActive==1?active:''" @click="intTime(1)">7日</button>
+                <button :class="chatActive==2?active:''" @click="intTime(2)">1月</button>
+                <div>
+                    <input type="text" id="chat_time">
+                </div>
+            </div>
+            <div class="chart-main">
+                <div id="chart_num">
+
+                </div>
+            </div>
+        </section>
+        <section class="settings" v-if="showId==5">
+            <!--<link rel="stylesheet" href="${base}/res/vendor/wx-face/qqface.css"/>-->
+            <!--<script src="${base}/res/vendor/wx-face/jquery.qqFace.js"></script>-->
+            <div class="border-bottom">
+                <a href="javascript:;" @click="settingToggle(true)" :class="settingSelect==true?active:''">
+                    机器人属性
+                </a>
+                <a href="javascript:;" @click="settingToggle(false)" :class="settingSelect==false?active:''">
+                    自定义语料库
+                </a>
+            </div>
+            <div v-if="settingSelect==true" style="margin-top: 20px">
+                <div class="form-control">
+                <span>
+                    机器人名称<b>*</b>
+                </span>
+                    <input type="text" v-model="robotMessage.nickname">
+                </div>
+                <div class="form-control">
+                <span>
+                    机器人性别<b>*</b>
+                </span>
+                    <p class="btn-select">
+                        <button :class="robotMessage.gender==1?active:''">
+                            男
+                        </button>
+                        <input type="radio" name="gender" value="1" v-model="robotMessage.gender">
+                    </p>
+                    <p class="btn-select">
+                        <button :class="robotMessage.gender==2?active:''">
+                            女
+                        </button>
+                        <input type="radio" name="gender" value="2" v-model="robotMessage.gender">
+                    </p>
+                    <p class="btn-select">
+                        <button :class="robotMessage.gender==0?active:''">
+                            无
+                        </button>
+                        <input type="radio" name="gender" value="0" v-model="robotMessage.gender">
+                    </p>
+                </div>
+                <div class="form-control">
+                        <span>
+                            机器人性格<b>*</b>
+                        </span>
+                    <div>
+                        <#list chatRobotCharacterList as item>
+                        <p class="btn-select">
+                            <button :class="{active:characterList.indexOf('${item.value}')!=-1}">
+                                ${item.name}
+                            </button>
+                            <input type="checkbox" name="character" value="${item.value}" v-model="characterList">
+                        </p>
+                    </#list>
+                </div>
+                <span class="absolute">
+                    （可多选）
+                </span>
+            </div>
+            <div class="attr-btn-box">
+                <button @click="saveMessage">
+                    保&nbsp;&nbsp;&nbsp;&nbsp;存
+                </button>
+                <button @click="resetMessage">
+                    取&nbsp;&nbsp;&nbsp;&nbsp;消
+                </button>
+            </div>
+    </div>
+    <div v-if="settingSelect==false">
+        <div>
+            <h3>
+                自定义语料库
+                <p :class="reply==true?active:''">
+                        <span>
+
+                        </span>
+                    <input type="checkbox" @click="updateReplyStatus">
+                </p>
+            </h3>
+            <h4>
+                通过编辑内容或关键词规则，快速进行自动回复设置。如具备开发能力，可更灵活地使用该功能。<br/>
+                关闭自动回复之后，将立即对所有用户生效
+            </h4>
+        </div>
+        <div v-if="reply==true">
+            <div class="reply-list">
+                <input type="text" @keyup.enter="queryList(1,3)" placeholder="搜索关键词" v-model="condition">
+                <button @click="addModel">添加回复</button>
+            </div>
+            <div id="relative">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>
+                            关键词
+                        </th>
+                        <th style="width: 500px">
+                            回复内容
+                        </th>
+                        <th style="width: 150px;text-align: center">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(index,item) in replyList">
+                        <td>
+                            {{item.keywords}}
+                        </td>
+                        <td>
+                                    <span>
+                                    {{item.response}}
+                                    </span>
+                        </td>
+                        <td>
+                            <button @click="detailModel(index)">
+                                详情
+                            </button>
+                            <button @click="alterModel(index)">
+                                编辑
+                            </button>
+                            <button @click="delModel(item.keywordsId)">
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div id="delete">
+                    <p>确定要删除这条回复？</p>
+                    <button @click="delReply">
+                        确定
+                    </button>
+                    <button @click="hideDel">
+                        取消
+                    </button>
+                </div>
+                <div v-if="replyList.length==0" class="no-reply">
+                    未添加回复
+                </div>
+                <ul class="page" v-if="replyList.length!=0">
+                    <li>
+                        <button>首页</button>
+                    </li>
+                    <li>
+                        <button class="lastPage" @click="lastPage(3)" title="上一页">
+                            <span>&laquo;</span>
+                        </button>
+                    </li>
+                    <li id="keyPage" v-if="show==true">
+                        <btn-list></btn-list>
+                    </li>
+                    <li>
+                        <button class="nextPage" @click="nextPage(3)" title="下一页">
+                            <span>&raquo;</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button>尾页</button>
+                    </li>
+                </ul>
+                <div v-show="addShow==true" class="add-reply">
+                    <!--<div class="reply-title">-->
+                    <!--添加关键词回复-->
+                    <!--</div>-->
+                    <div class="form-control">
+                                    <span>
+                                             关键词
+                                    </span>
+                        <input type="text" v-model="keyword">
+                    </div>
+                    <div class="textarea-control">
+                                <span>
+                                        回复内容
+                                </span>
+                        <textarea cols="30" rows="10" maxlength="300" v-model="replyContent" class="reply-text"></textarea>
+                        <div class="textarea-bottom">
+                            <!--<span class="face-select" @click="faceModel"></span>-->
+                            <!--<div class="qq-face" v-if="faceShow==true">-->
+                            <!--<face-list></face-list>-->
+                            <!--</div>-->
+                            <div>
+                                还可以输入{{replyContentLength}}个字，按Enter键换行
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-box">
+                        <button @click="saveReply">
+                            保&nbsp;&nbsp;存
+                        </button>
+                        <button @click="addModel">
+                            取&nbsp;&nbsp;消
+                        </button>
+                    </div>
+                </div>
+                <div v-show="alterShow==true" class="add-reply">
+                    <!--<div class="reply-title">-->
+                    <!--修改关键词回复-->
+                    <!--</div>-->
+                    <div class="form-control">
+                                    <span>
+                                             关键词
+                                    </span>
+                        <input type="text" v-model="keyword">
+                    </div>
+                    <div class="textarea-control">
+                                <span>
+                                        回复内容
+                                </span>
+                        <textarea cols="30" rows="10" maxlength="300" v-model="replyContent" class="reply-text"></textarea>
+                        <div class="textarea-bottom">
+                            <!--<span class="face-select" @click="faceModel"></span>-->
+                            <!--<div class="qq-face" v-if="faceShow==true">-->
+                            <!--<face-list></face-list>-->
+                            <!--</div>-->
+                            <div>
+                                还可以输入{{replyContentLength}}个字，按Enter键换行
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-box">
+                        <button @click="updateReply">
+                            保&nbsp;&nbsp;存
+                        </button>
+                        <button @click="hideAlter">
+                            取&nbsp;&nbsp;消
+                        </button>
+                    </div>
+                </div>
+                <div v-if="detailShow==true" class="reply-detail">
+                    <!--<div class="reply-title">-->
+                    <!--关键词回复详情-->
+                    <!--</div>-->
+                    <dt>关键词</dt>
+                    <dd>{{replyList[detailIndex].keywords}}</dd>
+                    <dt>回复</dt>
+                    <dd>{{replyList[detailIndex].response}}</dd>
+                    <div class="btn-box">
+                        <button @click="hideDetail">
+                            关&nbsp;&nbsp;闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+<div id="chart_layer">
+    <div>
+        <img src="${base}/res/portal/images/loading.gif">
+        <p>加载中...请稍后</p>
+    </div>
+</div>
+<div id="detail_layer">
+    <div>
+        <img src="${base}/res/portal/images/loading.gif">
+        <p>加载中...请稍后</p>
+    </div>
+</div>
+<div id="list_layer">
+    <div>
+        <img src="${base}/res/portal/images/loading.gif">
+        <p>加载中...请稍后</p>
+    </div>
+</div>
+</div>
+<script src="${base}/res/portal/js/account_detail.js" type="text/javascript" charset="utf-8"></script>

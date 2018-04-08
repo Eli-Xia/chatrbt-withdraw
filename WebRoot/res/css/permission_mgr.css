@@ -1,0 +1,12 @@
+#role-status span:after {
+    content: ' / ';
+}
+#role-status span:last-of-type:after {
+    content: '';
+}
+.checkbox label {
+    margin-right: 30px;
+}
+.box-header .btn-primary {
+    margin-top: 10px;
+}

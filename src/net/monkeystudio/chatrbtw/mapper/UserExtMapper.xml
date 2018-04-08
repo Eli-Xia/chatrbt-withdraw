@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.UserExtMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.UserExt">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="contact_person" jdbcType="VARCHAR" property="contactPerson" />
+    <result column="contact_email" jdbcType="VARCHAR" property="contactEmail" />
+    <result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
+    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="company_email" jdbcType="VARCHAR" property="companyEmail" />
+    <result column="company_address" jdbcType="VARCHAR" property="companyAddress" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="approve_time" jdbcType="TIMESTAMP" property="approveTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, contact_person, contact_email, contact_phone, company_name, company_email, 
+    company_address, create_time, status, approve_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_user_ext
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from e_user_ext
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.UserExt">
+    insert into e_user_ext (user_id, contact_person, contact_email, 
+      contact_phone, company_name, company_email, 
+      company_address, create_time, status, 
+      approve_time)
+    values (#{userId,jdbcType=INTEGER}, #{contactPerson,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, 
+      #{contactPhone,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{companyEmail,jdbcType=VARCHAR}, 
+      #{companyAddress,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{approveTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.UserExt">
+    insert into e_user_ext
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="contactPerson != null">
+        contact_person,
+      </if>
+      <if test="contactEmail != null">
+        contact_email,
+      </if>
+      <if test="contactPhone != null">
+        contact_phone,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="companyEmail != null">
+        company_email,
+      </if>
+      <if test="companyAddress != null">
+        company_address,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="approveTime != null">
+        approve_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="contactPerson != null">
+        #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="contactEmail != null">
+        #{contactEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPhone != null">
+        #{contactPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEmail != null">
+        #{companyEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="approveTime != null">
+        #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <sql id="selective_update_items">
+  	<set>
+      <if test="contactPerson != null">
+        contact_person = #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="contactEmail != null">
+        contact_email = #{contactEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="contactPhone != null">
+        contact_phone = #{contactPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="companyEmail != null">
+        company_email = #{companyEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="companyAddress != null">
+        company_address = #{companyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="approveTime != null">
+        approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+  </sql>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.UserExt">
+    update e_user_ext
+    	<include refid="selective_update_items"/>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeySelectiveWithMapParams" parameterType="map">
+    update e_user_ext
+    	<include refid="selective_update_items"/>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.UserExt">
+    update e_user_ext
+    set contact_person = #{contactPerson,jdbcType=VARCHAR},
+      contact_email = #{contactEmail,jdbcType=VARCHAR},
+      contact_phone = #{contactPhone,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      company_email = #{companyEmail,jdbcType=VARCHAR},
+      company_address = #{companyAddress,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      approve_time = #{approveTime,jdbcType=TIMESTAMP}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+</mapper>

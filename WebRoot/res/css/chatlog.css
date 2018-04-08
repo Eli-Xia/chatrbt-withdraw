@@ -1,0 +1,14 @@
+.box-header .date-box{
+    display: inline-block;
+    position: relative;
+}
+.box-header input{
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    height: 34px;
+    width: 170px;
+}
+#chatlog table td:nth-child(4){
+    word-break: break-all
+}

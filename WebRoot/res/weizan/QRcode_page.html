@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KeenDo | 获取二维码</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/ico" href="/res/weizan/images/favicon.ico">
+    <script src="/res/vendor/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+<div id="main"></div>
+
+<script src="/res/js/global.js"></script>
+<script>
+    $mks.syncJsonPost({
+        data: {},
+        url: '/api/wx-pub/weizan/join-url',
+        success_func: function(res){
+            if ( res.retCode == 0){
+                window.location.href = res.result;
+            } else {
+                dialog(res.retMsg,2);
+            }
+        }
+    })
+</script>
+</body>
+</html>

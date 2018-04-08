@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxFanMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.WxFan">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+        <result column="sex" property="sex" jdbcType="INTEGER" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="country" property="country" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="union_id" property="unionId" jdbcType="VARCHAR" />
+        <result column="subscribe_time" property="subscribeTime" jdbcType="INTEGER" />
+        <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
+        <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at
+    </sql>
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxFan" keyProperty="id" useGeneratedKeys="true" >
+        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at)
+            values (
+              #{id,jdbcType=INTEGER},
+              #{nickname,jdbcType=VARCHAR},
+              #{sex,jdbcType=INTEGER},
+              #{city,jdbcType=VARCHAR},
+              #{country,jdbcType=VARCHAR},
+              #{province,jdbcType=VARCHAR},
+              #{unionId,jdbcType=VARCHAR},
+              #{subscribeTime,jdbcType=INTEGER},
+              #{wxPubOriginId,jdbcType=VARCHAR},
+              #{wxFanOpenId,jdbcType=VARCHAR},
+              #{createAt,jdbcType=INTEGER}
+            )
+    </insert>
+
+    <select id="select" parameterType="map" resultMap="baseResultMap">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM
+            e_wx_fan
+        WHERE
+            wx_pub_origin_id = #{wxPubOriginId}
+        AND
+            wx_fan_open_id = #{wxFanOpenId}
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM
+            e_wx_fan
+        WHERE
+            id = #{id}
+    </select>
+
+
+
+</mapper>

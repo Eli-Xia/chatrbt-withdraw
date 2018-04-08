@@ -1,0 +1,20 @@
+#example .edit-url {
+    padding: 0;
+}
+.edit-url textarea {
+    width: 100%;
+    border: 1px solid #f0f0f0;
+    resize: none;
+    background-color: #fff6ec;
+}
+.btn.right {
+    margin-right: 10px;
+}
+.wx-news-wrap .box {
+    clear: both;
+    margin-top: 20px;
+}
+#pub-name {
+    font-size: 18px;
+    display: inline-block;
+}

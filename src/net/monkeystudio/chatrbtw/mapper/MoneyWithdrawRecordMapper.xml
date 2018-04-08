@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.MoneyWithdrawRecordMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="amount" property="amount" jdbcType="REAL" />
+    <result column="invoice_number" property="invoiceNumber" jdbcType="VARCHAR" />
+    <result column="invoice_audit_ret" property="invoiceAuditRet" jdbcType="INTEGER" />
+    <result column="invoice_receive_time" property="invoiceReceiveTime" jdbcType="TIMESTAMP" />
+    <result column="bank_flow_number" property="bankFlowNumber" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="success_time" property="successTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, apply_time, amount,invoice_number,invoice_audit_ret,invoice_receive_time,bank_flow_number, state, success_time
+  </sql>
+
+  <sql id="Base_Where">
+    <where>
+      <if test="userId != null">
+        and user_id = #{userId}
+      </if>
+      <if test="applyTime != null">
+        and apply_time = #{applyTime}
+      </if>
+      <if test="amount != null">
+        and amount = #{amount}
+      </if>
+      <if test="invoiceNumber != null">
+        and invoice_number = #{invoiceNumber}
+      </if>
+      <if test="invoiceAuditRet != null">
+        and invoice_audit_ret = #{invoiceAuditRet}
+      </if>
+      <if test="invoiceReceiveTime != null">
+        and invoice_receive_time = #{invoiceReceiveTime}
+      </if>
+      <if test="bankFlowNumber != null">
+        and bank_flow_number = #{bankFlowNumber}
+      </if>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="successTime != null">
+        and success_time = #{successTime}
+      </if>
+
+    </where>
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_money_withdraw_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from e_money_withdraw_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
+    insert into e_money_withdraw_record (id, user_id, apply_time, 
+      amount, state, success_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{applyTime,jdbcType=TIMESTAMP}, 
+      #{amount,jdbcType=REAL}, #{state,jdbcType=INTEGER}, #{successTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
+    insert into e_money_withdraw_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="applyTime != null" >
+        apply_time,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="invoiceNumber != null">
+        invoice_number,
+      </if>
+      <if test="invoiceAuditRet != null">
+        invoice_audit_ret,
+      </if>
+      <if test="invoiceReceiveTime != null">
+        invoice_receive_time,
+      </if>
+      <if test="bankFlowNumber != null">
+        bank_flow_number,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="successTime != null" >
+        success_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="applyTime != null" >
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=REAL},
+      </if>
+      <if test="invoiceNumber != null">
+        #{invoiceNumber},
+      </if>
+      <if test="invoiceAuditRet != null">
+        #{invoiceAuditRet},
+      </if>
+      <if test="invoiceReceiveTime != null">
+        #{invoiceReceiveTime},
+      </if>
+      <if test="bankFlowNumber != null">
+        #{bankFlowNumber},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="successTime != null" >
+        #{successTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
+    update e_money_withdraw_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="applyTime != null" >
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=REAL},
+      </if>
+      <if test="invoiceNumber != null">
+        invoice_number = #{invoiceNumber},
+      </if>
+      <if test="invoiceAuditRet != null">
+        invoice_audit_ret = #{invoiceAuditRet},
+      </if>
+      <if test="invoiceReceiveTime != null">
+        invoice_receive_time = #{invoiceReceiveTime},
+      </if>
+      <if test="bankFlowNumber != null">
+        bank_flow_number = #{bankFlowNumber},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="successTime != null" >
+        success_time = #{successTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
+    update e_money_withdraw_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      amount = #{amount,jdbcType=REAL},
+      invoice_number = #{invoiceNumber},
+      invoice_audit_ret = #{invoiceAuditRet},
+      invoice_receive_time = #{invoiceReceiveTime},
+      bank_flow_number = #{bankFlowNumber},
+      state = #{state,jdbcType=INTEGER},
+      success_time = #{successTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="sumByState" parameterType="map" resultType="java.lang.Float">
+    SELECT IFNULL(sum(amount),0) FROM  e_money_withdraw_record
+    WHERE state IN
+    <foreach collection="states" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+    AND user_id = #{userId}
+  </select>
+
+  <select id="selectByParamMap" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> FROM  e_money_withdraw_record
+    <include refid="Base_Where"/>
+  </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from e_money_withdraw_record
+    order by apply_time desc
+    limit #{startIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+  </select>
+
+  <select id="count" resultType="java.lang.Integer">
+    select
+    count(id)
+    from
+    e_money_withdraw_record
+  </select>
+
+</mapper>

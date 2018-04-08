@@ -1,0 +1,116 @@
+#key_mgr table td span{
+    display: inline-block;
+    min-width: 200px;
+    height: 18px;
+    line-height: 18px;
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    /*overflow: hidden;*/
+    word-break:break-all;
+}
+.right{
+    float:right;
+}
+#key_list{
+    position: relative;
+}
+#key_detail,#key_alter,#key_add{
+    position: absolute;
+    top:95px;
+    left:0;
+    right:0;
+    background: #fff;
+    padding: 15px;
+    box-shadow: 0 0 10px 0 #707070;
+}
+.textarea-control{
+    padding: 10px 0;
+    position: relative;
+}
+.textarea-control>span{
+    float: left;
+    display: inline-block;
+    width: 100px;
+    text-align: left;
+    padding-top: 10px;
+}
+.textarea-control>textarea{
+    width: 641px;
+    height: 112px;
+    resize:none;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    padding: 10px;
+    font-size: 14px;
+}
+.btn-box{
+    text-align: center;
+    padding-top: 8px;
+}
+.btn-box>button{
+    width: 80px;
+    height: 28px;
+    line-height: 28px;
+    border: none;
+    margin-right: 20px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 12px;
+}
+.btn-box>button:first-child{
+    background-color: #28a7fd;
+}
+.btn-box>button:nth-child(2) {
+    background-color: #e84e4e;
+}
+.model-header>span{
+    display: inline-block;
+    width: 97px;
+}
+.model-header>input{
+    width: 641px;
+    padding: 3px;
+}
+dd{
+    padding-left: 20px;
+    word-break:break-all;
+}
+
+/* 搜索 */
+#key_mgr .input-box {
+    margin: 10px 0 20px;
+}
+.input-box .btn-default {
+    font-size: 14px;
+    padding: 6px 12px;
+}
+.input-box > input {
+    padding: 6px 12px;
+    vertical-align: middle;
+}
+#search {
+    margin-right: 15px;
+}
+.input-box .btn-primary {
+    margin-right: 5px;
+} 
+
+/* 上传文件 */
+.upload-wrap {
+    margin-right: 10px;
+}
+.upload-wrap > img {
+    width: 16px;
+    margin-right: 5px;
+}
+#upload-btn {
+    position: relative;
+}
+#upload {
+    width: 81px;
+    height: 34px;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}

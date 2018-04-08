@@ -1,0 +1,229 @@
+#ad_mgr table td {
+    word-break: break-all;
+}
+
+.el-row:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.el-row:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.el-row > div:first-child {
+    width: 110px;
+    float: left;
+    padding: 10px;
+}
+
+.el-row span {
+    margin-right: 4px;
+    color: red;
+}
+
+.el-row > div:last-child {
+    margin-left: 110px;
+    padding: 5px;
+}
+
+#ad_check .el-row > div:last-child {
+    padding: 10px;
+}
+
+.upload {
+    position: relative;
+}
+
+.el-row img {
+    width: 203px;
+    height: 130px;
+}
+
+.upload input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    cursor: pointer;
+    bottom: 0;
+    opacity: 0;
+}
+.upload span{
+    font-size: 12px;
+    color: #b0c3cc;
+    margin-left: 8px;
+}
+.el-row select {
+    padding: 5px;
+    width: 150px;
+}
+
+.el-row input[type="text"] {
+    padding: 5px;
+    width: 100%;
+}
+
+#switch {
+    position: relative;
+    width: 75px;
+    height: 33px;
+    border-radius: 30px;
+    border: 1px solid #B1B1B1;
+    cursor: pointer;
+}
+
+#switch.active {
+    background-color: #3c8dbc;
+    border-color: #3c8dbc;
+}
+
+#switch.active div {
+    left: 41px;
+}
+
+#switch > div {
+    position: absolute;
+    left: 0;
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+    background-color: #fff;
+    box-shadow: 0 0 2px 2px #b1b1b1;
+    transition: all .3s linear;
+}
+
+.chart-query > div {
+    position: relative;
+}
+
+#push_time, #alter_time, #push {
+    width: 150px;
+}
+
+#ad_put .modal-body > div {
+    width: 190px;
+    height: 500px;
+    overflow: auto;
+    float: left;
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+}
+
+.modal-footer {
+    clear: both;
+}
+
+#ad_put .modal-body button {
+    outline: none;
+    padding: 6px 10px;
+    margin-right: 6px;
+    margin-bottom: 10px;
+    border: 1px solid #e5e5e5;
+    background-color: #fff;
+}
+
+#ad_put .modal-body .btn-28a7fd {
+    border-color: #28a7fd;
+    background-color: #28a7fd;
+    color: #fff;
+}
+
+#ad_put .modal-body .btn-d58512 {
+    border-color: #d58512;
+    background-color: #d58512;
+    color: #fff;
+}
+
+#ad_put .modal-body .tag-box {
+    padding: 10px 20px;
+}
+
+.tag-box span {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: #b0c3cc;
+}
+
+.account-header {
+    height: 44px;
+}
+
+#ad_put .modal-dialog {
+    width: 600px !important;
+}
+
+#ad_put .modal-body .account-box {
+    padding: 10px 20px;
+    position: relative;
+}
+
+.account-main p {
+    color: #b0c3cc;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.account-main > p span {
+    margin-right: 6px;
+}
+
+.account-main .fa {
+    margin-right: 5px;
+}
+
+.account-main ul {
+    padding-bottom: 34px;
+}
+
+#account_page {
+    position: fixed;
+    left: 0;
+    right: 16px;
+    bottom: 66px;
+    text-align: right;
+}
+
+#account_page > div {
+    display: inline-block;
+    background-color: #fff;
+}
+
+#ad_put #account_page button {
+    padding: 4px 0;
+    width: 21px;
+    text-align: center;
+    margin-right: 0;
+    margin-bottom: 6px;
+    border: none;
+}
+
+#account_page .web-page {
+    display: inline-block;
+}
+
+#account_page .active {
+    color: #28a7fd;
+}
+
+#ad_put ul {
+    padding: 0;
+}
+
+#ad_put li {
+    list-style: none;
+    padding: 3px;
+    cursor: pointer;
+}
+
+.account-main .fa-circle-o {
+    color: #d58512;
+}
+
+.account-main .fa-check-square {
+    color: #28a7fd;
+}

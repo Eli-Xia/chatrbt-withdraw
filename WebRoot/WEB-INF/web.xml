@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+  
+<display-name></display-name>	
+   <welcome-file-list>
+       <welcome-file>index.html</welcome-file>
+   </welcome-file-list>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/portal/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/portal/404.html</location>
+	</error-page>
+
+   <!-- spring配置文件，org.springframework.web.context.ContextLoaderListener 使用 -->
+   <context-param>
+       <param-name>contextConfigLocation</param-name>
+       <param-value>
+       	   /WEB-INF/conf/spring-context.xml,
+		   /WEB-INF/conf/spring-shiro.xml
+	   </param-value>
+   </context-param>
+    
+   <!-- Spring MVC配置 -->
+   <servlet>
+      <servlet-name>springDispatcher</servlet-name>
+      <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+      <init-param>
+          <description>加载/WEB-INF/conf/spring-dispatcher.xml</description>
+          <param-name>contextConfigLocation</param-name>
+          <param-value>/WEB-INF/conf/spring-dispatcher.xml</param-value>
+      </init-param>
+      <load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+<servlet-name>springDispatcher</servlet-name>
+<url-pattern>*.html</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>springDispatcher</servlet-name>
+<url-pattern>/api/*</url-pattern>
+</servlet-mapping>
+   
+    <!--验证码-->
+    <servlet> 
+  		<servlet-name>Kaptcha</servlet-name> 
+  		<servlet-class> 
+   			com.google.code.kaptcha.servlet.KaptchaServlet 
+	  	</servlet-class> 
+	  	<init-param> 
+	   		<description> 
+	    		Border around kaptcha. Legal values are yes or no. 
+	   		</description> 
+	   		<param-name>kaptcha.border</param-name> 
+	   		<param-value>no</param-value> 
+	  	</init-param> 
+	  	<init-param> 
+	   		<param-name>kaptcha.textproducer.font.size</param-name> 
+	   		<param-value>45</param-value> 
+	  	</init-param> 
+	  	<init-param> 
+	   		<param-name>kaptcha.textproducer.char.string</param-name> 
+	   		<param-value>abcdefnmnwx235678ABCDEFGHKQRSTX</param-value> 
+	 	</init-param> 
+	  	<init-param> 
+	   		<description> 
+	    		Ending background color. Legal values are r,g,b. 
+	   		</description> 
+	   		<param-name>kaptcha.background.clear.from</param-name> 
+	   		<param-value>255,255,255</param-value> 
+	  	</init-param> 
+	  	<init-param> 
+	   		<description> 
+	    		Ending background color. Legal values are r,g,b. 
+	   		</description> 
+		   	<param-name>kaptcha.background.clear.to</param-name> 
+		   	<param-value>255,255,255</param-value> 
+	  	</init-param> 
+		<init-param> 
+		   <description> 
+		    Ending background color. Legal values are r,g,b. 
+		   </description> 
+		   <param-name>kaptcha.image.width</param-name> 
+		   <param-value>160</param-value> 
+		  </init-param> 
+		  <!-- 设置字体个数 --> 
+		<init-param> 
+			<param-name>kaptcha.textproducer.char.length</param-name> 
+			<param-value>4</param-value> 
+		</init-param> 
+	</servlet> 
+	<servlet-mapping> 
+		<servlet-name>Kaptcha</servlet-name> 
+		<url-pattern>/vercode.jpg</url-pattern> 
+	</servlet-mapping>
+
+
+
+	<!-- UTF8 -->
+ 	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Shiro Filter -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 开启监听，web启动时装载spring配置 -->
+   <listener>
+       <listener-class>
+          org.springframework.web.context.ContextLoaderListener
+       </listener-class>
+   </listener>
+</web-app>

@@ -1,0 +1,182 @@
+<link rel="stylesheet" href="${base}/res/portal/css/ads_hall.css"/>
+
+<div id="ads_hall">
+    <ul class="label">
+        <li :class="showModel==1?'active':''" @click="toggleModel(1)">投放中</li>
+        <li :class="showModel==2?'active':''" @click="toggleModel(2)">预投放</li>
+        <li :class="showModel==3?'active':''" @click="toggleModel(3)">已结束</li>
+    </ul>
+    <section v-show="showModel==1">
+        <div class="tip" v-if="tipShow">
+            <span>提醒：所有广告仅在活跃用户与机器人对话中产生，已按照标签分类投放至精准用户（并不是所有聊天活跃用户都会接收到广告）</span><br/>
+            <span class="margin">已默认自动开启广告投放，您可自行查看广告详情来选择是否关闭广告投放，未认证公众号暂未开通广告收益功能。</span>
+            <a @click="tipShow=false">×</a>
+        </div>
+        <div class="ads-list" :class="tipShow?'other':''" v-if="pushList.length>0">
+            <div v-for="(index,item) in pushList">
+                <img :src="item.coverPic" :class="item.state==0?'gray':''">
+                <div class="ad-msg">
+                    <p>{{item.portalTitle}}</p>
+                    <div>
+                        <span>{{item.pushTime | formatDateTime}}</span>
+                        <div class="switch" :class="item.state==1?'active':''" @click="updateState(item.id,item.state,index,1)">
+                            <div></div>
+                        </div>
+                    </div>
+                    <span @click="pushDetail(item.id,index,1)">详情</span>
+                </div>
+                <div class="open" v-if="item.state==1">
+                    投放中
+                </div>
+                <div class="close" v-if="item.state==0">
+                    已关闭
+                </div>
+            </div>
+        </div>
+        <div v-else class="no-data">
+            <i class="icon iconfont icon-zanwushuju"></i>
+            <p>暂无数据</p>
+        </div>
+    </section>
+    <section v-show="showModel==2">
+        <div class="ads-list" :class="tipShow?'other':''" v-if="preList.length>0">
+            <div v-for="(index,item) in preList">
+                <img :src="item.coverPic" :class="item.state==0?'gray':''">
+                <div class="ad-msg">
+                    <p>{{item.portalTitle}}</p>
+                    <div>
+                        <span>{{item.pushTime | formatDateTime}}</span>
+                        <div class="switch" :class="item.state==1?'active':''" @click="updateState(item.id,item.state,index,2)">
+                            <div></div>
+                        </div>
+                    </div>
+                    <span @click="pushDetail(item.id,index,2)">详情</span>
+                </div>
+                <div class="open" v-if="item.state==1">
+                    预投放
+                </div>
+                <div class="close" v-if="item.state==0">
+                    已关闭
+                </div>
+            </div>
+        </div>
+        <div v-else class="no-data">
+            <i class="icon iconfont icon-zanwushuju"></i>
+            <p>暂无数据</p>
+        </div>
+    </section>
+    <section v-show="showModel==3">
+        <div class="ads-list" :class="tipShow?'other':''" v-if="closeList.length>0">
+            <div v-for="item in closeList">
+                <img :src="item.coverPic" class="gray">
+                <div class="ad-msg">
+                    <p>{{item.portalTitle}}</p>
+                    <div>
+                        <span>{{item.pushTime | formatDateTime}}</span>
+                    </div>
+                    <span @click="closeDetail(item.id)">详情</span>
+                </div>
+            </div>
+        </div>
+        <div v-else class="no-data">
+            <i class="icon iconfont icon-zanwushuju"></i>
+            <p>暂无数据</p>
+        </div>
+    </section>
+    <!--已经结束详情模块-->
+    <div class="detail-model" v-show="closedShow">
+        <div id="closed" @click="hideDetail">×</div>
+        <div class="detail-header">
+            {{detail.portalTitle}}
+        </div>
+        <div class="detail-msg">
+            <div>
+                <span>时间</span>
+                <p>{{detail.pushTime | formatDateTime}} ~ {{detail.closeTime | formatDateTime}}</p>
+            </div>
+            <div>
+                <span>类型</span>
+                <p>{{detail.adType | formatAdType}}</p>
+            </div>
+            <div>
+                <span>内容</span>
+                <p>{{detail.portalContent}}</p>
+            </div>
+        </div>
+        <div class="detail-account">
+            <p>公众号投放</p>
+            <ul v-if="wxList.length>0">
+                <li v-for="(index,item) in wxList" v-if="index>=minIndex && index<maxIndex">
+                    <span :class="{active:item.isExclude==1}" class="closed"><i class="iconfont icon-iconcorrect"></i></span>
+                    {{item.nickname}}
+                </li>
+            </ul>
+            <div v-else>
+                无相关公众号
+            </div>
+        </div>
+        <div class="detail-footer" v-show="wxList.length>0">
+            <div class="page">
+                <button @click="page=1">首页</button>
+                <button title="上一页" @click="lastWebPage">&laquo;</button>
+                <div class="web-page">
+                </div>
+                <button title="下一页" @click="nextWebPage">&raquo;</button>
+                <button @click="page=pages">尾页</button>
+            </div>
+        </div>
+    </div>
+    <!--投放和预投放  详情模块-->
+    <div class="detail-model" v-show="pushShow">
+        <div class="detail-header">
+            {{detail.portalTitle}}
+        </div>
+        <div class="detail-msg">
+            <div>
+                <span>时间</span>
+                <p>{{detail.pushTime | formatDateTime}}</p>
+            </div>
+            <div>
+                <span>类型</span>
+                <p>{{detail.adType | formatAdType}}</p>
+            </div>
+            <div>
+                <span>内容</span>
+                <p>{{detail.portalContent}}</p>
+            </div>
+        </div>
+        <div class="detail-account">
+            <p>公众号投放</p>
+            <ul v-if="wxList.length>0">
+                <li v-for="(index,item) in wxList" v-if="index>=minIndex && index<maxIndex" @click="alertWxPushIds(item.wxPubId)">
+                    <span :class="{active:wxPushIds.indexOf(item.wxPubId)!=-1}" class="push"><i class="iconfont icon-iconcorrect"></i></span>
+                    {{item.nickname}}
+                </li>
+            </ul>
+            <div v-else>
+                无相关公众号
+            </div>
+        </div>
+        <div class="detail-footer" v-show="wxList.length>0">
+            <div class="page">
+                <button @click="page=1">首页</button>
+                <button title="上一页" @click="lastWebPage">&laquo;</button>
+                <div class="web-page">
+                </div>
+                <button title="下一页" @click="nextWebPage">&raquo;</button>
+                <button @click="page=pages">尾页</button>
+            </div>
+            <div class="btn-box">
+                <button class="success" @click="updatePushWX(detail.adId)">确&nbsp;&nbsp;定</button>
+                <button class="rest" @click="hideDetail">取&nbsp;&nbsp;消</button>
+            </div>
+        </div>
+    </div>
+    <div id="ad_layer">
+        <div>
+            <img src="${base}/res/portal/images/loading.gif">
+            <p>加载中...请稍后</p>
+        </div>
+    </div>
+</div>
+<script src="${base}/res/portal/js/ads_hall.js"></script>

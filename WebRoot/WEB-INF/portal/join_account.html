@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="${base}/res/portal/css/join_account.css"/>
+<div id="join_account">
+    <section>
+        <h3>创建机器人</h3>
+        <div class="form-control">
+                <span>
+                    机器人名称<b>*</b>
+                </span>
+            <input type="text" v-model="robotName">
+        </div>
+        <div class="form-control">
+                <span>
+                    机器人性别<b>*</b>
+                </span>
+            <p class="btn-select">
+                <button :class="gender==0?active:''">
+                    男
+                </button>
+                <input type="radio" name="gender" value="0" v-model="gender">
+            </p>
+            <p class="btn-select">
+                <button :class="gender==1?active:''">
+                    女
+                </button>
+                <input type="radio" name="gender" value="1" v-model="gender">
+            </p>
+            <p class="btn-select">
+                <button :class="gender==2?active:''">
+                    无
+                </button>
+                <input type="radio" name="gender" value="2" v-model="gender">
+            </p>
+        </div>
+        <div class="form-control">
+            <span>
+                机器人性格<b>*</b>
+            </span>
+            <div>
+                <#list chatRobotCharacterList as item>
+                <p class="btn-select">
+                    <button :class="character.indexOf('${item.value}')!=-1?active:''">
+                        ${item.name}
+                    </button>
+                    <input type="checkbox" name="character" value="${item.value}" v-model="character">
+                </p>
+            </#list>
+        </div>
+        <span class="absolute">
+                （可多选）
+        </span>
+</div>
+</section>
+<div class="btn-center">
+    <button @click="requireUrl">
+        获取公众号接入二维码
+    </button>
+</div>
+</div>
+<script src="${base}/res/portal/js/join_account.js" type="text/javascript" charset="utf-8"></script>

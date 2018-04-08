@@ -1,0 +1,690 @@
+package net.monkeystudio.chatrbtw.service;
+
+import net.monkeystudio.admin.controller.req.ad.AddAd;
+import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
+import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.RandomUtil;
+import net.monkeystudio.chatrbtw.entity.*;
+import net.monkeystudio.chatrbtw.mapper.AdMapper;
+import net.monkeystudio.chatrbtw.mapper.RAdWxPubMapper;
+import net.monkeystudio.chatrbtw.mapper.RAdWxPubTagMapper;
+import net.monkeystudio.chatrbtw.service.bean.ad.*;
+import net.monkeystudio.exception.BizException;
+import net.monkeystudio.utils.CommonUtils;
+import net.monkeystudio.utils.JsonHelper;
+import net.monkeystudio.wx.service.WxPubAuthorizerRefreshTokenService;
+import net.monkeystudio.wx.service.WxPubService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Created by bint on 2017/12/8.
+ */
+@Service
+public class AdService {
+
+    //图文形式的广告
+    public final static Integer AD_NEWS_TYPE = 1;
+
+    //文本形式的广告
+    public final static Integer AD_TEXT_TYPE = 2;
+
+    //图片形式的广告
+    public final static Integer AD_IMAGE_TYPE = 3 ;
+
+    //问问搜广告
+    public final static Integer AD_ASK_SEARCH_TYPE = 4;
+
+    //聊天过程中主动推送
+    public final static Integer CHAT_PUSH_TYPE = 1;
+
+    //缓存时间30分钟
+    private final static Integer AD_CACHE_PERIOD = 60 * 30;
+
+    public final static Integer AD_PUSH_CLOSE = 0;//广告投放关闭(全局)
+    public final static Integer AD_PUSH_OPEN = 1;//广告投放开启(全局)
+
+    public final static Integer WX_PUB_AD_PUSH_STATE_OPEN = 1;//针对公众号主,公众号下广告投放状态(默认开启)
+    public final static Integer WX_PUB_AD_PUSH_STATE_CLOSE = 0;//针对公众号主,公众号下广告投放状态
+    public final static Integer WX_PUB_AD_PUSH_EXCLUDE = 0;//针对公众号主,公众号是否剔除广告投放
+    public final static Integer WX_PUB_AD_PUSH_NOT_EXCLUDE = 1;//针对公众号主,公众号是否剔除广告投放(默认不剔除)
+
+    public final static int AD_PUSH_STATE_NOT_YET = 0;//未投放
+    public final static int AD_PUSH_STATE_PREPUSH = 1;//预投放
+    public final static int AD_PUSH_STATE_PUSHING = 2;//投放中
+    public final static int AD_PUSH_STATE_CLOSE = 3;//已结束
+
+    private static final String AD_COVER_PIC_DIRECTORY = "/ad/cover-pic/";//portal广告封面图片存放目录
+    private static final String AD_WX_PIC_DIRECTORY = "/ad/wx-pic";//微信广告图片存放目录
+
+    private static final Float MIN_AD_INCOME = 0.01F;//最小广告单价
+
+
+    @Autowired
+    private AdMapper adMapper;
+
+    @Autowired
+    private WxPubTagService wxPubTagService;
+
+    @Autowired
+    private WxPubService wxPubService;
+
+    @Autowired
+    private RAdWxPubMapper rAdWxPubMapper;
+
+    @Autowired
+    private RAdWxPubTagMapper rAdWxPubTagMapper;
+
+    @Autowired
+    private RedisCacheTemplate redisCacheTemplate;
+
+    @Autowired
+    private AdClickLogService adClickLogService;
+
+    @Autowired
+    private COSService cosService;
+
+    @Autowired
+    private WxPubAuthorizerRefreshTokenService wxPubAuthorizerRefreshTokenService;
+
+
+
+    /**
+     * 根据id获取广告id
+     * @param id
+     * @return
+     */
+    public Ad getAdById(Integer id){
+
+        Ad ad = this.getAdByIdFromCache(id);
+        if(ad != null){
+            return ad;
+        }
+
+        ad = this.getAdByIdFromDb(id);
+
+        String key = this.getCacheKeyById(id);
+        redisCacheTemplate.setObject(key,ad);
+        redisCacheTemplate.expire(key, AD_CACHE_PERIOD);
+
+        return ad;
+
+    }
+
+    private Ad getAdByIdFromDb(Integer id){
+        return adMapper.selectById(id);
+    }
+
+    private Ad getAdByIdFromCache(Integer id){
+        String key = this.getCacheKeyById(id);
+        Ad ad = redisCacheTemplate.getObject(key);
+        return ad;
+    }
+
+    /**
+     * 获取指定广告类型最新的一条广告
+     * @param adType
+     * @param pushType
+     * @return
+     */
+    public Ad getNewestByType(Integer adType ,Integer pushType){
+        return adMapper.selectNewestByType(adType, pushType);
+    }
+
+    /**
+     * 获得广告的分页数据
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public List<AdMgrListResp> getAds(Integer page, Integer pageSize){
+        Integer startIndex = CommonUtils.page2startIndex(page, pageSize);
+        List<Ad> ads = adMapper.selectByPage(startIndex, pageSize);
+
+        List<AdMgrListResp> list = new ArrayList<>();
+
+        for(Ad ad:ads){
+            AdMgrListResp resp =new AdMgrListResp();
+            BeanUtils.copyProperties(ad,resp);
+            resp.setTotalClickCount(adClickLogService.getAdTotalClick(ad.getId()));
+
+            Integer pushState = this.getAdPushState(ad);
+
+            switch (pushState){
+                case AD_PUSH_STATE_NOT_YET: resp.setPushState(pushState);   break;
+
+                case AD_PUSH_STATE_PREPUSH: resp.setPushState(pushState);   break;
+
+                case AD_PUSH_STATE_PUSHING: resp.setPushState(pushState);   break;
+
+                case AD_PUSH_STATE_CLOSE:   resp.setPushState(pushState);   break;
+            }
+
+            list.add(resp);
+        }
+        return list;
+    }
+
+    /**
+     * 更新广告
+     * @param
+     * @return
+     */
+    public void updateAd(AdUpdateReq req){
+        //修改前的广告
+        Ad oldAd = this.getAdById(req.getId());
+        /*cache中的数据需要包含db中ad的左右字段,但adUpdateReq中的更新字段只有部分,导致出问题.*/
+        Ad ad = new Ad();
+
+        //上传广告图片和封面图片并返回地址
+        if(req.getWxPic() != null){
+            String wxPicUrl = this.uploadPic(req.getWxPic(), AD_WX_PIC_DIRECTORY);
+            ad.setPicUrl(wxPicUrl);
+        }
+
+        if(req.getCoverPic() != null){
+            String coverPicUrl = this.uploadPic(req.getCoverPic(),AD_COVER_PIC_DIRECTORY);
+            ad.setCoverPic(coverPicUrl);
+        }
+
+        ad.setId(req.getId());
+        ad.setClickAmount(req.getClickAmount());
+        ad.setAlias(req.getAlias());
+        ad.setAdRecommendStatement(req.getAdRecommendStatement());
+        ad.setAdType(req.getAdType());
+        ad.setDescription(req.getDescription());
+        ad.setPushType(req.getPushType());
+        ad.setTextContent(req.getTextContent());
+        ad.setUrl(req.getUrl());
+        ad.setTitle(req.getTitle());
+        ad.setPortalTitle(req.getPortalTitle());
+        ad.setPortalContent(req.getPortalContent());
+        ad.setClickAmount(req.getClickAmount());
+        ad.setPushTime(CommonUtils.dateStartTime(req.getPushTime()));
+        ad.setPrePushTime(CommonUtils.dateOffset(ad.getPushTime(),-1));
+        //全局广告投放按钮关闭后无法再开启
+        if( AD_PUSH_OPEN.equals(oldAd.getIsOpen())){
+            ad.setIsOpen(req.getIsOpen());
+        }
+        //广告投放结束,设置结束时间
+        if(req.getIsOpen() == AD_PUSH_CLOSE && AD_PUSH_OPEN.equals(oldAd.getIsOpen())){
+            ad.setCloseTime(new Date());
+        }
+        this.update(ad);
+
+    }
+
+    public void update(Ad ad){
+        adMapper.updateByPrimaryKeySelective(ad);
+
+        Ad dbAd = this.getAdByIdFromDb(ad.getId());
+
+        String key = this.getCacheKeyById(ad.getId());
+
+        redisCacheTemplate.setObject(key,dbAd);
+
+        redisCacheTemplate.expire(key, AD_CACHE_PERIOD);
+    }
+
+    /**
+     * 获得所有的数据数
+     * @return
+     */
+    public Integer getCount(){
+        return adMapper.count();
+    }
+
+    public Integer save(AddAd addAd) {
+
+        Ad ad = new Ad();
+
+        BeanUtils.copyProperties(addAd,ad,"pushTime","wxPic","coverPic","createAt");
+
+        //上传广告图片和封面图片并返回地址
+        String wxPicUrl = null;
+
+        String coverPicUrl = null;
+
+        if(addAd.getWxPic() != null){
+            wxPicUrl = this.uploadPic(addAd.getWxPic(), AD_WX_PIC_DIRECTORY);
+        }
+        if(addAd.getCoverPic() != null){
+            coverPicUrl = this.uploadPic(addAd.getCoverPic(),AD_COVER_PIC_DIRECTORY);
+        }
+        ad.setCreateAt(new Date());//广告创建时间
+
+        ad.setCoverPic(coverPicUrl);
+
+        ad.setPicUrl(wxPicUrl);
+
+        ad.setIsOpen(AD_PUSH_OPEN);//广告投放状态默认开启
+
+        ad.setPushTime(CommonUtils.dateStartTime(addAd.getPushTime()));
+
+        ad.setPrePushTime(CommonUtils.dateOffset(ad.getPushTime(),-1));//预投放时间为投放时间的前一天
+
+        return adMapper.insert(ad);
+    }
+
+    public Integer delete(Integer id) {
+
+        return adMapper.detete(id);
+    }
+
+    /**
+     * 获取admin广告投放页面数据
+     * @param id  广告id
+     * @return 页面数据
+     */
+    public AdDistribute2WxPubResp createAdDistribute2WxPubResp(Integer id) {
+
+        //标签集合
+        List<WxPubTag> tags = wxPubTagService.getAllTags();
+
+        //上次投放该广告所确认的标签集
+        List<RAdWxPubTag> tagsByAdId = rAdWxPubTagMapper.selectByAdId(id);
+        List<Integer> tagIdsOfAd = tagsByAdId.stream().map(RAdWxPubTag::getWxPubTagId).collect(Collectors.toList());
+
+        //上次投放广告划分的微信公众号集
+        List<RAdWxPub> wxPubsByAdId = rAdWxPubMapper.selectByAdId(id);
+        List<Integer> wxPubIds = wxPubsByAdId.stream().map(RAdWxPub::getWxPubId).collect(Collectors.toList());
+
+        //标签和公众号对应关系数据集
+        List<TagId2WxPubsItem> items = new ArrayList<>();
+        for(WxPubTag tag:tags){
+            TagId2WxPubsItem item = new TagId2WxPubsItem();
+            List<WxPub> wxPubsByTagId = wxPubService.getWxPubsByTagId(tag.getId());
+            List<AdWxPubResp> adWxPubResps = new ArrayList<>();
+            for(WxPub wxPub:wxPubsByTagId){
+
+                if(wxPub.getVerifyTypeInfo() == wxPubService.WX_PUB_VERIFY_TYPE_WX_VERIFY
+                        && wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
+                    AdWxPubResp adWxPubResp = new AdWxPubResp();
+                    BeanUtils.copyProperties(wxPub,adWxPubResp);
+                    adWxPubResps.add(adWxPubResp);
+                }
+            }
+            item.setTagId(tag.getId());
+            item.setWxPubs(adWxPubResps);
+            items.add(item);
+        }
+
+        AdDistribute2WxPubResp resp = new AdDistribute2WxPubResp();
+        resp.setTags(tags);
+        resp.setTagIdsOfAd(tagIdsOfAd);
+        resp.setWxPubIdsOfAd(wxPubIds);
+        resp.setTagId2WxPubsItems(items);
+
+        return resp;
+
+    }
+
+    /**
+     * 广告投放"确认"操作
+     * @param req
+     */
+    @Transactional
+    public void distributeAdToWxPubConfirm(AdDistribute2WxPubConfirmReq req) {
+
+        Integer adId = req.getAdId();
+
+        //广告对应标签集合
+        List<Integer> tagIds = req.getTagIds();
+
+        //广告-标签关系维护
+        List<RAdWxPubTag> rAdWxPubTags = new ArrayList<>();
+        for(Integer tagId:tagIds){
+            RAdWxPubTag rAdWxPubTag = new RAdWxPubTag();
+            rAdWxPubTag.setAdId(adId);
+            rAdWxPubTag.setWxPubTagId(tagId);
+            rAdWxPubTags.add(rAdWxPubTag);
+        }
+
+
+        //被该广告划分到的公众号集合
+        List<Integer> wxPubIds = req.getWxPubIds();
+
+
+        //adId --> List<RAdWxPub>
+        Map<String,Object> param = new HashMap<>();
+
+        param.put("adId",adId);
+
+        List<RAdWxPub> list = this.rAdWxPubMapper.selectByParamMap(param);
+
+        boolean isEmpty = CollectionUtils.isEmpty(list);
+
+        //若表中有数据先delete再insert
+        if(!isEmpty){
+
+            rAdWxPubMapper.deleteByAdId(adId);
+
+            rAdWxPubTagMapper.deleteByAdId(adId);
+
+        }else{
+            //如果表中没有数据批量insert
+            List<RAdWxPub> ret = new ArrayList<>();
+
+            for(Integer wxPubId:wxPubIds){
+
+                RAdWxPub rAdWxPub = new RAdWxPub();
+
+                rAdWxPub.setWxPubId(wxPubId);
+
+                rAdWxPub.setAdId(adId);
+
+                rAdWxPub.setIsExclude(WX_PUB_AD_PUSH_NOT_EXCLUDE);
+
+                rAdWxPub.setState(WX_PUB_AD_PUSH_STATE_OPEN);
+
+                ret.add(rAdWxPub);
+            }
+            rAdWxPubMapper.batchInsert(ret);
+        }
+
+        rAdWxPubTagMapper.batchInsert(rAdWxPubTags);
+
+        if(isEmpty){
+            return ;
+        }
+        //广告原来存在于关系表中
+        for(Integer wxPubId:wxPubIds){
+
+            RAdWxPub rAdWxPub = new RAdWxPub();
+
+            rAdWxPub.setWxPubId(wxPubId);
+
+            rAdWxPub.setAdId(adId);
+
+            for(int i = 0 ; i < list.size() ; i++){
+
+                if(list.contains(rAdWxPub)){
+
+                    RAdWxPub obj = list.get(i);
+
+                    rAdWxPub.setState(obj.getState());
+
+                    rAdWxPub.setIsExclude(obj.getIsExclude());
+
+                    this.rAdWxPubMapper.insert(rAdWxPub);
+
+                    break;
+
+                }else{
+
+                    rAdWxPub.setIsExclude(WX_PUB_AD_PUSH_NOT_EXCLUDE);
+
+                    rAdWxPub.setState(WX_PUB_AD_PUSH_STATE_OPEN);
+
+                    this.rAdWxPubMapper.insert(rAdWxPub);
+
+                    break;
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 广告是否为问问搜类型
+     * @param ad
+     * @return
+     */
+    private boolean isAskSearchAd(Ad ad){
+        return AD_ASK_SEARCH_TYPE.equals(ad.getAdType());
+    }
+
+    /**
+     * 获取为公众号划分的广告
+     * 一个公众号可以被多条广告划分,随机取一条广告进行投放.
+     * 广告投放状态.
+     * @param
+     * @return
+     */
+    public Ad getPushAdByWxPub(WxPub wxPub){
+
+        //未认证及未授权公众号不推送广告
+        if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY.intValue()  == wxPub.getVerifyTypeInfo().intValue()
+                || !wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
+            return null;
+        }
+
+        Integer wxPubId = wxPub.getId();
+
+        Map<String,Object> param = new HashMap<>();
+
+        param.put("wxPubId",wxPubId);
+
+        List<RAdWxPub> rAdWxPubs = rAdWxPubMapper.selectByParamMap(param);
+
+        if(ListUtil.isEmpty(rAdWxPubs)){
+            return null;
+        }
+
+        List<Ad> ads = new ArrayList<>();
+
+        for(RAdWxPub obj:rAdWxPubs){
+            //满足广告投放的条件:1,智能聊广告(排除问问搜) 2,投放开关开启 3,正在投放 4,公众号主开启投放且公众号未被剔除
+            Ad ad = this.getAdById(obj.getAdId());
+
+            if(AD_PUSH_CLOSE.equals(ad.getIsOpen())
+                    ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)
+                    ||  this.isAskSearchAd(ad)
+                    ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())
+                    ||  WX_PUB_AD_PUSH_EXCLUDE.equals(obj.getIsExclude())
+                     ){
+
+                continue;
+            }
+
+            ads.add(ad);
+        }
+        if(ListUtil.isEmpty(ads)){
+            return null;
+        }
+        //从集合中随机获取一条广告
+        return ads.get(RandomUtil.randomIndex(ads.size()));
+    }
+
+    //一个公众号可对应多条广告
+    public List<Ad> getAdByWxPubId(Integer wxPubId){
+
+        Map<String,Object> param = new HashMap<>();
+
+        param.put("wxPubId",wxPubId);
+
+        List<RAdWxPub> rAdWxPubs = rAdWxPubMapper.selectByParamMap(param);
+
+        List<Ad> ads = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(rAdWxPubs)){
+            return ads;
+        }
+        List<Integer> ids = rAdWxPubs.stream().map(RAdWxPub::getAdId).collect(Collectors.toList());
+
+        for(Integer id:ids){
+            Ad ad = this.getAdById(id);
+            ads.add(ad);
+        }
+        return ads;
+    }
+
+    private String getCacheKeyById(Integer adId){
+        String key = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "Ad:ad:" + adId;
+        return key;
+    }
+
+
+    /**
+     * 上传图片
+     * @param file
+     * @param directory
+     * @return
+     */
+    public String uploadPic(MultipartFile file,String directory){
+        String cosPath = this.createPicPath(file,directory);
+        String cosPicUrl = null;
+        try {
+            String pathJson = cosService.uploadFile(cosPath, IOUtils.toByteArray(file.getInputStream()));
+            String dataJson = JsonHelper.getStringFromJson(pathJson, "data");
+            cosPicUrl = JsonHelper.getStringFromJson(dataJson,"access_url");
+        } catch (IOException e) {
+            Log.e(e);
+        }
+        return cosPicUrl;
+    }
+
+    /**
+     * 生成文件名
+     * 文件名: 年月日时分秒-用户id.后缀
+     * @param file
+     * @param directory 文件目录
+     * @return
+     */
+    private String createPicPath(MultipartFile file,String directory){
+        String fileName = file.getOriginalFilename();
+        String suffix = CommonUtils.getFilenamePostfix(fileName);
+        String sFormat = CommonUtils.dateFormat(new Date(), "yyyyMMddHHmmss");
+        StringBuilder sb = new StringBuilder();
+        sb.append(directory).append(sFormat).append(".").append(suffix);
+        return sb.toString();
+    }
+
+    /**
+     * 是否达到最小广告单价
+     * @param income
+     * @return
+     */
+    public boolean isMoreThanMinIncome(Float income){
+        return income >= MIN_AD_INCOME;
+    }
+
+
+    /**
+     * 当前广告点击数到达最大点击数时关闭广告投放
+     * @param ad
+     * @return
+     */
+    public void closeAdPushWhenReachMaxClick(Ad ad){
+        //如果广告投放已经关闭则return
+        if(AD_PUSH_CLOSE.equals(ad.getIsOpen())){
+            return;
+        }
+        Ad newAd = new Ad();
+        newAd.setIsOpen(AD_PUSH_CLOSE);
+        newAd.setCloseTime(new Date());
+        newAd.setId(ad.getId());
+        this.update(newAd);
+    }
+
+    /**
+     * 判断广告是否达到最大点击数
+     * @param ad
+     * @return
+     */
+    public boolean isReachMaxClick(Ad ad) throws BizException{
+        Integer currentClickAmount = adClickLogService.getAdTotalClick(ad.getId());
+
+        Integer maxClickAmount = ad.getClickAmount();
+
+        if(maxClickAmount == null || maxClickAmount <= 0 ){
+            throw new BizException("该广告未设置最大点击数");
+        }
+        return currentClickAmount >= maxClickAmount;
+    }
+
+    /**
+     * 判断广告当前的投放状态
+     * @param ad
+     * @return 1:预投放 2:投放中 3:已结束
+     */
+    public Integer getAdPushState(Ad ad){
+
+        long now = new Date().getTime();
+
+        //long值为0即ad.getCloseTime == null
+        long preTime = 0;
+        long pushTime = 0;
+        long closeTime = 0;
+
+        if(ad.getPrePushTime() != null){
+            preTime = ad.getPrePushTime().getTime();
+        }
+        if(ad.getPushTime() != null){
+            pushTime = ad.getPushTime().getTime();
+        }
+        if(ad.getCloseTime() != null){
+            closeTime = ad.getCloseTime().getTime();
+        }
+
+        //广告是否已经填写结束时间,因为广告投放结束时间是后续确定的,所以有可能为null,单纯时间比较会出问题.
+        if(closeTime != 0){
+            if(now < preTime){
+                return AD_PUSH_STATE_NOT_YET;
+            }else if (now >= preTime && now < pushTime) {
+                return AD_PUSH_STATE_PREPUSH;
+
+            } else if (now >= pushTime && now < closeTime) {
+                return AD_PUSH_STATE_PUSHING;
+
+            } else if (now >= closeTime) {
+                return AD_PUSH_STATE_CLOSE;
+            }
+        }else{
+            if(now < preTime){
+                return AD_PUSH_STATE_NOT_YET;
+            }else if (now >= preTime && now < pushTime) {
+                return AD_PUSH_STATE_PREPUSH;
+            } else if (now >= pushTime) {
+                return AD_PUSH_STATE_PUSHING;
+            }
+        }
+        return null;
+    }
+
+    
+    /**
+     * 根据公众号随机获取一条问问搜广告
+     * @param
+     * @return
+     */
+    public Ad getAskSearchAdByWxPub(WxPub wxPub){
+        //如果是非认证公众号
+        if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY  == wxPub.getVerifyTypeInfo()
+                || !wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
+            return null;
+        }
+
+        Map<String,Object> param = new HashMap<>();
+
+        param.put("wxPubId",wxPub.getId());
+
+        List<RAdWxPub> ret = rAdWxPubMapper.selectByParamMap(param);
+
+        if(CollectionUtils.isEmpty(ret)){
+            return null;
+        }
+   
+        //过滤出问问搜广告集
+        List<Integer> adIds = ret.stream().filter(obj -> AD_ASK_SEARCH_TYPE.equals((this.getAdById(obj.getAdId()).getAdType())))
+                .map(RAdWxPub::getAdId).collect(Collectors.toList());
+
+        Ad ad = this.getAdById(adIds.get(RandomUtil.randomIndex(adIds.size())));
+
+        return ad;
+    }
+
+
+}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatRobotBaseInfoMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatRobotBaseInfo">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+        <result column="gender" property="gender" jdbcType="INTEGER" />
+        <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, nickname, gender , wx_pub_origin_id
+    </sql>
+
+    <select id="selectByWxPubOriginId" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_chat_robot_base_info
+        where
+        wx_pub_origin_id = #{wxPubOriginId}
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into e_chat_robot_base_info ( nickname, gender ,wx_pub_origin_id)
+            value (#{nickname} , #{gender} , #{wxPubOriginId})
+    </insert>
+
+    <delete id="deleteByWxPubOriginId" parameterType="map">
+        delete from e_chat_robot_base_info where wx_pub_origin_id = #{wxPubOriginId}
+    </delete>
+
+    <update id="update" >
+        update e_chat_robot_base_info set
+            nickname = #{nickname},
+            gender = #{gender},
+            wx_pub_origin_id = #{wxPubOriginId}
+        where
+            id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_chat_robot_base_info
+        where
+            id = #{id}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from e_chat_robot_base_info where `id` = #{id}
+    </delete>
+
+    <select id="selectListByWxPubOriginId" parameterType="map" resultMap="baseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from
+        e_chat_robot_base_info
+        where
+            <if test="wxPubOriginId != null">
+                wx_pub_origin_id = #{wxPubOriginId}
+            </if>
+            <if test="wxPubOriginId == null">
+                wx_pub_origin_id is #{wxPubOriginId}
+            </if>
+    </select>
+
+
+</mapper>

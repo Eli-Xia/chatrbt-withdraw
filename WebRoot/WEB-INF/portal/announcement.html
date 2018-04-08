@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>KeenDo | 问问搜</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
+    <link rel="stylesheet" href="${base}/res/portal/css/index.css"/>
+    <link rel="stylesheet" href="${base}/res/portal/css/announcement.css"/>
+</head>
+<body id="index">
+<header>
+    <div>
+        <a class="logo" href="${base}/home.html">
+            <img src="${base}/res/portal/images/logo_small.png" alt="金豆传媒">
+        </a>
+        <div class="user-message">
+            <img src="${base}/res/portal/images/default_small.png" alt="金豆传媒">
+            <a href="javascript:;" @click="confirmShow('确认要退出？')">退出</a>
+            <div>
+
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <h1>一键定制机器人，轻松拥有问问搜</h1>
+    <div class="content-wrap">
+        <div class="words-wrap">
+            <p>内容的更新越来越快，图文的传播寿命越来越短，不想让辛苦编写的文章压箱底？</p>
+            <br>
+            <p>发过的文章太多，有时候自己写的文章自己也找不到？</p>
+            <br>
+            <p>同类型的文章要整理合辑，还在逐个逐个设置关键词？</p>
+            <br>
+            <p>有了问问搜，以上的问题都不是问题！</p>
+            <br>
+            <p class="strong">操作简便<span>一键定制</span><span>智能整理</span>省时省力</p>
+            <br>
+            <p>快跟我一起建立公众号自己的搜索引擎——问问搜！</p>
+        </div>
+
+        <div class="img-wrap">
+            <h2>第一步&nbsp;&nbsp;定制机器人</h2>
+            <img src="${base}/res/portal/images/announcement/1.png" alt="定制机器人">
+            <h2>第二步&nbsp;&nbsp;扫描二维码获取公众号平台授权</h2>
+            <img src="${base}/res/portal/images/announcement/2.png" alt="扫二维码平台授权">
+            <h2>第三步&nbsp;&nbsp;成功接入平台</h2>
+            <img src="${base}/res/portal/images/announcement/3.png" alt="接入平台">
+        </div>
+        <div class="liuyan">
+            <img src="${base}/res/portal/images/announcement/4.png" alt="后台留言">
+            <span><em>当天接入平台后<br>问问搜功能次日开始生效</em>现在，你的公众号粉丝可以通过向后台留言<br>提问关键词使用问问搜功能啦！</span>
+        </div>
+    </div>
+    
+</div>
+<footer>
+    <!-- <p><a href="">联系我们</a><a href="">关于我们</a></p> -->
+    <p><a href="http://www.miibeian.gov.cn/">许可证号：粤ICP备17103036号&nbsp;&nbsp;&nbsp;&nbsp;Copyright © 2017 - 2018 Keendo&nbsp;&nbsp;&nbsp;&nbsp;All Rights Reserved</a></p>
+</footer>
+<!--报错  信息框-->
+<div id="msg_layer">
+    <div class="success-msg">
+        <div class="dialog_img">
+            <img src="${base}/res/portal/images/dialog_success.png">
+        </div>
+        <div class="content"></div>
+        <p>
+            <button @click="msgHide">关&nbsp;&nbsp;闭</button>
+        </p>
+    </div>
+    <div class="err-msg">
+        <div class="dialog_img">
+            <img src="${base}/res/portal/images/dialog_err.png">
+        </div>
+        <div class="content"></div>
+        <p>
+            <button @click="msgHide">关&nbsp;&nbsp;闭</button>
+        </p>
+    </div>
+</div>
+<!-- 确认框 -->
+<div id="confirm_layer">
+    <div>
+        <div class="dialog_img">
+            <img src="${base}/res/portal/images/dialog_warn.png">
+        </div>
+        <div id="confirm_content"></div>
+        <p>
+            <button @click="confirmHide">取&nbsp;&nbsp;消</button>
+            <button @click="logout">确&nbsp;&nbsp;定</button>
+        </p>
+    </div>
+</div>
+<script src="${base}/res/vendor/jquery-3.1.1.min.js"></script>
+<script src="${base}/res/vendor/vue.js"></script>
+<script src="${base}/res/js/config.js"></script>
+<script src="${base}/res/js/global.js"></script>
+<script src="${base}/res/portal/js/index.js"></script>
+<script src="${base}/res/portal/js/status.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+#home-page {
+    margin: 16px auto;
+}
+.banner {
+    line-height: 0;
+}
+.banner img {
+    width: 100%;
+    position: relative;
+}
+.content-wrap > h3 {
+    color: #8eb2c7;
+    line-height: 1;
+    margin: 14px 0;
+    font-size: 14px;
+}
+.announcement li {
+    border-top: 1px solid #e7eef3;
+}
+.announcement li:last-of-type {
+    border-bottom: 1px solid #e7eef3;
+}
+.announcement a {
+    padding: 23px 14px;
+    color: #363636;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.announcement a span {
+    line-height: 14px;
+}
+.announcement a:hover {
+    background-color: #eff6fb;
+}

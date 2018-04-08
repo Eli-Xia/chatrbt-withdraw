@@ -1,0 +1,17 @@
+<div class="row">
+	<div class="col-md-12">
+		<button id="third-party-auth" class="btn btn-success" style="margin-top: 100px; margin-left: 100px; " >获取公众号接入二维码</button>
+	</div>
+</div>
+
+
+<script>
+
+    $("#third-party-auth").click(function(event) {
+
+        var popup = window.open("","_blank");;  //先发起弹窗（因为是用户触发，所以不会被拦截）
+        $.get("/api/third-party/auth", function(result){
+            popup.location.href = result
+        });
+    })
+</script>

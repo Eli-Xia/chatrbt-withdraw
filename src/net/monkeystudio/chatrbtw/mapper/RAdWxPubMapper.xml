@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RAdWxPubMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.RAdWxPub" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ad_id" property="adId" jdbcType="INTEGER" />
+    <result column="wx_pub_id" property="wxPubId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="is_exclude" property="isExclude" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ad_id, wx_pub_id,state,is_exclude
+  </sql>
+  <sql id="Base_Where">
+    <where>
+      <if test="id != null">
+        and id = #{id}
+      </if>
+      <if test="adId != null">
+        and ad_id = #{adId}
+      </if>
+      <if test="wxPubId != null">
+        and wx_pub_id = #{wxPubId}
+      </if>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="isExclude != null">
+        and is_exclude = #{isExclude}
+      </if>
+    </where>
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from r_ad_wx_pub
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from r_ad_wx_pub
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPub" >
+    insert into r_ad_wx_pub (id, ad_id, wx_pub_id,state,is_exclude
+      )
+    values (#{id,jdbcType=INTEGER}, #{adId,jdbcType=INTEGER}, #{wxPubId,jdbcType=INTEGER},#{state},#{isExclude}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPub" >
+    insert into r_ad_wx_pub
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="adId != null" >
+        ad_id,
+      </if>
+      <if test="wxPubId != null" >
+        wx_pub_id,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="isExclude != null">
+        is_exclude,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="adId != null" >
+        #{adId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubId != null" >
+        #{wxPubId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state},
+      </if>
+      <if test="isExclude != null">
+        #{isExclude},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPub" >
+    update r_ad_wx_pub
+    <set >
+      <if test="adId != null" >
+        ad_id = #{adId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubId != null" >
+        wx_pub_id = #{wxPubId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        state = #{state},
+      </if>
+      <if test="isExclude != null">
+        is_exclude = #{isExclude},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RAdWxPub" >
+    update r_ad_wx_pub
+    set ad_id = #{adId,jdbcType=INTEGER},
+      wx_pub_id = #{wxPubId,jdbcType=INTEGER},
+      state = #{state},
+      is_exclude = #{isExclude}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="countPushAdRecord" resultType="java.lang.Integer">
+    select count(id) FROM r_ad_wx_pub WHERE  ad_id = #{adId}
+  </select>
+
+  <delete id="deleteByAdId" parameterType="java.lang.Integer" >
+    delete from r_ad_wx_pub
+    where ad_id = #{adId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="batchInsert"  parameterType="java.util.List" >
+    insert into r_ad_wx_pub (ad_id,wx_pub_id,state,is_exclude)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.adId}, #{item.wxPubId},#{item.state},#{item.isExclude})
+    </foreach>
+  </insert>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    FROM  r_ad_wx_pub
+  </select>
+
+  <select id="selectByAdId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> FROM  r_ad_wx_pub WHERE  ad_id = #{adId}
+  </select>
+
+
+  <update id="updateAdId"  >
+    update r_ad_wx_pub
+    set ad_id = #{adId,jdbcType=INTEGER}
+    where wx_pub_id = #{wxPubId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByParamMap" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> FROM  r_ad_wx_pub
+    <include refid="Base_Where"/>
+  </select>
+  
+  <update id="updateByParamMap">
+    update r_ad_wx_pub
+    <set >
+      <if test="col.adId != null" >
+        ad_id = #{col.adId,jdbcType=INTEGER},
+      </if>
+      <if test="col.wxPubId != null" >
+        wx_pub_id = #{col.wxPubId,jdbcType=INTEGER},
+      </if>
+      <if test="col.state != null">
+        state = #{col.state},
+      </if>
+      <if test="col.isExclude != null">
+        is_exclude = #{col.isExclude},
+      </if>
+    </set>
+    <where>
+      <if test="con.id != null">
+        and id = #{conParam.id}
+      </if>
+      <if test="con.adId != null">
+        and ad_id = #{con.adId}
+      </if>
+      <if test="con.wxPubId != null">
+        and wx_pub_id = #{con.wxPubId}
+      </if>
+      <if test="con.state != null">
+        and state = #{con.state}
+      </if>
+      <if test="con.isExclude != null">
+        and is_exclude = #{con.isExclude}
+      </if>
+    </where>
+  </update>
+
+  <select id="selectByParam" parameterType="map" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM  r_ad_wx_pub_tag
+    <include refid="Base_Where"/>
+
+  </select>
+</mapper>

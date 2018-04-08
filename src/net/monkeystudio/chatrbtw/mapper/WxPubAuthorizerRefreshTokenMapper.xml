@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxPubAuthorizerRefreshTokenMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="authorizer_appp_id" jdbcType="VARCHAR" property="authorizerAppid" />
+    <result column="authorizer_refresh_token" jdbcType="VARCHAR" property="authorizerRefreshToken" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, authorizer_appp_id, authorizer_refresh_token ,status
+  </sql>
+  <select id="selectByAuthorizerAppId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+      <include refid="Base_Column_List" />
+    from e_pub_authorizer_refresh_token
+      where authorizer_appp_id = #{authorizerAppid,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken">
+    insert into e_pub_authorizer_refresh_token (id, authorizer_appp_id, authorizer_refresh_token ,status)
+    values (
+      #{id,jdbcType=INTEGER},
+      #{authorizerAppid,jdbcType=VARCHAR},
+      #{authorizerRefreshToken,jdbcType=VARCHAR},
+      #{status,jdbcType=INTEGER}
+    )
+  </insert>
+
+  <update id="updateByAppId" parameterType="net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken">
+    update e_pub_authorizer_refresh_token
+      <trim prefix="set" suffixOverrides=",">
+        <if test="authorizerRefreshToken != null">
+          authorizer_refresh_token = #{authorizerRefreshToken,jdbcType=VARCHAR},
+        </if>
+
+        <if test="status != null">
+          status = #{status,jdbcType=INTEGER} ,
+        </if>
+      </trim>
+        where authorizer_appp_id = #{authorizerAppid,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateStatusByAppId" parameterType="java.lang.String">
+    update e_pub_authorizer_refresh_token
+    set status = #{status,jdbcType=VARCHAR}
+    where authorizer_appp_id = #{authorizerAppid,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

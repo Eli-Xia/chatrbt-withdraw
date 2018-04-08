@@ -1,0 +1,66 @@
+package net.monkeystudio.base.utils;
+
+import net.monkeystudio.utils.Log;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+
+/**
+ * Created by bint on 2017/10/27.
+ */
+public class StringUtil {
+
+    private static final String UDER_LINE = "_";
+
+    public static String formatString(String string ){
+
+        Integer index = string.indexOf(UDER_LINE);
+
+        while (index != -1){
+
+            String letter = string.substring(index + 1 , index + 2);
+
+            String capitalLetter = letter.toUpperCase();
+
+            string = string.replaceFirst(UDER_LINE + letter , capitalLetter);
+
+            index = string.indexOf(UDER_LINE);
+
+        }
+
+        return string ;
+    }
+
+
+    public static String readBuffer(BufferedReader br){
+
+        if(br == null){
+            return null;
+        }
+
+        String inputLine;
+        StringBuffer body = new StringBuffer();
+        try {
+            while ((inputLine = br.readLine()) != null) {
+                body.append(inputLine);
+            }
+        } catch (IOException e) {
+            Log.e("IOException: " + e);
+            return "";
+        }finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return body.toString();
+    }
+
+
+    public static void main(String[] args) {
+
+
+    }
+}

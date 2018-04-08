@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.AccountSettingMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.AccountSetting" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="letter_of_delegation_img_url" property="letterOfDelegationImgUrl" jdbcType="VARCHAR" />
+    <result column="account_type" property="accountType" jdbcType="INTEGER" />
+    <result column="account_holder" property="accountHolder" jdbcType="VARCHAR" />
+    <result column="id_number" property="idNumber" jdbcType="VARCHAR" />
+    <result column="account_name" property="accountName" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="bank_fork_name" property="bankForkName" jdbcType="VARCHAR" />
+    <result column="account_number" property="accountNumber" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, letter_of_delegation_img_url, account_type, account_holder, id_number, account_name, 
+    bank_name, province, city, bank_fork_name, account_number, email, user_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_account_setting
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from e_account_setting
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AccountSetting" >
+    insert into e_account_setting (id, letter_of_delegation_img_url, account_type, 
+      account_holder, id_number, account_name, 
+      bank_name, province, city, 
+      bank_fork_name, account_number, email, 
+      user_id)
+    values (#{id,jdbcType=INTEGER}, #{letterOfDelegationImgUrl,jdbcType=VARCHAR}, #{accountType,jdbcType=INTEGER}, 
+      #{accountHolder,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, #{accountName,jdbcType=VARCHAR}, 
+      #{bankName,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{bankForkName,jdbcType=VARCHAR}, #{accountNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.AccountSetting" >
+    insert into e_account_setting
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="letterOfDelegationImgUrl != null" >
+        letter_of_delegation_img_url,
+      </if>
+      <if test="accountType != null" >
+        account_type,
+      </if>
+      <if test="accountHolder != null" >
+        account_holder,
+      </if>
+      <if test="idNumber != null" >
+        id_number,
+      </if>
+      <if test="accountName != null" >
+        account_name,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="bankForkName != null" >
+        bank_fork_name,
+      </if>
+      <if test="accountNumber != null" >
+        account_number,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="letterOfDelegationImgUrl != null" >
+        #{letterOfDelegationImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        #{accountType,jdbcType=INTEGER},
+      </if>
+      <if test="accountHolder != null" >
+        #{accountHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null" >
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="bankForkName != null" >
+        #{bankForkName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNumber != null" >
+        #{accountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.AccountSetting" >
+    update e_account_setting
+    <set >
+      <if test="letterOfDelegationImgUrl != null" >
+        letter_of_delegation_img_url = #{letterOfDelegationImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        account_type = #{accountType,jdbcType=INTEGER},
+      </if>
+      <if test="accountHolder != null" >
+        account_holder = #{accountHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null" >
+        id_number = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        account_name = #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="bankForkName != null" >
+        bank_fork_name = #{bankForkName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNumber != null" >
+        account_number = #{accountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.AccountSetting" >
+    update e_account_setting
+    set letter_of_delegation_img_url = #{letterOfDelegationImgUrl,jdbcType=VARCHAR},
+      account_type = #{accountType,jdbcType=INTEGER},
+      account_holder = #{accountHolder,jdbcType=VARCHAR},
+      id_number = #{idNumber,jdbcType=VARCHAR},
+      account_name = #{accountName,jdbcType=VARCHAR},
+      bank_name = #{bankName,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      bank_fork_name = #{bankForkName,jdbcType=VARCHAR},
+      account_number = #{accountNumber,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByUserId" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM  e_account_setting WHERE user_id = #{userId}
+  </select>
+</mapper>

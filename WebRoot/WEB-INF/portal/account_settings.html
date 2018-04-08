@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="${base}/res/portal/css/account_settings.css"/>
+<script src="${base}/res/vendor/photo-clip/cropbox.js"></script>
+<div id="account_settings">
+    <div id="view">
+        <div id="clip_area">
+            <div class="thumbBox">
+
+            </div>
+            <div class="spinner" style="display: none">Loading...</div>
+        </div>
+        <p><button id="clip_btn">截取</button></p>
+    </div>
+    <h3>账号设置</h3>
+    <div class="form-control">
+                <span>
+                    账号昵称
+                </span>
+        <input type="text" v-model="nickname" id="nickname" :disabled="disable" :class="disable==true?dis:''">
+        <a href="javascript:;" :class="disable==true?'':active" @click="disToggle">
+
+        </a>
+    </div>
+    <div class="upload" v-if="show">
+                <span>
+                    头像
+                </span>
+        <div class="upload-control">
+            <img :src="imgUrl==''?defaultUrl:imgUrl" id="user_img">
+            <p>
+                <button>
+                    上传
+                </button>
+                <input type="file" id="file">
+                <br/>
+                <span>
+                        要求清晰、健康，代表品牌形象<br/>
+                        请勿使用二维码，最大5M
+                        </span>
+            </p>
+        </div>
+    </div>
+    <div class="form-control">
+                <span>
+                    联系邮箱
+                </span>
+        <input type="text" v-model="email" id="email">
+    </div>
+    <div class="form-control">
+                <span>
+                    联系电话
+                </span>
+        <input type="text" v-model="userTel" id="tel">
+    </div>
+    <div class="btn-bottom">
+        <button @click="saveUpdate">
+            保&nbsp;&nbsp;&nbsp;&nbsp;存
+        </button>
+        <button @click="reset">
+            取&nbsp;&nbsp;&nbsp;&nbsp;消
+        </button>
+    </div>
+</div>
+<script src="${base}/res/portal/js/account_settings.js"></script>

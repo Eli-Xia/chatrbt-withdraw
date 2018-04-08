@@ -1,0 +1,49 @@
+<link rel="stylesheet" href="${base}/res/css/wx_pub_tag_mgr.css">
+
+<div id="tag-mgr">
+    <#include "/templates/modal_edit_tag.html" encoding="utf-8">
+    <#include "/templates/modal_del_confirm.html" encoding="utf-8">
+    <div class="box">
+      <div class="box-header">
+        <button type="button" class="btn btn-primary" @click="onAddTag"><i class="fa fa-plus"></i>&nbsp;&nbsp; 新标签</button>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body">
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>标签名称</th>
+                    <th class="gw-tr-width">操作</th>
+                </tr>
+            </thead>
+            <tbody class="gw-tbody">
+                <tr  v-for = "item in pubTagList">
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td class="gw-list-item-oper">
+                        <button type="button" class="btn btn-block btn-info btn-xs btn-gw-show" @click="onEditTag(item)">编辑</button>
+                        <button type="button" class="btn btn-block btn-danger btn-xs btn-gw-show" @click="deleteTag(item.id)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+      <nav class="deco-pagination-container">
+        <ul class="page">
+          <li>
+            <button href="#" aria-label="Previous" class="prev-page" @click="prevPage">
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+          <li id="page"></li>
+          <li>
+            <button href="#" aria-label="Next" class="next-page" @click="nextPage">
+              <span aria-hidden="true">&raquo;</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div><!-- /.box-body -->
+  </div>
+<script src="${base}/res/js/wx_pub_tag_mgr.js" type="text/javascript" charset="utf-8"></script>

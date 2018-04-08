@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.KrKeywordMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.KrKeyword">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="wx_pub_origin_id" jdbcType="VARCHAR" property="wxPubOriginId" />
+    <result column="keywords" jdbcType="VARCHAR" property="keywords" />
+    <result column="response_id" jdbcType="INTEGER" property="responseId" />
+    <result column="rule" jdbcType="INTEGER" property="rule" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, wx_pub_origin_id, keywords, response_id, rule
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_kr_keyword
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+   <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_kr_keyword
+    where 1=1
+     <if test="wxPubOriginId != null">
+       and wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+     </if>
+
+     <if test="wxPubOriginId == null">
+       and wx_pub_origin_id is null
+     </if>
+
+     <if test="keywords != null">
+       and keywords like '%${keywords}%'
+     </if>
+     order by id desc
+    limit #{startIndex}, #{pageSize}
+  </select>
+
+  <select id="count" parameterType="map" resultType="java.lang.Integer">
+    select 
+    	count(*)
+    from e_kr_keyword
+    where 1=1
+      <if test="wxPubOriginId != null">
+       and wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+      </if>
+      <if test="wxPubOriginId == null">
+        and wx_pub_origin_id is null
+      </if>
+      <if test="wxPubOriginId == null">
+        and keywords like '%${keywords}%'
+      </if>
+  </select>
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_kr_keyword
+  </select>
+  <select id="selectByResponseId"  parameterType="map"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from e_kr_keyword
+    where response_id = #{responseId,jdbcType=INTEGER}
+  </select>
+  <select id="countByResponseId"  parameterType="map"  resultType="java.lang.Integer">
+    select 
+    	count(*)
+    from e_kr_keyword
+    where response_id = #{responseId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from e_kr_keyword
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.KrKeyword">
+    insert into e_kr_keyword (id, wx_pub_origin_id, keywords, 
+      response_id, rule)
+    values (#{id,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, 
+      #{responseId,jdbcType=INTEGER}, #{rule,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.KrKeyword">
+    insert into e_kr_keyword
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id,
+      </if>
+      <if test="keywords != null">
+        keywords,
+      </if>
+      <if test="responseId != null">
+        response_id,
+      </if>
+      <if test="rule != null">
+        rule,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null">
+        #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null">
+        #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="responseId != null">
+        #{responseId,jdbcType=INTEGER},
+      </if>
+      <if test="rule != null">
+        #{rule,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.KrKeyword">
+    update e_kr_keyword
+    <set>
+      <if test="wxPubOriginId != null">
+        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null">
+        keywords = #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="responseId != null">
+        response_id = #{responseId,jdbcType=INTEGER},
+      </if>
+      <if test="rule != null">
+        rule = #{rule,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.KrKeyword">
+    update e_kr_keyword
+    set wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      keywords = #{keywords,jdbcType=VARCHAR},
+      response_id = #{responseId,jdbcType=INTEGER},
+      rule = #{rule,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

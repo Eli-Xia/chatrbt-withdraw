@@ -1,0 +1,94 @@
+<link rel="stylesheet" href="${base}/res/portal/css/revenue_count.css"/>
+<div class="revenue-wrap" id="revenue">
+    <h3>收益统计</h3>
+    <div class="yesterday-count">
+        <span>{{yesterdayIncome}}</span>
+        <p>昨日总收益（元）</p>
+    </div>
+    <h3>收益明细</h3>
+    <div class="chart-wrap">
+        <div class="revenue-detail">
+            <span>时间</span>
+            <div class="time-box">
+                <input type="text" id="income_time" readonly>
+            </div>
+            <div class="right">
+                <span>总收益</span>
+                <span>详情</span>
+            </div>
+        </div>
+        <div class="chart-main">
+            <div class="no-data" v-if="incomeList.length==0">
+                <i class="icon iconfont icon-zanwushuju"></i>
+                <p>暂无数据</p>
+            </div>
+            <div class="revenue-list" v-show="incomeList.length>0">
+                <ul>
+                    <li v-for="(index,item) in incomeList">
+                        <span>{{item.date | formatDateTime}}</span>
+                        <div class="right">
+                            <span>{{item.income}}</span>
+                            <b @click="detailModel(item.date,item.income)">详情</b>
+                        </div>
+                    </li>
+                </ul>
+                <div class="income-page">
+                    <button title="首页">首页</button>
+                    <button title="上一页">&laquo;</button>
+                    <div class="web-page">
+                        <button class="active">1</button>
+                    </div>
+                    <button title="下一页">&raquo;</button>
+                    <button title="尾页">尾页</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="detail-layer" v-show="showDetail">
+        <div class="income-time">
+            {{activeTime | formatDateTime}}
+        </div>
+        <div class="total">
+            <h2>{{income}}<span>元</span></h2>
+            <p>合计</p>
+        </div>
+        <div class="total-list">
+            <div class="total-title">
+                <span>公众号</span>
+                <span class="right">收益</span>
+            </div>
+            <div v-if="accountsList.length==0" class="no-account">
+                <i class="icon iconfont icon-zanwushuju"></i>
+                <p>无相关公众号</p>
+            </div>
+            <ul v-else>
+                <li v-for="(index,item) in accountsList.slice((accountPage-1)*4,accountPage*4)">
+                    <img :src="item.wxPubHeadImgUrl || '${base}/res/portal/images/default.png'">{{item.wxPubName}}
+                    <span class="right">{{item.wxDailyIncome}}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="total-footer">
+            <div v-show="accountsList.length>0">
+                <div class="income-page">
+                    <button title="首页">首页</button>
+                    <button title="上一页">&laquo;</button>
+                    <div class="web-page">
+                    </div>
+                    <button title="下一页">&raquo;</button>
+                    <button title="尾页">尾页</button>
+                </div>
+            </div>
+            <div class="right">
+                <button @click="detailModel">关&nbsp;&nbsp;闭</button>
+            </div>
+        </div>
+    </div>
+    <div id="list_layer">
+        <div>
+            <img src="${base}/res/portal/images/loading.gif">
+            <p>加载中...请稍后</p>
+        </div>
+    </div>
+</div>
+<script src="${base}/res/portal/js/revenue_count.js" type="text/javascript" charset="utf-8"></script>

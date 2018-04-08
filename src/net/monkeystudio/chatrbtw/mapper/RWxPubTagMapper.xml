@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RWxPubTagMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.RWxPubTag" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="wx_pub_id" property="wxPubId" jdbcType="INTEGER" />
+    <result column="tag_id" property="tagId" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from `r_wx_pub_tag`
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RWxPubTag" useGeneratedKeys="true" keyProperty="id" >
+    insert into `r_wx_pub_tag` (wx_pub_id, tag_id)
+    values (#{wxPubId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RWxPubTag" >
+    update `r_wx_pub_tag`
+    set wx_pub_id = #{wxPubId,jdbcType=INTEGER},
+      tag_id = #{tagId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, wx_pub_id, tag_id
+    from `r_wx_pub_tag`
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, wx_pub_id, tag_id
+    from `r_wx_pub_tag`
+  </select>
+
+  <delete id="deleteTagsByWxPubId" parameterType="java.lang.Integer" >
+    delete from `r_wx_pub_tag`
+    where wx_pub_id = #{wxPubId}
+  </delete>
+
+
+  <insert id="saveTagsForWxPub" parameterType="map" useGeneratedKeys="true" >
+    insert into r_wx_pub_tag (wx_pub_id,tag_id)
+    values
+    <foreach collection="tagIds" item="item" index="index" separator=",">
+      (#{wxPubId}, #{item})
+    </foreach>
+  </insert>
+</mapper>

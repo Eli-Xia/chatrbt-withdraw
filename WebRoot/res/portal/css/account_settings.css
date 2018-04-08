@@ -1,0 +1,160 @@
+#account_settings {
+    position: relative;
+    height: 100%;
+}
+h3 {
+    padding: 26px 0;
+    font-weight: 500;
+    font-size: 16px;
+}
+.form-control>a{
+    position: relative;
+    top:7px;
+    float: right;
+    width: 14px;
+    height: 14px;
+    background:url("../images/pen.png") no-repeat;
+}
+.form-control>a.active{
+    background:url("../images/pen_blue.png") no-repeat ;
+}
+.form-control input[type='text'] {
+    width: 356px;
+    height: 28px;
+    line-height: 28px;
+    padding-left: 6px;
+    border: 1px solid #e2e2e2;
+    border-radius: 3px;
+}
+.form-control .dis{
+    color: #555;
+    border-color: transparent !important;
+    background-color: #fff !important;
+}
+.upload {
+    margin: 27px 0;
+}
+
+.upload > span {
+    float: left;
+    width: 100px;
+    text-align: left;
+    height: 80px;
+    line-height: 80px;
+}
+
+.upload-control {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    height: 80px;
+}
+
+#user_img{
+    float: left;
+    width: 80px;
+    height: 80px;
+}
+
+.upload-control > p {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    position: relative;
+    margin-left: 24px;
+}
+.upload-control > p>span{
+    font-size: 12px;
+}
+.upload-control > p:hover button{
+
+}
+.upload-control button {
+    width: 56px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 3px;
+    border: 1px solid #e2e2e2;
+    background-color: #fff;
+    color: #bfbfbf;
+    margin-bottom: 8px;
+}
+.upload-control input{
+    position: absolute;
+    top: 0;
+    left:0;
+    height: 28px;
+    opacity: 0;
+    filter: alpha(opacity:0);
+}
+.btn-bottom{
+    margin-top: 50px;
+    text-align: center;
+}
+.btn-bottom>button{
+    display: inline-block;
+    *display:inline;
+    *zoom:1;
+    width: 120px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 16px;
+}
+.btn-bottom>button:first-child{
+    background-color:#28a7fd;
+    border: 1px solid #28a7fd;
+    margin-right: 20px;
+}
+.btn-bottom>button:last-child{
+    background-color:#e84e4e;
+    border: 1px solid #e84e4e;
+}
+#view{
+    position: absolute;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom:0;
+    background: #fff;
+    z-index: 50;
+    display: none;
+    text-align: center;
+}
+#clip_area{
+    position: relative;
+    display: inline-block;
+    height: 400px;
+    width: 400px;
+    border: 1px solid #aaa;
+    background: #fff;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    cursor: move;
+    box-shadow: 4px 4px 12px #B0B0B0;
+}
+.thumbBox{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    margin-top: -100px;
+    margin-left: -100px;
+    border: 1px solid rgb(102, 102, 102);
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+    background: none repeat scroll 0% 0% transparent;
+}
+#clip_btn{
+    height: 38px;
+    line-height: 38px;
+    padding: 0 15px;
+    background: #28a7fd;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    margin-top: 15px;
+}
