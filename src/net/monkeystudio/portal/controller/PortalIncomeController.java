@@ -57,7 +57,7 @@ public class PortalIncomeController extends PortalBaseController{
             return respHelper.authFailed();
         }
 
-        WxPubIncomeCountInfoResp wxPubIncomeCountInfoResp = incomeSerivce.wxPubIncomeCount(wxPubOriginId);
+        WxPubIncomeCountInfoResp wxPubIncomeCountInfoResp = incomeSerivce.wxPubIncomeCount(wxPubOriginId ,userId);
         return respHelper.ok(wxPubIncomeCountInfoResp);
     }
 
@@ -91,7 +91,7 @@ public class PortalIncomeController extends PortalBaseController{
             return respHelper.failed("时间参数有误");
         }
 
-        List<WxPubDailyIncomeItem> wxPubDailyIncomeItemList = incomeSerivce.getDailyListWxPubIncome(wxPubOriginId, startDate, endDate, page);
+        List<WxPubDailyIncomeItem> wxPubDailyIncomeItemList = incomeSerivce.getDailyListWxPubIncome(wxPubOriginId, startDate, endDate, page ,userId);
 
         Integer totalCount = DateUtils.getDiscrepantDays(startDate,endDate);
 
