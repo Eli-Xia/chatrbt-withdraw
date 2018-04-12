@@ -55,6 +55,7 @@
                     </if>
                     and     ad_id = #{adId}
                     and     wx_pub_origin_Id = #{wxPubOriginId}
+                    and     user_id = #{userId}
                 GROUP BY wx_fan_id ) m
     </select>
 
@@ -68,8 +69,6 @@
             click_time desc
         limit
         #{startIndex},#{pageSize}
-
-
     </select>
 
     <select id="count" resultType="java.lang.Integer">
@@ -99,5 +98,41 @@
             WHERE
                 ad_id = #{adId}
             GROUP BY wx_fan_id ) m
+    </select>
+
+
+    <select id="selectAdIdByUserId" parameterType="map" resultType="java.lang.Integer">
+
+        select
+            ad_id
+        FROM
+            e_ad_click_log
+        where
+            1=1
+            <if test="startTime != null">
+                and click_time <![CDATA[  >  ]]> #{startTime}
+            </if>
+
+            <if test="endTime != null">
+                and click_time <![CDATA[  <  ]]> #{endTime}
+            </if>
+        and
+            user_id = #{userId}
+        group by
+            ad_id
+    </select>
+
+
+
+    <select id="countTotalAdClick" parameterType="map" resultType="java.lang.Integer">
+        SELECT count(wx_fan_id)
+            FROM (SELECT wx_fan_id as wx_fan_id
+                    FROM
+                        e_ad_click_log
+                    WHERE 1 = 1
+                    and     ad_id = #{adId}
+                    and     user_id = #{userId}
+                    GROUP BY wx_fan_id ) m
+
     </select>
 </mapper>
