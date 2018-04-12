@@ -2,12 +2,15 @@ package net.monkeystudio.chatrbtw.controller;
 
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.controller.bean.TestGetKrResponse;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.service.*;
+import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -87,6 +90,8 @@ public class TestController {
     @Autowired
     private AdClickLogService adClickLogService;
 
+    @Autowired
+    private WxPubHelper wxPubHelper;
 
     @RequestMapping(value = "/getKrResponse", method = RequestMethod.POST)
     @ResponseBody
@@ -191,7 +196,12 @@ public class TestController {
     @ResponseBody
     public String test9(HttpServletRequest request ){
 
-        Integer result = adClickLogService.getAdTotalClick(25);
+        try {
+            PubBaseInfo pubBaseInfo = wxPubHelper.fetchPubBaseInfo("gh_371e413ded76");
+            Log.d(pubBaseInfo.toString());
+        } catch (BizException e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
