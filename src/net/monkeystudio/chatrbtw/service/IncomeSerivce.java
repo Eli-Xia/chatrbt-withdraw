@@ -135,7 +135,7 @@ public class IncomeSerivce {
             wxPubDailyIncome.setWxPub(wxPub);
 
 
-            BigDecimal dailyIncome = this.getWxPubDailyIncome(wxPubOriginId, date);
+            BigDecimal dailyIncome = this.getWxPubDailyIncome(wxPubOriginId, date ,userId);
             wxPubDailyIncome.setDailyIncome(dailyIncome);
 
             map.put(wxPub.getOriginId(), wxPubDailyIncome);
@@ -149,10 +149,10 @@ public class IncomeSerivce {
      * @param wxPubOriginId
      * @return
      */
-    public BigDecimal getWxPubYesterdayIncome(String wxPubOriginId){
+    public BigDecimal getWxPubYesterdayIncome(String wxPubOriginId ,Integer userId){
         Date yesterday = DateUtils.getYesterday(new Date());
 
-        BigDecimal bigDecimal = this.getWxPubDailyIncome(wxPubOriginId, yesterday);
+        BigDecimal bigDecimal = this.getWxPubDailyIncome(wxPubOriginId, yesterday ,userId);
 
         return bigDecimal;
     }
@@ -176,7 +176,7 @@ public class IncomeSerivce {
      * @param date
      * @return
      */
-    private BigDecimal getWxPubDailyIncome(String wxPubOriginId ,Date date){
+    private BigDecimal getWxPubDailyIncome(String wxPubOriginId ,Date date ,Integer userId){
 
         BigDecimal dailyIncome = new BigDecimal(0);
         List<Integer> adIdList = adClickLogService.getAdIdList(wxPubOriginId,date);
@@ -193,7 +193,7 @@ public class IncomeSerivce {
             Float adClickIncome = ad.getIncome();
             BigDecimal adClickIncomeBD = BigDecimalUtils.getInstance(adClickIncome);
 
-            Integer adClickCount = adClickLogService.countDailyAdClick(wxPubOriginId,date,adId);
+            Integer adClickCount = adClickLogService.countDailyAdClick(wxPubOriginId,date,adId ,userId);
 
             BigDecimal dayTotal = ArithmeticUtils.multiply(adClickIncomeBD, new BigDecimal(adClickCount));
 
@@ -209,7 +209,7 @@ public class IncomeSerivce {
      * @param wxPubOriginId
      * @return
      */
-    private BigDecimal getAdTotalIncome(Integer adId , String wxPubOriginId) throws BizException {
+    private BigDecimal getAdTotalIncome(Integer adId , String wxPubOriginId ,Integer userId) throws BizException {
         Ad ad = adService.getAdById(adId);
 
         if(ad == null){
@@ -220,7 +220,7 @@ public class IncomeSerivce {
         Float adClickIncome = ad.getIncome();
         BigDecimal adClickIncomeBD = BigDecimalUtils.getInstance(adClickIncome);
 
-        Integer adClickCount = adClickLogService.countDailyAdClick(wxPubOriginId,adId);
+        Integer adClickCount = adClickLogService.countDailyAdClick(wxPubOriginId,adId ,userId);
 
         BigDecimal total = ArithmeticUtils.multiply(adClickIncomeBD, new BigDecimal(adClickCount));
 
@@ -249,19 +249,57 @@ public class IncomeSerivce {
         for(WxPub wxPub : wxPubList){
             String wxPubOriginId = wxPub.getOriginId();
 
-            BigDecimal wxPubHistoryTotalIncome = this.getWxPubHistoryTotalIncome(wxPubOriginId);
+            BigDecimal wxPubHistoryTotalIncome = this.getWxPubHistoryTotalIncome(wxPubOriginId,userId);
             totalIncomeBD = totalIncomeBD.add(wxPubHistoryTotalIncome);
         }
 
         return totalIncomeBD;
     }
 
+    public BigDecimal getHistoryTotalIncomeDetail2(Integer userId){
+        List<Integer> adList = adClickLogService.getAdListByUserId(userId);
+
+        BigDecimal total = new BigDecimal(0);
+        for(Integer adId : adList){
+            BigDecimal adIncome = this.getAdUserIncomeByUserId(userId, adId);
+
+
+            total = total.add(adIncome);
+        }
+
+        return total;
+    }
+
+
+    /**
+     * 获取指定广告下的用户收益
+     * @param userId
+     * @return
+     */
+    public BigDecimal getAdUserIncomeByUserId(Integer userId ,Integer adId){
+
+        Integer count = adClickLogService.countTotalUserAd(userId, adId);
+
+        Ad ad = adService.getAdById(adId);
+
+        BigDecimal income = new BigDecimal(0);
+
+
+        BigDecimal countBD = new BigDecimal(count);
+        BigDecimal clickIncome = new BigDecimal(ad.getIncome());
+
+        income = ArithmeticUtils.multiply(countBD, clickIncome);
+
+        return income;
+    }
+
+
     /**
      * 获得用户的历史总收益
      * @param userId
      * @return
      */
-    public UserTotalIncomeDetail getHistoryTotalIncomeDetail(Integer userId) throws BizException {
+    public UserTotalIncomeDetail getHistoryTotalIncomeDetail (Integer userId) throws BizException {
         BigDecimal totalIncomeBD = new BigDecimal(0);
 
         UserTotalIncomeDetail userTotalIncomeDetail = new UserTotalIncomeDetail();
@@ -279,7 +317,7 @@ public class IncomeSerivce {
         for(WxPub wxPub : wxPubList){
             String wxPubOriginId = wxPub.getOriginId();
 
-            List<WxPubAdIncomeOverview> wxPubAdIncomeOverviewList = this.getWxPubTotalDetailIncome(wxPubOriginId);
+            List<WxPubAdIncomeOverview> wxPubAdIncomeOverviewList = this.getWxPubTotalDetailIncome(wxPubOriginId,userId);
 
             WxPubTotalIncomeOverview WxPubTotalIncomeOverview = new WxPubTotalIncomeOverview();
             WxPubTotalIncomeOverview.setWxPubAdIncomeOverviewList(wxPubAdIncomeOverviewList);
@@ -309,14 +347,14 @@ public class IncomeSerivce {
      * @param wxPubOriginId
      * @return
      */
-    public WxPubIncomeCountInfoResp wxPubIncomeCount(String wxPubOriginId) throws BizException {
+    public WxPubIncomeCountInfoResp wxPubIncomeCount(String wxPubOriginId ,Integer userId) throws BizException {
 
         WxPubIncomeCountInfoResp wxPubIncomeCountInfoResp = new WxPubIncomeCountInfoResp();
 
-        BigDecimal historyTotalIncome = this.getWxPubHistoryTotalIncome(wxPubOriginId);
+        BigDecimal historyTotalIncome = this.getWxPubHistoryTotalIncome(wxPubOriginId ,userId);
         wxPubIncomeCountInfoResp.setHistoryTotalIncome(historyTotalIncome.doubleValue());
 
-        BigDecimal yesterdayIncome = this.getWxPubYesterdayIncome(wxPubOriginId);
+        BigDecimal yesterdayIncome = this.getWxPubYesterdayIncome(wxPubOriginId ,userId);
         wxPubIncomeCountInfoResp.setYesterdayIncome(yesterdayIncome.floatValue());
 
         return wxPubIncomeCountInfoResp;
@@ -328,17 +366,16 @@ public class IncomeSerivce {
      * @param wxPubOriginId
      * @return
      */
-    public BigDecimal getWxPubHistoryTotalIncome(String wxPubOriginId) throws BizException {
+    public BigDecimal getWxPubHistoryTotalIncome(String wxPubOriginId ,Integer userId) throws BizException {
 
         BigDecimal historyTotalIncome = new BigDecimal(0);
 
         List<Integer> adIdList = adClickLogService.getAdIdList(wxPubOriginId);
 
         for(Integer adId : adIdList){
-            BigDecimal adTatal = this.getAdTotalIncome(adId, wxPubOriginId);
+            BigDecimal adTatal = this.getAdTotalIncome(adId, wxPubOriginId ,userId);
 
             historyTotalIncome = historyTotalIncome.add(adTatal);
-
         }
 
         return historyTotalIncome;
@@ -351,7 +388,7 @@ public class IncomeSerivce {
      * @return
      * @throws BizException
      */
-    public List<WxPubAdIncomeOverview> getWxPubTotalDetailIncome(String wxPubOriginId) throws BizException {
+    public List<WxPubAdIncomeOverview> getWxPubTotalDetailIncome(String wxPubOriginId , Integer userId) throws BizException {
 
         List<WxPubAdIncomeOverview> wxPubAdIncomeOverviewList = new ArrayList<>();
 
@@ -359,7 +396,7 @@ public class IncomeSerivce {
 
         for(Integer adId : adIdList){
             WxPubAdIncomeOverview wxPubAdIncomeOverview = new WxPubAdIncomeOverview();
-            BigDecimal adTatal = this.getAdTotalIncome(adId, wxPubOriginId);
+            BigDecimal adTatal = this.getAdTotalIncome(adId, wxPubOriginId ,userId);
 
             Ad ad = adService.getAdById(adId);
             wxPubAdIncomeOverview.setAdId(adId);
@@ -380,7 +417,7 @@ public class IncomeSerivce {
      * @param endDate
      * @return
      */
-    public List<WxPubDailyIncomeItem> getDailyListWxPubIncome(String wxPubOriginId , Date startDate , Date endDate ,Integer page) throws BizException{
+    public List<WxPubDailyIncomeItem> getDailyListWxPubIncome(String wxPubOriginId , Date startDate , Date endDate ,Integer page ,Integer userId) throws BizException{
 
         if(!startDate.before(endDate)){
             throw  new BizException("param error!");
@@ -406,9 +443,9 @@ public class IncomeSerivce {
                 endTimestampShow = endTiemstamp;
             }
 
-            wxPubDailyIncomeItemList = this.getWxPubDailyIncomeList(wxPubOriginId,new Date(startTimestampShow),new Date(endTimestampShow));
+            wxPubDailyIncomeItemList = this.getWxPubDailyIncomeList(wxPubOriginId,new Date(startTimestampShow),new Date(endTimestampShow) ,userId);
         }else {
-            wxPubDailyIncomeItemList = this.getWxPubDailyIncomeList(wxPubOriginId,startDate,endDate);
+            wxPubDailyIncomeItemList = this.getWxPubDailyIncomeList(wxPubOriginId,startDate,endDate ,userId);
         }
 
         if(ListUtil.isNotEmpty(wxPubDailyIncomeItemList)){
@@ -426,7 +463,7 @@ public class IncomeSerivce {
      * @param endDate
      * @return
      */
-    private List<WxPubDailyIncomeItem> getWxPubDailyIncomeList(String wxPubOriginId , Date startDate, Date endDate){
+    private List<WxPubDailyIncomeItem> getWxPubDailyIncomeList(String wxPubOriginId , Date startDate, Date endDate ,Integer userId){
 
         List<WxPubDailyIncomeItem> wxPubDailyIncomeItemList = new ArrayList<>();
 
@@ -444,7 +481,7 @@ public class IncomeSerivce {
             Date date = new Date(pointer);
             wxPubDailyIncomeItem.setDate(date);
 
-            BigDecimal income = this.getWxPubDailyIncome(wxPubOriginId, date);
+            BigDecimal income = this.getWxPubDailyIncome(wxPubOriginId, date , userId);
             wxPubDailyIncomeItem.setIncome(income.floatValue());
 
             wxPubDailyIncomeItemList.add(wxPubDailyIncomeItem);
