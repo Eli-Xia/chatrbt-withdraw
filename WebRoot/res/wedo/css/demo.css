@@ -3,6 +3,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+html {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+}
 .container-wrap {
   position: relative;
   width: 100%;
@@ -35,6 +38,13 @@
   bottom: 0;
   z-index: 5;
   display: none;
+}
+p.tips {
+  position: absolute;
+  bottom: -30px;
+  text-align: center;
+  width: 100%;
+  color: #fff;
 }
 #mask {
   position: fixed;
