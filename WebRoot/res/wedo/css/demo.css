@@ -18,9 +18,11 @@
 }
 #share-btn img {
   width: 100%;
+  display: block;
 }
 .container-wrap img {
   width: 100%;
+  display: block;
 }
 .share {
   width: 300px;
