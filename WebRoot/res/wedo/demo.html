@@ -24,14 +24,16 @@
 		var shareBtn = document.getElementById("share-btn");
 		var mask = document.getElementById("mask");
 		var shareImg = document.querySelector('.share');
-		var body = document.getElementsByTagName('body')[0];
+		var html = document.getElementsByTagName('html')[0];
 		shareBtn.onclick = () => {
 			shareImg.style.display = 'block';
 			mask.style.display = 'block';
+			html.style.overflow = 'hidden';
 		}
 		mask.onclick = () => {
 			shareImg.style.display = 'none';
 			mask.style.display = 'none';
+			html.style.overflow = 'auto';
 		}
 	</script>
 </body>
