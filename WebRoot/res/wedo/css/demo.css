@@ -7,22 +7,24 @@
   position: relative;
   width: 100%;
 }
-.container-wrap button {
+#share-btn {
   width: 80px;
-  height: 30px;
+  height: 25px;
   position: fixed;
-  top: 30px;
-  right: 50px;
+  top: 20px;
+  right: 0;
   font-size: 20px;
-  background-color: papayawhip;
   border: none;
+}
+#share-btn img {
+  width: 100%;
 }
 .container-wrap img {
   width: 100%;
 }
 .share {
-  width: 80%;
-  height: 447px;
+  width: 300px;
+  height: 534px;
   margin: auto;
   position: fixed;
   top: 0;
