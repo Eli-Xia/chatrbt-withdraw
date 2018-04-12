@@ -27,6 +27,8 @@ public interface WxPubNewsMapper {
     
     List<WxPubNews> selectByTitle(@Param("wxPubOriginId") String wxPubOriginId, @Param("title") String title, @Param("maxRetCount") Integer maxRetCount);
 
+    List<WxPubNews> selectAllByTitle(@Param("wxPubOriginId") String wxPubOriginId, @Param("title") String title);
+
     int updateByPrimaryKeySelective(WxPubNewsWithBLOBs record);
 
     int updateByPrimaryKeyWithBLOBs(WxPubNewsWithBLOBs record);

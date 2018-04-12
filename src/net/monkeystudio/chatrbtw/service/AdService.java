@@ -18,6 +18,7 @@ import net.monkeystudio.utils.JsonHelper;
 import net.monkeystudio.wx.service.WxPubAuthorizerRefreshTokenService;
 import net.monkeystudio.wx.service.WxPubService;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -445,15 +446,54 @@ public class AdService {
         return AD_PUSH_TYPE_ASK_SEARCH.equals(ad.getPushType());
     }
 
+    private interface Hook{
+        boolean callback(Ad ad);
+    }
+
     /**
-     * 获取为公众号划分的广告
-     * 一个公众号可以被多条广告划分,随机取一条广告进行投放.
-     * 广告投放状态.
-     * @param
+     * 随机获取一条接入指定公众号的问问搜广告
+     * @param wxPub
      * @return
      */
-    public Ad getPushAdByWxPub(WxPub wxPub){
+    public Ad getSmartChatPushAd(WxPub wxPub){
 
+        Ad ad = this.getPushAdTemplate(wxPub, new Hook() {
+
+            @Override
+            public boolean callback(Ad ad) {
+
+                return isAskSearchAd(ad);
+            }
+        });
+
+        return ad;
+    }
+
+    /**
+     * 随机获取一条接入指定公众号的智能聊广告
+     * @param wxPub
+     * @return
+     */
+    public Ad getAskSearchPushAd(WxPub wxPub){
+        Ad ad = this.getPushAdTemplate(wxPub, new Hook() {
+
+            @Override
+            public boolean callback(Ad ad) {
+
+                return !isAskSearchAd(ad);
+            }
+        });
+
+        return ad;
+    }
+
+    /**
+     * 随机获取指定公众号下的一条广告 模板方法
+     * @param wxPub :公众号
+     * @param judgePushTypeHook:callback
+     * @return
+     */
+    private Ad getPushAdTemplate(WxPub wxPub,Hook judgePushTypeHook){
         //未认证及未授权公众号不推送广告
         if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY.intValue()  == wxPub.getVerifyTypeInfo().intValue()
                 || !wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
@@ -478,12 +518,11 @@ public class AdService {
             //满足广告投放的条件:1,智能聊广告(排除问问搜) 2,投放开关开启 3,正在投放 4,公众号主开启投放且公众号未被剔除
             Ad ad = this.getAdById(obj.getAdId());
 
-            if(AD_PUSH_CLOSE.equals(ad.getIsOpen())
+            if(AD_PUSH_CLOSE.equals(ad.getIsOpen()) ||  judgePushTypeHook.callback(ad)
                     ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)
-                    ||  isAskSearchAd(ad)
                     ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())
                     ||  WX_PUB_AD_PUSH_EXCLUDE.equals(obj.getIsExclude())
-                     ){
+                    ){
 
                 continue;
             }
@@ -497,26 +536,27 @@ public class AdService {
         return ads.get(RandomUtil.randomIndex(ads.size()));
     }
 
-    //一个公众号可对应多条广告
+    /**
+     * 获取指定公众号对应的广告集
+     * @param wxPubId
+     * @return
+     */
     public List<Ad> getAdByWxPubId(Integer wxPubId){
 
         Map<String,Object> param = new HashMap<>();
 
         param.put("wxPubId",wxPubId);
 
-        List<RAdWxPub> rAdWxPubs = rAdWxPubMapper.selectByParamMap(param);
+        List<RAdWxPub> rs = rAdWxPubMapper.selectByParamMap(param);
 
         List<Ad> ads = new ArrayList<>();
 
-        if(ListUtil.isEmpty(rAdWxPubs)){
+        if(ListUtil.isEmpty(rs)){
             return ads;
         }
-        List<Integer> ids = rAdWxPubs.stream().map(RAdWxPub::getAdId).collect(Collectors.toList());
+        //遍历公众号-广告关系,得到公众号对应广告集
+        rs.stream().forEach(obj -> ads.add(this.getAdById(obj.getAdId())));
 
-        for(Integer id:ids){
-            Ad ad = this.getAdById(id);
-            ads.add(ad);
-        }
         return ads;
     }
 
@@ -645,37 +685,6 @@ public class AdService {
         return null;
     }
 
-    
-    /**
-     * 根据公众号随机获取一条问问搜广告
-     * @param
-     * @return
-     */
-    public Ad getAskSearchAdByWxPub(WxPub wxPub){
-        //如果是非认证公众号
-        if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY.intValue()  == wxPub.getVerifyTypeInfo().intValue()
-                || !wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
-            return null;
-        }
-
-        Map<String,Object> param = new HashMap<>();
-
-        param.put("wxPubId",wxPub.getId());
-
-        List<RAdWxPub> ret = rAdWxPubMapper.selectByParamMap(param);
-
-        if(ListUtil.isEmpty(ret)){
-            return null;
-        }
-   
-        //过滤出问问搜广告集
-        List<Integer> adIds = ret.stream().filter(obj -> AD_PUSH_TYPE_ASK_SEARCH.equals((this.getAdById(obj.getAdId()).getPushType())))
-                .map(RAdWxPub::getAdId).collect(Collectors.toList());
-
-        Ad ad = this.getAdById(adIds.get(RandomUtil.randomIndex(adIds.size())));
-
-        return ad;
-    }
 
     public void clearCache(){
         List<Ad> ads = adMapper.selectAll();

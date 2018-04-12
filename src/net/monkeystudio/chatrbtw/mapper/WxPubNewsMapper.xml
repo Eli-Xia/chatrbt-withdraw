@@ -71,6 +71,13 @@
     and title like CONCAT(CONCAT('%',#{title}),'%')
     limit #{maxRetCount}
   </select>
+  <select id="selectAllByTitle" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from e_wx_pub_news
+    where wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
+    and title like CONCAT(CONCAT('%',#{title}),'%')
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from e_wx_pub_news
     where id = #{id,jdbcType=INTEGER}

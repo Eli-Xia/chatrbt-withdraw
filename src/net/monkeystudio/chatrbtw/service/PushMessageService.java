@@ -33,7 +33,7 @@ public class PushMessageService {
     private final static Long RECOVER_PERIOD = 48 * 60 * 60L;
 
 
-    public void checkNeedToSendMessageHandle(){
+    /*public void checkNeedToSendMessageHandle(){
         String needToSend = pushMessageConfigService.getByKey(PushMessageConfigService.PUSH_RECOVER_MESSAGE_SWITCH_KEY);
 
         if(needToSend == null){
@@ -45,12 +45,12 @@ public class PushMessageService {
             pushRecoverMessage();
         }
 
-    }
+    }*/
 
     /**
      * 推送挽回粉丝消息
      */
-    private void pushRecoverMessage(){
+    /*private void pushRecoverMessage(){
 
         String content = pushMessageConfigService.getByKey(PushMessageConfigService.PUSH_RECOVER_CONTENT_KEY);
 
@@ -115,6 +115,6 @@ public class PushMessageService {
             String wxOpenId = wxPub.getAppId();
             wxCustomerHelper.sendTextMessageByAuthorizerId(userOpenId ,wxOpenId,content);
         }
-    }
+    }*/
 
 }

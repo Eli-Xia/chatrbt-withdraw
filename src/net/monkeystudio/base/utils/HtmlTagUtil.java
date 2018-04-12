@@ -40,4 +40,14 @@ public class HtmlTagUtil {
         return null;
     }
 
+    /**
+     * 把a标签替换成空字符串
+     * @param content
+     * @return
+     */
+    public static String removeATag(String content){
+        String ret = content.replaceAll("<a href[^>]*>","").replaceAll("</a>","");
+        return ret;
+    }
+
 }
