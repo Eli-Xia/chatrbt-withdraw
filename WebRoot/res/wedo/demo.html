@@ -20,9 +20,14 @@
 	<script>
 		var shareBtn = document.getElementById("share-btn");
 		var mask = document.getElementById("mask");
-		var shareImg = document.querySelector('share');
+		var shareImg = document.querySelector('.share');
 		shareBtn.onclick = () => {
+			shareImg.style.display = 'block';
 			mask.style.display = 'block';
+		}
+		mask.onclick = () => {
+			shareImg.style.display = 'none';
+			mask.style.display = 'none';
 		}
 	</script>
 </body>
