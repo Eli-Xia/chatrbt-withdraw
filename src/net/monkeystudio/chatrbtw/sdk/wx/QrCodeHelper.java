@@ -22,8 +22,8 @@ public class QrCodeHelper {
 
         String url = WxApiUrlUtil.getCreateTempQrCodeUrl(accessToken);
 
-        HttpUtils.postJson(url);
-
+        //HttpUtils.postJson(url);
+        return null;
     }
 
 }
