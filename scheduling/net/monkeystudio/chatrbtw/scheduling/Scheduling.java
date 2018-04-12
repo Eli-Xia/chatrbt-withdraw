@@ -40,11 +40,11 @@ public class Scheduling {
     }
 
     
-    @Scheduled(cron="* 0/30 * * * ? ") //间隔30分钟执行
+    /*@Scheduled(cron="* 0/30 * * * ? ") //间隔30分钟执行
     public void checkNeedToSendMessageHandle(){
         pushMessage.checkNeedToSendMessageHandle();
 
-    }
+    }*/
     
     /**
      * sql心跳
