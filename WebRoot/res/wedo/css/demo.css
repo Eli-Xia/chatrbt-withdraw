@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container-wrap {
+  position: relative;
+  width: 100%;
+}
+.container-wrap button {
+  width: 80px;
+  height: 30px;
+  position: absolute;
+  top: 30px;
+  right: 50px;
+  font-size: 20px;
+}
+.container-wrap img {
+  width: 100%;
+}
+.share {
+  width: 80%;
+  margin: auto;
+  position: absolute;
+  top: 100px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: none;
+}
+#mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  top: 0;
+  left: 0;
+  display: none;
+}

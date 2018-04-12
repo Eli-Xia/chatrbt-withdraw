@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no, email=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<title>斑马</title>
+	<link rel="stylesheet" href="/res/wedo/css/demo.css">
+</head>
+<body>
+	<div class="container-wrap">
+		<button id="share-btn">分享</button>
+		<img src="images/long.jpg" alt="长图">
+		<div class="share">
+			<img src="images/share@2x.png" alt="">
+		</div>
+		<div id="mask"></div>
+	</div>
+
+	<script>
+		var shareBtn = document.getElementById("share-btn");
+		var mask = document.getElementById("mask");
+		var shareImg = document.querySelector('share');
+		shareBtn.onclick = () => {
+			mask.style.display = 'block';
+		}
+	</script>
+</body>
+</html>
