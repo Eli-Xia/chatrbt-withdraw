@@ -1,10 +1,15 @@
 package net.monkeystudio.chatrbtw.controller;
 
+import com.google.zxing.WriterException;
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.QRCodeUtil;
 import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.chatrbtw.sdk.wx.QrCodeHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.QrCodeTicker;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.controller.bean.TestGetKrResponse;
@@ -93,6 +98,9 @@ public class TestController {
     @Autowired
     private WxPubHelper wxPubHelper;
 
+    @Autowired
+    private QrCodeHelper qrCodeHelper;
+
     @RequestMapping(value = "/getKrResponse", method = RequestMethod.POST)
     @ResponseBody
     public String getKrResponse(HttpServletRequest request, @RequestBody TestGetKrResponse testGetKrResponse){
@@ -145,7 +153,19 @@ public class TestController {
     @ResponseBody
     public String test8(HttpServletRequest request) throws BizException {
 
-        wxTextMessageHandler.reviseWxPub("gh_05cd3e6bacbf");
+        String result = qrCodeHelper.createQrCodeByWxPubOriginId("gh_902e0d566cd9", 60 * 30 * 30, QrCodeHelper.QrCodeType.TEMP,"abcd");
+
+        QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
+
+        String url = "http://weixin.qq.com/q/02_H-X4s5beuj1Q4kghq1A";
+        String path = "/Users/bint/Documents/chart_robot/src/chatrbtw/test.jpg";
+        try {
+            QRCodeUtil.createQRCode(qrCodeTicker.getUrl(),path,400,400);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return null;
     }

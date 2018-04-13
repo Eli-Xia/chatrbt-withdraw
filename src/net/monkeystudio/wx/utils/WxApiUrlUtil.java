@@ -21,8 +21,6 @@ public class WxApiUrlUtil {
 
     private final static String FETCH_CREATE_TEMP_QR_CODE_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=#{accessToken}";
 
-
-
     public static String getSendMessageUrl(String accessToken){
         return SEND_MESSAGE_URL.replace("#{ACCESS_TOKEN}", accessToken);
     }
@@ -71,7 +69,6 @@ public class WxApiUrlUtil {
      * @return
      */
     public static String getCreateTempQrCodeUrl(String accessToken){
-
         return FETCH_CREATE_TEMP_QR_CODE_URL.replace("#{accessToken}", accessToken);
     }
 
