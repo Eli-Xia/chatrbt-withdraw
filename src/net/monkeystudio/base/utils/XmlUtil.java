@@ -1,5 +1,6 @@
 package net.monkeystudio.base.utils;
 
+import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
 import net.monkeystudio.wx.mp.beam.Encryp;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -55,27 +56,26 @@ public class XmlUtil {
 
     public static void main(String[] args) {
 
-        String xmlStr = "" +
-                "<xml>" +
-                "  <AppId><![CDATA[wx7dabde16518e57ad]]></AppId> " +
-                "  <CreateTime>1510627962</CreateTime> " +
-                "  <InfoType><![CDATA[unauthorized]]></InfoType>" +
-                "  <AuthorizerAppid><![CDATA[wx880fe0c4ce7c8d35]]></AuthorizerAppid>" +
+
+        String xmlStr3 = "<xml>\n" +
+                "    <ToUserName>< ![CDATA[toUser] ]>\n" +
+                "    </ToUserName>\n" +
+                "    <FromUserName>< ![CDATA[FromUser] ]>\n" +
+                "    </FromUserName>\n" +
+                "    <CreateTime>123456789</CreateTime>\n" +
+                "    <MsgType>< ![CDATA[event] ]>\n" +
+                "    </MsgType>\n" +
+                "    <Event>< ![CDATA[subscribe] ]>\n" +
+                "    </Event>\n" +
+                "    <EventKey>< ![CDATA[qrscene_123123] ]>\n" +
+                "    </EventKey>\n" +
+                "    <Ticket>< ![CDATA[TICKET] ]>\n" +
+                "    </Ticket>\n" +
                 "</xml>";
 
-
-        UnauthorizedResp unauthorizedResp = converyToJavaBean(xmlStr, UnauthorizedResp.class);
-
-        System.out.println(unauthorizedResp.toString());
-        System.out.println(convertToXml(unauthorizedResp));
-
-
-        String xmlStr2 = "<xml>    <AppId><![CDATA[wx7dabde16518e57ad]]></AppId>    <Encrypt><![CDATA[F0gmMTMJReZlDNZGICCTxjXBx7Sfj/e/iTz8cXOow0FfFl0DI7qZOUxoy8meZSAwkn+PYX4zrm4btXrSSLV10vQ9mfxAAYcNKiyZqK+bRigYHHs4U0xBhEfIXONrTB8vOdP/eVWvW5MRJS0uIOgf1XFdnh59Los5f/3ubs/u/BFy45YC8d+e7iWjMlmB81QJ/lPORXcHDCn8Rxe4WFL4JVFvPH7ZOPT+ZowjxBsoyq5zB0ZpKjgHp4jZ8T/WrVdLBwk5EiUWYGvhomfi0N9UlRDn7xCaQjugxHF0yoTWr7+Uj1E5g4QLFZYu7HdLBnCSv9+fllZZflX8bmpM03pWhg==]]></Encrypt></xml>";
-        Encryp encryp = converyToJavaBean(xmlStr2, Encryp.class);
-
-        System.out.println(encryp.toString());
-        System.out.println(convertToXml(encryp));
-
+        xmlStr3 = xmlStr3.replace(" ", "");
+        SubscribeEvent subscribeEvent = converyToJavaBean(xmlStr3, SubscribeEvent.class);
+        Log.d(subscribeEvent.toString());
     }
 
 }

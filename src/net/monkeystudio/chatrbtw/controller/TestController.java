@@ -3,10 +3,7 @@ package net.monkeystudio.chatrbtw.controller;
 import com.google.zxing.WriterException;
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.QRCodeUtil;
-import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.sdk.wx.QrCodeHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.QrCodeTicker;
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -156,11 +154,11 @@ public class TestController {
         String result = qrCodeHelper.createQrCodeByWxPubOriginId("gh_902e0d566cd9", 60 * 30 * 30, QrCodeHelper.QrCodeType.TEMP,"abcd");
 
         QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
-
-        String url = "http://weixin.qq.com/q/02_H-X4s5beuj1Q4kghq1A";
-        String path = "/Users/bint/Documents/chart_robot/src/chatrbtw/test.jpg";
         try {
-            QRCodeUtil.createQRCode(qrCodeTicker.getUrl(),path,400,400);
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(qrCodeTicker.getUrl(),100,100);
+            String str = ImageUtils.encodeImgageToBase64(bufferedImage ,"jpg");
+
+            Log.d("base: " + str);
         } catch (WriterException e) {
             e.printStackTrace();
         } catch (IOException e) {
