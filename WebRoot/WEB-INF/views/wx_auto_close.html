@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>接入微信JSSDK</title>
+</head>
+<script src="${base}/res/vendor/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript">
+    $(function(){
+            var appId=$(sign.appId);
+            var nonceStr=$(sign.nonceStr);
+            var timestamp=$(sign.timestamp);
+            var signature=$(sign.signature);
+            wx.config({
+                debug: true,
+                appId: appId,
+                timestamp: timestamp,
+                nonceStr: nonceStr,
+                signature: signature,
+                jsApiList: [
+                    'checkJsApi',
+                    'closeWindow'
+                ]
+            });
+
+        wx.closeWindow();
+
+    });
+    wx.ready(function () {
+        // 1 判断当前版本是否支持指定 JS 接口，支持批量判断
+        // alert("1230k");
+    });
+
+    wx.error(function (res) {
+        alert(res.errMsg);
+    });
+
+</script>
+<body>
+
+</body>
+</html>

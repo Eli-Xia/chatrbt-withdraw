@@ -2,12 +2,19 @@ package net.monkeystudio.wx.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken;
 import net.monkeystudio.chatrbtw.service.WxEventMessageHandler;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.mp.aes.XMLParse;
+import net.monkeystudio.wx.utils.Sign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Map;
 
 
 @Service
@@ -24,6 +31,12 @@ public class WxService {
 
 	@Autowired
 	private WxEventMessageHandler wxEventMessageHandler;
+
+	@Autowired
+	private CfgService cfgService;
+
+	@Autowired
+	private WxAuthApiService wxAuthApiService;
 
 	public String handleData(String postContent,String timestamp ,String openId ){
 		String content = wxBizMsgCryptService.decryptEvent(postContent);
@@ -95,13 +108,21 @@ public class WxService {
 
 	/**
 	 * 获取24小时内聊天记录次数的统计个数的key
-	 * @param wxPubOpenId
-	 * @param wxUserOpenId
 	 * @return
-	 */
+	 *//*
 	private String getChatLogCountCacheKey(String wxPubOpenId ,String wxUserOpenId){
 
 		return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "ChatLogCount:" + wxPubOpenId + ":" + wxUserOpenId;
+	}*/
+
+	public ModelAndView autoClose(String url,String wxPubAppId) throws BizException{
+		String componentAppId = cfgService.get(GlobalConfigConstants.COMPONENT_APP_ID_KEY);
+		String ticket = wxAuthApiService.getJsApiTicket(wxPubAppId);
+		Map<String, String> config = Sign.sign(ticket, url, componentAppId);
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("sign",config);
+		return mv;
+
 	}
 
 	/**

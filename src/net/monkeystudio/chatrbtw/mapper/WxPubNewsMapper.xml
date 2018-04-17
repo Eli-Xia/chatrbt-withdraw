@@ -69,8 +69,10 @@
     from e_wx_pub_news
     where wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
     and title like CONCAT(CONCAT('%',#{title}),'%')
+    order by create_time desc
     limit #{maxRetCount}
   </select>
+
   <select id="selectAllByTitle" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

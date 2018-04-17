@@ -1,9 +1,6 @@
 package net.monkeystudio.wx.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -252,7 +249,8 @@ public class WxMaterialMgrService {
 		
 		return wxPubNewsMapper.selectByPage(params);
 	}
-	
+
+
 	/**
 	 * 获取公众号素材news总数
 	 * @param params
@@ -262,7 +260,14 @@ public class WxMaterialMgrService {
 		
 		return wxPubNewsMapper.count(params);
 	}
-	
+
+	public Integer getWxPubNewsCount(String wxPubOriginId,String title){
+		Map<String,Object> param = new HashMap<>();
+		param.put("wxPubOriginId",wxPubOriginId);
+		param.put("title",title);
+		return this.getWxPubNewsCount(param);
+	}
+
 	/**
 	 * 设置公众号素材news url2
 	 * @param idUrl2Map

@@ -3,8 +3,14 @@ package net.monkeystudio.chatrbtw.controller;
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.base.utils.URLUtil;
+import net.monkeystudio.base.utils.XmlUtil;
+import net.monkeystudio.chatrbtw.entity.Ad;
+import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.wx.controller.bean.Article;
+import net.monkeystudio.wx.controller.bean.NewsMsgRes;
 import net.monkeystudio.wx.controller.bean.TestGetKrResponse;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.service.*;
@@ -15,12 +21,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by bint on 2017/10/31.
@@ -187,11 +196,74 @@ public class TestController {
     }
 
 
-    @RequestMapping(value = "/test9", method = RequestMethod.GET)
-    @ResponseBody
-    public String test9(HttpServletRequest request ){
 
-        Integer result = adClickLogService.getAdTotalClick(25);
+    @RequestMapping(value = "/test9", method = RequestMethod.GET)
+    public ModelAndView test9(HttpServletRequest request ){
+
+       // Integer result = adClickLogService.getAdTotalClick(25);
+        /*ModelAndView mv = new ModelAndView();
+        mv.setViewName("redirect:/over.html");*/
+        String requestURI = request.getRequestURI();
+        System.out.println(1);
+        return  null;
+    }
+
+    @RequestMapping(value = "/testDate", method = RequestMethod.POST)
+    @ResponseBody
+    public String testDate(HttpServletRequest request ){
+        /*TextMsgRec textMsgRec = new TextMsgRec();
+        textMsgRec.setFromUserName("ovoy80zwgzSHMC4W1nhcGySaekvw");
+        textMsgRec.setToUserName("gh_371e413ded76");
+        textMsgRec.setContent("星座");
+        textMsgRec.setCreateTime(TimeUtil.getCurrentTimestamp());
+        textMsgRec.setMsgType("text");
+
+        wxTextMessageHandler.metarialHandle(textMsgRec);*/
+
+        //wxTextMessageHandler.replyMoreNewsMsg("ovoy80zwgzSHMC4W1nhcGySaekvw","gh_371e413ded76");
+
+
+        // ================================================以下为测试数据===========================================
+
+
+
+        String moreKey = wxTextMessageHandler.getMoreNewsCountCacheKey("ovoy80zwgzSHMC4W1nhcGySaekvw", "星座", "gh_371e413ded76");
+        System.out.println(moreKey);
+        redisCacheTemplate.setString(moreKey,"0");
+        String string = redisCacheTemplate.getString(moreKey);
+
+        String key  = wxTextMessageHandler.getAskSearchCountCacheKey("gh_371e413ded76","ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.del(key);
+        String aa = redisCacheTemplate.getString(key);
+
+        String haha = wxTextMessageHandler.getAskSearchKeywordCacheKey("gh_371e413ded76", "ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.del(haha);
+        String bb = redisCacheTemplate.getString(haha);
+
+        String countCacheKey = wxTextMessageHandler.getChatLogCountCacheKey("gh_371e413ded76", "ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.setString(countCacheKey,"0");
+        String cc = redisCacheTemplate.getString(countCacheKey);
+
+        /*String moreKey = wxTextMessageHandler.getMoreNewsCountCacheKey("oRQue0zoz-0A1bnum5qc-Iq0cLvw", "原创", "gh_902e0d566cd9");
+        System.out.println(moreKey);
+        redisCacheTemplate.setString(moreKey,"0");
+        String string = redisCacheTemplate.getString(moreKey);
+
+        String key  = wxTextMessageHandler.getAskSearchCountCacheKey("gh_902e0d566cd9","oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.del(key);
+        String aa = redisCacheTemplate.getString(key);
+
+        String haha = wxTextMessageHandler.getAskSearchKeywordCacheKey("gh_902e0d566cd9", "oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.del(haha);
+        String bb = redisCacheTemplate.getString(haha);
+
+        String countCacheKey = wxTextMessageHandler.getChatLogCountCacheKey("gh_902e0d566cd9", "oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.setString(countCacheKey,"0");
+        String cc = redisCacheTemplate.getString(countCacheKey);*/
+
+        //# 良人大叔:gh_902e0d566cd9  夏鑫:oRQue0zoz-0A1bnum5qc-Iq0cLvw
+        //  星座  gh_371e413ded76   夏鑫 :ovoy80zwgzSHMC4W1nhcGySaekvw
+        System.out.println(1);
 
         return null;
     }
@@ -201,4 +273,29 @@ public class TestController {
         System.out.println(i);
     }
 
+    public static void main(String[]args){
+        /*NewsMsgRes newsMsgRes = new NewsMsgRes();
+        newsMsgRes.setCreateTime(new Date().getTime());
+        newsMsgRes.setFromUserName("bb");
+        newsMsgRes.setMsgType("cc");
+        newsMsgRes.setToUserName("xiaxin");
+        newsMsgRes.setArticleCount(1);
+
+        List<Article> as = new ArrayList<>();
+        Article article = new Article();
+        article.setDescription("z");
+        article.setPicUrl("x");
+        article.setTitle("c");
+        article.setUrl("v");
+        as.add(article);
+
+        newsMsgRes.setArticles(as);
+
+
+        String s = XmlUtil.convertToXml(newsMsgRes);*/
+        System.out.println(11);
+    }
+
+    private class Singleton1{
+    }
 }

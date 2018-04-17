@@ -471,6 +471,7 @@ public class AdService {
 
     /**
      * 随机获取一条接入指定公众号的智能聊广告
+     * 图文广告
      * @param wxPub
      * @return
      */
@@ -480,7 +481,7 @@ public class AdService {
             @Override
             public boolean callback(Ad ad) {
 
-                return !isAskSearchAd(ad);
+                return !isAskSearchAd(ad) || !AD_NEWS_TYPE.equals(ad.getAdType());
             }
         });
 

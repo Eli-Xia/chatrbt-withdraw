@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
+import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.service.WxAuthApiService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import net.monkeystudio.base.BaseController;
 import net.monkeystudio.wx.service.WxService;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(value = "/wx")
@@ -114,6 +116,21 @@ public class WxController extends BaseController{
 
 		return result;
 	}
+
+
+	@RequestMapping(value = "/auto-close",method = RequestMethod.GET)
+	public ModelAndView clickMoreNews(HttpServletRequest request,@RequestParam("wxPubAppId")String wxPubAppId) throws BizException{
+		Log.d("======= auto-close method  success =======");
+		StringBuffer requestURL = request.getRequestURL();
+		ModelAndView mv = wxService.autoClose(requestURL.toString(),wxPubAppId);
+		mv.setViewName("/views/wx_auto_close");
+		return mv;
+	}
+
+	//oauth branch
+
+
+
 
 
 }
