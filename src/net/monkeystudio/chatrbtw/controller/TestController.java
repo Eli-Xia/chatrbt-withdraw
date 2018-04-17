@@ -197,14 +197,10 @@ public class TestController {
 
 
 
-    @RequestMapping(value = "/test9", method = RequestMethod.GET)
-    public ModelAndView test9(HttpServletRequest request ){
-
-       // Integer result = adClickLogService.getAdTotalClick(25);
-        /*ModelAndView mv = new ModelAndView();
-        mv.setViewName("redirect:/over.html");*/
-        String requestURI = request.getRequestURI();
-        System.out.println(1);
+    @RequestMapping(value = "/test9", method = RequestMethod.POST)
+    @ResponseBody
+    public String test9(HttpServletRequest request ){
+        wxTextMessageHandler.metarialHandle(null,null,null);
         return  null;
     }
 
