@@ -744,7 +744,7 @@ public class WxTextMessageHandler {
         this.handleNewsMsgList(wxPubNewsList,pushArticleList);
 
         //当前素材总数
-        Integer nowCount = qo.getPage() + qo.getPageSize();
+        Integer nowCount = qo.getStartIndex() + qo.getPageSize();
         //判断是否有"更多"图文消息
         if(totalCount.intValue() > nowCount.intValue()){
             Article lastItem = new Article();
