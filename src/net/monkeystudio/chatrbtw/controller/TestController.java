@@ -39,7 +39,7 @@ import java.util.List;
 public class TestController {
 
     @Autowired
-    WxService wxService ;
+    WxService wxService;
 
     @Autowired
     private WxAuthApiService wxAuthApiService;
@@ -52,7 +52,7 @@ public class TestController {
 
     @Autowired
     private WxCustomerServiceService wxCustomerServiceService;
-    
+
     @Autowired
     private KeywordResponseService keywordResponseService;
 
@@ -111,7 +111,7 @@ public class TestController {
 
     @RequestMapping(value = "/getKrResponse", method = RequestMethod.POST)
     @ResponseBody
-    public String getKrResponse(HttpServletRequest request, @RequestBody TestGetKrResponse testGetKrResponse){
+    public String getKrResponse(HttpServletRequest request, @RequestBody TestGetKrResponse testGetKrResponse) {
 
     	/*String result = keywordResponseService.getResponse(testGetKrResponse.getStr(),"xxx");
     	if ( result == null ){
@@ -119,7 +119,6 @@ public class TestController {
     	}*/
         return null;
     }
-
 
 
     @RequestMapping(value = "/test4", method = RequestMethod.GET)
@@ -139,13 +138,11 @@ public class TestController {
     }
 
 
-
-
     @RequestMapping(value = "/test5", method = RequestMethod.GET)
     @ResponseBody
     public String test5(HttpServletRequest request) throws BizException {
 
-        Integer result = ethnicGroupsService.createSecondEthnicGroups("gh_902e0d566cd9","oRQue05TvSudtScEa8wZWtnJK98g");
+        Integer result = ethnicGroupsService.createSecondEthnicGroups("gh_902e0d566cd9", "oRQue05TvSudtScEa8wZWtnJK98g");
         return null;
     }
 
@@ -153,12 +150,12 @@ public class TestController {
     @ResponseBody
     public String test8(HttpServletRequest request) throws BizException {
 
-        String result = qrCodeHelper.createQrCodeByWxPubOriginId("gh_902e0d566cd9", 60 * 30 * 30, QrCodeHelper.QrCodeType.TEMP,"abcd");
+        String result = qrCodeHelper.createQrCodeByWxPubOriginId("gh_902e0d566cd9", 60 * 30 * 30, QrCodeHelper.QrCodeType.TEMP, "abcd");
 
         QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
         try {
-            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(qrCodeTicker.getUrl(),100,100);
-            String str = ImageUtils.encodeImgageToBase64(bufferedImage ,"jpg");
+            BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(qrCodeTicker.getUrl(), 100, 100);
+            String str = ImageUtils.encodeImgageToBase64(bufferedImage, "jpg");
 
             Log.d("base: " + str);
         } catch (WriterException e) {
@@ -171,18 +168,17 @@ public class TestController {
     }
 
 
-
     @RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
     @ResponseBody
-    public String test6(HttpServletRequest request){
+    public String test6(HttpServletRequest request) {
 
-            File file = new File("//Users/bint/Downloads/WechatIMG3278.jpeg");
+        File file = new File("//Users/bint/Downloads/WechatIMG3278.jpeg");
 
-            try {
+        try {
             FileInputStream fileInputStream = new FileInputStream(file);
             byte[] bytes = IOUtils.toByteArray(fileInputStream);
 
-            cosService.uploadFile("/ad/1111.jpeg",bytes);
+            cosService.uploadFile("/ad/1111.jpeg", bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -191,10 +187,9 @@ public class TestController {
     }
 
 
-
     @RequestMapping(value = "/test7", method = RequestMethod.POST)
     @ResponseBody
-    public String test7(HttpServletRequest request ){
+    public String test7(HttpServletRequest request) {
 
         /*List<CustomerNewsItem> customerNewsItemList = new ArrayList<>();
 
@@ -212,17 +207,16 @@ public class TestController {
     }
 
 
-
     @RequestMapping(value = "/test9", method = RequestMethod.POST)
     @ResponseBody
-    public String test9(HttpServletRequest request ){
-        wxTextMessageHandler.metarialHandle(null,null,null);
-        return  null;
+    public String test9(HttpServletRequest request) {
+        wxTextMessageHandler.metarialHandle(null, null, null);
+        return null;
     }
 
     @RequestMapping(value = "/testDate", method = RequestMethod.POST)
     @ResponseBody
-    public String testDate(HttpServletRequest request ){
+    public String testDate(HttpServletRequest request) {
         TextMsgRec textMsgRec = new TextMsgRec();
         textMsgRec.setFromUserName("ovoy80zwgzSHMC4W1nhcGySaekvw");
         textMsgRec.setToUserName("gh_371e413ded76");
@@ -248,20 +242,13 @@ public class TestController {
 
     @RequestMapping(value = "/test10", method = RequestMethod.GET)
     @ResponseBody
-    public String test10(HttpServletRequest request ){
+    public String test10(HttpServletRequest request) {
 
         String content = "<xml>    <ToUserName><![CDATA[gh_371e413ded76]]></ToUserName>    <Encrypt><![CDATA[KVUoxnl9h891OJtg5tV/NpR/XeOYP1FjVC46W4VGcQYS9IA0xVyBU1tE5AwP/U6iQtlUN0ghX9hV0l+4naHKVqjx1i8+RwHwwnqgG40RjGMKUXc2o7AoXFMS8ExnCaAhLnB+J98FewJpgjXXJvoIhfLgJzhg9aV4eSEWRwpRsc2mQlEZqZXffkRsGIZ3enjImtjIJi9wMNfAf9x1Qg1enmXp0WAoqIDRubmdvMClWyAaiJhWaT60Mszzo48KDauPEaSpvTF8NhIvtAgr3fsojWJ+64jugX0aXpl4+RnWpjFp3UzZ97e9tVZw8KffyFx8yKmgd+/mtExZ8//5lC9VlnCw/KcrJHWsvUlCYMGlzTbPj15CD5bWPY3717qaXifwFaEvHy4f34U84/u5mwOHALs5QGr0HAzBxBDrxRGehUWb7IlLaLuu5loRvRdypCwHgx7T+I4i38nxVmiswKZSY+fkoKwaNWqpFVRMSOUYKzqLbFVARiyYfSc1BBTxPFb97SMek4HYUYzZhTTsV65AI43E2P0TrAJ2EkjafZudObpln4dg0OGYpuwSwRE5b94lnUb0FMcg21XXVQH6AqSu92/kViX6oVbvvZUirDi255ORxMMLQUuQ48m4hzFMD9mi]]></Encrypt></xml>";
 
         content = content.replace(" ", "");
-        wxService.handleData(content,"","");
+        wxService.handleData(content, "", "");
 
         return null;
     }
-
-    private static void run(int i){
-        System.out.println(i);
-    }
-
-
-
 }
