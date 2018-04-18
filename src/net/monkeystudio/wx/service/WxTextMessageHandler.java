@@ -19,6 +19,8 @@ import net.monkeystudio.wx.controller.bean.Article;
 import net.monkeystudio.wx.controller.bean.NewsMsgRes;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
+import net.monkeystudio.wx.vo.customerservice.CustomerNews;
+import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import net.monkeystudio.wx.vo.thirtparty.AuthorizerInfo;
 import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
 import net.monkeystudio.wx.vo.thirtparty.WxThirtPartAuthorizationResp;
@@ -709,14 +711,21 @@ public class WxTextMessageHandler {
         //即将的5条问问搜素材
 
 
-        List<Article> pushArticleList = new ArrayList<>();
+        List<CustomerNewsItem> pushArticleList = new ArrayList<>();
 
         //问问搜开头
-        Article startItem = new Article();
+        /*Article startItem = new Article();
+        startItem.setTitle(content+ASK_SEARCH_FIRST_ITEM_TITLE);
+        startItem.setDescription(ASK_SEARCH_FIRST_ITEM_DESC);
+        startItem.setUrl(null);
+        startItem.setPicUrl(null);*/
+
+        CustomerNewsItem startItem = new CustomerNewsItem();
         startItem.setTitle(content+ASK_SEARCH_FIRST_ITEM_TITLE);
         startItem.setDescription(ASK_SEARCH_FIRST_ITEM_DESC);
         startItem.setUrl(null);
         startItem.setPicUrl(null);
+
 
         pushArticleList.add(startItem);
 
@@ -728,11 +737,19 @@ public class WxTextMessageHandler {
         //1,公众号接入问问搜广告  2,问问搜聊天有效期(24小时)内,第一次会插入问问搜广告
         if(askSearchCount == 1 && ad != null){
 
-            Article article = new Article();
+            /*Article article = new Article();
+            article.setPicUrl(ad.getPicUrl());
+            article.setTitle(ad.getTitle());
+            article.setUrl(ad.getUrl());
+            article.setDescription("");*/
+
+            CustomerNewsItem article = new CustomerNewsItem();
             article.setPicUrl(ad.getPicUrl());
             article.setTitle(ad.getTitle());
             article.setUrl(ad.getUrl());
             article.setDescription("");
+
+
             //问问搜第二条插入广告
             pushArticleList.add(article);
         }
@@ -745,7 +762,7 @@ public class WxTextMessageHandler {
         Integer nowCount = qo.getPage() + qo.getPageSize();
         //判断是否有"更多"图文消息
         if(newsCount.intValue() > nowCount.intValue()){
-            Article lastItem = new Article();
+            CustomerNewsItem lastItem = new CustomerNewsItem();
             lastItem.setTitle(ASK_SEARCH_LAST_ITEM_TITLE);
             lastItem.setUrl(null);
             lastItem.setPicUrl(null);
@@ -787,9 +804,9 @@ public class WxTextMessageHandler {
         return resXml;
 
     }
-    private void  handleNewsMsgList(List<WxPubNews> news,List<Article> as){
+    private void  handleNewsMsgList(List<WxPubNews> news,List<CustomerNewsItem> as){
         for (WxPubNews wxPubNews:news){
-            Article article = new Article();
+            CustomerNewsItem article = new CustomerNewsItem();
             article.setDescription("");
             article.setTitle(wxPubNews.getTitle());
             article.setPicUrl(wxPubNews.getThumbUrl());

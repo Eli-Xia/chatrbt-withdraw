@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * Created by bint on 2017/12/11.
  */
 @Service
-public class WxEventMessageHandler {
+public class WxEventMessageHandler extends  WxBaseMessageHandler{
 
     @Autowired
     private PushMessageConfigService pushMessageConfigService;
@@ -44,9 +44,10 @@ public class WxEventMessageHandler {
 
             //如果有启用陪聊宠
             if(rWxPubProductService.isEnable(ProductService.CHAT_PET ,wxPubOriginId)){
-                TextMsgRes textMsgRes = new TextMsgRes();
+                //TextMsgRes textMsgRes = new TextMsgRes();
 
-                textMsgRes.setCreateTime(TimeUtil.getCurrentTimestamp());
+                //textMsgRes.setCreateTime(TimeUtil.getCurrentTimestamp());
+
 
                 String qrSceneStr = subscribeEvent.getEventKey();
 
@@ -58,18 +59,11 @@ public class WxEventMessageHandler {
 
                     ChatPet chatPet = chatPetService.getById(parentId);
                     if(chatPet == null){
-                        String repltContent = "链接有误，请检查链接参数";
+                        String replyContent = "链接有误，请检查链接参数";
 
-                        textMsgRes.setContent(repltContent);
-                        textMsgRes.setMsgType("text");
-
-                        String fromUserName = subscribeEvent.getFromUserName();
-                        textMsgRes.setToUserName(fromUserName);
-
-                        String toUserName = subscribeEvent.getToUserName();
-                        textMsgRes.setFromUserName(toUserName);
-                        return XmlUtil.convertToXml(textMsgRes);
+                        return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
                     }
+
                     chatPetId = chatPetService.generateChatPet(wxPubOriginId,wxFanOpenId,parentId,chatPet.getSecondEthnicGroupsId());
                 }else {
                     Integer ethnicGroupsId = ethnicGroupsService.createSecondEthnicGroups(wxPubOriginId,wxFanOpenId);
@@ -78,9 +72,6 @@ public class WxEventMessageHandler {
 
                     chatPetService.generateChatPet(wxPubOriginId,wxFanOpenId,ethnicGroups.getId(),ethnicGroupsId);
                 }
-
-
-
 
                 /*EthnicGroupsCodeValidatedResp ethnicGroupsCodeValidatedResp = ethnicGroupsService.validated(chatPet.getId(),wxPubOriginId);
 
@@ -99,52 +90,29 @@ public class WxEventMessageHandler {
                 }*/
 
 
-                String repltContent = "您的宠物已经生成，";
+                String replyContent = "您的宠物已经生成，";
 
                 String aTag = HtmlTagUtil.generateATag("www.baidu.com", "点击查看");
-                textMsgRes.setContent(repltContent + aTag);
-                textMsgRes.setMsgType("text");
 
-                String fromUserName = subscribeEvent.getFromUserName();
-                textMsgRes.setToUserName(fromUserName);
+                replyContent = replyContent + aTag;
 
-                String toUserName = subscribeEvent.getToUserName();
-                textMsgRes.setFromUserName(toUserName);
 
-                return XmlUtil.convertToXml(textMsgRes);
+                return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
             }
 
             //如果有开启问问搜
             if(rWxPubProductService.isEnable(ProductService.ASK_SEARCH, wxPubOriginId)){
-                TextMsgRes textMsgRes = new TextMsgRes();
 
-                textMsgRes.setCreateTime(TimeUtil.getCurrentTimestamp());
-                textMsgRes.setContent("欢迎关注我们公众号，回复关键字，即可获取我们公众号的过往历史文章！");
-                textMsgRes.setMsgType("text");
+                String replyContent = "欢迎关注我们公众号，回复关键字，即可获取我们公众号的过往历史文章！";
 
-                String fromUserName = subscribeEvent.getFromUserName();
-                textMsgRes.setToUserName(fromUserName);
-
-                String toUserName = subscribeEvent.getToUserName();
-                textMsgRes.setFromUserName(toUserName);
-
-                return XmlUtil.convertToXml(textMsgRes);
+                return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
             }
 
             if(rWxPubProductService.isEnable(ProductService.SMART_CHAT, wxPubOriginId)){
-                TextMsgRes textMsgRes = new TextMsgRes();
 
-                textMsgRes.setCreateTime(TimeUtil.getCurrentTimestamp());
-                textMsgRes.setContent("欢迎关注我们公众号，我可以陪你聊天哟！！！么么哒～～");
-                textMsgRes.setMsgType("text");
+                String replyContent = "欢迎关注我们公众号，我可以陪你聊天哟！！！么么哒～～";
 
-                String fromUserName = subscribeEvent.getFromUserName();
-                textMsgRes.setToUserName(fromUserName);
-
-                String toUserName = subscribeEvent.getToUserName();
-                textMsgRes.setFromUserName(toUserName);
-
-                return XmlUtil.convertToXml(textMsgRes);
+                return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
             }
 
 

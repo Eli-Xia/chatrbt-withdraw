@@ -1,16 +1,23 @@
 package net.monkeystudio.wx.vo.customerservice;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Created by bint on 2017/12/8.
  */
 public class CustomerNewsItem {
 
+    @XStreamAlias("Title")
     private String title;
+
+    @XStreamAlias("Description")
     private String description;
+
+    @XStreamAlias("Url")
     private String url;
 
+    @XStreamAlias("PicUrl")
     @JsonProperty("picurl")
     private String picUrl;
 

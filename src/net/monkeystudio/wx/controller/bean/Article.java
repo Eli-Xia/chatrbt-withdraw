@@ -3,6 +3,8 @@ package net.monkeystudio.wx.controller.bean;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
+ *
+ * @deprecated 重复类-CustomerNewsItem
  * @author xiaxin
  */
 @XStreamAlias("item")
