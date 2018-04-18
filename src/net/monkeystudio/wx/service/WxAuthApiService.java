@@ -4,12 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.service.GlobalConstants;
-import net.monkeystudio.base.utils.Base64EncodingUtil;
-import net.monkeystudio.base.utils.HttpsHelper;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.URLUtil;
-import net.monkeystudio.base.utils.XmlUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.RWxPubProduct;
 import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken;
@@ -19,7 +14,6 @@ import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.auth.WxPubJoinStatus;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.service.CfgService;
-import net.monkeystudio.utils.JsonHelper;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 import net.monkeystudio.wx.mp.beam.ComponentVerifyTicket;
 import net.monkeystudio.wx.mp.beam.Encryp;
@@ -40,8 +34,6 @@ import java.util.Map;
 //@SuppressWarnings("unused")
 @Service
 public class WxAuthApiService {
-
-    private final static String FETCH_JSAPI_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=#{accessToken}&type=jsapi";
 
     private static String authPageUrl = "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=#{component_appid}&pre_auth_code=#{pre_auth_code}&redirect_uri=#{redirect_uri}";
 
@@ -153,76 +145,7 @@ public class WxAuthApiService {
     }*/
 
 
-    public String getJsApiTicket(String wxPubAppId) throws BizException{
-        Log.d("=============platform appid = {?}===================",wxPubAppId);
-        String jsApiTicketRedisKey = this.getJsApiTicketKey(wxPubAppId);
 
-        String jsApiTicket = redisCacheTemplate.getString(jsApiTicketRedisKey);
-
-        if(jsApiTicket != null){
-            Log.d("==============从cache中获取的jsapi ticket = {?} ==============",jsApiTicket);
-            return jsApiTicket;
-        }
-        JsApiTicketResp resp = this.fetchJsApiTicketResp(wxPubAppId);
-
-        String ticket = resp.getTicket();
-
-        Integer expiresIn = resp.getExpiresIn();
-
-        redisCacheTemplate.setString(jsApiTicketRedisKey,ticket);
-
-        redisCacheTemplate.expire(jsApiTicketRedisKey,expiresIn);
-
-        return ticket;
-    }
-
-    private String replaceJsApiTicketUrl(String string,String accessToken){
-        return string.replace("#{accessToken}",accessToken);
-    }
-
-    public JsApiTicketResp fetchJsApiTicketResp(String wxPubAppId) throws BizException{
-
-        String authorizerAccessToken = this.getAuthorizerAccessToken(wxPubAppId);
-
-        if(authorizerAccessToken == null){
-            throw new BizException("获取不到authorizerAccessToken");
-        }
-        Log.d("=================调用api去获取jsapiticket,此前先获取auth access token  = {?} =========================",authorizerAccessToken);
-        String jsApiTicketUrl = this.replaceJsApiTicketUrl(FETCH_JSAPI_TICKET_URL,authorizerAccessToken);
-
-        Log.d("##### jsApiTicketUrl 调用接口获取ticket的url  = [?] #####",jsApiTicketUrl);
-
-        String response = HttpsHelper.getJson(jsApiTicketUrl);
-
-        Log.d("###### js api json response = [?]",response);
-
-        String errcode = JsonHelper.getStringFromJson(response,"errcode");
-
-        if (!"0".equals(errcode)){
-            Log.d("调用获取jsApiTicket接口失败!");
-            return null;
-        }else{
-            Log.d("================调用获取jsApiTicket接口已经成功了 ,response是正确的了 ===============");
-            JsApiTicketResp resp= new JsApiTicketResp();
-
-            String ticket = JsonHelper.getStringFromJson(response,"ticket");
-
-            Integer expiresIn = Integer.parseInt(JsonHelper.getStringFromJson(response,"expires_in"));
-
-            Log.d("================= response中的ticket = {?} , expireIn = {?}",ticket,expiresIn==null?"":expiresIn.toString());
-
-            resp.setTicket(ticket);
-
-            resp.setExpiresIn(expiresIn);
-
-            return resp;
-        }
-
-    }
-
-    private String getJsApiTicketKey(String wxPubAppId) {
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX+"jsApiTicket:"+wxPubAppId;
-    }
 
 
     /**

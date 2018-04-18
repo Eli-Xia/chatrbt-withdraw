@@ -3,11 +3,9 @@ package net.monkeystudio.wx.service;
 import net.monkeystudio.admin.controller.req.wxpubmaterial.QueryWxPubNewsList;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
-import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.URLUtil;
 import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
@@ -102,7 +100,6 @@ public class WxTextMessageHandler {
     private final static int REPLY_TYPE_WX_MATERIAL = 4;//微信素材回复
     private final static int REPLY_TYPE_BASE_KEYWORDS = 5; //公众关键字回复
     private final static int REPLY_TYPE_TU_LING = 6;  //图灵关键字回复
-    private final static String MORE_NEWS_PATH = "/api/wx/more-news";
 
     private final static int REPLY_MSG_TYPE_TEXT = 1;//文本回复类型
     private final static int REPLY_MSG_TYPE_ARTICLES = 2;//图文回复类型
@@ -122,10 +119,10 @@ public class WxTextMessageHandler {
     private final static Integer COUNT_CACHE_PERIOD = 24 * 60 * 60;
 
     //问问搜"更多"有效时长为半小时
-    private final static Integer MORE_NEWS_VALID_TIME = 60 * 5;
+    private final static Integer MORE_NEWS_VALID_TIME = 60 * 30;
 
     //微信文章推送个数
-    private final static Integer WX_PUB_ARTICLE_PUSH_COUNT = 2;
+    private final static Integer WX_PUB_ARTICLE_PUSH_COUNT = 5;
 
     //图灵机器人名字
     private final static String TU_LING_ROBOT_NAME =  "keendooo";
@@ -661,18 +658,15 @@ public class WxTextMessageHandler {
         return false;
     }
     public String metarialHandle(TextMsgRec textMsgRec,Integer chatLogId,String replySrc){
-        /*String content = textMsgRec.getContent();
+
+        String content = textMsgRec.getContent();
         String wxPubOriginId = textMsgRec.getToUserName();
-        String wxfanOpenId = textMsgRec.getFromUserName();*/
-        String content = "星座";
-        String wxPubOriginId = "gh_371e413ded76";
-        String wxfanOpenId = "ovoy80zwgzSHMC4W1nhcGySaekvw";
+        String wxfanOpenId = textMsgRec.getFromUserName();
 
         String askSearchCountCacheKey = this.getAskSearchCountCacheKey(wxPubOriginId, wxfanOpenId);
-        String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
+        String moreNewsCountCacheKey = null;
         String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId,wxfanOpenId);
 
-        Long count = redisCacheTemplate.incr(moreNewsCountCacheKey);//用于获取分页素材,从1开始
 
         Ad ad = null;//问问搜广告
 
@@ -680,11 +674,14 @@ public class WxTextMessageHandler {
             //获取问问搜广告
             WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
             ad = adService.getAskSearchPushAd(wxPub);
+            moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
+            redisCacheTemplate.del(moreNewsCountCacheKey);//关键字搜索,每次应从第一页开始
             redisCacheTemplate.setString(askSearchKeywordCacheKey,content);
             redisCacheTemplate.expire(askSearchKeywordCacheKey,MORE_NEWS_VALID_TIME);
         }else{
             // "更多"从缓存中获取
             content = redisCacheTemplate.getString(askSearchKeywordCacheKey);
+            moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
         }
         //"更多"时间失效
         if(content == null){
@@ -692,27 +689,25 @@ public class WxTextMessageHandler {
             return "";
         }
 
-        /*if("更多".equals(StringUtils.trimWhitespace(content))){
-            return this.replyMoreNewsMsg(wxfanOpenId,wxPubOriginId);
-        }*/
+        Long count = redisCacheTemplate.incr(moreNewsCountCacheKey);//用于获取分页素材,关键字:从1开始;"更多":累加
 
         //素材总条数
         Integer totalCount = wxMaterialMgrService.getWxPubNewsCount(wxPubOriginId,content);
 
-        //查询本次"更多"素材分页数据
+        //查询本次"更多"素材分页数据,只有"更多"触发分页,关键字总是获取第一页
         QueryWxPubNewsList qo = new QueryWxPubNewsList();
         qo.setTitle(content);
         qo.setWxPubOriginId(wxPubOriginId);
         qo.setPage((count.intValue()-1) * WX_PUB_ARTICLE_PUSH_COUNT);
         qo.setPageSize(WX_PUB_ARTICLE_PUSH_COUNT);
-        Log.d("=============查询素材分页数据 page = {?} ,  pageSize = {?}",qo.getPage().toString(),qo.getPageSize().toString());
+        Log.d("=============查询素材分页数据 page = {?} ,  pageSize = {?} ============",qo.getPage().toString(),qo.getPageSize().toString());
         List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(qo.getMap());
 
 
-        Log.i("############## 素材总条数为  = {?}",totalCount.toString());
+        Log.i("=============== 素材总条数为  = {?} ===================",totalCount.toString());
         //共有多少次"更多"
         Integer moreCount =  totalCount%WX_PUB_ARTICLE_PUSH_COUNT == 0 ? totalCount / WX_PUB_ARTICLE_PUSH_COUNT - 1 : totalCount / WX_PUB_ARTICLE_PUSH_COUNT ;
-        Log.i("############## 该关键字素材回复共会出现 {?} 次\"更多\"",moreCount.toString());
+        Log.i("================ 该关键字素材回复共会出现 {?} 次\"更多\" ===============",moreCount.toString());
         //即将的5条问问搜素材
 
 
@@ -743,7 +738,6 @@ public class WxTextMessageHandler {
             //问问搜第二条插入广告
             pushArticleList.add(article);
         }
-
 
         this.handleNewsMsgList(wxPubNewsList,pushArticleList);
 
@@ -815,291 +809,7 @@ public class WxTextMessageHandler {
 
 
 
-
-/*
-
-    public String metarialHandle(TextMsgRec textMsgRec,Integer chatLogId,String replySrc){
-        String content = textMsgRec.getContent();
-        String wxPubOriginId = textMsgRec.getToUserName();
-        String wxfanOpenId = textMsgRec.getFromUserName();
-
-        if("更多".equals(StringUtils.trimWhitespace(content))){
-            return this.replyMoreNewsMsg(wxfanOpenId,wxPubOriginId);
-        }
-
-        List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNews(wxPubOriginId, content, WX_PUB_ARTICLE_PUSH_COUNT);
-
-        if(wxPubNewsList == null | wxPubNewsList.size() == 0){
-            return null;
-        }
-
-
-        List<Article> pushArticleList = new ArrayList<>();
-
-        //问问搜开头
-        Article startItem = new Article();
-        startItem.setTitle(content+ASK_SEARCH_FIRST_ITEM_TITLE);
-        startItem.setDescription(ASK_SEARCH_FIRST_ITEM_DESC);
-        startItem.setUrl(null);
-        startItem.setPicUrl(null);
-
-        pushArticleList.add(startItem);
-
-
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-        //随机获取一条问问搜图文类型广告
-        Ad ad = adService.getAskSearchPushAd(wxPub);
-
-        String askSearchCountCacheKey = this.getAskSearchCountCacheKey(wxPubOriginId, wxfanOpenId);
-
-        Long askSearchCount = redisCacheTemplate.incr(askSearchCountCacheKey);
-
-        if(askSearchCount == 1){
-            redisCacheTemplate.expire(askSearchCountCacheKey,COUNT_CACHE_PERIOD);
-        }
-        //1,公众号接入问问搜广告  2,问问搜聊天有效期(24小时)内,第一次会插入问问搜广告
-        if(ad != null && askSearchCount == 1){
-
-            Article article = new Article();
-            article.setPicUrl(ad.getPicUrl());
-            article.setTitle(ad.getTitle());
-            article.setUrl(ad.getUrl());
-            article.setDescription("");
-            //问问搜第二条插入广告
-            pushArticleList.add(article);
-        }
-
-        this.handleNewsMsgList(wxPubNewsList,pushArticleList);
-
-        //素材总条数
-        Integer newsCount = wxMaterialMgrService.getWxPubNewsCount(wxPubOriginId,content);
-
-        String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
-        String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId,wxfanOpenId);
-
-        //判断是否有"更多"图文消息
-        if(newsCount.intValue() > WX_PUB_ARTICLE_PUSH_COUNT){
-            Article lastItem = new Article();
-            lastItem.setTitle(ASK_SEARCH_LAST_ITEM_TITLE);
-            lastItem.setUrl(null);
-            lastItem.setPicUrl(null);
-            lastItem.setDescription("");
-            pushArticleList.add(lastItem);
-
-            redisCacheTemplate.setString(moreNewsCountCacheKey,"0");
-            redisCacheTemplate.expire(moreNewsCountCacheKey,MORE_NEWS_VALID_TIME);
-            redisCacheTemplate.setString(askSearchKeywordCacheKey,content);
-            redisCacheTemplate.expire(askSearchKeywordCacheKey,MORE_NEWS_VALID_TIME);
-        }else{
-            //如果没有"更多",再回复更多无响应
-            redisCacheTemplate.del(askSearchKeywordCacheKey);
-            redisCacheTemplate.del(moreNewsCountCacheKey);
-        }
-        //图文消息回复日志
-        StringBuffer chatLogSb = new StringBuffer();
-
-        for(int i = 0; i < pushArticleList.size(); i++){
-            if(i == 0){
-                chatLogSb.append(pushArticleList.get(i).getTitle());
-            }else{
-                chatLogSb.append("\n");
-                chatLogSb.append(pushArticleList.get(i).getTitle());
-            }
-        }
-
-        NewsMsgRes res = new NewsMsgRes();
-        res.setFromUserName(wxPubOriginId);
-        res.setToUserName(wxfanOpenId);
-        res.setMsgType("news");
-        res.setArticles(pushArticleList);
-        res.setCreateTime(new Date().getTime() / 1000L);
-        res.setArticleCount(pushArticleList.size());
-
-        String resXml = XmlUtil.convertToXml(res);
-
-        chatLogService.saveResponse(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), chatLogSb.toString() , chatLogId, replySrc);
-
-         return resXml;
-
-
-    }
-
-    public String replyMoreNewsMsg(String wxfanOpenId, String wxPubOriginId) {
-
-        String resXml = "";
-
-        String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId, wxfanOpenId);
-        String keyword = redisCacheTemplate.getString(askSearchKeywordCacheKey);
-        String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId, keyword, wxPubOriginId);
-        if(keyword == null){
-            redisCacheTemplate.del(moreNewsCountCacheKey);
-            return "";
-        }
-
-        Long count = redisCacheTemplate.incr(moreNewsCountCacheKey);
-
-
-        //素材总条数
-        Integer totalCount = wxMaterialMgrService.getWxPubNewsCount(wxPubOriginId,keyword);
-
-        //查询本次"更多"素材分页数据
-        QueryWxPubNewsList qo = new QueryWxPubNewsList();
-        qo.setTitle(keyword);
-        qo.setWxPubOriginId(wxPubOriginId);
-        qo.setPage(count.intValue() * WX_PUB_ARTICLE_PUSH_COUNT);
-        qo.setPageSize(WX_PUB_ARTICLE_PUSH_COUNT);
-        Log.d("=============查询素材分页数据 page = {?} ,  pageSize = {?}",qo.getPage().toString(),qo.getPageSize().toString());
-        List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(qo.getMap());
-
-
-        Log.i("############## 素材总条数为  = {?}",totalCount.toString());
-        //共有多少次"更多"
-        Integer moreCount =  totalCount%WX_PUB_ARTICLE_PUSH_COUNT == 0 ? totalCount / WX_PUB_ARTICLE_PUSH_COUNT - 1 : totalCount / WX_PUB_ARTICLE_PUSH_COUNT ;
-        Log.i("############## 该关键字素材回复共会出现 {?} 次\"更多\"",moreCount.toString());
-        //即将的5条问问搜素材
-
-        List<Article> pushArticleList = new ArrayList<>();
-
-        //第一条
-        Article startItem = new Article();
-        startItem.setTitle(keyword+ASK_SEARCH_FIRST_ITEM_TITLE);
-        startItem.setDescription(ASK_SEARCH_FIRST_ITEM_DESC);
-        startItem.setUrl(null);
-        startItem.setPicUrl(null);
-        pushArticleList.add(startItem);
-
-        this.handleNewsMsgList(wxPubNewsList,pushArticleList);
-
-        //判断是否需要提醒回复"更多"
-        if(count.intValue() < moreCount.intValue()){
-            Article lastItem = new Article();
-            lastItem.setTitle(ASK_SEARCH_LAST_ITEM_TITLE);
-            lastItem.setUrl(null);
-            lastItem.setPicUrl(null);
-            lastItem.setDescription("");
-            pushArticleList.add(lastItem);
-        }else{
-            redisCacheTemplate.del(askSearchKeywordCacheKey);
-            redisCacheTemplate.del(moreNewsCountCacheKey);
-        }
-
-        NewsMsgRes res = new NewsMsgRes();
-        res.setFromUserName(wxPubOriginId);
-        res.setToUserName(wxfanOpenId);
-        res.setMsgType("news");
-        res.setArticles(pushArticleList);
-        res.setCreateTime(new Date().getTime() / 1000L);
-        res.setArticleCount(pushArticleList.size());
-
-        resXml = XmlUtil.convertToXml(res);
-
-        return resXml;
-
-    }
-
-    */
-
-
-    /*public String metarialHandle(TextMsgRec textMsgRec){
-        String content = textMsgRec.getContent();
-        String wxPubOriginId = textMsgRec.getToUserName();
-        String wxfanOpenId = textMsgRec.getFromUserName();
-
-        if("更多".equals(StringUtils.trimWhitespace(content))){
-            return this.moreNewsHandle(wxfanOpenId,wxPubOriginId);
-        }
-
-        List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNews(wxPubOriginId, content, WX_PUB_ARTICLE_PUSH_COUNT);
-
-        if(wxPubNewsList == null | wxPubNewsList.size() == 0){
-            return null;
-        }
-
-        List<PushArticleListItem> pushArticleList = new LinkedList<>();
-
-        for(WxPubNews wxPubNews : wxPubNewsList){
-            PushArticleListItem pushArticleListItem = BeanUtils.copyBean(wxPubNews, PushArticleListItem.class);
-            pushArticleList.add(pushArticleListItem);
-
-            String realUrl = wxPubNews.getUrl2();
-
-            //如果文章真实地址存在，则用正式的
-            if(realUrl != null){
-                pushArticleListItem.setArticleUrl(realUrl);
-            }else {
-                pushArticleListItem.setArticleUrl(wxPubNews.getUrl());
-            }
-        }
-
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-        //随机获取一条问问搜广告
-        Ad ad = adService.getAskSearchPushAd(wxPub);
-
-        String askSearchCountCacheKey = this.getAskSearchCountCacheKey(wxPubOriginId, wxfanOpenId);
-
-        Long askSearchCount = redisCacheTemplate.incr(askSearchCountCacheKey);
-
-        if(askSearchCount == 1){
-            redisCacheTemplate.expire(askSearchCountCacheKey,COUNT_CACHE_PERIOD);
-        }
-        //1,公众号接入问问搜广告  2,问问搜聊天有效期(24小时)内,第一次会插入问问搜广告
-        if(ad != null && askSearchCount == 1){
-
-
-            PushArticleListItem adItem = new PushArticleListItem();
-
-            WxFan fan = wxFanService.getWxFan(wxPubOriginId,wxfanOpenId);
-
-            String pushUrl = adPushService.getAdPushUrl(ad.getId(),fan.getId(),wxfanOpenId);
-
-            adItem.setArticleUrl(pushUrl);
-
-            adItem.setTitle(HtmlTagUtil.removeATag(ad.getTextContent()));
-            //问问搜第二条插入广告
-            pushArticleList.add(1,adItem);
-        }
-
-        StringBuffer contentBuffer = new StringBuffer();
-
-        for(int i=0;i<pushArticleList.size();i++ ){
-
-            PushArticleListItem item = pushArticleList.get(i);
-            String title = item.getTitle();
-            String url = item.getArticleUrl();
-
-            contentBuffer.append(title);
-            contentBuffer.append(" | ");
-            contentBuffer.append(HtmlTagUtil.generateATag(url,"点击查看"));
-            contentBuffer.append("\n");
-            contentBuffer.append("\n");
-
-        }
-
-        Map<String,Object> param = new HashMap<>();
-        param.put("wxPubOriginId",wxPubOriginId);
-        param.put("title",content);
-        Integer newsCount = wxMaterialMgrService.getWxPubNewsCount(param);
-        //是否插入更多超链接
-        if(newsCount.intValue() > WX_PUB_ARTICLE_PUSH_COUNT){
-            contentBuffer.append("请回复\"更多\"获取更多精彩内容");
-            contentBuffer.append("\n");
-            contentBuffer.append("\n");
-            String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
-            String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId,wxfanOpenId);
-            redisCacheTemplate.setString(moreNewsCountCacheKey,"0");
-            redisCacheTemplate.expire(moreNewsCountCacheKey,MORE_NEWS_VALID_TIME);
-            redisCacheTemplate.setString(askSearchKeywordCacheKey,content);
-            redisCacheTemplate.expire(askSearchKeywordCacheKey,MORE_NEWS_VALID_TIME);
-        }
-
-
-        String replyContent = contentBuffer.toString();
-        replyContent = replyContent.substring(0,replyContent.length()-2);
-
-        return replyContent;
-    }*/
-
-    public String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
+    private String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchKw:" + wxPubOriginId + ":" + wxfanOpenId;
     }
 
@@ -1109,110 +819,18 @@ public class WxTextMessageHandler {
      * @param wxUserOpenId
      * @return
      */
-    public String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
+    private String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
 
-    /**
-     * 问问搜点击"更多"后推送下一页内容
-     * @param wxfanOpenId
-     * @param wxPubOriginId
-     */
-    /*public String moreNewsHandle(String wxfanOpenId, String wxPubOriginId) {
-        String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId, wxfanOpenId);
-        String keyword = redisCacheTemplate.getString(askSearchKeywordCacheKey);
-        String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId, keyword, wxPubOriginId);
-        if(keyword == null){
-            redisCacheTemplate.del(moreNewsCountCacheKey);
-            return "";
-        }
-
-        Long count = redisCacheTemplate.incr(moreNewsCountCacheKey);
-
-        //素材总条数
-        Map<String,Object> param = new HashMap<>();
-        param.put("wxPubOriginId",wxPubOriginId);
-        param.put("title",keyword);
-        Integer totalCount = wxMaterialMgrService.getWxPubNewsCount(param);
-
-        //查询本次"更多"素材分页数据
-        QueryWxPubNewsList qo = new QueryWxPubNewsList();
-        qo.setTitle(keyword);
-        qo.setWxPubOriginId(wxPubOriginId);
-        qo.setPage(count.intValue());
-        qo.setPageSize(WX_PUB_ARTICLE_PUSH_COUNT);
-        List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(qo.getMap());
-
-        Log.i("############## news total count  = {?}",totalCount.toString());
-        //共有多少次"更多"
-        Integer moreCount =  totalCount%WX_PUB_ARTICLE_PUSH_COUNT == 0 ? totalCount / WX_PUB_ARTICLE_PUSH_COUNT - 1 : totalCount / WX_PUB_ARTICLE_PUSH_COUNT ;
-        Log.i("############## The count of more news genduo = {?}",moreCount.toString());
-        //即将的5条问问搜素材
-        List<PushArticleListItem> items = new ArrayList<>();
 
 
-        for(WxPubNews news:wxPubNewsList){
-
-            PushArticleListItem item = new PushArticleListItem();
-
-            item.setTitle(news.getTitle());
-
-            String realUrl = news.getUrl2();
-
-            //如果文章真实地址存在，则用正式的
-            if(realUrl != null){
-                item.setArticleUrl(realUrl);
-            }else {
-                item.setArticleUrl(news.getUrl());
-            }
-            items.add(item);
-        }
-        StringBuffer contentBuffer = new StringBuffer();
-
-        for(int i=0;i<items.size();i++ ){
-
-            PushArticleListItem item = items.get(i);
-            String title = item.getTitle();
-            String url = item.getArticleUrl();
-
-            contentBuffer.append(title);
-            contentBuffer.append(" | ");
-            contentBuffer.append(HtmlTagUtil.generateATag(url,"点击查看"));
-            contentBuffer.append("\n");
-            contentBuffer.append("\n");
-
-
-        }
-        if(count.intValue() < moreCount.intValue()){
-            contentBuffer.append("请回复\"更多\"获取更多精彩内容");
-            contentBuffer.append("\n");
-            contentBuffer.append("\n");
-        }
-        String replyContent = contentBuffer.toString();
-        replyContent = replyContent.substring(0,replyContent.length()-2);
-        return replyContent;
-
-    }*/
-
-    public String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
+    private String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "moreNewsCount:" + wxPubOriginId + ":" + wxfanOpenId + ":" + content ;
     }
 
-    //获取广告推送地址
-    public String getMoreNewsUrl(String wxfanOpenId,String content,String wxPubOriginId){
-        String webDomain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
 
-        String pushUrl = URLUtil.addParam(webDomain+MORE_NEWS_PATH, "content", content);
-
-        pushUrl = URLUtil.addParam(pushUrl,"wxfanOpenId",wxfanOpenId);
-
-        pushUrl = URLUtil.addParam(pushUrl, "wxPubOriginId", wxPubOriginId);
-
-        return pushUrl;
-    }
-
-
-    public String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
+    private String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
 
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "ChatLogCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
