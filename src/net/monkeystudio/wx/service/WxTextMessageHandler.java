@@ -38,7 +38,7 @@ import java.util.List;
  * Created by bint on 2017/12/1.
  */
 @Service
-public class WxTextMessageHandler {
+public class WxTextMessageHandler extends WxBaseMessageHandler{
 
     @Autowired
     private AdService adService;
@@ -307,7 +307,6 @@ public class WxTextMessageHandler {
 
         Integer replyMsgType = REPLY_MSG_TYPE_TEXT;//当前默认消息回复类型为文本类型
 
-
         String wxFanOpenId = textMsgRec.getFromUserName(); //用户openId
         String wxPubOriginId = textMsgRec.getToUserName(); //公众号 originId
         String content = textMsgRec.getContent();
@@ -414,16 +413,11 @@ public class WxTextMessageHandler {
             //文本消息回复
             case REPLY_MSG_TYPE_TEXT:
                 respStr = responseProcessService.responseProecess(wxPubOriginId, respStr);
-                TextMsgRes textMsgRes = new TextMsgRes();//文本消息回复对象
-                textMsgRes.setContent(respStr);
-                textMsgRes.setCreateTime(new Date().getTime() / 1000L);
-                textMsgRes.setMsgType("text");
-                textMsgRes.setToUserName(wxFanOpenId);
-                textMsgRes.setFromUserName(wxPubOriginId);
+
+                String respXml = this.replyTextStr(wxPubOriginId, wxFanOpenId, replySrc);
 
                 try {
-                    String respXml = XmlUtil.convertToXml(textMsgRes);
-                    chatLogService.saveResponse(textMsgRes.getFromUserName(), textMsgRes.getToUserName(), respStr , chatLogId, replySrc);
+                    chatLogService.saveResponse(wxPubOriginId, wxFanOpenId, respStr , chatLogId, replySrc);
                     return respXml;
                 } catch (Exception e) {
                     Log.e(e);
@@ -440,18 +434,6 @@ public class WxTextMessageHandler {
 
     }
 
-    //TODO
-
-    /*private RespStrAndType getRespAndType(TextMsgRec textMsgRec){
-        TextMsgRes textMsgRes = new TextMsgRes();//消息回复对象
-
-        String wxUserOpenId = textMsgRec.getFromUserName(); //用户openId
-        String wxPubOriginId = textMsgRec.getToUserName(); //公众号 originId
-        String content = textMsgRec.getContent();
-
-        return null;
-
-    }*/
 
     /**
      * 智能聊广告处理
@@ -476,7 +458,6 @@ public class WxTextMessageHandler {
 
             String countCacheKey = this.getChatLogCountCacheKey(wxPubOriginId, wxFanOpenId);
             Long count = redisCacheTemplate.incr(countCacheKey);
-            Log.d("===========测试星座秋小 ->当前聊天次数 =  {?} ",count.toString());
 
             if (count == 1) {
                 redisCacheTemplate.expire(countCacheKey, COUNT_CACHE_PERIOD);
@@ -484,15 +465,11 @@ public class WxTextMessageHandler {
 
             String chatAdPushCountStr = pushMessageConfigService.getByKey(PushMessageConfigService.CHAT_PUSH_AD_COUNT_KEY);
             if (chatAdPushCountStr != null) {
-                Log.d("========== 系统规定推送智能聊广告的聊天次数cache key = {?}",chatAdPushCountStr);
                 Long chatAdPushCount = Long.valueOf(chatAdPushCountStr);
                 //如果刚好到达次数，则触发推送广告机制
                 if (count.longValue() == chatAdPushCount.longValue()) {
-                    Log.d("============ 该粉丝当前已达到聊天次数 !!! ===========");
                     if(wxPubVerifyTypeInfo.intValue() == wxPubService.WX_PUB_VERIFY_TYPE_WX_VERIFY){
-                        Log.d("========== 星座已认证 =============");
                         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-                        Log.d("=============粉丝名称 = {?}",wxFan.getNickname());
                         if(wxFan != null){
                             Log.d("============= smart chat ad has been pushed !! ============");
                             this.sendAd(wxFan.getId(), wxPubOriginId);
@@ -504,9 +481,6 @@ public class WxTextMessageHandler {
     }
 
     private Integer getRespType(TextMsgRec textMsgRec) throws BizException {
-
-
-        TextMsgRes textMsgRes = new TextMsgRes();//消息回复对象
 
         String wxFanOpenId = textMsgRec.getFromUserName(); //用户openId
         String wxPubOriginId = textMsgRec.getToUserName(); //公众号 originId
@@ -737,18 +711,11 @@ public class WxTextMessageHandler {
         //1,公众号接入问问搜广告  2,问问搜聊天有效期(24小时)内,第一次会插入问问搜广告
         if(askSearchCount == 1 && ad != null){
 
-            /*Article article = new Article();
-            article.setPicUrl(ad.getPicUrl());
-            article.setTitle(ad.getTitle());
-            article.setUrl(ad.getUrl());
-            article.setDescription("");*/
-
             CustomerNewsItem article = new CustomerNewsItem();
             article.setPicUrl(ad.getPicUrl());
             article.setTitle(ad.getTitle());
             article.setUrl(ad.getUrl());
             article.setDescription("");
-
 
             //问问搜第二条插入广告
             pushArticleList.add(article);
@@ -789,15 +756,16 @@ public class WxTextMessageHandler {
             }
         }
 
-        NewsMsgRes res = new NewsMsgRes();
+        /*NewsMsgRes res = new NewsMsgRes();
         res.setFromUserName(wxPubOriginId);
         res.setToUserName(wxfanOpenId);
         res.setMsgType("news");
         res.setArticles(pushArticleList);
         res.setCreateTime(new Date().getTime() / 1000L);
-        res.setArticleCount(pushArticleList.size());
+        res.setArticleCount(pushArticleList.size());*/
 
-        String resXml = XmlUtil.convertToXml(res);
+
+        String resXml = this.replyNewsStr(wxPubOriginId, wxfanOpenId, pushArticleList);
 
         chatLogService.saveResponse(wxPubOriginId, wxfanOpenId, chatLogSb.toString() , chatLogId, replySrc);
 
