@@ -409,7 +409,7 @@ public class WxPubService {
 		return wxPubMapper.count();
 	}
 
-	public WxPubCountBaseInfo getWxPubCountBaseInfo(String originId){
+	public WxPubCountBaseInfo getWxPubCountBaseInfo(String originId ,Integer userId){
 
         WxPubCountBaseInfo wxPubCountBaseInfo = new WxPubCountBaseInfo();
 
@@ -424,7 +424,7 @@ public class WxPubService {
         wxPubCountBaseInfo.setYesterdayChatNum(chatLogService.getTotalChatNum(originId));
 
 
-		BigDecimal yesterdayIncome =  incomeSerivce.getWxPubYesterdayIncome(originId);
+		BigDecimal yesterdayIncome =  incomeSerivce.getWxPubYesterdayIncome(originId,userId);
 		wxPubCountBaseInfo.setYesterdayIncome(yesterdayIncome.floatValue());
 
         return wxPubCountBaseInfo;

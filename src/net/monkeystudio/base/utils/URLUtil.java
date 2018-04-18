@@ -10,6 +10,7 @@ public class URLUtil {
     private final static String EQUAL_SIGN = "=";
     private final static String FORWARD_SLASH = "/";
 
+
     public static String addParam(String url , String paramName ,String paramValue){
 
         if(url  == null || paramName == null || paramValue == null){

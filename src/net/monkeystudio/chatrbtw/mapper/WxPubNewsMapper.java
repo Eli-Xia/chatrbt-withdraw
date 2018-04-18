@@ -24,8 +24,12 @@ public interface WxPubNewsMapper {
     List<WxPubNews> selectByPage(Map<String,Object> params);
     
     int count(Map<String,Object> params);
-    
+
     List<WxPubNews> selectByTitle(@Param("wxPubOriginId") String wxPubOriginId, @Param("title") String title, @Param("maxRetCount") Integer maxRetCount);
+
+    //List<WxPubNews> selectByPage(@Param("wxPubOriginId") String wxPubOriginId, @Param("title") String title, @Param("startIndex") Integer startIndex,@Param("pageSize")Integer pageSize);
+
+    List<WxPubNews> selectAllByTitle(@Param("wxPubOriginId") String wxPubOriginId, @Param("title") String title);
 
     int updateByPrimaryKeySelective(WxPubNewsWithBLOBs record);
 

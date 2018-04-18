@@ -1,19 +1,16 @@
 package net.monkeystudio.wx.controller;
 
-import java.io.BufferedReader;
-
-import javax.servlet.http.HttpServletRequest;
-
+import net.monkeystudio.base.BaseController;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.wx.service.WxAuthApiService;
-
+import net.monkeystudio.wx.service.WxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.wx.service.WxService;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 
 @Controller
 @RequestMapping(value = "/wx")
@@ -114,6 +111,11 @@ public class WxController extends BaseController{
 
 		return result;
 	}
+
+
+
+
+
 
 
 }

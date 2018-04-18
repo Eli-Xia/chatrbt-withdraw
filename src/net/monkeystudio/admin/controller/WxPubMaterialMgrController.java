@@ -40,23 +40,6 @@ public class WxPubMaterialMgrController {
 	WxPubService wxPubService;
 	
 	/**
-	 * 触发抓取公众号素材
-	 * @param wxPubOriginId
-	 * @return
-	 * @throws Exception
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/fetch", method = RequestMethod.GET)
-    public RespBase fetch(@RequestParam("wxPubOriginId") String wxPubOriginId) throws Exception {
-		
-		wxMaterialMgrService.updateWxPubNewsMaterials(wxPubOriginId);
-		
-		return respHelper.ok();
-	}
-	
-	
-	
-	/**
 	 * 公众号素材列表
 	 * @param wxPubOriginId
 	 * @return

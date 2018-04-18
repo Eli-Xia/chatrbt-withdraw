@@ -54,6 +54,34 @@ public class AdClickLogService {
     }
 
 
+    public Integer countTotalUserAd(Integer userId , Integer adId){
+
+        return adClickLogMapper.countTotalAdClick(userId,adId);
+
+    }
+
+
+    /**
+     * 根据用户id获取统计
+     * @param userId
+     * @return
+     */
+    public List<Integer> getAdListByUserId(Integer userId){
+        return this.getAdListByUserId(userId, null, null);
+    }
+
+    /**
+     * 更具用户id获取统计
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<Integer> getAdListByUserId(Integer userId,Date startDate ,Date endDate){
+        return adClickLogMapper.selectAdIdByUserId(userId, startDate, endDate);
+    }
+
+
     /**
      * 得到公众号下的指定日期的广告点击数
      * @param wxPubOriginId
@@ -61,12 +89,12 @@ public class AdClickLogService {
      * @param adId
      * @return
      */
-    public Integer countDailyAdClick(String wxPubOriginId ,Date date ,Integer adId){
+    public Integer countDailyAdClick(String wxPubOriginId ,Date date ,Integer adId ,Integer userId){
 
         Date startTime = DateUtils.getBeginDate(date);
         Date endTime = DateUtils.getEndDate(date);
 
-        return adClickLogMapper.countDayAdClick(startTime, endTime, wxPubOriginId, adId);
+        return adClickLogMapper.countDayAdClick(startTime, endTime, wxPubOriginId, adId ,userId);
     }
 
     /**
@@ -75,9 +103,9 @@ public class AdClickLogService {
      * @param adId
      * @return
      */
-    public Integer countDailyAdClick(String wxPubOriginId ,Integer adId){
+    public Integer countDailyAdClick(String wxPubOriginId ,Integer adId ,Integer userId){
 
-        return adClickLogMapper.countDayAdClick(null, null, wxPubOriginId, adId);
+        return adClickLogMapper.countDayAdClick(null, null, wxPubOriginId, adId ,userId);
     }
 
     /**

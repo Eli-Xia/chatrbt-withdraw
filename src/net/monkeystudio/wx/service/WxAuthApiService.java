@@ -4,12 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.service.GlobalConstants;
-import net.monkeystudio.base.utils.Base64EncodingUtil;
-import net.monkeystudio.base.utils.HttpsHelper;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.URLUtil;
-import net.monkeystudio.base.utils.XmlUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.RWxPubProduct;
 import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken;
@@ -23,15 +18,7 @@ import net.monkeystudio.wx.mp.aes.XMLParse;
 import net.monkeystudio.wx.mp.beam.ComponentVerifyTicket;
 import net.monkeystudio.wx.mp.beam.Encryp;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;
-import net.monkeystudio.wx.vo.thirtparty.AuthorizerInfo;
-import net.monkeystudio.wx.vo.thirtparty.AuthorizerRefreshTokenResp;
-import net.monkeystudio.wx.vo.thirtparty.ComponentAccessToken;
-import net.monkeystudio.wx.vo.thirtparty.PreAuthCode;
-import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
-import net.monkeystudio.wx.vo.thirtparty.UnauthorizedResp;
-import net.monkeystudio.wx.vo.thirtparty.VerifyTicketInfo;
-import net.monkeystudio.wx.vo.thirtparty.WxThirtPartAuthorizationResp;
-import net.monkeystudio.wx.vo.thirtparty.WxThirtyPartauthorizerInfo;
+import net.monkeystudio.wx.vo.thirtparty.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,7 +118,7 @@ public class WxAuthApiService {
     /**
      * @Deprecated
      *  已经弃用，这个不支持绑定机器人
-     * @param userId
+     * @param
      * @return
      */
     /*public String getAuthPageUrl(Integer userId) throws BizException {
@@ -164,6 +151,9 @@ public class WxAuthApiService {
         return this.getAuthorizerAccessToken(wxPubAppId);
 
     }
+
+
+
 
     /**
      * 获取AuthorizerAccessToken

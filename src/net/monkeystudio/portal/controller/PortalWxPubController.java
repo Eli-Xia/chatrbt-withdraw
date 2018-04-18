@@ -112,7 +112,7 @@ public class PortalWxPubController extends PortalBaseController{
             return respHelper.failed(Msg.text("common.user.nologin"));
         }
 
-        WxPubCountBaseInfo wxPubCountBaseInfo = wxPubService.getWxPubCountBaseInfo(wxPubOrginId);
+        WxPubCountBaseInfo wxPubCountBaseInfo = wxPubService.getWxPubCountBaseInfo(wxPubOrginId,userId);
 
         return respHelper.ok(wxPubCountBaseInfo);
 

@@ -65,7 +65,7 @@ public class AdPushService {
      * @param wxFanOpenId
      * @param adContent
      */
-    private String pushTextAd(String wxPubAppId , String wxFanOpenId ,String adContent){
+    public String pushTextAd(String wxPubAppId , String wxFanOpenId ,String adContent){
 
         String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId, wxPubAppId, adContent);
 
@@ -237,11 +237,12 @@ public class AdPushService {
         return null;
     }
 
+
     public Ad getPushAdByWxPub(String wxPubAppId){
 
         WxPub wxPub = wxPubService.getWxPubByAppId(wxPubAppId);
 
-        return  adService.getPushAdByWxPub(wxPub);
+        return  adService.getSmartChatPushAd(wxPub);
 
     }
 }

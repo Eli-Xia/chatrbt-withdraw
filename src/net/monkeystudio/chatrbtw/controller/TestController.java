@@ -7,12 +7,12 @@ import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.sdk.wx.QrCodeHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.QrCodeTicker;
+import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.controller.bean.TestGetKrResponse;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.service.*;
-import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,13 +20,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by bint on 2017/10/31.
@@ -209,9 +212,23 @@ public class TestController {
     }
 
 
-    @RequestMapping(value = "/test9", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/test9", method = RequestMethod.POST)
     @ResponseBody
     public String test9(HttpServletRequest request ){
+        wxTextMessageHandler.metarialHandle(null,null,null);
+        return  null;
+    }
+
+    @RequestMapping(value = "/testDate", method = RequestMethod.POST)
+    @ResponseBody
+    public String testDate(HttpServletRequest request ){
+        TextMsgRec textMsgRec = new TextMsgRec();
+        textMsgRec.setFromUserName("ovoy80zwgzSHMC4W1nhcGySaekvw");
+        textMsgRec.setToUserName("gh_371e413ded76");
+        textMsgRec.setContent("星座");
+        textMsgRec.setCreateTime(TimeUtil.getCurrentTimestamp());
+        textMsgRec.setMsgType("text");
 
         try {
             ethnicGroupsService.createFounderQrCodeImage("gh_371e413ded76");
@@ -223,7 +240,9 @@ public class TestController {
             e.printStackTrace();
         }
 
+
         return null;
+
     }
 
 
@@ -242,5 +261,7 @@ public class TestController {
     private static void run(int i){
         System.out.println(i);
     }
+
+
 
 }
