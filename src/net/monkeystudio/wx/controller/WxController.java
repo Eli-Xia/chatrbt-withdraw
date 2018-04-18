@@ -8,6 +8,7 @@ import net.monkeystudio.wx.service.WxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.portlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -112,7 +113,21 @@ public class WxController extends BaseController{
 		return result;
 	}
 
+	/**
+	 * 网页授权
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
+	public ModelAndView oauth(HttpServletRequest request){
 
+		ModelAndView mv = new ModelAndView();
+
+		mv.setViewName("redirect:/admin/login.html");
+
+
+		return mv;
+	}
 
 
 
