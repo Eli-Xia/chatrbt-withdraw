@@ -218,6 +218,48 @@ public class TestController {
 
         //wxTextMessageHandler.replyMoreNewsMsg("ovoy80zwgzSHMC4W1nhcGySaekvw","gh_371e413ded76");
 
+        // ================================================以下为测试数据===========================================
+
+
+
+        String moreKey = wxTextMessageHandler.getMoreNewsCountCacheKey("ovoy80zwgzSHMC4W1nhcGySaekvw", "星座", "gh_371e413ded76");
+        System.out.println(moreKey);
+        redisCacheTemplate.setString(moreKey,"0");
+        String string = redisCacheTemplate.getString(moreKey);
+
+        String key  = wxTextMessageHandler.getAskSearchCountCacheKey("gh_371e413ded76","ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.del(key);
+        String aa = redisCacheTemplate.getString(key);
+
+        String haha = wxTextMessageHandler.getAskSearchKeywordCacheKey("gh_371e413ded76", "ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.del(haha);
+        String bb = redisCacheTemplate.getString(haha);
+
+        String countCacheKey = wxTextMessageHandler.getChatLogCountCacheKey("gh_371e413ded76", "ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.setString(countCacheKey,"0");
+        String cc = redisCacheTemplate.getString(countCacheKey);
+
+        /*String moreKey = wxTextMessageHandler.getMoreNewsCountCacheKey("oRQue0zoz-0A1bnum5qc-Iq0cLvw", "原创", "gh_902e0d566cd9");
+        System.out.println(moreKey);
+        redisCacheTemplate.setString(moreKey,"0");
+        String string = redisCacheTemplate.getString(moreKey);
+
+        String key  = wxTextMessageHandler.getAskSearchCountCacheKey("gh_902e0d566cd9","oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.del(key);
+        String aa = redisCacheTemplate.getString(key);
+
+        String haha = wxTextMessageHandler.getAskSearchKeywordCacheKey("gh_902e0d566cd9", "oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.del(haha);
+        String bb = redisCacheTemplate.getString(haha);
+
+        String countCacheKey = wxTextMessageHandler.getChatLogCountCacheKey("gh_902e0d566cd9", "oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.setString(countCacheKey,"0");
+        String cc = redisCacheTemplate.getString(countCacheKey);*/
+
+        //# 良人大叔:gh_902e0d566cd9  夏鑫:oRQue0zoz-0A1bnum5qc-Iq0cLvw
+        //  星座  gh_371e413ded76   夏鑫 :ovoy80zwgzSHMC4W1nhcGySaekvw
+        System.out.println(1);
+
         return null;
 
     }

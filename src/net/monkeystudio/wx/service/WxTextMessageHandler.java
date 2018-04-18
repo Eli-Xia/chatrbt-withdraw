@@ -809,7 +809,7 @@ public class WxTextMessageHandler {
 
 
 
-    private String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
+    public String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchKw:" + wxPubOriginId + ":" + wxfanOpenId;
     }
 
@@ -819,18 +819,18 @@ public class WxTextMessageHandler {
      * @param wxUserOpenId
      * @return
      */
-    private String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
+    public String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
 
 
 
-    private String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
+    public String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "moreNewsCount:" + wxPubOriginId + ":" + wxfanOpenId + ":" + content ;
     }
 
 
-    private String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
+    public String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
 
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "ChatLogCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
