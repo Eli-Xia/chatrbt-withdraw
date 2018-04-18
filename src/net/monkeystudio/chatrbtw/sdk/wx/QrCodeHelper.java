@@ -66,7 +66,7 @@ public class QrCodeHelper {
 
 
     public enum QrCodeType{
-        TEMP("QR_SCENE"),PERPETUAL("QR_LIMIT_STR_SCENE");
+        TEMP("QR_STR_SCENE"),PERPETUAL("QR_LIMIT_STR_SCENE");
 
         private String type;
 

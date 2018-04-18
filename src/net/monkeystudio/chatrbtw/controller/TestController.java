@@ -99,6 +99,13 @@ public class TestController {
     @Autowired
     private QrCodeHelper qrCodeHelper;
 
+    @Autowired
+    private EthnicGroupsService ethnicGroupsService;
+
+    @Autowired
+    private WxEventMessageHandler wxEventMessageHandler;
+
+
     @RequestMapping(value = "/getKrResponse", method = RequestMethod.POST)
     @ResponseBody
     public String getKrResponse(HttpServletRequest request, @RequestBody TestGetKrResponse testGetKrResponse){
@@ -135,15 +142,7 @@ public class TestController {
     @ResponseBody
     public String test5(HttpServletRequest request) throws BizException {
 
-        TextMsgRec textMsgRec = new TextMsgRec();
-        textMsgRec.setFromUserName("ovoy806BiqXBdhSacB7dmClbRvF0");
-        textMsgRec.setToUserName("gh_371e413ded76");
-        textMsgRec.setContent("星座");
-        textMsgRec.setCreateTime(TimeUtil.getCurrentTimestamp());
-        textMsgRec.setMsgType("text");
-
-        wxTextMessageHandler.textMsgRecHandle(textMsgRec);
-
+        Integer result = ethnicGroupsService.createSecondEthnicGroups("gh_902e0d566cd9","oRQue05TvSudtScEa8wZWtnJK98g");
         return null;
     }
 
@@ -215,15 +214,30 @@ public class TestController {
     public String test9(HttpServletRequest request ){
 
         try {
-            PubBaseInfo pubBaseInfo = wxPubHelper.fetchPubBaseInfo("gh_371e413ded76");
-            Log.d(pubBaseInfo.toString());
+            ethnicGroupsService.createFounderQrCodeImage("gh_371e413ded76");
         } catch (BizException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WriterException e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
+
+    @RequestMapping(value = "/test10", method = RequestMethod.GET)
+    @ResponseBody
+    public String test10(HttpServletRequest request ){
+
+        String content = "<xml>    <ToUserName><![CDATA[gh_371e413ded76]]></ToUserName>    <Encrypt><![CDATA[KVUoxnl9h891OJtg5tV/NpR/XeOYP1FjVC46W4VGcQYS9IA0xVyBU1tE5AwP/U6iQtlUN0ghX9hV0l+4naHKVqjx1i8+RwHwwnqgG40RjGMKUXc2o7AoXFMS8ExnCaAhLnB+J98FewJpgjXXJvoIhfLgJzhg9aV4eSEWRwpRsc2mQlEZqZXffkRsGIZ3enjImtjIJi9wMNfAf9x1Qg1enmXp0WAoqIDRubmdvMClWyAaiJhWaT60Mszzo48KDauPEaSpvTF8NhIvtAgr3fsojWJ+64jugX0aXpl4+RnWpjFp3UzZ97e9tVZw8KffyFx8yKmgd+/mtExZ8//5lC9VlnCw/KcrJHWsvUlCYMGlzTbPj15CD5bWPY3717qaXifwFaEvHy4f34U84/u5mwOHALs5QGr0HAzBxBDrxRGehUWb7IlLaLuu5loRvRdypCwHgx7T+I4i38nxVmiswKZSY+fkoKwaNWqpFVRMSOUYKzqLbFVARiyYfSc1BBTxPFb97SMek4HYUYzZhTTsV65AI43E2P0TrAJ2EkjafZudObpln4dg0OGYpuwSwRE5b94lnUb0FMcg21XXVQH6AqSu92/kViX6oVbvvZUirDi255ORxMMLQUuQ48m4hzFMD9mi]]></Encrypt></xml>";
+
+        content = content.replace(" ", "");
+        wxService.handleData(content,"","");
+
+        return null;
+    }
 
     private static void run(int i){
         System.out.println(i);
