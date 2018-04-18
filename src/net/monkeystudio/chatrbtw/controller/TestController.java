@@ -245,9 +245,8 @@ public class TestController {
 
         newsMsgRes.setArticles(as);
 
-
         String s = XmlUtil.convertToXml(newsMsgRes);*/
-        System.out.println(11);
+        
     }
 
 }

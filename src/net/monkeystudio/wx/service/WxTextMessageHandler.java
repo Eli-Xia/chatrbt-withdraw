@@ -430,8 +430,6 @@ public class WxTextMessageHandler {
 
             case REPLY_MSG_TYPE_ARTICLES:
 
-                chatLogService.saveResponse(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), "图文消息测试" , chatLogId, replySrc);
-
                 return respStr;
 
         }
