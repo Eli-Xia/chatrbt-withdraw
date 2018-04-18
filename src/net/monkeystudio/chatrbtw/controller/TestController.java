@@ -1,14 +1,18 @@
 package net.monkeystudio.chatrbtw.controller;
 
+import net.monkeystudio.admin.controller.req.wxpubmaterial.QueryWxPubNewsList;
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.URLUtil;
 import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.entity.Ad;
 import net.monkeystudio.chatrbtw.entity.WxPub;
+import net.monkeystudio.chatrbtw.entity.WxPubNews;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.controller.bean.Article;
 import net.monkeystudio.wx.controller.bean.NewsMsgRes;
 import net.monkeystudio.wx.controller.bean.TestGetKrResponse;
@@ -17,6 +21,7 @@ import net.monkeystudio.wx.service.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,9 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by bint on 2017/10/31.
@@ -61,6 +64,8 @@ public class TestController {
 
     @Autowired
     private AdPushService adPushService;
+    @Autowired
+    private WxMaterialMgrService wxMaterialMgrService;
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
@@ -95,6 +100,9 @@ public class TestController {
 
     @Autowired
     private AdClickLogService adClickLogService;
+
+    @Autowired
+    private RespHelper respHelper;
 
 
     @RequestMapping(value = "/getKrResponse", method = RequestMethod.POST)
@@ -199,9 +207,29 @@ public class TestController {
 
     @RequestMapping(value = "/test9", method = RequestMethod.POST)
     @ResponseBody
-    public String test9(HttpServletRequest request ){
+    public RespBase test9(HttpServletRequest request ){
         wxTextMessageHandler.metarialHandle(null,null,null);
-        return  null;
+        /*QueryWxPubNewsList qo = new QueryWxPubNewsList();
+        qo.setTitle("星座");
+        qo.setWxPubOriginId("gh_371e413ded76");
+        qo.setPage(2);
+        qo.setPageSize(5);
+        Log.d("=============查询素材分页数据 page = {?} , startIndex = {?} ,  pageSize = {?} ============",qo.getPage().toString(),qo.getStartIndex().toString(),qo.getPageSize().toString());
+        *//*Map<String,Object> param = new HashMap<>();
+        param.put("wxPubOriginId","gh_371e413ded76");
+        param.put("title","星座");
+        param.put("startIndex",5);
+        param.put("pageSize",5);*//*
+        Map<String,Object> param = qo.getMap();
+        List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(param);
+        if(!CollectionUtils.isEmpty(wxPubNewsList)){
+            for(WxPubNews wb:wxPubNewsList){
+                System.out.println(wb.getTitle());
+            }
+        }
+        System.out.println(1);*/
+        return respHelper.ok() ;
+
     }
 
     @RequestMapping(value = "/testDate", method = RequestMethod.POST)
@@ -217,6 +245,48 @@ public class TestController {
         wxTextMessageHandler.metarialHandle(textMsgRec);*/
 
         //wxTextMessageHandler.replyMoreNewsMsg("ovoy80zwgzSHMC4W1nhcGySaekvw","gh_371e413ded76");
+
+        // ================================================以下为测试数据===========================================
+
+
+
+        String moreKey = wxTextMessageHandler.getMoreNewsCountCacheKey("ovoy80zwgzSHMC4W1nhcGySaekvw", "星座", "gh_371e413ded76");
+        System.out.println(moreKey);
+        redisCacheTemplate.setString(moreKey,"0");
+        String string = redisCacheTemplate.getString(moreKey);
+
+        String key  = wxTextMessageHandler.getAskSearchCountCacheKey("gh_371e413ded76","ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.del(key);
+        String aa = redisCacheTemplate.getString(key);
+
+        String haha = wxTextMessageHandler.getAskSearchKeywordCacheKey("gh_371e413ded76", "ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.del(haha);
+        String bb = redisCacheTemplate.getString(haha);
+
+        String countCacheKey = wxTextMessageHandler.getChatLogCountCacheKey("gh_371e413ded76", "ovoy80zwgzSHMC4W1nhcGySaekvw");
+        redisCacheTemplate.setString(countCacheKey,"0");
+        String cc = redisCacheTemplate.getString(countCacheKey);
+
+        /*String moreKey = wxTextMessageHandler.getMoreNewsCountCacheKey("oRQue0zoz-0A1bnum5qc-Iq0cLvw", "原创", "gh_902e0d566cd9");
+        System.out.println(moreKey);
+        redisCacheTemplate.setString(moreKey,"0");
+        String string = redisCacheTemplate.getString(moreKey);
+
+        String key  = wxTextMessageHandler.getAskSearchCountCacheKey("gh_902e0d566cd9","oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.del(key);
+        String aa = redisCacheTemplate.getString(key);
+
+        String haha = wxTextMessageHandler.getAskSearchKeywordCacheKey("gh_902e0d566cd9", "oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.del(haha);
+        String bb = redisCacheTemplate.getString(haha);
+
+        String countCacheKey = wxTextMessageHandler.getChatLogCountCacheKey("gh_902e0d566cd9", "oRQue0zoz-0A1bnum5qc-Iq0cLvw");
+        redisCacheTemplate.setString(countCacheKey,"0");
+        String cc = redisCacheTemplate.getString(countCacheKey);*/
+
+        //# 良人大叔:gh_902e0d566cd9  夏鑫:oRQue0zoz-0A1bnum5qc-Iq0cLvw
+        //  星座  gh_371e413ded76   夏鑫 :ovoy80zwgzSHMC4W1nhcGySaekvw
+        System.out.println(1);
 
         return null;
 

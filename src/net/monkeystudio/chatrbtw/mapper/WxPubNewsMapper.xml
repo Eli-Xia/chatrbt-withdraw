@@ -46,7 +46,7 @@
         and wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR}
     </if>
     <if test="title != null">
-        and title like CONCAT(CONCAT('%',#{title}),'%')
+        and title like CONCAT('%',#{title},'%')
     </if>
     order by create_time desc
     limit #{startIndex},#{pageSize}
