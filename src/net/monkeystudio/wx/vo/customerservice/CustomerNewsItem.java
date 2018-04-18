@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Created by bint on 2017/12/8.
  */
+@XStreamAlias("item")
 public class CustomerNewsItem {
 
     @XStreamAlias("Title")

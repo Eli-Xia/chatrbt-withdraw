@@ -12,6 +12,21 @@ public class StringUtil {
 
     private static final String UDER_LINE = "_";
 
+
+    public static Boolean isEmpty(String str){
+
+        if(str == null || "".equals(str)){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public static Boolean isNotEmpty(String str){
+        return !isEmpty(str);
+    }
+
     public static String formatString(String string ){
 
         Integer index = string.indexOf(UDER_LINE);

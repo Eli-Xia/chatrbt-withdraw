@@ -38,17 +38,21 @@ public class EthnicGroupsService {
 
     private final static String FOUNDER_EVENT_KEY = "-1";
 
+    public final static String EVENT_SPECIAL_STR = "keendo_chat_pet";
+
+
 
     @Autowired
     private QrCodeHelper qrCodeHelper;
 
     /**
      * 获取一级族群
+     *
      * @param wxPubOriginId
      * @return
      */
-    public EthnicGroups getFounderEthnicGroups(String wxPubOriginId){
-        return ethnicGroupsCodeMapper.selectByWxPubAndSecondFunder(wxPubOriginId ,null);
+    public EthnicGroups getFounderEthnicGroups(String wxPubOriginId) {
+        return ethnicGroupsCodeMapper.selectByWxPubAndSecondFunder(wxPubOriginId, null);
     }
 
     private Integer save(EthnicGroups ethnicGroups) {
@@ -86,13 +90,13 @@ public class EthnicGroupsService {
 
     public void createFounderQrCodeImage(String wxPubOriginId) throws BizException, IOException, WriterException {
 
-        String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 1000 * 60 * 60 * 24, QrCodeHelper.QrCodeType.TEMP, String.valueOf(FOUNDER_EVENT_KEY));
+        String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 1000 * 60 * 60 * 24 * 30, QrCodeHelper.QrCodeType.TEMP, EVENT_SPECIAL_STR + FOUNDER_EVENT_KEY);
         QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
 
-        QRCodeUtil.createQRCode(qrCodeTicker.getUrl(),"/Users/bint/Documents/chart_robot/src/chatrbtw/WebRoot/test.jpg",100,100);
+        QRCodeUtil.createQRCode(qrCodeTicker.getUrl(), "/Users/bint/Documents/chart_robot/src/chatrbtw/WebRoot/test.jpg", 100, 100);
     }
 
-    public Integer createSecondEthnicGroups(String wxPubOriginId , String wxFanOpenId){
+    public Integer createSecondEthnicGroups(String wxPubOriginId, String wxFanOpenId) {
         EthnicGroups ethnicGroups = new EthnicGroups();
 
         ethnicGroups.setWxPubOriginId(wxPubOriginId);
@@ -109,25 +113,25 @@ public class EthnicGroupsService {
         return this.save(ethnicGroups);
     }
 
-    public Boolean isFounderEventKey(String enventKey){
-        if(FOUNDER_EVENT_KEY.equals(enventKey)){
+    public Boolean isFounderEventKey(String enventKey) {
+        if (FOUNDER_EVENT_KEY.equals(enventKey)) {
             return true;
         }
 
         return false;
     }
 
-    public Boolean isNotFounderEventKey(String enventKey){
+    public Boolean isNotFounderEventKey(String enventKey) {
 
         return !this.isFounderEventKey(enventKey);
 
     }
 
 
-    private EthnicGroups getSecondFounderEthnicGroups(String wxPubOriginId){
-        List<EthnicGroups> list = ethnicGroupsCodeMapper.selectFounderByWxPub(wxPubOriginId ,FOUDER_TYPE);
+    private EthnicGroups getSecondFounderEthnicGroups(String wxPubOriginId) {
+        List<EthnicGroups> list = ethnicGroupsCodeMapper.selectFounderByWxPub(wxPubOriginId, FOUDER_TYPE);
 
-        if(ListUtil.isEmpty(list)){
+        if (ListUtil.isEmpty(list)) {
             return null;
         }
 
@@ -137,9 +141,7 @@ public class EthnicGroupsService {
     }
 
     //TODO
-    private String getH5Url(String wxPubOriginId , String wxFanOpendId){
-
-        
+    private String getH5Url(String wxPubOriginId, String wxFanOpendId) {
 
 
         return "";

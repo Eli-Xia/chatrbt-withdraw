@@ -756,14 +756,6 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             }
         }
 
-        /*NewsMsgRes res = new NewsMsgRes();
-        res.setFromUserName(wxPubOriginId);
-        res.setToUserName(wxfanOpenId);
-        res.setMsgType("news");
-        res.setArticles(pushArticleList);
-        res.setCreateTime(new Date().getTime() / 1000L);
-        res.setArticleCount(pushArticleList.size());*/
-
 
         String resXml = this.replyNewsStr(wxPubOriginId, wxfanOpenId, pushArticleList);
 

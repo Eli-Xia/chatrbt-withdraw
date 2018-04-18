@@ -15,7 +15,13 @@ import java.util.List;
 public class WxBaseMessageHandler {
 
 
-
+    /**
+     * 回复多条图文
+     * @param wxPubOriginId
+     * @param wxfanOpenId
+     * @param customerNewsList
+     * @return
+     */
     public String replyNewsStr(String wxPubOriginId, String wxfanOpenId ,List<CustomerNewsItem> customerNewsList){
 
         NewsMsgRes newsMsgRes = this.replyNews(wxPubOriginId, wxfanOpenId, customerNewsList);
@@ -24,6 +30,13 @@ public class WxBaseMessageHandler {
     }
 
 
+    /**
+     * 回复文本
+     * @param wxPubOriginId
+     * @param wxfanOpenId
+     * @param content
+     * @return
+     */
     public String replyTextStr(String wxPubOriginId, String wxfanOpenId , String content){
         TextMsgRes textMsgRes = this.replyText(wxPubOriginId, wxfanOpenId, content);
 
