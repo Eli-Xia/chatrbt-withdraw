@@ -5,4 +5,4 @@ chatrbtw.iml
 .idea
 .classpath
 .settings
-src\net\monkeystudio\chatrbtw\controller\TestController.java
+src/net/monkeystudio/chatrbtw/controller/TestController.java
