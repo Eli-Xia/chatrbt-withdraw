@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
 import net.monkeystudio.chatrbtw.service.bean.ethnicgroupscode.EthnicGroupsCodeValidatedResp;
 import net.monkeystudio.service.CfgService;
@@ -24,7 +25,7 @@ import java.util.List;
  * Created by bint on 2017/12/11.
  */
 @Service
-public class WxEventMessageHandler extends  WxBaseMessageHandler{
+public class WxEventMessageHandler extends WxBaseMessageHandler {
 
     @Autowired
     private PushMessageConfigService pushMessageConfigService;
@@ -41,50 +42,58 @@ public class WxEventMessageHandler extends  WxBaseMessageHandler{
     @Autowired
     private CfgService cfgService;
 
+    @Autowired
+    private WxFanService wxFanService;
+
+
 
     private final static String SUBSCRIBE_EVENT = "subscribe";
 
-    public String handleEvent(String content){
+    public String handleEvent(String content) {
         String eventType = this.judgeEventType(content);
 
-        if(SUBSCRIBE_EVENT.equals(eventType)){
+        if (SUBSCRIBE_EVENT.equals(eventType)) {
 
             SubscribeEvent subscribeEvent = XmlUtil.converyToJavaBean(content, SubscribeEvent.class);
             String wxPubOriginId = subscribeEvent.getToUserName();
             String wxFanOpenId = subscribeEvent.getFromUserName();
 
             //如果有启用陪聊宠
-            if(rWxPubProductService.isEnable(ProductService.CHAT_PET ,wxPubOriginId)){
+            if (rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)) {
 
                 String qrSceneStr = subscribeEvent.getEventKey();
 
                 //如果EventKey不为空
-                if(StringUtil.isNotEmpty(qrSceneStr)){
+                if (StringUtil.isNotEmpty(qrSceneStr)) {
 
 
                     //判断是否包含特地字符串，以免有其他平台也在用该接口
-                    if(qrSceneStr.contains(EthnicGroupsService.EVENT_SPECIAL_STR)){
+                    if (qrSceneStr.contains(EthnicGroupsService.EVENT_SPECIAL_STR)) {
 
                         String parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
 
                         Integer chatPetId = null;
-                        if(ethnicGroupsService.isNotFounderEventKey(parentIdStr)){
+                        ChatPet chatPet = null;
+                        ChatPet parentChatPet = null;
+                        if (ethnicGroupsService.isNotFounderEventKey(parentIdStr)) {
                             Integer parentId = Integer.valueOf(parentIdStr);
 
-                            ChatPet chatPet = chatPetService.getById(parentId);
-                            if(chatPet == null){
+                            parentChatPet = chatPetService.getById(parentId);
+
+                            //如果不是长老，
+                            if (chatPet == null) {
                                 String replyContent = "链接有误，请检查链接参数";
 
                                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
                             }
 
-                            chatPetId = chatPetService.generateChatPet(wxPubOriginId,wxFanOpenId,parentId,chatPet.getSecondEthnicGroupsId());
-                        }else {
-                            Integer ethnicGroupsId = ethnicGroupsService.createSecondEthnicGroups(wxPubOriginId,wxFanOpenId);
+                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, parentId, chatPet.getSecondEthnicGroupsId());
+                        } else {
+                            Integer ethnicGroupsId = ethnicGroupsService.createSecondEthnicGroups(wxPubOriginId, wxFanOpenId);
 
                             EthnicGroups ethnicGroups = ethnicGroupsService.getFounderEthnicGroups(wxPubOriginId);
 
-                            chatPetService.generateChatPet(wxPubOriginId,wxFanOpenId,ethnicGroups.getId(),ethnicGroupsId);
+                            chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId);
                         }
 
                     /*EthnicGroupsCodeValidatedResp ethnicGroupsCodeValidatedResp = ethnicGroupsService.validated(chatPet.getId(),wxPubOriginId);
@@ -103,27 +112,49 @@ public class WxEventMessageHandler extends  WxBaseMessageHandler{
                         return XmlUtil.convertToXml(textMsgRes);
                     }*/
 
+                        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId,wxFanOpenId);
+
+
+                        String parentWxFanNickname = null;
+                        if(parentChatPet != null){
+                            String parentWxFanOpenId = parentChatPet.getWxFanOpenId();
+                            WxFan parentWxFan = wxFanService.getWxFan(wxPubOriginId, parentWxFanOpenId);
+                            parentWxFanNickname = parentWxFan.getNickname();
+                        }else {
+                            parentWxFanNickname = "Wedo";
+                        }
+
+
+
 
                         CustomerNewsItem customerNewsItem = new CustomerNewsItem();
-                        String replyContent = "您的宠物已经出生！";
-                        customerNewsItem.setDescription(replyContent);
+                        String description = wxFan.getNickname() + "的斑马，出生于2018年4月12日8点30分您已经成功接受# " + parentWxFanNickname + "#的邀请，创造了一只独一无二的斑马，\n" +
+                                "加入了斑马星球。\n" +
+                                "\n" +
+                                "斑马星球的基本规律：多爱心互动，多真诚聊天\n" +
+                                "等到长大，虚拟宠物带回现实Money，报效宠爸宠妈\n" +
+                                "\n" +
+                                "聊天中会随机触发事件\n" +
+                                "每一次点击链接，完成每日任务，即获得成长经验值";
+                        customerNewsItem.setDescription(description);
 
                         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-                        String uri = "/res/wedo/zebra.html";
+                        String uri = "/res/wedo/zebra.html?id=" + chatPetId;
                         String url = domain + uri;
                         customerNewsItem.setUrl(url);
+                        customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/normal_cover.jpg");
 
-                        customerNewsItem.setPicUrl("http://test-1254066218.file.myqcloud.com/ad/cover-pic/20180418103328.jpg");
-                        customerNewsItem.setTitle("点击领取");
+                        String replyContent = "您的宠物已经出生！";
+                        customerNewsItem.setTitle(replyContent);
 
-                        return this.replySingleNewsStr(wxPubOriginId  ,wxFanOpenId  ,customerNewsItem);
+                        return this.replySingleNewsStr(wxPubOriginId, wxFanOpenId, customerNewsItem);
 
                     }
                 }
             }
 
             //如果有开启问问搜
-            if(rWxPubProductService.isEnable(ProductService.ASK_SEARCH, wxPubOriginId)){
+            if (rWxPubProductService.isEnable(ProductService.ASK_SEARCH, wxPubOriginId)) {
 
                 String replyContent = "欢迎关注我们公众号，回复关键字，即可获取我们公众号的过往历史文章！";
 
@@ -131,7 +162,7 @@ public class WxEventMessageHandler extends  WxBaseMessageHandler{
             }
 
             //如果有开启智能聊
-            if(rWxPubProductService.isEnable(ProductService.SMART_CHAT, wxPubOriginId)){
+            if (rWxPubProductService.isEnable(ProductService.SMART_CHAT, wxPubOriginId)) {
 
                 String replyContent = "欢迎关注我们公众号，我可以陪你聊天哟！！！么么哒～～";
 
@@ -143,7 +174,7 @@ public class WxEventMessageHandler extends  WxBaseMessageHandler{
         return null;
     }
 
-    public String testEventHandle(String content){
+    public String testEventHandle(String content) {
         String eventType = this.judgeEventType(content);
 
         TextMsgRes textMsgRes = new TextMsgRes();
@@ -162,24 +193,23 @@ public class WxEventMessageHandler extends  WxBaseMessageHandler{
     }
 
 
-
-
-    private String replySingleNewsStr(String wxPubOriginId ,String wxFanOpendId, CustomerNewsItem customerNewsItem ){
+    private String replySingleNewsStr(String wxPubOriginId, String wxFanOpendId, CustomerNewsItem customerNewsItem) {
 
         List<CustomerNewsItem> customerNewsList = new ArrayList<>();
 
         customerNewsList.add(customerNewsItem);
 
-        return this.replyNewsStr(wxPubOriginId,wxFanOpendId,customerNewsList);
+        return this.replyNewsStr(wxPubOriginId, wxFanOpendId, customerNewsList);
 
     }
 
     /**
      * 判断事件种类
+     *
      * @param str
      * @return
      */
-    private String judgeEventType(String str){
+    private String judgeEventType(String str) {
 
         String eventType = XMLParse.extractField(str, "Event");
         return eventType;

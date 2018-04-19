@@ -55,6 +55,21 @@
             id = #{id}
     </select>
 
-
+    <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.WxFan">
+        update e_wx_fan set
+            nickname = #{nickname},
+            sex = #{sex},
+            city = #{city},
+            country = #{country},
+            province = #{province},
+            union_id = #{unionId},
+            subscribe_time = #{subscribeTime},
+            wx_pub_origin_id = #{ wxPubOriginId},
+            wx_fan_open_id = #{wxFanOpenId},
+        where
+            wx_pub_origin_id = #{wxPubOriginId}
+        and
+            wx_fan_open_id = #{wxFanOpenId}
+    </update>
 
 </mapper>

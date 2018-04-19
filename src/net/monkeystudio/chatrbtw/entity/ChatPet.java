@@ -6,7 +6,7 @@ package net.monkeystudio.chatrbtw.entity;
 public class ChatPet {
     private Integer id;
     private Integer tempAppearence;
-    private String wxPubOrginId;
+    private String wxPubOriginId;
     private String wxFanOpenId;
     private Integer ethnicGroupsId;
     private Integer secondEthnicGroupsId;
@@ -27,12 +27,12 @@ public class ChatPet {
         this.tempAppearence = tempAppearence;
     }
 
-    public String getWxPubOrginId() {
-        return wxPubOrginId;
+    public String getWxPubOriginId() {
+        return wxPubOriginId;
     }
 
-    public void setWxPubOrginId(String wxPubOrginId) {
-        this.wxPubOrginId = wxPubOrginId;
+    public void setWxPubOriginId(String wxPubOriginId) {
+        this.wxPubOriginId = wxPubOriginId;
     }
 
     public String getWxFanOpenId() {

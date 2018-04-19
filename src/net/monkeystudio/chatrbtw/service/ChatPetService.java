@@ -2,7 +2,11 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetBaseInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,9 @@ public class ChatPetService {
     @Autowired
     private ChatPetMapper chatPetMapper;
 
+    @Autowired
+    private WxFanService wxFanService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -30,10 +37,9 @@ public class ChatPetService {
 
         chatPet.setTempAppearence(appearance);
         chatPet.setWxFanOpenId(wxFanOpenId);
-        chatPet.setWxPubOrginId(wxPubOriginId);
+        chatPet.setWxPubOriginId(wxPubOriginId);
         chatPet.setEthnicGroupsId(ethnicGroupsId);
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
-
 
         return this.save(chatPet);
     }
@@ -54,4 +60,43 @@ public class ChatPetService {
     private Integer save(ChatPet chatPet){
         return chatPetMapper.insert(chatPet);
     }
+
+
+    /**
+     * 获取宠物的信息
+     * @param chatPetId
+     * @return
+     */
+    public ChatPetInfo getInfo(Integer chatPetId){
+        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        if(chatPet == null){
+            return null;
+        }
+
+        chatPetBaseInfo.setTempAppearance(chatPet.getTempAppearence());
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        String wxFanOpenId = chatPet.getWxFanOpenId();
+
+        OwnerInfo ownerInfo = new OwnerInfo();
+        WxFan owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        ownerInfo.setNickname(owner.getNickname());
+
+        String headImgUrl = owner.getHeadImgUrl();
+        if(headImgUrl == null){
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+        }
+
+        owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        ownerInfo.setHeadImg(owner.getHeadImgUrl());
+
+        chatPetBaseInfo.setOwnerInfo(ownerInfo);
+
+        return chatPetBaseInfo;
+    }
+
+
 }
