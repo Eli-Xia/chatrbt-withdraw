@@ -4,7 +4,6 @@ import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetBaseInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;

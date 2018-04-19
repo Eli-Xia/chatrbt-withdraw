@@ -12,14 +12,15 @@
         <result column="subscribe_time" property="subscribeTime" jdbcType="INTEGER" />
         <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+        <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at
+        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxFan" keyProperty="id" useGeneratedKeys="true" >
-        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at)
+        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url)
             values (
               #{id,jdbcType=INTEGER},
               #{nickname,jdbcType=VARCHAR},
@@ -31,7 +32,8 @@
               #{subscribeTime,jdbcType=INTEGER},
               #{wxPubOriginId,jdbcType=VARCHAR},
               #{wxFanOpenId,jdbcType=VARCHAR},
-              #{createAt,jdbcType=INTEGER}
+              #{createAt,jdbcType=INTEGER},
+              #{headImgUrl,jdbcType=VARCHAR}
             )
     </insert>
 
@@ -66,6 +68,7 @@
             subscribe_time = #{subscribeTime},
             wx_pub_origin_id = #{ wxPubOriginId},
             wx_fan_open_id = #{wxFanOpenId},
+            head_img_url = #{headImgUrl}
         where
             wx_pub_origin_id = #{wxPubOriginId}
         and

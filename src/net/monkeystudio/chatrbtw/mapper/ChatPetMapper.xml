@@ -3,7 +3,7 @@
 <mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatPetMapper">
     <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPet">
         <result column="id" property="id" jdbcType="INTEGER" />
-        <result column="wx_pub_origin_id" property="wxPubOrginId" jdbcType="VARCHAR" />
+        <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
         <result column="temp_appearance" property="tempAppearence" jdbcType="INTEGER" />
     </resultMap>
@@ -18,7 +18,7 @@
         from
             e_chat_pet
         where
-            wx_pub_origin_id = #{wxPubOrginId} and `wx_fan_open_id` = #{wxFanOpenId}
+            wx_pub_origin_id = #{wxPubOriginId} and `wx_fan_open_id` = #{wxFanOpenId}
     </select>
 
 
@@ -26,7 +26,7 @@
         insert into
             e_chat_pet
                 (wx_pub_origin_id, wx_fan_open_id ,temp_appearance)
-        values (#{wxPubOrginId} , #{wxFanOpenId}  , #{tempAppearence})
+        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence})
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap" >

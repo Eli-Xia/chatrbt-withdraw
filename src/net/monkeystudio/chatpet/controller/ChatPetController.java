@@ -1,12 +1,9 @@
 package net.monkeystudio.chatpet.controller;
 
-import net.monkeystudio.admin.controller.req.adclicklog.AdClickLogQueryReq;
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
-import net.monkeystudio.chatrbtw.entity.AdClickLog;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

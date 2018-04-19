@@ -184,6 +184,9 @@ public class WxFanService {
         BeanUtils.copyProperties(wxFanBaseInfo,wxFan);
 
         this.update(wxFan);
+
+        wxFan = this.getById(wxFan.getId());
+        this.setWxFanCache(wxPubOriginId, wxFanOpenId ,wxFan);
     }
 
     private Integer update(WxFan wxFan) {
