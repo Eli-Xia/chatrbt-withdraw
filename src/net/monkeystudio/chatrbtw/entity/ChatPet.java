@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.entity;
 
+import java.util.Date;
+
 /**
  * Created by bint on 2018/4/16.
  */
@@ -10,6 +12,7 @@ public class ChatPet {
     private String wxFanOpenId;
     private Integer ethnicGroupsId;
     private Integer secondEthnicGroupsId;
+    private Date createTime;
 
     public Integer getId() {
         return id;
@@ -57,5 +60,13 @@ public class ChatPet {
 
     public void setSecondEthnicGroupsId(Integer secondEthnicGroupsId) {
         this.secondEthnicGroupsId = secondEthnicGroupsId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

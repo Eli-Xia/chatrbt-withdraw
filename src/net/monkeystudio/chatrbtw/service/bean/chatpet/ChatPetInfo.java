@@ -10,6 +10,9 @@ public class ChatPetInfo {
 
     private OwnerInfo ownerInfo;
 
+    private String ownerId;
+    private String geneticCode;
+
     public Integer getTempAppearance() {
         return tempAppearance;
     }
@@ -24,5 +27,21 @@ public class ChatPetInfo {
 
     public void setOwnerInfo(OwnerInfo ownerInfo) {
         this.ownerInfo = ownerInfo;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getGeneticCode() {
+        return geneticCode;
+    }
+
+    public void setGeneticCode(String geneticCode) {
+        this.geneticCode = geneticCode;
     }
 }

@@ -9,6 +9,9 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by bint on 2018/4/16.
  */
@@ -94,8 +97,26 @@ public class ChatPetService {
 
         chatPetBaseInfo.setOwnerInfo(ownerInfo);
 
+        String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+        chatPetBaseInfo.setOwnerId(owerId);
+
+        //宠物基因
+        String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
+        chatPetBaseInfo.setGeneticCode(geneticCode);
+
         return chatPetBaseInfo;
     }
 
+    private String calculateGeneticCode(Long createTime){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2018,1,1);
+        Date date = calendar.getTime();
+
+        Long cusTimestamp = createTime - date.getTime();
+        String geneticCode = String.valueOf(cusTimestamp);
+
+        return geneticCode;
+    }
 
 }
