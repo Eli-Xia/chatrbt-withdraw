@@ -135,8 +135,7 @@ public class WxOauthService {
         String grantType = "authorization_code";
         String componentAppid = cfgService.get(GlobalConfigConstants.COMPONENT_APP_ID_KEY);
         String componentAccessToken = wxAuthApiService.getComponentAccessTokenStr();
-        return String.format("https://api.weixin.qq.com/sns/oauth2/component/access_token\n" +
-                        "     ?appid=%s&code=%s&grant_type=%s&component_appid=%s&component_access_token=%s",
+        return String.format("https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=%s&component_appid=%s&component_access_token=%s",
                wxPubAppId,code,grantType,componentAppid,componentAccessToken );
     }
 
