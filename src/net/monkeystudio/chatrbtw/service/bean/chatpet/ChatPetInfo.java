@@ -1,5 +1,8 @@
 package net.monkeystudio.chatrbtw.service.bean.chatpet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by bint on 2018/4/19.
  */
@@ -12,6 +15,10 @@ public class ChatPetInfo {
 
     private String ownerId;
     private String geneticCode;
+
+    private List<PetLogResp> petLogs = new ArrayList<>();
+
+    private Float fanTotalCoin = 0F;
 
     public Integer getTempAppearance() {
         return tempAppearance;
@@ -43,5 +50,22 @@ public class ChatPetInfo {
 
     public void setGeneticCode(String geneticCode) {
         this.geneticCode = geneticCode;
+    }
+
+
+    public Float getFanTotalCoin() {
+        return fanTotalCoin;
+    }
+
+    public void setFanTotalCoin(Float fanTotalCoin) {
+        this.fanTotalCoin = fanTotalCoin;
+    }
+
+    public List<PetLogResp> getPetLogs() {
+        return petLogs;
+    }
+
+    public void setPetLogs(List<PetLogResp> petLogs) {
+        this.petLogs = petLogs;
     }
 }

@@ -1,16 +1,22 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
+import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by bint on 2018/4/16.
@@ -25,6 +31,9 @@ public class ChatPetService {
 
     @Autowired
     private WxFanService wxFanService;
+
+    @Autowired
+    private PetLogMapper petLogMapper;
 
     /**
      * 生成宠物
@@ -104,6 +113,25 @@ public class ChatPetService {
         String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
         chatPetBaseInfo.setGeneticCode(geneticCode);
 
+        //宠物日志
+        List<PetLog> dailyPetLogList = this.getDailyPetLogList(chatPetId, new Date());
+        List<PetLogResp> resps = new ArrayList<>();
+
+        for(PetLog pl:dailyPetLogList){
+            PetLogResp resp = new PetLogResp();
+            resp.setChatPetId(pl.getChatPetId());
+            resp.setCoin(pl.getCoin());
+            resp.setContent(pl.getContent());
+            resp.setCreateTime(pl.getCreateTime());
+            resp.setId(pl.getId());
+            resps.add(resp);
+        }
+        chatPetBaseInfo.setPetLogs(resps);
+
+        //粉丝拥有代币
+        Float fanTotalCoin = this.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
+        chatPetBaseInfo.setFanTotalCoin(fanTotalCoin);
+
         return chatPetBaseInfo;
     }
 
@@ -119,4 +147,43 @@ public class ChatPetService {
         return geneticCode;
     }
 
+    /**
+     * 获取每日宠物日志
+     * @param date
+     * @return
+     */
+    public List<PetLog> getDailyPetLogList(Integer chatPetId, Date date){
+        Date beginDate = DateUtils.getBeginDate(date);
+        Date endDate = DateUtils.getEndDate(date);
+
+        List<PetLog> pls = petLogMapper.selectDailyPetLog(chatPetId,beginDate,endDate);
+        return pls;
+    }
+
+    /**
+     * 获取当前粉丝总代币数  代币是跟粉丝挂钩的
+     * @return
+     */
+    public Float getFanTotalCoin(String wxPubOriginId,String wxFanOpenId){
+
+        Float totalCoin = petLogMapper.countFanTotalCoin(wxPubOriginId,wxFanOpenId,new Date());
+        return totalCoin;
+    }
+
+    /**
+     * 保存宠物日志
+     * @param petLog
+     */
+    public void savePetLog(PetLog petLog){
+        PetLog pl = new PetLog();
+
+        pl.setCoin(petLog.getCoin());
+        pl.setCreateTime(petLog.getCreateTime());
+        pl.setContent(petLog.getContent());
+        pl.setChatPetId(petLog.getChatPetId());
+        pl.setWxPubOriginId(petLog.getWxPubOriginId());
+        pl.setWxFanOpenId(petLog.getWxFanOpenId());
+
+        petLogMapper.insert(pl);
+    }
 }
