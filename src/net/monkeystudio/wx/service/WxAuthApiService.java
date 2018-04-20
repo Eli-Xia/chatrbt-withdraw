@@ -144,6 +144,13 @@ public class WxAuthApiService {
         return result;
     }*/
 
+    public String getWxPubAccessTokenByOriginId(String wxPubOriginId) throws BizException {
+
+        String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);
+
+        return this.getAuthorizerAccessToken(wxPubAppId);
+
+    }
 
 
 
@@ -157,7 +164,6 @@ public class WxAuthApiService {
     public String getAuthorizerAccessToken(String wxPubAppId) throws BizException {
 
         String authorizerAccessTokenRedisKey = this.getAuthorizerAccessTokenKey(wxPubAppId);
-
 
         String authorizerRefreshToken = redisCacheTemplate.getObject(authorizerAccessTokenRedisKey);
 

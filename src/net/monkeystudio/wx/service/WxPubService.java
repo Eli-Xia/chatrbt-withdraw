@@ -409,6 +409,12 @@ public class WxPubService {
 		return wxPubMapper.count();
 	}
 
+	/**
+	 * 获取微信统计基础信息
+	 * @param originId
+	 * @param userId
+	 * @return
+	 */
 	public WxPubCountBaseInfo getWxPubCountBaseInfo(String originId ,Integer userId){
 
         WxPubCountBaseInfo wxPubCountBaseInfo = new WxPubCountBaseInfo();

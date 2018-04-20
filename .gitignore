@@ -5,6 +5,5 @@ chatrbtw.iml
 .idea
 .classpath
 .settings
-src/net/monkeystudio/chatrbtw/controller/TestController.java
-generator/generatorConfig.xml
-pom.xml
+src/net/monkeystudio/chatrbtw/controller/TestController2.java
+

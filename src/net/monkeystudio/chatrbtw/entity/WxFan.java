@@ -15,6 +15,7 @@ public class WxFan implements Serializable{
     private String wxPubOriginId;
     private String wxFanOpenId;
     private Long createAt;
+    private String headImgUrl;
 
     public Integer getId() {
         return id;
@@ -103,6 +104,14 @@ public class WxFan implements Serializable{
 
     public void setCreateAt(Long createAt) {
         this.createAt = createAt;
+    }
+
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
     }
 
     @Override

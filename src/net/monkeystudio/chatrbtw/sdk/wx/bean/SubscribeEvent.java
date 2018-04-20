@@ -24,6 +24,9 @@ public class SubscribeEvent {
     @XStreamAlias("EventKey")
     private String eventKey;
 
+    @XStreamAlias("Ticket")
+    private String ticket;
+
 
     public String getToUserName() {
         return toUserName;
@@ -71,5 +74,26 @@ public class SubscribeEvent {
 
     public void setEventKey(String eventKey) {
         this.eventKey = eventKey;
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
+    }
+
+    @Override
+    public String toString() {
+        return "SubscribeEvent{" +
+                "toUserName='" + toUserName + '\'' +
+                ", fromUserName='" + fromUserName + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", msgType='" + msgType + '\'' +
+                ", event='" + event + '\'' +
+                ", eventKey='" + eventKey + '\'' +
+                ", ticket='" + ticket + '\'' +
+                '}';
     }
 }
