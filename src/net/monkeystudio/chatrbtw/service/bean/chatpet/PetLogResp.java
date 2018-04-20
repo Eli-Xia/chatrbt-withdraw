@@ -1,8 +1,11 @@
-package net.monkeystudio.chatrbtw.entity;
+package net.monkeystudio.chatrbtw.service.bean.chatpet;
 
 import java.util.Date;
 
-public class PetLog {
+/**
+ * @author xiaxin
+ */
+public class PetLogResp {
     private Integer id;
 
     private Date createTime;
@@ -10,10 +13,6 @@ public class PetLog {
     private Float coin;
 
     private Integer chatPetId;
-
-    private String wxPubOriginId;
-
-    private String wxFanOpenId;
 
     private String content;
 
@@ -49,27 +48,11 @@ public class PetLog {
         this.chatPetId = chatPetId;
     }
 
-    public String getWxPubOriginId() {
-        return wxPubOriginId;
-    }
-
-    public void setWxPubOriginId(String wxPubOriginId) {
-        this.wxPubOriginId = wxPubOriginId == null ? null : wxPubOriginId.trim();
-    }
-
-    public String getWxFanOpenId() {
-        return wxFanOpenId;
-    }
-
-    public void setWxFanOpenId(String wxFanOpenId) {
-        this.wxFanOpenId = wxFanOpenId == null ? null : wxFanOpenId.trim();
-    }
-
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
+        this.content = content;
     }
 }

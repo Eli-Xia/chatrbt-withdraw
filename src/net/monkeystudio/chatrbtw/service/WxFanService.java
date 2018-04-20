@@ -165,4 +165,31 @@ public class WxFanService {
         return wxFan;
     }
 
+    /**
+     * 修正微信粉丝信息
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     */
+    public void reviseWxPub(String wxPubOriginId ,String wxFanOpenId){
+        String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);
+        WxFanBaseInfo wxFanBaseInfo = null;
+        try {
+            wxFanBaseInfo = wxFanHelper.fetcWxhUserBaseInfo(wxFanOpenId,wxPubAppId);
+        } catch (BizException e) {
+            Log.e(e);
+        }
+
+        WxFan wxFan = this.getWxFan(wxPubOriginId, wxFanOpenId);
+
+        BeanUtils.copyProperties(wxFanBaseInfo,wxFan);
+
+        this.update(wxFan);
+
+        wxFan = this.getById(wxFan.getId());
+        this.setWxFanCache(wxPubOriginId, wxFanOpenId ,wxFan);
+    }
+
+    private Integer update(WxFan wxFan) {
+        return wxFanMapper.update(wxFan);
+    }
 }

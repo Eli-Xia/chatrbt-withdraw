@@ -1,6 +1,7 @@
 package net.monkeystudio.wx.controller.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class NewsMsgRes {
     private Integer articleCount;
 
     @XStreamAlias("Articles")
-    private List<Article> articles;
+    private List<CustomerNewsItem> articles;
 
 
     public String getToUserName() {
@@ -68,11 +69,11 @@ public class NewsMsgRes {
         this.articleCount = articleCount;
     }
 
-    public List<Article> getArticles() {
+    public List<CustomerNewsItem> getArticles() {
         return articles;
     }
 
-    public void setArticles(List<Article> articles) {
+    public void setArticles(List<CustomerNewsItem> articles) {
         this.articles = articles;
     }
 }
