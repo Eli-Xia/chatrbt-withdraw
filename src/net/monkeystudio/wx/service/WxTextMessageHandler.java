@@ -6,6 +6,7 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
@@ -775,9 +776,9 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             String realUrl = wxPubNews.getUrl2();
 
             //如果文章真实地址存在，则用正式的
-            if(realUrl != null){
+            if(StringUtil.isNotEmpty(realUrl)){
                 article.setUrl(realUrl);
-            }else {
+            }else{
                 article.setUrl(wxPubNews.getUrl());
             }
             as.add(article);
