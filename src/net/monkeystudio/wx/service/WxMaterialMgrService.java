@@ -56,10 +56,6 @@ public class WxMaterialMgrService {
 		List<WxPubNews> news = wxPubNewsMapper.selectByTitle(wxPubOriginId, title, maxRetCount);
 		return news;
 	}
-	public List<WxPubNews> getAllWxPubNews(String wxPubOriginId, String title){
-		List<WxPubNews> news = wxPubNewsMapper.selectAllByTitle(wxPubOriginId, title);
-		return news;
-	}
 	
 //	/**
 //	 * 更新所有公众号素材，用于定时任务调用。

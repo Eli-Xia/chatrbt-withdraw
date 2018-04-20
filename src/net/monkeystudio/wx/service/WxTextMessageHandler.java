@@ -637,6 +637,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         String wxPubOriginId = textMsgRec.getToUserName();
         String wxfanOpenId = textMsgRec.getFromUserName();
 
+
         String askSearchCountCacheKey = this.getAskSearchCountCacheKey(wxPubOriginId, wxfanOpenId);
         String moreNewsCountCacheKey = null;
         String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId,wxfanOpenId);
@@ -654,7 +655,9 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             redisCacheTemplate.expire(askSearchKeywordCacheKey,MORE_NEWS_VALID_TIME);
         }else{
             // "更多"从缓存中获取
+            Log.d("=============更多 step1==========");
             content = redisCacheTemplate.getString(askSearchKeywordCacheKey);
+            Log.d("==============此次更多搜索的关键字为 {?} ===========",content);
             moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
         }
         //"更多"时间失效
@@ -664,6 +667,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         }
 
         Long count = redisCacheTemplate.incr(moreNewsCountCacheKey);//用于获取分页素材,关键字:从1开始;"更多":累加
+        Log.d("================= remark 用于判断素材页码 count = {?}===========",count.toString());
 
         //素材总条数
         Integer totalCount = wxMaterialMgrService.getWxPubNewsCount(wxPubOriginId,content);
@@ -672,16 +676,16 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         QueryWxPubNewsList qo = new QueryWxPubNewsList();
         qo.setTitle(content);
         qo.setWxPubOriginId(wxPubOriginId);
-        qo.setPage((count.intValue()-1) * WX_PUB_ARTICLE_PUSH_COUNT);
+        qo.setPage(count.intValue());
         qo.setPageSize(WX_PUB_ARTICLE_PUSH_COUNT);
-        Log.d("=============查询素材分页数据 page = {?} ,  pageSize = {?} ============",qo.getPage().toString(),qo.getPageSize().toString());
+        Log.d("=============查询素材分页数据 page = {?} , startIndex = {?} ,  pageSize = {?} ============",qo.getPage().toString(),qo.getStartIndex().toString(),qo.getPageSize().toString());
         List<WxPubNews> wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(qo.getMap());
 
 
-        Log.i("=============== 素材总条数为  = {?} ===================",totalCount.toString());
+        Log.d("=============== 素材总条数为  = {?} ,此次分页素材总条数 = {?} ===================",totalCount.toString(),Integer.toString(wxPubNewsList.size()));
         //共有多少次"更多"
         Integer moreCount =  totalCount%WX_PUB_ARTICLE_PUSH_COUNT == 0 ? totalCount / WX_PUB_ARTICLE_PUSH_COUNT - 1 : totalCount / WX_PUB_ARTICLE_PUSH_COUNT ;
-        Log.i("================ 该关键字素材回复共会出现 {?} 次\"更多\" ===============",moreCount.toString());
+        Log.d("================ 该关键字素材回复共会出现 {?} 次\"更多\" ===============",moreCount.toString());
         //即将的5条问问搜素材
 
 
@@ -723,12 +727,10 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         this.handleNewsMsgList(wxPubNewsList,pushArticleList);
 
-        //素材总条数
-        Integer newsCount = wxMaterialMgrService.getWxPubNewsCount(wxPubOriginId,content);
         //当前素材总数
-        Integer nowCount = qo.getPage() + qo.getPageSize();
+        Integer nowCount = qo.getStartIndex() + qo.getPageSize();
         //判断是否有"更多"图文消息
-        if(newsCount.intValue() > nowCount.intValue()){
+        if(totalCount.intValue() > nowCount.intValue()){
             CustomerNewsItem lastItem = new CustomerNewsItem();
             lastItem.setTitle(ASK_SEARCH_LAST_ITEM_TITLE);
             lastItem.setUrl(null);
@@ -784,7 +786,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
 
 
-    private String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
+    public String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchKw:" + wxPubOriginId + ":" + wxfanOpenId;
     }
 
@@ -794,18 +796,18 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
      * @param wxUserOpenId
      * @return
      */
-    private String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
+    public String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
 
 
 
-    private String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
+    public String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "moreNewsCount:" + wxPubOriginId + ":" + wxfanOpenId + ":" + content ;
     }
 
 
-    private String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
+    public String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
 
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "ChatLogCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
