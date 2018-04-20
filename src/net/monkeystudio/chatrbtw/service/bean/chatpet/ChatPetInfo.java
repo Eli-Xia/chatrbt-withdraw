@@ -52,7 +52,6 @@ public class ChatPetInfo {
         this.geneticCode = geneticCode;
     }
 
-
     public Float getFanTotalCoin() {
         return fanTotalCoin;
     }
