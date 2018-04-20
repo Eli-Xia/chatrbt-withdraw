@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>chatrbtw</groupId>
     <artifactId>chatrbtw</artifactId>
@@ -12,7 +11,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shiro.version>1.3.2</shiro.version>
     </properties>
-
     <!--nexus-->
     <repositories>
         <repository>
@@ -21,11 +19,7 @@
             <url>http://218.244.145.145:9001/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-
-
     <dependencies>
-
-
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -292,15 +286,8 @@
             <artifactId>javase</artifactId>
             <version>3.3.0</version>
         </dependency>
-        <dependency>
-            <groupId>saimiri-core</groupId>
-            <artifactId>saimiri-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <!--new-->
-            <!-- <type>jar</type>
-             <scope>compile</scope>
-             <classifier>api</classifier>-->
-        </dependency>
+
+
     </dependencies>
     <profiles>
         <profile>
@@ -344,12 +331,22 @@
                     <include>**/*.xml</include>
                 </includes>
             </resource>
-            <!--<resource>
-              <directory>saimiri-core</directory>
-              <excludes>
-                <exclude>**/*.java</exclude>
-              </excludes>
-            </resource>-->
+            <resource>
+                <directory>saimiri-core</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.tld</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>scheduling</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.tld</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>
@@ -381,6 +378,28 @@
                     </webResources>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src</source>
+                                <source>saimiri-core</source>
+                                <source>config</source>
+                                <source>scheduling</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!--mybatis generator maven plugin-->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
@@ -398,3 +417,5 @@
         </plugins>
     </build>
 </project>
+
+
