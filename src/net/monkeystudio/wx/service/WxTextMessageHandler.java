@@ -111,6 +111,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     private final static String ASK_SEARCH_FIRST_ITEM_DESC = "Powered by keendo.com.cn";
     private final static String ASK_SEARCH_LAST_ITEM_TITLE = "在下面↓回复\"更多\"即可获取更多结果";
     private final static String ASK_SEARCH_REPLY_TIP = "更多";
+    private final static int  PUSH_TASK_AD_CHAT_COUNT = 3;//聊天次数到达推送陪聊宠任务广告
 
 
 
@@ -434,6 +435,11 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         return null;
 
     }
+    //推送任务广告
+    private String pushTaskAdChatCountKey(String wxPubOriginId,String wxFanOpenId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "PushTaskAdChatCount:" + wxPubOriginId + ":" + wxFanOpenId;
+    }
+
 
 
     /**
@@ -460,8 +466,18 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             String countCacheKey = this.getChatLogCountCacheKey(wxPubOriginId, wxFanOpenId);
             Long count = redisCacheTemplate.incr(countCacheKey);
 
+            String pushTaskAdCountCacheKey = this.pushTaskAdChatCountKey(wxPubOriginId,wxFanOpenId);
+            Long taskAdCount = redisCacheTemplate.incr(pushTaskAdCountCacheKey);
+
+            //redisCacheTemplate.expire(pushTaskAdCountCacheKey,)
+
+
             if (count == 1) {
                 redisCacheTemplate.expire(countCacheKey, COUNT_CACHE_PERIOD);
+            }
+
+            if(count.intValue() == PUSH_TASK_AD_CHAT_COUNT){
+
             }
 
             String chatAdPushCountStr = pushMessageConfigService.getByKey(PushMessageConfigService.CHAT_PUSH_AD_COUNT_KEY);

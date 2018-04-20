@@ -1,5 +1,7 @@
 package net.monkeystudio.base.utils;
 
+import net.monkeystudio.utils.CommonUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,6 +69,33 @@ public class DateUtils {
     //获取两个时间的间隔,返回的是时间毫秒值
     public static long getBetweenTwoDate(Date one, Date other) {
         return Math.abs(one.getTime() - other.getTime());
+    }
+
+    //获取当前时间距离第二天0点的秒数
+    public static int getCacheSeconds(){
+        Date current = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(current);
+        //设置时分秒为0
+        c.set(Calendar.DAY_OF_MONTH,1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return 0;
+    }
+
+    public static void main(String[]args){
+        Date current = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(current);
+        //设置时分秒为0
+        c.set(Calendar.DAY_OF_MONTH,1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        Date time = c.getTime();
+        CommonUtils.dateFormat(time,null);
+
     }
 
     //获取开始时间
