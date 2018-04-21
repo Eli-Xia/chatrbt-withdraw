@@ -61,7 +61,10 @@ public class ChatPetService {
         chatPet.setEthnicGroupsId(ethnicGroupsId);
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
 
-        return this.save(chatPet);
+        this.save(chatPet);
+
+        Integer chatPetId = chatPet.getId();
+        return chatPetId;
     }
 
     /**e

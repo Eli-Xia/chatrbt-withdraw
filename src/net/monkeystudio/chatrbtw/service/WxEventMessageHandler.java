@@ -66,34 +66,39 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                 //如果EventKey不为空
                 if (StringUtil.isNotEmpty(qrSceneStr)) {
 
-
                     //判断是否包含特地字符串，以免有其他平台也在用该接口
                     if (qrSceneStr.contains(EthnicGroupsService.EVENT_SPECIAL_STR)) {
+
+                        ChatPet chatPet = null;
+
+                        if(chatPet != null){
+                            return null;
+                        }
 
                         String parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
 
                         Integer chatPetId = null;
-                        ChatPet chatPet = null;
                         ChatPet parentChatPet = null;
-                        if (ethnicGroupsService.isNotFounderEventKey(parentIdStr)) {
+                        //如果父亲是族群创始宠物
+                        if (ethnicGroupsService.isFounderEventKey(parentIdStr)) {
+
+                            Integer ethnicGroupsId = ethnicGroupsService.createSecondEthnicGroups(wxPubOriginId, wxFanOpenId);
+
+                            EthnicGroups ethnicGroups = ethnicGroupsService.getFounderEthnicGroups(wxPubOriginId);
+
+                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId);
+                        } else {
                             Integer parentId = Integer.valueOf(parentIdStr);
 
                             parentChatPet = chatPetService.getById(parentId);
 
-                            //如果不是长老，
+                            //如果不是长老
                             if (chatPet == null) {
                                 String replyContent = "链接有误，请检查链接参数";
 
                                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
                             }
-
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, parentId, chatPet.getSecondEthnicGroupsId());
-                        } else {
-                            Integer ethnicGroupsId = ethnicGroupsService.createSecondEthnicGroups(wxPubOriginId, wxFanOpenId);
-
-                            EthnicGroups ethnicGroups = ethnicGroupsService.getFounderEthnicGroups(wxPubOriginId);
-
-                            chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId);
                         }
 
                     /*EthnicGroupsCodeValidatedResp ethnicGroupsCodeValidatedResp = ethnicGroupsService.validated(chatPet.getId(),wxPubOriginId);

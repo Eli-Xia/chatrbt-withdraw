@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by bint on 2018/4/12.
  */
 public class CreateQrCode {
+
+    @JsonProperty("expire_seconds")
     private Integer expireSeconds;
 
     @JsonProperty("action_name")

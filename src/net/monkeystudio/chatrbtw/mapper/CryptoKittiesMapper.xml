@@ -15,11 +15,9 @@
 
   <update id="updateMinItem" parameterType="map" >
       update
-          e_crypto_kitties(wx_pub_origin_id,wx_fan_open_id)
-      values
-          (#{wxPubOriginId} ,#{wxFanOpenId})
-      where
-          create_time = (select min(create_time) from e_crypto_kitties where wx_fan_open_id is null) m
+          e_crypto_kitties set wx_pub_origin_id = #{wxPubOriginId} ,wx_fan_open_id = #{wxFanOpenId}
+       where wx_fan_open_id is  null
+       order by create_time desc limit 1;
   </update>
 
   <select id="selectByWxFan" resultMap="baseResultMap" parameterType="map">
