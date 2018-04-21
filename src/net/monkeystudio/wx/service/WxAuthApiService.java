@@ -149,7 +149,6 @@ public class WxAuthApiService {
         String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);
 
         return this.getAuthorizerAccessToken(wxPubAppId);
-
     }
 
 

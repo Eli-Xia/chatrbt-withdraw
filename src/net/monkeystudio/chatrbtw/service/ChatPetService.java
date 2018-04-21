@@ -63,6 +63,8 @@ public class ChatPetService {
         this.save(chatPet);
 
         Integer chatPetId = chatPet.getId();
+
+        chatPetLogService.savePetBornLog(wxPubOriginId,wxFanOpenId,chatPetId);
         return chatPetId;
     }
 

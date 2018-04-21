@@ -45,6 +45,9 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     @Autowired
     private WxFanService wxFanService;
 
+    @Autowired
+    private ChatPetLogService chatPetLogService;
+
 
 
     private final static String SUBSCRIBE_EVENT = "subscribe";
@@ -69,7 +72,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                     //判断是否包含特地字符串，以免有其他平台也在用该接口
                     if (qrSceneStr.contains(EthnicGroupsService.EVENT_SPECIAL_STR)) {
 
-                        ChatPet chatPet = null;
+                        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId,wxFanOpenId);
 
                         if(chatPet != null){
                             return null;
@@ -93,7 +96,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             parentChatPet = chatPetService.getById(parentId);
 
                             //如果不是长老
-                            if (chatPet == null) {
+                            if (parentChatPet == null) {
                                 String replyContent = "链接有误，请检查链接参数";
 
                                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
