@@ -16,11 +16,7 @@ import net.monkeystudio.base.redis.bean.PipelineSource;
 import net.monkeystudio.base.redis.bean.RedisDataSource;
 import net.monkeystudio.base.redis.utils.SerializeUtils;
 import net.monkeystudio.base.utils.Log;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Transaction;
+import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 /**
@@ -714,6 +710,32 @@ public class RedisCacheTemplate {
         }
 
         return null;
+    }
+
+    public void publish(String channel ,String message) {
+        Jedis jedis = getPool().getResource();
+        try {
+            jedis.publish(channel, message);
+        }catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e.getMessage());
+        }finally {
+            jedis.close();
+        }
+    }
+
+    public void subscribe(JedisPubSub jedisPubSub ,String channel) {
+        Jedis jedis = getPool().getResource();
+        try {
+            jedis.subscribe(jedisPubSub, channel);
+        }catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e.getMessage());
+        }finally {
+            jedis.close();
+        }
     }
 
 
