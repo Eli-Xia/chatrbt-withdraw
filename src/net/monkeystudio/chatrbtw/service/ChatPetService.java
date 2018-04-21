@@ -157,7 +157,9 @@ public class ChatPetService {
 
         //宠物的url
         CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        chatPetBaseInfo.setAppearanceUrl(cryptoKitties.getUrl());
+
+        String appearanceUrl = cryptoKitties.getUrl();
+        chatPetBaseInfo.setAppearanceUrl(appearanceUrl);
 
         //公众号的头像
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
