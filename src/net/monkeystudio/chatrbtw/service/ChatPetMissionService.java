@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,36 +21,47 @@ public class ChatPetMissionService {
     @Autowired
     private WxFanService wxFanService;
 
+    @Autowired
+    private TaskExecutor taskExecutor;
+
     private final static String SUBSCRIBE_CHANNEL = "chat_pet_mission";
+
+
 
     @PostConstruct
     private void initSubscribe(){
 
-        JedisPubSub jedisPubSub = new JedisPubSub() {
+
+        taskExecutor.execute(new Runnable() {
             @Override
-            public void onMessage(String channel, String message) {
+            public void run() {
+                JedisPubSub jedisPubSub = new JedisPubSub() {
+                    @Override
+                    public void onMessage(String channel, String message) {
 
-                String str[] = message.split(":");
-                Integer wxFanId = Integer.valueOf(str[0]);
-                String wxFanOpenId = str[1];
-                Integer adId = Integer.valueOf(str[2]);
+                        String str[] = message.split(":");
+                        Integer wxFanId = Integer.valueOf(str[0]);
+                        String wxFanOpenId = str[1];
+                        Integer adId = Integer.valueOf(str[2]);
 
-                if(str.length != 3){
-                    Log.d("chatpet mission message errror." + str);
-                    return ;
-                }
+                        if(str.length != 3){
+                            Log.d("chatpet mission message errror." + str);
+                            return ;
+                        }
 
-                if(validatedWxFan(wxFanId,wxFanOpenId)){
-
-
+                        if(validatedWxFan(wxFanId,wxFanOpenId)){
 
 
-                }
 
+
+                        }
+
+                    }
+                };
+
+                redisCacheTemplate.subscribe(jedisPubSub,SUBSCRIBE_CHANNEL);
             }
-        };
-
-        redisCacheTemplate.subscribe(jedisPubSub,SUBSCRIBE_CHANNEL);
+        });
     }
 
 
