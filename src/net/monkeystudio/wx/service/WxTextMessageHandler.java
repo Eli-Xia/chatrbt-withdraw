@@ -426,8 +426,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             case REPLY_MSG_TYPE_TEXT:
                 respStr = responseProcessService.responseProecess(wxPubOriginId, respStr);
 
-
-                String respXml = this.replyTextStr(wxPubOriginId, wxFanOpenId, replySrc);
+                String respXml = this.replyTextStr(wxPubOriginId, wxFanOpenId, respStr);
 
                 try {
                     chatLogService.saveResponse(wxPubOriginId, wxFanOpenId, respStr , chatLogId, replySrc);
