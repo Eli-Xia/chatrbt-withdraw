@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.PetLogMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.PetLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="coin" property="coin" jdbcType="REAL" />
+    <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
+    <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
+    <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.PetLog" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, coin, chat_pet_id, wx_pub_origin_id, wx_fan_open_id
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from e_pet_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from e_pet_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
+    insert into e_pet_log (id, create_time, coin, 
+      chat_pet_id, wx_pub_origin_id, wx_fan_open_id, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{coin,jdbcType=REAL}, 
+      #{chatPetId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
+    insert into e_pet_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="coin != null" >
+        coin,
+      </if>
+      <if test="chatPetId != null" >
+        chat_pet_id,
+      </if>
+      <if test="wxPubOriginId != null" >
+        wx_pub_origin_id,
+      </if>
+      <if test="wxFanOpenId != null" >
+        wx_fan_open_id,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coin != null" >
+        #{coin,jdbcType=REAL},
+      </if>
+      <if test="chatPetId != null" >
+        #{chatPetId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null" >
+        #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="wxFanOpenId != null" >
+        #{wxFanOpenId,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
+    update e_pet_log
+    <set >
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coin != null" >
+        coin = #{coin,jdbcType=REAL},
+      </if>
+      <if test="chatPetId != null" >
+        chat_pet_id = #{chatPetId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null" >
+        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="wxFanOpenId != null" >
+        wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
+    update e_pet_log
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      coin = #{coin,jdbcType=REAL},
+      chat_pet_id = #{chatPetId,jdbcType=INTEGER},
+      wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
+    update e_pet_log
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      coin = #{coin,jdbcType=REAL},
+      chat_pet_id = #{chatPetId,jdbcType=INTEGER},
+      wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectDailyPetLog" resultMap="ResultMapWithBLOBs">
+    SELECT <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/>FROM  e_pet_log
+    WHERE chat_pet_id = #{chatPetId}
+    AND create_time &gt;= #{beginTime} AND  create_time &lt;= #{endTime} ORDER BY create_time DESC
+  </select>
+
+  <select id="countFanTotalCoin" resultType="java.lang.Float">
+    SELECT sum(coin) from e_pet_log WHERE  wx_pub_origin_id = #{wxPubOriginId} AND wx_fan_open_id = #{wxFanOpenId}
+    AND create_time &lt;= #{nowTime}
+  </select>
+</mapper>

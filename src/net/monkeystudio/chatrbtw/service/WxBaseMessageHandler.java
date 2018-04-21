@@ -73,6 +73,7 @@ public class WxBaseMessageHandler {
         TextMsgRes textMsgRes = new TextMsgRes();
 
         textMsgRes.setCreateTime(TimeUtil.getCurrentTimestamp());
+        textMsgRes.setContent("欢迎关注我们公众号，回复关键字，即可获取我们公众号的过往历史文章！");
         textMsgRes.setContent(content);
         textMsgRes.setMsgType("text");
 
