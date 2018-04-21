@@ -411,7 +411,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         }
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
-            //完成陪聊宠每日聊天任务
+            //完成陪聊宠每日任务
             chatPetLogService.completeChatPetDailyTask(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT);
 
             this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
@@ -447,7 +447,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
     }
     //推送任务广告
-    private String pushTaskAdChatCountKey(String wxPubOriginId,String wxFanOpenId){
+    public String pushTaskAdChatCountKey(String wxPubOriginId,String wxFanOpenId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "PushTaskAdChatCount:" + wxPubOriginId + ":" + wxFanOpenId;
     }
 
