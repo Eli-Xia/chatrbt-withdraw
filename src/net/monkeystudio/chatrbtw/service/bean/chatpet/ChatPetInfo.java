@@ -8,9 +8,8 @@ import java.util.List;
  */
 public class ChatPetInfo {
 
-
     private Integer tempAppearance;
-
+    private String appearanceUrl;
     private OwnerInfo ownerInfo;
 
     private String ownerId;
@@ -52,7 +51,6 @@ public class ChatPetInfo {
         this.geneticCode = geneticCode;
     }
 
-
     public Float getFanTotalCoin() {
         return fanTotalCoin;
     }
@@ -67,5 +65,13 @@ public class ChatPetInfo {
 
     public void setPetLogs(List<PetLogResp> petLogs) {
         this.petLogs = petLogs;
+    }
+
+    public String getAppearanceUrl() {
+        return appearanceUrl;
+    }
+
+    public void setAppearanceUrl(String appearanceUrl) {
+        this.appearanceUrl = appearanceUrl;
     }
 }

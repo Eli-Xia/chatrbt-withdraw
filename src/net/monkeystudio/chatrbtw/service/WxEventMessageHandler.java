@@ -121,11 +121,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             WxFan parentWxFan = wxFanService.getWxFan(wxPubOriginId, parentWxFanOpenId);
                             parentWxFanNickname = parentWxFan.getNickname();
                         }else {
-                            parentWxFanNickname = "Wedo";
+                            parentWxFanNickname = "喵小咪";
                         }
-
-
-
 
                         CustomerNewsItem customerNewsItem = new CustomerNewsItem();
                         String description = wxFan.getNickname() + "的斑马，出生于2018年4月12日8点30分您已经成功接受# " + parentWxFanNickname + "#的邀请，创造了一只独一无二的斑马，\n" +
@@ -136,15 +133,21 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                                 "\n" +
                                 "聊天中会随机触发事件\n" +
                                 "每一次点击链接，完成每日任务，即获得成长经验值";
+
+                        description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + "的邀请，加入了喵小咪星球。\n" +
+                                "自此历史浓重的记录了一笔：#XY#的喵小咪，出生于2018年4月12日8点30分。\n" +
+                                " \n" +
+                                "现在，可以在下面聊天栏里跟我说第一句话。\n" +
+                                "喵~期待~";
                         customerNewsItem.setDescription(description);
 
                         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
                         String uri = "/res/wedo/zebra.html?id=" + chatPetId;
                         String url = domain + uri;
                         customerNewsItem.setUrl(url);
-                        customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/normal_cover.jpg");
+                        customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/kitties_normal_cover.png");
 
-                        String replyContent = "您的宠物已经出生！";
+                        String replyContent = "喵！World!";
                         customerNewsItem.setTitle(replyContent);
 
                         return this.replySingleNewsStr(wxPubOriginId, wxFanOpenId, customerNewsItem);
