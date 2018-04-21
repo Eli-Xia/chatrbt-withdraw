@@ -17,7 +17,7 @@
       update
           e_crypto_kitties set wx_pub_origin_id = #{wxPubOriginId} ,wx_fan_open_id = #{wxFanOpenId}
        where wx_fan_open_id is  null
-       order by create_time desc limit 1;
+       order by create_time esc limit 1;
   </update>
 
   <select id="selectByWxFan" resultMap="baseResultMap" parameterType="map">

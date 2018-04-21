@@ -10,41 +10,22 @@ window.onload = function () {
             bgColor: '1b0035',
             canvasSign: true,
             userInfo: {
-                headImg: 'images/demo.png',
-                nickname: '四木'
+                headImg: '',
+                nickname: ''
             },
             list: {
                 ownerId: 'acB7dmClbR',
                 geneticCode: 15147396010,
-                fanTotalCoin: 0.0
+                fanTotalCoin: 0.0,
+                appearanceUrl: ''
             },
-            logs: [
-                {
-                    id: '',
-                    createTime: '',
-                    coin: 3,
-                    content: '完成每日阅读文章任务，经验值'
-                },
-                {
-                    id: '',
-                    createTime: '',
-                    coin: 3,
-                    content: '完成每日阅读文章任务，经验值'
-                },
-                {
-                    id: '',
-                    createTime: '',
-                    coin: 3,
-                    content: '完成每日阅读文章任务，经验值'
-                }
-            ],
-            twoImg: 'images/two.png',
+            logs: [],
+            twoImg: '',
             id: ''
         },
         created() {
             var i = location.search.indexOf('=')
             this.id =location.search.slice(i+1)
-            console.log(this.id)
             this.queryList()
         },
         methods: {
@@ -52,7 +33,7 @@ window.onload = function () {
                 if ($event.target.className == 'share-target' || $event.target.id == 'share') {
                     this.share = !this.share
                     if ($event.target.className == 'share-target' && this.canvasSign) {
-                        this.canvasImg()
+                        // this.canvasImg()
                         this.canvasSign = false
                     }
                 }
@@ -60,7 +41,7 @@ window.onload = function () {
             queryList() {
                 var _self = this
                 var xhr = new XMLHttpRequest();
-                var data = JSON.stringify({"id": "1"})
+                var data = JSON.stringify({"id": "2"})
                 xhr.open('post', '/api/chat-pet/pet/info', true);
                 xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8')
                 xhr.send(data)
@@ -74,6 +55,8 @@ window.onload = function () {
                             _self.userInfo.nickname = resp.result.ownerInfo.nickname
                             _self.list = resp.result
                             _self.logs = resp.result.petLogs
+                            _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode
+                            console.log(_self.list)
                         } else {
                             alert(resp.retMsg)
                         }
@@ -85,15 +68,15 @@ window.onload = function () {
                 html2canvas(document.getElementById('canvas_img')).then(function (canvas) {
                     var img = new Image();
                     img.src = canvas.toDataURL()
-                    document.getElementById('share').replaceChild(img,document.getElementById('canvas_img'));
+                    document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
                     // document.getElementById('share').appendChild(img);
                 });
             },
             convertImgToBase64(url, callback, outputFormat) {
                 var canvas = document.createElement('CANVAS'),
                     ctx = canvas.getContext('2d'),
-                    img = new Image;
-                img.crossOrigin = 'Anonymous';
+                    img = new Image();
+                img.crossOrigin = 'AnonyÎmous';
                 img.onload = function () {
                     canvas.height = img.height;
                     canvas.width = img.width;
@@ -112,7 +95,7 @@ window.onload = function () {
                     return d.getFullYear() + '-' + add_zero(d.getMonth() + 1) + '-'
                         + add_zero(d.getDate());
                 } else {
-                    return '--'
+                    return ''
                 }
 
                 function add_zero(temp) {

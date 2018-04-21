@@ -2,7 +2,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>斑马侠</title>
+    <title>喵小咪星球</title>
     <meta content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1, user-scalable=no"
           name="viewport">
     <script>
@@ -17,10 +17,10 @@
     </script>
     <link rel="stylesheet" href="css/zebra.css">
 </head>
-<body id="app">
+<body id="app" v-cloak>
 <header>
     <div class="user-msg">
-        <img :src="userInfo.headImg" alt="微信头像">
+        <img v-if="userInfo.headImg" :src="userInfo.headImg" alt="avatar">
         <div>
             <div class="user-name">{{userInfo.nickname}}</div>
             <div class="user-token">
@@ -35,7 +35,7 @@
 <section>
     <div id="user_zebra">
         <div class="zebra-bg">
-            <img src="images/demo_3.png" alt="斑马侠">
+            <img v-if="list.appearanceUrl" :src="list.appearanceUrl" alt="cat">
         </div>
         <div class="user-code" v-if="userCodeShow">
             <div>
@@ -89,8 +89,12 @@
     <div id="log">
         <div class="tittle">宠物日志</div>
         <div>
-            <div class="log-date">
+            <div class="log-date" v-if="logs.length !== 0">
                 {{logs[0].createTime | formatDate}}
+            </div>
+            <div class="nodata" v-if="logs.length == 0">
+                <img src="images/nodata.svg" alt="no-data">
+                <p>没有消息</p>
             </div>
             <ul>
                 <li v-for="item in logs">
@@ -103,21 +107,21 @@
     </div>
 </section>
 <footer>
-    喵小咪星球持续建设中<br>
-    敬请期待
+    <p>喵小咪星球持续建设中</p>
+    <p>敬请期待</p>
 </footer>
-<div id="share" v-show="share" @click="shareShow($event)">
+<div v-cloak id="share" v-if="share" @click="shareShow($event)">
     <div :style="{'background-color': '#' + bgColor}" id="canvas_img">
         <div>
             <div class="zebra">
                 <div class="wx-img">
-                    <img :src="userInfo.headImg" alt="微信头像">
+                    <img :src="userInfo.headImg" alt="avatar">
                 </div>
                 <span>
                 {{userInfo.nickname}}的喵小咪
                 </span>
                 <div class="zebra-msg">
-                    <img src="images/demo_3.png" alt="斑马侠图">
+                    <img :src="list.appearanceUrl" alt="cat">
                 </div>
                 <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
                 <div class="bg-left bg" :style="{'background-color': '#' + bgColor}"></div>
@@ -125,13 +129,13 @@
             <div class="code-box">
                 <div>
                     <div class="code">
-                        <img :src="twoImg" alt="二维码" class="two">
+                        <img :src="twoImg" alt="QRcode" class="two">
                         <img src="images/demo_2.png" alt="背景" class="two-bg">
                     </div>
                 </div>
                 <div class="hint">
                     长按识别二维码<br/>
-                    领取专属的斑马
+                    领取专属喵小咪
                 </div>
                 <div class="tip">
                     数量有限 <br/>请把名额留给热爱互联网，关注科技的小伙伴们
