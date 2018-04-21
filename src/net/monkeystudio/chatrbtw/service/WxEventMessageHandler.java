@@ -145,7 +145,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         String uri = "/res/wedo/zebra.html?id=" + chatPetId;
                         String url = domain + uri;
                         customerNewsItem.setUrl(url);
-                        customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/normal_cover.jpg");
+                        customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/kitties_normal_cover.png");
 
                         String replyContent = "喵！World!";
                         customerNewsItem.setTitle(replyContent);
