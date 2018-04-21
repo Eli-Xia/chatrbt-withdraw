@@ -40,4 +40,16 @@
         where
             `id` = #{id}
     </select>
+
+    <select id="selectByParam"  resultMap="baseResultMap">
+        select <include refid="Base_Column_List"/> FROM  e_chat_pet
+        <where>
+            <if test="wxPubOriginId != null">
+                and wx_pub_origin_id = #{wxPubOriginId}
+            </if>
+            <if test="wxFanOpenId != null">
+                and wx_fan_open_id = #{wxFanOpenId}
+            </if>
+        </where>
+    </select>
 </mapper>
