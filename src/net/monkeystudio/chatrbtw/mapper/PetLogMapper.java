@@ -24,4 +24,6 @@ public interface PetLogMapper {
     List<PetLog> selectDailyPetLog(@Param("chatPetId") Integer chatPetId, @Param("beginTime")Date beginDate, @Param("endTime") Date endDate);
 
     Float countFanTotalCoin(@Param("wxPubOriginId")String wxPubOriginId, @Param("wxFanOpenId")String wxFanOpenId,@Param("nowTime") Date now);
+
+    Integer countTaskLog(@Param("wxPubOriginId")String wxPubOriginId, @Param("wxFanOpenId")String wxFanOpenId, @Param("beginTime")Date beginDate, @Param("endTime") Date endDate,@Param("taskCode")Integer taskCode);
 }

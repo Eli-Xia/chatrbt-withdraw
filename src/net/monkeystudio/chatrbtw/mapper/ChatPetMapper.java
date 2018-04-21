@@ -10,4 +10,6 @@ public interface ChatPetMapper {
     Integer insert(ChatPet chatPet);
 
     ChatPet selectById(Integer id);
+
+    ChatPet selectByParam(ChatPet chatPet);
 }

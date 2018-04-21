@@ -17,6 +17,8 @@ public class PetLog {
 
     private String content;
 
+    private Integer taskCode;
+
     public Integer getId() {
         return id;
     }
@@ -71,5 +73,13 @@ public class PetLog {
 
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
+    }
+
+    public Integer getTaskCode() {
+        return taskCode;
+    }
+
+    public void setTaskCode(Integer taskCode) {
+        this.taskCode = taskCode;
     }
 }

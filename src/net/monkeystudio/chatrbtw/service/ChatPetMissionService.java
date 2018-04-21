@@ -24,6 +24,9 @@ public class ChatPetMissionService {
     @Autowired
     private TaskExecutor taskExecutor;
 
+    @Autowired
+    private ChatPetLogService chatPetLogService;
+
     private final static String SUBSCRIBE_CHANNEL = "chat_pet_mission";
 
 
@@ -50,9 +53,9 @@ public class ChatPetMissionService {
                         }
 
                         if(validatedWxFan(wxFanId,wxFanOpenId)){
+                            WxFan wxFan = wxFanService.getById(wxFanId);
 
-
-
+                            chatPetLogService.completeChatPetDailyReadTask(wxFan.getWxPubOriginId(),wxFanOpenId);
 
                         }
 

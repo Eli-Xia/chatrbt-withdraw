@@ -8,12 +8,13 @@
     <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
     <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
     <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+    <result column="task_code" property="taskCode" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.PetLog" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, coin, chat_pet_id, wx_pub_origin_id, wx_fan_open_id
+    id, create_time, coin, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code
   </sql>
   <sql id="Blob_Column_List" >
     content
@@ -33,10 +34,10 @@
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
     insert into e_pet_log (id, create_time, coin, 
       chat_pet_id, wx_pub_origin_id, wx_fan_open_id, 
-      content)
+      content,task_code)
     values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{coin,jdbcType=REAL}, 
       #{chatPetId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
-      #{content,jdbcType=LONGVARCHAR})
+      #{content,jdbcType=LONGVARCHAR}, #{taskCode})
   </insert>
   <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
     insert into e_pet_log
@@ -62,6 +63,9 @@
       <if test="content != null" >
         content,
       </if>
+      <if test="taskCode != null" >
+        task_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -84,6 +88,9 @@
       </if>
       <if test="content != null" >
         #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taskCode != null" >
+        #{taskCode,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -108,6 +115,9 @@
       <if test="content != null" >
         content = #{content,jdbcType=LONGVARCHAR},
       </if>
+      <if test="taskCode != null" >
+        task_code = #{taskCode,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -118,7 +128,8 @@
       chat_pet_id = #{chatPetId,jdbcType=INTEGER},
       wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
       wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
-      content = #{content,jdbcType=LONGVARCHAR}
+      content = #{content,jdbcType=LONGVARCHAR},
+      task_code = #{taskCode}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
@@ -127,7 +138,8 @@
       coin = #{coin,jdbcType=REAL},
       chat_pet_id = #{chatPetId,jdbcType=INTEGER},
       wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
-      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR}
+      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      task_code = #{taskCode}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -140,5 +152,23 @@
   <select id="countFanTotalCoin" resultType="java.lang.Float">
     SELECT sum(coin) from e_pet_log WHERE  wx_pub_origin_id = #{wxPubOriginId} AND wx_fan_open_id = #{wxFanOpenId}
     AND create_time &lt;= #{nowTime}
+  </select>
+
+  <select id="countTaskLog" resultType="java.lang.Integer">
+    select count(id) FROM  e_pet_log WHERE wx_pub_origin_id = #{wxPubOriginId} AND wx_fan_open_id = #{wxFanOpenId}
+    AND create_time &gt;= #{beginTime} AND  create_time &lt;= #{endTime} AND task_code = #{taskCode}
+  </select>
+
+  <select id="selectByParam" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    <where>
+      <if test="wxPubOriginId != null">
+        and wx_pub_origin_id = #{wxPubOriginId}
+      </if>
+      <if test="wxFanOpenId != null">
+        and wx_fan_open_id = #{wxFanOpenId}
+      </if>
+    </where>
+    limit 1
   </select>
 </mapper>
