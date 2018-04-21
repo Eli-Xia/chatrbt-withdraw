@@ -90,7 +90,7 @@ public class EthnicGroupsService {
 
     public void createFounderQrCodeImage(String wxPubOriginId) throws BizException, IOException, WriterException {
 
-        String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 1000 * 60 * 60 * 24 * 30, QrCodeHelper.QrCodeType.TEMP, EVENT_SPECIAL_STR + FOUNDER_EVENT_KEY);
+        String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 2592000, QrCodeHelper.QrCodeType.TEMP, EVENT_SPECIAL_STR + FOUNDER_EVENT_KEY);
         QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
 
         QRCodeUtil.createQRCode(qrCodeTicker.getUrl(), "/Users/bint/Documents/chart_robot/src/chatrbtw/WebRoot/test.jpg", 100, 100);
