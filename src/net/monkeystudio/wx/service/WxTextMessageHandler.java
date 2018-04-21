@@ -1,13 +1,11 @@
 package net.monkeystudio.wx.service;
 
+import com.aliyun.oss.common.utils.DateUtil;
 import net.monkeystudio.admin.controller.req.wxpubmaterial.QueryWxPubNewsList;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
-import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.StringUtil;
-import net.monkeystudio.base.utils.XmlUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
@@ -111,7 +109,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     private final static String ASK_SEARCH_FIRST_ITEM_DESC = "Powered by keendo.com.cn";
     private final static String ASK_SEARCH_LAST_ITEM_TITLE = "在下面↓回复\"更多\"即可获取更多结果";
     private final static String ASK_SEARCH_REPLY_TIP = "更多";
-    private final static int  PUSH_TASK_AD_CHAT_COUNT = 3;//聊天次数到达推送陪聊宠任务广告
+    private final static Integer  PUSH_TASK_AD_CHAT_COUNT = 3;//聊天次数到达推送陪聊宠任务广告
 
 
 
@@ -407,9 +405,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         if ("".equals(respStr)) {
             return null;
         }
-
-
-        smartChatAdProecess(wxPubOriginId,wxFanOpenId);
+        //开通宠物陪聊,不走智能聊
+        if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
+            this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+        }else{
+            this.smartChatAdProecess(wxPubOriginId,wxFanOpenId);
+        }
 
         switch (replyMsgType){
             //文本消息回复
@@ -440,7 +441,44 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "PushTaskAdChatCount:" + wxPubOriginId + ":" + wxFanOpenId;
     }
 
+    /**
+     * 陪聊宠广告推送
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     * @throws BizException
+     */
+    private void petChatAdProcess(String wxPubOriginId,String wxFanOpenId) throws BizException{
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
 
+        if(wxPub != null ){
+            Integer wxPubVerifyTypeInfo = wxPub.getVerifyTypeInfo();
+            if(wxPubVerifyTypeInfo  == null){
+                this.reviseWxPub(wxPubOriginId);
+                wxPub = wxPubService.getByOrginId(wxPubOriginId);
+            }
+
+            if( rWxPubProductService.isUnable(ProductService.CHAT_PET,wxPubOriginId)){
+                return ;
+            }
+
+            String pushTaskAdChatCountKey = this.pushTaskAdChatCountKey(wxPubOriginId,wxFanOpenId);
+            Long count = redisCacheTemplate.incr(pushTaskAdChatCountKey);
+
+            if (count == 1) {
+                //缓存时间:当前时间距离次日0点的时间
+                redisCacheTemplate.expire(pushTaskAdChatCountKey, DateUtils.getCacheSeconds());
+            }
+
+            if(PUSH_TASK_AD_CHAT_COUNT.equals(count.intValue())){
+                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+                if(wxFan != null){
+                    Log.d("============= smart chat ad has been pushed !! ============");
+                    this.sendAd(wxFan.getId(), wxPubOriginId);
+                }
+            }
+
+        }
+    }
 
     /**
      * 智能聊广告处理
@@ -466,18 +504,9 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             String countCacheKey = this.getChatLogCountCacheKey(wxPubOriginId, wxFanOpenId);
             Long count = redisCacheTemplate.incr(countCacheKey);
 
-            String pushTaskAdCountCacheKey = this.pushTaskAdChatCountKey(wxPubOriginId,wxFanOpenId);
-            Long taskAdCount = redisCacheTemplate.incr(pushTaskAdCountCacheKey);
-
-            //redisCacheTemplate.expire(pushTaskAdCountCacheKey,)
-
 
             if (count == 1) {
                 redisCacheTemplate.expire(countCacheKey, COUNT_CACHE_PERIOD);
-            }
-
-            if(count.intValue() == PUSH_TASK_AD_CHAT_COUNT){
-
             }
 
             String chatAdPushCountStr = pushMessageConfigService.getByKey(PushMessageConfigService.CHAT_PUSH_AD_COUNT_KEY);

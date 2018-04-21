@@ -77,26 +77,15 @@ public class DateUtils {
         Calendar c = Calendar.getInstance();
         c.setTime(current);
         //设置时分秒为0
-        c.set(Calendar.DAY_OF_MONTH,1);
+        c.set(Calendar.DAY_OF_MONTH,c.get(Calendar.DAY_OF_MONTH)+1);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
-        return 0;
+        Date nextDay = c.getTime();
+        Long sec = (nextDay.getTime()-current.getTime()) / 1000 ;
+        return sec.intValue();
     }
 
-    public static void main(String[]args){
-        Date current = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(current);
-        //设置时分秒为0
-        c.set(Calendar.DAY_OF_MONTH,1);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        Date time = c.getTime();
-        CommonUtils.dateFormat(time,null);
-
-    }
 
     //获取开始时间
     public static Date getBeginDate(Date current) {

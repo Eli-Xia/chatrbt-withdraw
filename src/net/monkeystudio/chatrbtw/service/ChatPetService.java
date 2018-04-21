@@ -33,8 +33,7 @@ public class ChatPetService {
     private WxFanService wxFanService;
 
     @Autowired
-    private PetLogMapper petLogMapper;
-
+    private ChatPetLogService chatPetLogService;
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -114,7 +113,7 @@ public class ChatPetService {
         chatPetBaseInfo.setGeneticCode(geneticCode);
 
         //宠物日志
-        List<PetLog> dailyPetLogList = this.getDailyPetLogList(chatPetId, new Date());
+        List<PetLog> dailyPetLogList = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
         List<PetLogResp> resps = new ArrayList<>();
 
         for(PetLog pl:dailyPetLogList){
@@ -129,7 +128,7 @@ public class ChatPetService {
         chatPetBaseInfo.setPetLogs(resps);
 
         //粉丝拥有代币
-        Float fanTotalCoin = this.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
+        Float fanTotalCoin = chatPetLogService.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
         chatPetBaseInfo.setFanTotalCoin(fanTotalCoin);
 
         return chatPetBaseInfo;
@@ -147,43 +146,5 @@ public class ChatPetService {
         return geneticCode;
     }
 
-    /**
-     * 获取每日宠物日志
-     * @param date
-     * @return
-     */
-    public List<PetLog> getDailyPetLogList(Integer chatPetId, Date date){
-        Date beginDate = DateUtils.getBeginDate(date);
-        Date endDate = DateUtils.getEndDate(date);
 
-        List<PetLog> pls = petLogMapper.selectDailyPetLog(chatPetId,beginDate,endDate);
-        return pls;
-    }
-
-    /**
-     * 获取当前粉丝总代币数  代币是跟粉丝挂钩的
-     * @return
-     */
-    public Float getFanTotalCoin(String wxPubOriginId,String wxFanOpenId){
-
-        Float totalCoin = petLogMapper.countFanTotalCoin(wxPubOriginId,wxFanOpenId,new Date());
-        return totalCoin;
-    }
-
-    /**
-     * 保存宠物日志
-     * @param petLog
-     */
-    public void savePetLog(PetLog petLog){
-        PetLog pl = new PetLog();
-
-        pl.setCoin(petLog.getCoin());
-        pl.setCreateTime(petLog.getCreateTime());
-        pl.setContent(petLog.getContent());
-        pl.setChatPetId(petLog.getChatPetId());
-        pl.setWxPubOriginId(petLog.getWxPubOriginId());
-        pl.setWxFanOpenId(petLog.getWxFanOpenId());
-
-        petLogMapper.insert(pl);
-    }
 }

@@ -44,7 +44,8 @@ public class AdService {
     //图片形式的广告
     public final static Integer AD_IMAGE_TYPE = 3 ;
 
-
+    //广告推送类型-宠陪聊
+    public final static Integer AD_PUSH_TYPE_CHAT_PET = 2;
     //广告推送类型-问问搜
     public final static Integer AD_PUSH_TYPE_ASK_SEARCH = 1;
     //广告推送类型-智能聊

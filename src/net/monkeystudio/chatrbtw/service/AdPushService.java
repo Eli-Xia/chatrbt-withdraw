@@ -181,6 +181,7 @@ public class AdPushService {
         return true;
     }
 
+
     //获取广告推送地址
     public String getAdPushUrl(Integer adId,Integer wxFanId,String wxFanOpenId){
 
@@ -192,6 +193,7 @@ public class AdPushService {
 
         return pushUrl;
     }
+
 
 
     private String pushAd(String wxPubAppId, Integer wxFanId, Ad ad) throws BizException {
