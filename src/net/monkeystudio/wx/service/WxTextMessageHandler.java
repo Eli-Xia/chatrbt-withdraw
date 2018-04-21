@@ -8,6 +8,7 @@ import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
+import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
@@ -89,6 +90,9 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
     @Autowired
     private RWxPubProductService rWxPubProductService;
+
+    @Autowired
+    private ChatPetLogService chatPetLogService;
 
     @Autowired
     private CfgService cfgService;
@@ -407,8 +411,13 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         }
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
+            //完成陪聊宠每日聊天任务
+            chatPetLogService.completeChatPetDailyTask(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT);
+
             this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+
         }else{
+
             this.smartChatAdProecess(wxPubOriginId,wxFanOpenId);
         }
 
@@ -431,8 +440,8 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             case REPLY_MSG_TYPE_ARTICLES:
 
                 return respStr;
-
         }
+
 
         return null;
 
