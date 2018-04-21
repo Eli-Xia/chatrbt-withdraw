@@ -1,19 +1,21 @@
 package net.monkeystudio.chatrbtw.service;
 
+import com.google.zxing.WriterException;
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.CryptoKitties;
-import net.monkeystudio.chatrbtw.entity.PetLog;
-import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
+import net.monkeystudio.exception.BizException;
+import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,10 +36,17 @@ public class ChatPetService {
     @Autowired
     private WxFanService wxFanService;
 
+    @Autowired
     private ChatPetLogService chatPetLogService;
 
     @Autowired
     private CryptoKittiesService cryptoKittiesService;
+
+    @Autowired
+    private WxPubService wxPubService;
+
+    @Autowired
+    private EthnicGroupsService ethnicGroupsService;
 
     /**
      * 生成宠物
@@ -59,6 +68,7 @@ public class ChatPetService {
         chatPet.setWxPubOriginId(wxPubOriginId);
         chatPet.setEthnicGroupsId(ethnicGroupsId);
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
+        chatPet.setCreateTime(new Date());
 
         this.save(chatPet);
 
@@ -145,6 +155,22 @@ public class ChatPetService {
         Float fanTotalCoin = chatPetLogService.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
         chatPetBaseInfo.setFanTotalCoin(fanTotalCoin);
 
+        //公众号的头像
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+        String wxPubHeadImgUrl = wxPub.getHeadImgUrl();
+        chatPetBaseInfo.setwPubHeadImgUrl(wxPubHeadImgUrl);
+
+        //公众号二维码base64
+        try {
+            String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
+            chatPetBaseInfo.setInvitationQrCode(base64);
+        } catch (BizException e) {
+            Log.e(e);
+        } catch (IOException e) {
+            Log.e(e);
+        } catch (WriterException e) {
+            Log.e(e);
+        }
         return chatPetBaseInfo;
     }
 

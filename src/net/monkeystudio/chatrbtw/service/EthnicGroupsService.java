@@ -5,6 +5,7 @@ import net.monkeystudio.base.utils.ImageUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.QRCodeUtil;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.mapper.EthnicGroupsMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.QrCodeHelper;
@@ -14,6 +15,7 @@ import net.monkeystudio.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +43,8 @@ public class EthnicGroupsService {
     public final static String EVENT_SPECIAL_STR = "keendo_chat_pet";
 
 
+    @Autowired
+    private ChatPetService chatPetService;
 
     @Autowired
     private QrCodeHelper qrCodeHelper;
@@ -88,12 +92,34 @@ public class EthnicGroupsService {
         return new EthnicGroupsCodeValidatedResp(ETHNIC_GROUPS_CODE_VALIDATED_STATUS_ENABLE, null);
     }*/
 
+    /**
+     * 创建创始宠物的邀请二维码
+     * @param wxPubOriginId
+     * @throws BizException
+     * @throws IOException
+     * @throws WriterException
+     */
     public void createFounderQrCodeImage(String wxPubOriginId) throws BizException, IOException, WriterException {
 
         String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 2592000, QrCodeHelper.QrCodeType.TEMP, EVENT_SPECIAL_STR + FOUNDER_EVENT_KEY);
         QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
 
         QRCodeUtil.createQRCode(qrCodeTicker.getUrl(), "/Users/bint/Documents/chart_robot/src/chatrbtw/WebRoot/test.jpg", 100, 100);
+    }
+
+
+    public String createInvitationQrCode(Integer chatPetId) throws BizException, IOException, WriterException {
+
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+
+        String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 2592000, QrCodeHelper.QrCodeType.TEMP, EVENT_SPECIAL_STR + chatPetId);
+        QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
+
+        BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(qrCodeTicker.getUrl(), 100, 100);
+
+        return ImageUtils.encodeImgageToBase64(bufferedImage,"png");
     }
 
     public Integer createSecondEthnicGroups(String wxPubOriginId, String wxFanOpenId) {
@@ -139,12 +165,4 @@ public class EthnicGroupsService {
 
         return ethnicGroups;
     }
-
-    //TODO
-    private String getH5Url(String wxPubOriginId, String wxFanOpendId) {
-
-
-        return "";
-    }
-
 }

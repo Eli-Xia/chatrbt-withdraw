@@ -15,6 +15,26 @@ public class ChatPetInfo {
     private String ownerId;
     private String geneticCode;
 
+    private String invitationQrCode;
+    private String wPubHeadImgUrl;
+
+    public String getwPubHeadImgUrl() {
+        return wPubHeadImgUrl;
+    }
+
+    public void setwPubHeadImgUrl(String wPubHeadImgUrl) {
+        this.wPubHeadImgUrl = wPubHeadImgUrl;
+    }
+
+    public String getInvitationQrCode() {
+
+        return invitationQrCode;
+    }
+
+    public void setInvitationQrCode(String invitationQrCode) {
+        this.invitationQrCode = invitationQrCode;
+    }
+
     private List<PetLogResp> petLogs = new ArrayList<>();
 
     private Float fanTotalCoin = 0F;
