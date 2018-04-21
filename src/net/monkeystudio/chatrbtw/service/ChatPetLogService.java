@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.PetLog;
+import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,10 @@ import java.util.List;
 public class ChatPetLogService {
     @Autowired
     private PetLogMapper petLogMapper;
+
+    @Autowired
+    private ChatPetService chatPetService;
+
 
     /**
      * 获取每日宠物日志
@@ -53,7 +58,52 @@ public class ChatPetLogService {
         pl.setChatPetId(petLog.getChatPetId());
         pl.setWxPubOriginId(petLog.getWxPubOriginId());
         pl.setWxFanOpenId(petLog.getWxFanOpenId());
+        pl.setTaskCode(petLog.getTaskCode());
 
         petLogMapper.insert(pl);
     }
+
+
+    public void savePetBornLog(String wxPubOpenId,String wxFanOpenId,Integer chatPetId){
+        PetLog pl = new PetLog();
+        pl.setWxFanOpenId(wxPubOpenId);
+
+    }
+
+    /**
+     * 粉丝完成
+     * @return
+     */
+    public void completeChatPetDailyReadTask(String wxPubOriginId,String wxFanOpenId){
+        //判断粉丝当天宠物陪聊任务是否已经完成
+        //完成则插入一条宠物日志
+        if(isDailyTaskDone(wxPubOriginId,wxFanOpenId,ChatPetTaskEnum.DAILY_READ_NEWS)){
+            return;
+        }
+        PetLog pl = new PetLog();
+        pl.setTaskCode(ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
+        pl.setCoin(ChatPetTaskEnum.DAILY_READ_NEWS.getCoinValue());
+        pl.setCreateTime(new Date());
+        pl.setContent("完成"+ChatPetTaskEnum.DAILY_READ_NEWS.getName());
+        pl.setChatPetId(chatPetService.getChatPetByFans(wxPubOriginId,wxFanOpenId).getId());
+        pl.setWxPubOriginId(wxPubOriginId);
+        pl.setWxFanOpenId(wxFanOpenId);
+
+        this.savePetLog(pl);
+    }
+
+    public boolean isDailyTaskDone(String wxPubOriginId,String wxFanOpenId,ChatPetTaskEnum taskEnum){
+        Date now = new Date();
+        Date beginDate = DateUtils.getBeginDate(now);
+        Date endDate = DateUtils.getEndDate(now);
+
+        //每日阅读任务code
+        int code = taskEnum.getCode();
+
+        Integer count = petLogMapper.countTaskLog(wxPubOriginId, wxFanOpenId, beginDate, endDate, code);
+
+        return count > 0;
+
+    }
+
 }

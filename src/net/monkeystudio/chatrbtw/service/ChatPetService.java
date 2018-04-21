@@ -155,5 +155,14 @@ public class ChatPetService {
         return geneticCode;
     }
 
+    public ChatPet getChatPetByFans(String wxPubOriginId,String wxFanOpenId){
+        ChatPet param = new ChatPet();
+
+        param.setWxFanOpenId(wxPubOriginId);
+        param.setWxFanOpenId(wxFanOpenId);
+
+        return chatPetMapper.selectByParam(param);
+    }
+
 
 }
