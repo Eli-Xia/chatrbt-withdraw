@@ -35,7 +35,7 @@ public class ChatPetMissionService {
                 Integer adId = Integer.valueOf(str[2]);
 
                 if(str.length != 3){
-                    Log.d("");
+                    Log.d("chatpet mission message errror." + str);
                     return ;
                 }
 
