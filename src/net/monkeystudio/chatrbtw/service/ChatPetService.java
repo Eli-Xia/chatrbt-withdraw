@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.CryptoKitties;
 import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -36,6 +37,9 @@ public class ChatPetService {
     @Autowired
     private PetLogMapper petLogMapper;
 
+    @Autowired
+    private CryptoKittiesService cryptoKittiesService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -45,7 +49,11 @@ public class ChatPetService {
     public Integer generateChatPet(String wxPubOriginId , String wxFanOpenId ,Integer ethnicGroupsId ,Integer secondEthnicGroupsId){
 
         ChatPet chatPet = new ChatPet();
-        Integer appearance = this.ramdomGenerateAppearence();
+        //Integer appearance = this.ramdomGenerateAppearence();
+
+        cryptoKittiesService.designateKitty(wxPubOriginId,wxFanOpenId);
+        CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
+        Integer appearance = cryptoKitties.getId();
 
         chatPet.setTempAppearence(appearance);
         chatPet.setWxFanOpenId(wxFanOpenId);
