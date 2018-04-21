@@ -66,7 +66,14 @@ public class ChatPetLogService {
 
     public void savePetBornLog(String wxPubOpenId,String wxFanOpenId,Integer chatPetId){
         PetLog pl = new PetLog();
-        pl.setWxFanOpenId(wxPubOpenId);
+
+        pl.setWxPubOriginId(wxPubOpenId);
+        pl.setWxFanOpenId(wxFanOpenId);
+        pl.setContent("我出生啦!!");
+        pl.setCreateTime(new Date());
+        pl.setChatPetId(chatPetId);
+
+        this.savePetLog(pl);
 
     }
 
