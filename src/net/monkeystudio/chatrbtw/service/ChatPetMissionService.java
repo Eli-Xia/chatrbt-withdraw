@@ -34,9 +34,8 @@ public class ChatPetMissionService {
 
     @PostConstruct
     private void initSubscribe(){
-
-
-        taskExecutor.execute(new Runnable() {
+        //起一条独立的线程去监听
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 JedisPubSub jedisPubSub = new JedisPubSub() {
@@ -57,15 +56,16 @@ public class ChatPetMissionService {
                             WxFan wxFan = wxFanService.getById(wxFanId);
 
                             chatPetLogService.completeChatPetDailyTask(wxFan.getWxPubOriginId(),wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS);
-
                         }
-
                     }
                 };
 
                 redisCacheTemplate.subscribe(jedisPubSub,SUBSCRIBE_CHANNEL);
             }
         });
+
+        thread.start();
+        Log.d("finished Subscribe");
     }
 
 
