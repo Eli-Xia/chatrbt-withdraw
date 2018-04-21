@@ -1,25 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>chatrbtw</groupId>
-  <artifactId>chatrbtw</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <name>chatrbtw</name>
-  <description/>
-  <properties>
-    <webVersion>3.1</webVersion>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <shiro.version>1.3.2</shiro.version>
-  </properties>
-  <!--nexus-->
-  <repositories>
-     <repository>
-        <id>nexus</id>
-        <name>Nexus Repository</name>
-        <url>http://218.244.145.145:9001/nexus/content/groups/public/</url>
-     </repository>
-  </repositories>
-  <dependencies>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>chatrbtw</groupId>
+    <artifactId>chatrbtw</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>chatrbtw</name>
+    <description/>
+    <properties>
+        <webVersion>3.1</webVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <shiro.version>1.3.2</shiro.version>
+    </properties>
+    <!--nexus-->
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <name>Nexus Repository</name>
+            <url>http://218.244.145.145:9001/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <dependencies>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -226,10 +226,10 @@
         </dependency>
 
         <dependency>
-              <groupId>org.mybatis.generator</groupId>
-              <artifactId>mybatis-generator-core</artifactId>
-              <version>1.3.2</version>
-      </dependency>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
+            <version>1.3.2</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
         <dependency>
@@ -244,52 +244,52 @@
             <version>4.12</version>
         </dependency>
         <dependency>
-        	<groupId>dom4j</groupId>
-        	<artifactId>dom4j</artifactId>
-        	<version>1.6.1</version>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
         </dependency>
         <dependency>
-			  <groupId>commons-httpclient</groupId>
-			  <artifactId>commons-httpclient</artifactId>
-			  <version>3.1</version>
-		</dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
 
-      <dependency>
-          <groupId>com.qcloud</groupId>
-          <artifactId>cos_api</artifactId>
-          <version>4.6</version>
-      </dependency>
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>4.6</version>
+        </dependency>
 
-      <dependency>
-          <groupId>redis.clients</groupId>
-          <artifactId>jedis</artifactId>
-          <version>2.8.0</version>
-      </dependency>
-
-
-      <!-- https://mvnrepository.com/artifact/xstream/xstream -->
-      <dependency>
-          <groupId>com.thoughtworks.xstream</groupId>
-          <artifactId>xstream</artifactId>
-          <version>1.4.7</version>
-      </dependency>
-
-      <dependency>
-		  <groupId>com.github.penggle</groupId>
-		  <artifactId>kaptcha</artifactId>
-		  <version>2.3.2</version>
-		</dependency>
-
-      <!-- https://mvnrepository.com/artifact/com.google.zxing/core -->
-      <dependency>
-          <groupId>com.google.zxing</groupId>
-          <artifactId>javase</artifactId>
-          <version>3.3.0</version>
-      </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.8.0</version>
+        </dependency>
 
 
-  </dependencies>
-  <profiles>
+        <!-- https://mvnrepository.com/artifact/xstream/xstream -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.zxing/core -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
+
+    </dependencies>
+    <profiles>
         <profile>
             <id>dev</id>
             <properties>
@@ -313,107 +313,107 @@
                 <package.environment>pro</package.environment>
             </properties>
         </profile>
-  </profiles>
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <sourceDirectory>src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-      <resource>
-          <directory>config</directory>
-          <includes>
-              <include>**/*.properties</include>
-              <include>**/*.xml</include>
-          </includes>
-      </resource>
-      <resource>
-	        <directory>saimiri-core</directory>
-	        <includes>
-	          <include>**/*.properties</include>
-	          <include>**/*.xml</include>
-	          <include>**/*.tld</include>
-	        </includes>
-      </resource>
-      <resource>
-	        <directory>scheduling</directory>
-	        <includes>
-	          <include>**/*.properties</include>
-	          <include>**/*.xml</include>
-	          <include>**/*.tld</include>
-	        </includes>
-      </resource>
-    </resources>
+    </profiles>
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>config</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>saimiri-core</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.tld</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>scheduling</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.tld</include>
+                </includes>
+            </resource>
+        </resources>
 
-    <plugins>
-	      <plugin>
-	        <artifactId>maven-compiler-plugin</artifactId>
-	        <version>3.1</version>
-	        <configuration>
-	          <source>1.8</source>
-	          <target>1.8</target>
-	        </configuration>
-	      </plugin>
-	      <plugin>
-	        <artifactId>maven-war-plugin</artifactId>
-	        <version>2.6</version>
-	        <configuration>
-	          <webXml>WebRoot\WEB-INF\web.xml</webXml>
-	          <warSourceDirectory>${basedir}/WebRoot</warSourceDirectory>
-	          <archive>
-	              <addMavenDescriptor>false</addMavenDescriptor>
-	          </archive>
-	          <!--<version>3.1</version>-->
-	          <failOnMissingWebXml>true</failOnMissingWebXml>
-	          <webResources>
-	              <resource>
-	                  <directory>resource/${package.environment}</directory>
-	                  <targetPath>.</targetPath>
-	                  <filtering>true</filtering>
-	              </resource>
-	          </webResources>
-	        </configuration>
-	      </plugin>
-	      <plugin>
-	        <groupId>org.codehaus.mojo</groupId>
-	        <artifactId>build-helper-maven-plugin</artifactId>
-	        <version>1.8</version>
-	        <executions>
-	          <execution>
-	            <id>add-source</id>
-	            <phase>generate-sources</phase>
-	            <goals>
-	              <goal>add-source</goal>
-	            </goals>
-	            <configuration>
-	              <sources>
-	                <source>src</source>
-	                <source>saimiri-core</source>
-	                <source>config</source>
-	                <source>scheduling</source>
-	              </sources>
-	            </configuration>
-	          </execution>
-	        </executions>
-	      </plugin>
-        <!--mybatis generator maven plugin-->
-        <plugin>
-            <groupId>org.mybatis.generator</groupId>
-            <artifactId>mybatis-generator-maven-plugin</artifactId>
-            <version>1.3.2</version>
-            <configuration>
-                <!-- mybatis用于生成代码的配置文件 -->
-                <configurationFile>
-                    generator/generatorConfig.xml
-                </configurationFile>
-                <verbose>true</verbose>
-                <overwrite>true</overwrite>
-            </configuration>
-        </plugin>
-      </plugins>
-  </build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <webXml>WebRoot\WEB-INF\web.xml</webXml>
+                    <warSourceDirectory>${basedir}/WebRoot</warSourceDirectory>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                    <!--<version>3.1</version>-->
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>resource/${package.environment}</directory>
+                            <targetPath>.</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src</source>
+                                <source>saimiri-core</source>
+                                <source>config</source>
+                                <source>scheduling</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--mybatis generator maven plugin-->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <configuration>
+                    <!-- mybatis用于生成代码的配置文件 -->
+                    <configurationFile>
+                        generator/generatorConfig.xml
+                    </configurationFile>
+                    <verbose>true</verbose>
+                    <overwrite>true</overwrite>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
