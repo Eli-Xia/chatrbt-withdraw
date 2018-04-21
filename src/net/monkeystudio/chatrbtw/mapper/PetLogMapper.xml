@@ -159,7 +159,7 @@
     AND create_time &gt;= #{beginTime} AND  create_time &lt;= #{endTime} AND task_code = #{taskCode}
   </select>
 
-  <select id="selectByParam" resultMap="BaseResultMap">
+  <select id="selectByParam"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     <where>
       <if test="wxPubOriginId != null">
@@ -169,6 +169,5 @@
         and wx_fan_open_id = #{wxFanOpenId}
       </if>
     </where>
-    limit 1
   </select>
 </mapper>

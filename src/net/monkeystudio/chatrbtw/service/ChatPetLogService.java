@@ -81,17 +81,17 @@ public class ChatPetLogService {
      * 粉丝完成
      * @return
      */
-    public void completeChatPetDailyReadTask(String wxPubOriginId,String wxFanOpenId){
+    public void completeChatPetDailyTask(String wxPubOriginId,String wxFanOpenId,ChatPetTaskEnum taskEnum){
         //判断粉丝当天宠物陪聊任务是否已经完成
         //完成则插入一条宠物日志
-        if(isDailyTaskDone(wxPubOriginId,wxFanOpenId,ChatPetTaskEnum.DAILY_READ_NEWS)){
+        if(isDailyTaskDone(wxPubOriginId,wxFanOpenId,taskEnum)){
             return;
         }
         PetLog pl = new PetLog();
-        pl.setTaskCode(ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
-        pl.setCoin(ChatPetTaskEnum.DAILY_READ_NEWS.getCoinValue());
+        pl.setTaskCode(taskEnum.getCode());
+        pl.setCoin(taskEnum.getCoinValue());
         pl.setCreateTime(new Date());
-        pl.setContent("完成"+ChatPetTaskEnum.DAILY_READ_NEWS.getName());
+        pl.setContent("完成"+taskEnum.getName());
         pl.setChatPetId(chatPetService.getChatPetByFans(wxPubOriginId,wxFanOpenId).getId());
         pl.setWxPubOriginId(wxPubOriginId);
         pl.setWxFanOpenId(wxFanOpenId);
