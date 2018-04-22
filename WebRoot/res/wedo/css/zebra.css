@@ -136,6 +136,7 @@ header {
   padding: 0 0.4rem 0.4rem 0.54rem;
   font-size: 0.48rem;
   line-height: 1.67;
+  text-align: justify;
   border-bottom: 1px solid #ceced2;
 }
 #rule .gold {
