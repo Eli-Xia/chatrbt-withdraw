@@ -249,6 +249,8 @@ footer p {
   width: 100%;
 }
 #share > div {
+  width: 100%;
+  box-sizing: border-box;
   padding: 1.4rem 0.96rem;
   background: url("../images/share_sky.png") no-repeat;
   background-size: 100% 100%;
