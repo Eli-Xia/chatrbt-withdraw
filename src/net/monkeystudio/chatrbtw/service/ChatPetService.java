@@ -153,6 +153,9 @@ public class ChatPetService {
 
         //粉丝拥有代币
         Float fanTotalCoin = chatPetLogService.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
+        if(fanTotalCoin == null){
+            fanTotalCoin = 0F;
+        }
         chatPetBaseInfo.setFanTotalCoin(fanTotalCoin);
 
         //宠物的url

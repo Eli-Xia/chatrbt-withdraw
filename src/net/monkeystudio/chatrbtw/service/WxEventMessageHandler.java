@@ -142,8 +142,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                                 "聊天中会随机触发事件\n" +
                                 "每一次点击链接，完成每日任务，即获得成长经验值";
 
-                        description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + "的邀请，加入了喵小咪星球。\n" +
-                                "自此历史浓重的记录了一笔：# " + wxFan.getNickname() + "#的喵小咪，出生于2018年4月12日8点30分。\n" +
+                        description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
+                                "自此历史浓重的记录了一笔：#" + wxFan.getNickname() + "#的喵小咪，出生于2018年4月12日8点30分。\n" +
                                 " \n" +
                                 "现在，可以在下面聊天栏里跟我说第一句话。\n" +
                                 "喵~期待~";

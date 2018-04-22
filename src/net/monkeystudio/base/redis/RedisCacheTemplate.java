@@ -675,6 +675,40 @@ public class RedisCacheTemplate {
 
     }
 
+
+    public void lpush(String key ,String message) {
+
+        Jedis redis = getPool().getResource();
+
+        try {
+            redis.lpush(key,message);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e.getMessage());
+        } finally {
+            redis.close();
+        }
+    }
+
+
+    public List<String> brpop(Integer blockTimeout ,String key ) {
+
+        Jedis redis = getPool().getResource();
+
+        try {
+           return redis.brpop(blockTimeout,key);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e.getMessage());
+        } finally {
+            redis.close();
+        }
+
+        return null;
+    }
+
     public Boolean isExist(String key) {
 
         Jedis redis = getPool().getResource();
