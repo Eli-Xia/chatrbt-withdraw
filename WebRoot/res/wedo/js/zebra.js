@@ -1,6 +1,6 @@
-// var ua = navigator.userAgent.toLowerCase();
-// var isWeixin = ua.indexOf('micromessenger') != -1;
-// if (isWeixin) {
+var ua = navigator.userAgent.toLowerCase();
+var isWeixin = ua.indexOf('micromessenger') != -1;
+if (isWeixin) {
 window.onload = function () {
     new Vue({
         el: '#app',
@@ -164,13 +164,15 @@ window.onload = function () {
     })
 }
 
-// } else {
-// document.body.innerHTML='<p>只能微信浏览器打开</p>'
-// }
-// if (typeof WeixinJSBridge !== "undefined") {
-//     window.onload = function () {
-//         alert(2)
-//     }
-// } else {
-//     document.body.innerHTML = '<p>只能微信浏览器打开</p>'
-// }
+} else {
+    document.body.innerHTML='<p>只能微信浏览器打开</p>'
+    document.body.style.background = 'none'
+}
+if (typeof WeixinJSBridge !== "undefined") {
+    window.onload = function () {
+        alert(2)
+    }
+} else {
+    document.body.innerHTML = '<p>只能微信浏览器打开</p>'
+    document.body.style.background = 'none'
+}
