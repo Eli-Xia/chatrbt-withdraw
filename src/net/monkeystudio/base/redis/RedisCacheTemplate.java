@@ -695,7 +695,6 @@ public class RedisCacheTemplate {
     public List<String> brpop(Integer blockTimeout ,String key ) {
 
         Jedis redis = getPool().getResource();
-
         try {
            return redis.brpop(blockTimeout,key);
         } catch (JedisConnectionException e) {

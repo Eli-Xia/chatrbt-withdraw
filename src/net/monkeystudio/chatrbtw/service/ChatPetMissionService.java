@@ -67,27 +67,25 @@ public class ChatPetMissionService {
 
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
-                    for (String string : list) {
+                    String string = list.get(1);
+                    Log.d("receive the message [?]",string);
+                    String str[] = string.split(":");
+                    Integer wxFanId = Integer.valueOf(str[0]);
+                    String wxFanOpenId = str[1];
+                    Integer adId = Integer.valueOf(str[2]);
 
-                        Log.d("receive the message [?]",string);
-                        String str[] = string.split(":");
-                        Integer wxFanId = Integer.valueOf(str[0]);
-                        String wxFanOpenId = str[1];
-                        Integer adId = Integer.valueOf(str[2]);
-
-                        if(str.length != 3){
-                            Log.d("chatpet mission message errror." + str);
-                            return ;
-                        }
-
-                        if(validatedWxFan(wxFanId,wxFanOpenId)){
-                            WxFan wxFan = wxFanService.getById(wxFanId);
-
-                            chatPetLogService.completeChatPetDailyTask(wxFan.getWxPubOriginId(),wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS);
-                        }
-
-
+                    if(str.length != 3){
+                        Log.d("chatpet mission message errror." + str);
+                        return ;
                     }
+
+                    if(validatedWxFan(wxFanId,wxFanOpenId)){
+                        WxFan wxFan = wxFanService.getById(wxFanId);
+
+                        chatPetLogService.completeChatPetDailyTask(wxFan.getWxPubOriginId(),wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS);
+                    }
+
+
                 }
             }
         });
