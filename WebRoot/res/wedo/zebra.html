@@ -2,7 +2,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>喵小咪星球</title>
+    <title>喵小咪</title>
     <meta content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1, user-scalable=no"
           name="viewport">
     <script>
@@ -110,9 +110,9 @@
     <p>喵小咪星球持续建设中</p>
     <p>敬请期待</p>
 </footer>
-<div v-cloak id="share" v-if="share" @click="shareShow($event)">
+<div v-cloak id="share" v-show="share" @click="shareShow($event)">
     <div :style="{'background-color': '#' + bgColor}" id="canvas_img">
-        <div>
+        <div id="revert">
             <div class="zebra">
                 <div class="wx-img">
                     <img :src="userInfo.headImg" alt="avatar">
@@ -121,7 +121,9 @@
                 {{userInfo.nickname}}的喵小咪
                 </span>
                 <div class="zebra-msg">
-                    <img :src="list.appearanceUrl" alt="cat">
+                    <img :src="svgUrl" id="cat-img" alt="cat">
+                    <!-- <img src="images/nodata.svg" id="cat-img" alt="cat"> -->
+                    <!-- <span v-html="testImg"></span> -->
                 </div>
                 <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
                 <div class="bg-left bg" :style="{'background-color': '#' + bgColor}"></div>
@@ -130,7 +132,7 @@
                 <div>
                     <div class="code">
                         <img :src="twoImg" alt="QRcode" class="two">
-                        <img src="images/demo_2.png" alt="背景" class="two-bg">
+                        <img :src="list.wPubHeadImgUrl" alt="背景" class="two-bg">
                     </div>
                 </div>
                 <div class="hint">
