@@ -1,6 +1,6 @@
-var ua = navigator.userAgent.toLowerCase();
-var isWeixin = ua.indexOf('micromessenger') != -1;
-if (isWeixin) {
+// var ua = navigator.userAgent.toLowerCase();
+// var isWeixin = ua.indexOf('micromessenger') != -1;
+// if (isWeixin) {
 window.onload = function () {
     new Vue({
         el: '#app',
@@ -58,8 +58,10 @@ window.onload = function () {
                             });
                             _self.userInfo.nickname = resp.result.ownerInfo.nickname
                             _self.list = resp.result
-                            //需要替换
-                            // _self.list.appearanceUrl = 'http://localhost:12345/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/695884.svg'
+                            //替换链接
+                            var idx = _self.list.appearanceUrl.indexOf('googleapis.com');
+                            _self.list.appearanceUrl = 'https://test.keendo.com.cn'+_self.list.appearanceUrl.slice(idx+14);
+                            //end 替换
                             _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function(base64Img){
                                 _self.list.wPubHeadImgUrl = base64Img
                             });
@@ -164,15 +166,15 @@ window.onload = function () {
     })
 }
 
-} else {
-    document.body.innerHTML='<p>只能微信浏览器打开</p>'
-    document.body.style.background = 'none'
-}
-if (typeof WeixinJSBridge !== "undefined") {
-    window.onload = function () {
-        alert(2)
-    }
-} else {
-    document.body.innerHTML = '<p>只能微信浏览器打开</p>'
-    document.body.style.background = 'none'
-}
+// } else {
+//     document.body.innerHTML='<p>只能微信浏览器打开</p>'
+//     document.body.style.background = 'none'
+// }
+// if (typeof WeixinJSBridge !== "undefined") {
+//     window.onload = function () {
+//         alert(2)
+//     }
+// } else {
+//     document.body.innerHTML = '<p>只能微信浏览器打开</p>'
+//     document.body.style.background = 'none'
+// }
