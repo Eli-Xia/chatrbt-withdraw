@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,6 +79,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         if(chatPet != null){
                             return null;
                         }
+                        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
 
                         String parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
 
@@ -120,9 +123,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         return XmlUtil.convertToXml(textMsgRes);
                     }*/
 
-                        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId,wxFanOpenId);
-
-
                         String parentWxFanNickname = null;
                         if(parentChatPet != null){
                             String parentWxFanOpenId = parentChatPet.getWxFanOpenId();
@@ -142,8 +142,9 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                                 "聊天中会随机触发事件\n" +
                                 "每一次点击链接，完成每日任务，即获得成长经验值";
 
-                        description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + "的邀请，加入了喵小咪星球。\n" +
-                                "自此历史浓重的记录了一笔：# " + wxFan.getNickname() + "#的喵小咪，出生于2018年4月12日8点30分。\n" +
+                        Calendar calendar = Calendar.getInstance();
+                        description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
+                                "自此历史浓重的记录了一笔：#" + wxFan.getNickname() + "#的喵小咪，出生于" + (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH)+ "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分。\n" +
                                 " \n" +
                                 "现在，可以在下面聊天栏里跟我说第一句话。\n" +
                                 "喵~期待~";
