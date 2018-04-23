@@ -92,7 +92,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                             EthnicGroups ethnicGroups = ethnicGroupsService.getFounderEthnicGroups(wxPubOriginId);
 
-                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId);
+                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId ,null);
                         } else {
                             Integer parentId = Integer.valueOf(parentIdStr);
 
@@ -104,7 +104,10 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
                             }
-                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, parentId, chatPet.getSecondEthnicGroupsId());
+
+                            Integer secondEthnicGroupsId = parentChatPet.getSecondEthnicGroupsId();
+                            Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
+                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
                         }
 
                     /*EthnicGroupsCodeValidatedResp ethnicGroupsCodeValidatedResp = ethnicGroupsService.validated(chatPet.getId(),wxPubOriginId);

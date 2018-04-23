@@ -9,10 +9,11 @@
         <result column="ethnic_groups_id" property="ethnicGroupsId" jdbcType="VARCHAR" />
         <result column="second_ethnic_groups_id" property="secondEthnicGroupsId" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time
+        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id
     </sql>
 
     <select id="select" parameterType="map">
@@ -28,8 +29,8 @@
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet" keyProperty="id" useGeneratedKeys="true">
         insert into
             e_chat_pet
-                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time )
-        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime})
+                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id )
+        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId})
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap" >
