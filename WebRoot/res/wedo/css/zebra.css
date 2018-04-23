@@ -17,9 +17,6 @@ body * {
   -webkit-user-select: none;
   font-family: Helvetica;
 }
-[v-cloak] {
-  display: none;
-}
 ul {
   margin: 0;
   padding: 0;
@@ -59,9 +56,7 @@ header {
   height: 1.74rem;
   border-radius: 50%;
   border: 3px solid #fff;
-  background-color: #fff;
   float: left;
-  font-size: .5rem;
 }
 .user-msg > div {
   margin-left: 2.3rem;
@@ -85,14 +80,13 @@ header {
   position: relative;
 }
 #user_zebra .zebra-bg {
+  padding-top: 2.4rem;
   background: url("../images/section_bg.png") no-repeat;
   background-size: 100% 100%;
-  height: 10.5rem;
-  overflow: hidden;
 }
 #user_zebra img {
-  width: 100%;
-  margin-top: -1.37rem;
+  width: 7.46rem;
+  margin: 0 0 2.1rem 3.78rem;
 }
 #user_zebra .user-code {
   margin: 0 0.8rem;
@@ -136,7 +130,6 @@ header {
   padding: 0 0.4rem 0.4rem 0.54rem;
   font-size: 0.48rem;
   line-height: 1.67;
-  text-align: justify;
   border-bottom: 1px solid #ceced2;
 }
 #rule .gold {
@@ -183,16 +176,9 @@ header {
   margin-top: 0.24rem;
   color: #8e8e93;
 }
-.nodata {
-  text-align: center;
+#log .nodata {
   font-size: 0.48rem;
-  color: #8e8e93;
-}
-.nodata img {
-  width: 1.5rem;
-}
-.nodata p {
-  margin: 0;
+  text-align: center;
 }
 #log li {
   font-size: 0.48rem;
@@ -224,9 +210,6 @@ footer {
   color: #ecd8ff;
   padding: 2.94rem 0;
 }
-footer p {
-  margin: 0;
-}
 #share {
   position: fixed;
   top: 0;
@@ -250,8 +233,6 @@ footer p {
   width: 100%;
 }
 #share > div {
-  width: 100%;
-  box-sizing: border-box;
   padding: 1.4rem 0.96rem;
   background: url("../images/share_sky.png") no-repeat;
   background-size: 100% 100%;
@@ -301,11 +282,11 @@ footer p {
   height: 100%;
 }
 #share .zebra-msg {
+  padding: 2.04rem 0 3.2rem 3.28rem;
   text-align: left;
-  margin-top: -1.5rem;
 }
 #share .zebra-msg img {
-  width: 100%;
+  width: 6.86933333rem;
 }
 #share .code-box .hint {
   font-size: 0.56rem;
@@ -334,7 +315,3 @@ footer p {
   font-weight: 100;
   color: #a9a9a9;
 }
-/* #bgsvg {
-  width: 100%;
-  height: 200px;
-} */

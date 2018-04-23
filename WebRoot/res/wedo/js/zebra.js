@@ -23,11 +23,12 @@ window.onload = function () {
             logs: [],
             twoImg: '',
             id: '',
-            svgUrl: ''
+            svgUrl: '',
+            url: ''
         },
         created() {
             var i = location.search.indexOf('=')
-            this.id =location.search.slice(i+1)
+            this.id = location.search.slice(i + 1)
             this.queryList()
             // this.getData()
         },
@@ -53,19 +54,19 @@ window.onload = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var resp = JSON.parse(xhr.response)
                         if (resp.retCode == 0) {
-                            _self.convertImgToBase64(resp.result.ownerInfo.headImg, function(base64Img){
+                            _self.convertImgToBase64(resp.result.ownerInfo.headImg, function (base64Img) {
                                 _self.userInfo.headImg = base64Img
                             });
                             _self.userInfo.nickname = resp.result.ownerInfo.nickname
                             _self.list = resp.result
                             //替换链接
                             var idx = _self.list.appearanceUrl.indexOf('googleapis.com');
-                            _self.list.appearanceUrl = 'https://test.keendo.com.cn'+_self.list.appearanceUrl.slice(idx+14);
+                            _self.list.appearanceUrl = 'https://test.keendo.com.cn' + _self.list.appearanceUrl.slice(idx + 14);
                             //end 替换
-                            _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function(base64Img){
+                            _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function (base64Img) {
                                 _self.list.wPubHeadImgUrl = base64Img
                             });
-                            _self.convertSvgToBase64(resp.result.appearanceUrl, function(base64Img){
+                            _self.convertSvgToBase64(resp.result.appearanceUrl, function (base64Img) {
                                 _self.svgUrl = base64Img
                             });
                             _self.logs = resp.result.petLogs
@@ -94,9 +95,11 @@ window.onload = function () {
             canvasImg() {
                 var _this = this
                 html2canvas(document.getElementById('canvas_img')).then(function (canvas) {
-                    var img = new Image();
-                    img.src = canvas.toDataURL()
-                    document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
+                    _this.url = canvas.toDataURL();
+                    document.getElementById('canvas_img').style.display = 'none'
+                    // var img = new Image();
+                    // img.src = canvas.toDataURL()
+                    // document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
                     // document.getElementById('share').appendChild(img);
                 });
             },
