@@ -153,6 +153,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
                         String uri = "/res/wedo/zebra.html?id=" + chatPetId;
                         String url = domain + uri;
+                        //url = url.replace("http://", "https://");
+
                         customerNewsItem.setUrl(url);
                         customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/kitties_normal_cover.png");
 
