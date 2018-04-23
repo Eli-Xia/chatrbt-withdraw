@@ -61,12 +61,12 @@ window.onload = function () {
                             _self.list = resp.result
                             //替换链接
                             var idx = _self.list.appearanceUrl.indexOf('googleapis.com');
-                            _self.list.appearanceUrl = 'https://test.keendo.com.cn' + _self.list.appearanceUrl.slice(idx + 14);
+                            _self.list.appearanceUrl = 'http://test.keendo.com.cn' + _self.list.appearanceUrl.slice(idx + 14);
                             //end 替换
                             _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function (base64Img) {
                                 _self.list.wPubHeadImgUrl = base64Img
                             });
-                            _self.convertSvgToBase64(resp.result.appearanceUrl, function (base64Img) {
+                            _self.convertImgToBase64(_self.list.appearanceUrl, function (base64Img) {
                                 _self.svgUrl = base64Img
                             });
                             _self.logs = resp.result.petLogs
@@ -95,11 +95,9 @@ window.onload = function () {
             canvasImg() {
                 var _this = this
                 html2canvas(document.getElementById('canvas_img')).then(function (canvas) {
-                    _this.url = canvas.toDataURL();
-                    document.getElementById('canvas_img').style.display = 'none'
-                    // var img = new Image();
-                    // img.src = canvas.toDataURL()
-                    // document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
+                    var img = new Image();
+                    img.src = canvas.toDataURL()
+                    document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
                     // document.getElementById('share').appendChild(img);
                 });
             },
@@ -111,21 +109,6 @@ window.onload = function () {
                 img.onload = function () {
                     canvas.height = img.height;
                     canvas.width = img.width;
-                    ctx.drawImage(img, 0, 0);
-                    var dataURL = canvas.toDataURL(outputFormat || 'image/png');
-                    callback.call(this, dataURL);
-                    canvas = null;
-                };
-                img.src = url;
-            },
-            convertSvgToBase64(url, callback, outputFormat) {
-                var canvas = document.createElement('CANVAS'),
-                    ctx = canvas.getContext('2d'),
-                    img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = function () {
-                    canvas.height = '600';
-                    canvas.width = '600';
                     ctx.drawImage(img, 0, 0);
                     var dataURL = canvas.toDataURL(outputFormat || 'image/png');
                     callback.call(this, dataURL);

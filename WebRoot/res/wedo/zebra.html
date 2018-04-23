@@ -108,7 +108,6 @@
         <p>敬请期待</p>
     </footer>
     <div v-cloak id="share" v-show="share" @click="shareShow($event)">
-        <img :src="url">
         <div :style="{'background-color': '#' + bgColor}" id="canvas_img">
             <div id="revert">
                 <div class="zebra">
@@ -120,8 +119,6 @@
                         </span>
                     <div class="zebra-msg">
                         <img :src="svgUrl" id="cat-img" alt="cat">
-                        <!-- <img src="images/nodata.svg" id="cat-img" alt="cat"> -->
-                        <!-- <span v-html="testImg"></span> -->
                     </div>
                     <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
                     <div class="bg-left bg" :style="{'background-color': '#' + bgColor}"></div>
