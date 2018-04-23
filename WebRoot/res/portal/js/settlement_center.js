@@ -131,6 +131,9 @@ var settlementCenter = new Vue({
                     : value.indexOf('.') + 3
                 );
             this.withdrawMoney = Number(this.withdrawMoney);
+            if (this.withdrawMoney < 0) {
+                this.withdrawMoney = 0
+            }
             if (this.withdrawMoney > this.availableAmount) {
                 this.withdrawMoney = this.availableAmount;
             }
