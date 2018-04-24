@@ -81,6 +81,12 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         }
                         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
 
+
+                        if(!ethnicGroupsService.allowToAdopt(wxPubOriginId)){
+                            String replyContent = "今日宠物已经领完了，明天早点来哟！";
+                            return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
+                        }
+
                         String parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
 
                         Integer chatPetId = null;
@@ -109,22 +115,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
                         }
-
-                    /*EthnicGroupsCodeValidatedResp ethnicGroupsCodeValidatedResp = ethnicGroupsService.validated(chatPet.getId(),wxPubOriginId);
-
-                    if(ethnicGroupsCodeValidatedResp.getStatus().intValue() != EthnicGroupsService.ETHNIC_GROUPS_CODE_VALIDATED_STATUS_ENABLE.intValue()){
-                        String repltContent = ethnicGroupsCodeValidatedResp.getContent();
-
-                        textMsgRes.setContent(repltContent);
-                        textMsgRes.setMsgType("text");
-
-                        String fromUserName = subscribeEvent.getFromUserName();
-                        textMsgRes.setToUserName(fromUserName);
-
-                        String toUserName = subscribeEvent.getToUserName();
-                        textMsgRes.setFromUserName(toUserName);
-                        return XmlUtil.convertToXml(textMsgRes);
-                    }*/
 
                         String parentWxFanNickname = null;
                         if(parentChatPet != null){

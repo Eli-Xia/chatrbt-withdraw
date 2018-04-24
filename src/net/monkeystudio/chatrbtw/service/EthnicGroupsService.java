@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.ImageUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.ListUtil;
@@ -41,6 +42,9 @@ public class EthnicGroupsService {
     private final static String FOUNDER_EVENT_KEY = "-1";
 
     public final static String EVENT_SPECIAL_STR = "keendo_chat_pet";
+
+    @Autowired
+    private RedisCacheTemplate redisCacheTemplate;
 
 
     @Autowired
@@ -164,5 +168,54 @@ public class EthnicGroupsService {
         EthnicGroups ethnicGroups = list.get(0);
 
         return ethnicGroups;
+    }
+
+    private EthnicGroups getById(Integer ethnicGroupsId){
+        return ethnicGroupsCodeMapper.select(ethnicGroupsId);
+    }
+
+    /**
+     * 是否允许领取宠物
+     * @param wxPubOriginId
+     * @return
+     */
+    public  Boolean allowToAdopt(String wxPubOriginId){
+        Integer ethnicGroupsId = this.getFounderEthnicGroups(wxPubOriginId).getId();
+        return this.allowToAdopt(ethnicGroupsId);
+    }
+
+    /**
+     * 是否允许领养
+     * @param ethnicGroupsId
+     * @return
+     */
+    private Boolean allowToAdopt(Integer ethnicGroupsId){
+        String key = getEthnicGroupsExistingNumberKey(ethnicGroupsId);
+
+        Long num = redisCacheTemplate.incr(key);
+
+        EthnicGroups ethnicGroups = this.getById(ethnicGroupsId);
+        Integer limit = ethnicGroups.getTotalValidCount();
+
+        //如果没有限制，则允许
+        if(limit == null){
+            return true;
+        }
+
+        //如果当日领养数大于限制数，则不允许
+        if(num.intValue() > limit.intValue()){
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private static String getEthnicGroupsExistingNumberKey(Integer ethnicGroupsId){
+
+        String ethnicGroupsExistingNumberKey = "hash:ethnicGroupsExistingNumber";
+
+        return ethnicGroupsExistingNumberKey;
+
     }
 }
