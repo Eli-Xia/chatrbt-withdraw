@@ -38,8 +38,12 @@ window.onload = function () {
                 if ($event.target.className == 'share-target' || $event.target.id == 'share') {
                     this.share = !this.share
                     if ($event.target.className == 'share-target' && this.canvasSign) {
-                        this.canvasImg()
-                        this.canvasSign = false
+                        var catImg = document.getElementById('cat-img')
+                        catImg.src = _this.list.appearanceUrl
+                        catImg.onload = function() {
+                            this.canvasImg()
+                            this.canvasSign = false
+                        }
                     }
                 }
             },
@@ -62,13 +66,14 @@ window.onload = function () {
                             //替换链接
                             var idx = _self.list.appearanceUrl.indexOf('googleapis.com');
                             _self.list.appearanceUrl = 'http://test.keendo.com.cn' + _self.list.appearanceUrl.slice(idx + 14);
+                            // _self.list.appearanceUrl = 'http://localhost:12345'+ _self.list.appearanceUrl.slice(idx + 14);
                             //end 替换
                             _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function (base64Img) {
                                 _self.list.wPubHeadImgUrl = base64Img
                             });
-                            _self.convertImgToBase64(_self.list.appearanceUrl, function (base64Img) {
-                                _self.svgUrl = base64Img
-                            });
+                            // _self.convertImgToBase64(_self.list.appearanceUrl, function (base64Img) {
+                            //     _self.svgUrl = base64Img
+                            // });
                             _self.logs = resp.result.petLogs
                             _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode
                         } else {
@@ -94,7 +99,9 @@ window.onload = function () {
             },
             canvasImg() {
                 var _this = this
-                html2canvas(document.getElementById('canvas_img')).then(function (canvas) {
+                html2canvas(document.getElementById('canvas_img'), {
+                    useCORS: true,
+                }).then(function (canvas) {
                     var img = new Image();
                     img.src = canvas.toDataURL()
                     document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
