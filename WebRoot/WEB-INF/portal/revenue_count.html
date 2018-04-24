@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="chart-main">
-            <div class="revenue-list" v-show="incomeList.length>0">
+            <div class="revenue-list" v-show="incomeList!=null && incomeList.length>0">
                 <ul>
                     <li v-for="(index,item) in incomeList">
                         <span>{{item.date | formatDateTime}}</span>
