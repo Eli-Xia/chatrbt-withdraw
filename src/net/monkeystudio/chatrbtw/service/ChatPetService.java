@@ -1,20 +1,21 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
-import net.monkeystudio.base.utils.DateUtils;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.RandomUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
-import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.utils.JsonHelper;
+import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +48,10 @@ public class ChatPetService {
 
     @Autowired
     private EthnicGroupsService ethnicGroupsService;
+
+    @Autowired
+    private WxOauthService wxOauthService;
+
 
     /**
      * 生成宠物
@@ -204,5 +209,107 @@ public class ChatPetService {
         return chatPetMapper.selectByParam(param);
     }
 
+
+
+    /**
+     * 通过code获取access_token
+     *
+     * https://api.weixin.qq.com/sns/oauth2/component/access_token
+     * ?appid=APPID&code=CODE&grant_type=authorization_code&component_appid=COMPONENT_APPID&component_access_token=COMPONENT_ACCESS_TOKEN
+
+
+     appid	是	公众号的appid
+     code	是	填写第一步获取的code参数
+     grant_type	是	填authorization_code
+     component_appid	是	服务开发方的appid
+     component_access_token	是	服务开发方的access_token
+
+
+     {
+     "access_token":"ACCESS_TOKEN",
+     "expires_in":7200,
+     "refresh_token":"REFRESH_TOKEN",
+     "openid":"OPENID",
+     "scope":"SCOPE"
+     }
+
+     access_token	接口调用凭证
+     expires_in	access_token接口调用凭证超时时间，单位（秒）
+     refresh_token	用户刷新access_token
+     openid	授权用户唯一标识
+     scope	用户授权的作用域，使用逗号（,）分隔
+
+     /res/wedo/zebra.html?id=" + chatPetId
+
+     这个方法最好是改成
+     * @param code
+     */
+    public ChatPetSessionVo handleWxOauthCode(HttpServletResponse resp,String code,String wxPubAppId) throws Exception{
+        String fetchAccessTokenUrl = wxOauthService.getAccessTokenUrl(code,wxPubAppId);
+        String response = HttpsHelper.get(fetchAccessTokenUrl);
+        String access_token = JsonHelper.getStringFromJson(response,"access_token");
+        String wxFanOpenId = JsonHelper.getStringFromJson(response,"openid");
+        Log.d("================通过code获取accessToken结果  access_token = {?}  , openId = {?} =====================");
+        /*String fetchFansInfoUrl = wxOauthService.getFansInfoUrl(access_token,fansOpenId);
+        String info = HttpsHelper.get(fetchFansInfoUrl);
+        String openid2 = JsonHelper.getStringFromJson(info,"openid");
+        String nickname = JsonHelper.getStringFromJson(info,"nickname");*/
+        String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
+
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+
+
+        ChatPet param = new ChatPet();
+        param.setWxFanOpenId(wxFanOpenId);
+        param.setWxPubOriginId(wxPubOriginId);
+        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+        if(chatPet == null){
+            resp.sendRedirect("https://test.keendo.com.cn/res/wedo/poster.html");
+        }
+
+        ChatPetSessionVo vo = new ChatPetSessionVo();
+        vo.setChatPetId(chatPet.getId());
+        vo.setWxFanId(wxFan.getId());
+
+        return vo;
+
+
+
+
+        //获取粉丝信息  这个方法应该是要返回一个bean
+        /*
+        *   GET（请使用https协议） https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
+        *
+        *   access_token	网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
+            openid	用户的唯一标识
+            lang	返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
+
+
+            {
+                "openid":" OPENID",
+                " nickname": NICKNAME,
+                  "sex":"1",
+                "province":"PROVINCE"
+                "city":"CITY",
+                "country":"COUNTRY",
+                "headimgurl":    "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
+                "privilege":[ "PRIVILEGE1" "PRIVILEGE2"     ],
+                "unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
+            }
+        * */
+
+    }
+
+    /**
+     * 跳转陪聊宠页
+     * 参数:wxAppId FanInfo openId
+     * @param response
+     * return fansid
+     */
+    public Integer loginChatPet(HttpServletResponse response, String wxPubAppId, String wxFanOpenId) throws Exception{
+
+        return null;
+    }
 
 }

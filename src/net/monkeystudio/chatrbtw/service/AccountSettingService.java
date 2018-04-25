@@ -36,11 +36,11 @@ public class AccountSettingService {
     //结算设置
     private final static String[] CERTIFICATION_ALLOW_FILE_SUFFIX = {"jpg","jpeg","png"};	//委托个人收款证明支持文件后缀
     private final static long CERTIFICATION_FILE_SIZE_LIMIT = 5*1048576L ;					//委托个人收款证明图片max size
-    private final static Integer PERSONAL_ACCOUNT_TYPE = 1;	                    //个人账户
-    private final static Integer COMPANY_ACCOUNT_TYPE = 0;	                    //公司账户
-    private static final String ACCOUNT_SETTING_DIRECTORY = "/account-setting/";//委托个人收款证明存放目录
-    private static final String ACCOUNT_SETTING_DATE_FORMAT = "yyyyMMddHHmmss";//时间格式,用于生成文件名
-    private static final String CERTIFICATION_COS_PATH = "/company-doc/委托个人收款证明.docx";//委托个人收款证明文件在cos中的存放路径
+    public final static Integer PERSONAL_ACCOUNT_TYPE = 1;	                    //个人账户
+    public final static Integer COMPANY_ACCOUNT_TYPE = 0;	                    //公司账户
+    public static final String ACCOUNT_SETTING_DIRECTORY = "/account-setting/";//委托个人收款证明存放目录
+    public static final String ACCOUNT_SETTING_DATE_FORMAT = "yyyyMMddHHmmss";//时间格式,用于生成文件名
+    public static final String CERTIFICATION_COS_PATH = "/company-doc/委托个人收款证明.docx";//委托个人收款证明文件在cos中的存放路径
 
     @Autowired
     private COSService cosService;
@@ -226,6 +226,7 @@ public class AccountSettingService {
         }
 
     }
+
 
 
     public void handleSensitivePic(Integer userId,HttpServletResponse response){

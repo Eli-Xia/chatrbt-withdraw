@@ -9,6 +9,8 @@ public class AdminMoneyWithdrawDetail {
 
     private Float amount;
 
+    private String letterOfDelegationImgUrl;
+
     private Integer accountType;
 
     private String accountHolder;
@@ -19,13 +21,13 @@ public class AdminMoneyWithdrawDetail {
 
     private String bankName;
 
-    private String location;
-
     private String bankForkName;
 
     private String accountNumber;
 
     private String email;
+
+    private String location;
 
     private Integer invoiceRet;
 
@@ -143,5 +145,13 @@ public class AdminMoneyWithdrawDetail {
 
     public void setIdNumber(String idNumber) {
         this.idNumber = idNumber;
+    }
+
+    public String getLetterOfDelegationImgUrl() {
+        return letterOfDelegationImgUrl;
+    }
+
+    public void setLetterOfDelegationImgUrl(String letterOfDelegationImgUrl) {
+        this.letterOfDelegationImgUrl = letterOfDelegationImgUrl;
     }
 }

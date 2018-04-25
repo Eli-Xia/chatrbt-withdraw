@@ -126,31 +126,14 @@ public class WxController extends BaseController{
 	 */
 	@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
 	public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("wxPubAppId")String wxPubAppId) throws Exception{
-		String redirectUrl = wxOauthService.getRequestCodeUrl("https://test.keendo.com.cn/api/wx/oauth/code",wxPubAppId);
+		String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubAppId);
 
 		response.sendRedirect(redirectUrl);
 
 		return null;
 	}
 
-    /**
-     * 当用户禁止授权的时候,只会传state值过来.
-     * * @param request
-     * @param code
-     * @param state
-     * @param appId
-     * @return
-     * @throws BizException
-     */
-	@RequestMapping(value = "/oauth/code", method = RequestMethod.GET)
-	public ModelAndView oauth(HttpServletResponse response,HttpServletRequest request,@RequestParam(value = "code",required = false)String code,@RequestParam("state")String state,@RequestParam(value = "appid",required = false)String appId)throws Exception{
-		Log.d("============== code = {?}  , state = {?} ,  appid = {?}",code,state,appId);
 
-		wxOauthService.handleCode(code,appId);
-
-		response.sendRedirect("http://www.baidu.com");//测试,跳转h5
-		return null;
-	}
 
 
 
