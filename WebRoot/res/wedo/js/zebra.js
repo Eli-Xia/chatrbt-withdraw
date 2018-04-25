@@ -74,14 +74,18 @@ window.onload = function () {
                             });
                             //替换链接
                             var idx = resp.result.appearanceUrl.indexOf('googleapis.com');
+                            console.log(resp.result.appearanceUrl.slice(idx + 14));
                             if (location.hostname == 'localhost') {
-                                resp.result.appearanceUrl = 'http://test.keendo.com.cn' + resp.result.appearanceUrl.slice(idx + 14);
+                                resp.result.appearanceUrl = 'http://localhost:12345' + resp.result.appearanceUrl.slice(idx + 14);
                             } else {
                                 resp.result.appearanceUrl = location.origin + resp.result.appearanceUrl.slice(idx + 14);
                             }
                             //end 替换
                             _self.userInfo.nickname = resp.result.ownerInfo.nickname;
-                            _self.convertImgToBase64({width: 600}, resp.result.appearanceUrl, function (base64Img) {
+                            _self.convertImgToBase64({
+                                width: 600,
+                                height: 600
+                            }, resp.result.appearanceUrl, function (base64Img) {
                                 _self.imgLoad++;
                                 resp.result.appearanceUrl = base64Img;
                                 if (_self.imgLoad == 3) {
@@ -122,6 +126,7 @@ window.onload = function () {
                 img.onload = function () {
                     if (param.width) {
                         img.width = param.width;
+                        img.height = param.height
                     }
                     canvas.height = img.height;
                     canvas.width = img.width;
