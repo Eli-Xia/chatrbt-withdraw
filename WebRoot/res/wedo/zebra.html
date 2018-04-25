@@ -36,7 +36,7 @@
     <section>
         <div id="user_zebra">
             <div class="zebra-bg">
-                <img v-if="list.appearanceUrl" :src="list.appearanceUrl" alt="cat">
+                <img :src="list.appearanceUrl" alt="cat">
             </div>
             <div class="user-code" v-if="userCodeShow">
                 <div>
@@ -119,7 +119,7 @@
                         {{userInfo.nickname}}的喵小咪
                         </span>
                     <div class="zebra-msg">
-                        <img :src="list.appearanceUrl" id="cat-img" alt="cat">
+                        <img :src="svgUrl" id="cat-img" alt="cat">
                         <!-- <img src="images/nodata.svg" id="cat-img" alt="cat"> -->
                         <!-- <span v-html="testImg"></span> -->
                     </div>

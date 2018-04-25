@@ -74,7 +74,6 @@ window.onload = function () {
                             });
                             //替换链接
                             var idx = resp.result.appearanceUrl.indexOf('googleapis.com');
-                            console.log(resp.result.appearanceUrl.slice(idx + 14));
                             if (location.hostname == 'localhost') {
                                 resp.result.appearanceUrl = 'http://localhost:12345' + resp.result.appearanceUrl.slice(idx + 14);
                             } else {
@@ -87,7 +86,7 @@ window.onload = function () {
                                 height: 600
                             }, resp.result.appearanceUrl, function (base64Img) {
                                 _self.imgLoad++;
-                                resp.result.appearanceUrl = base64Img;
+                                _self.svgUrl = base64Img;
                                 if (_self.imgLoad == 3) {
                                     _self.list = resp.result;
                                 }
