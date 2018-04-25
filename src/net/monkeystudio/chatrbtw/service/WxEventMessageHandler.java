@@ -81,6 +81,12 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         }
                         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
 
+
+                        if(!ethnicGroupsService.allowToAdopt(wxPubOriginId)){
+                            String replyContent = "今日宠物已经领完了，明天早点来哟！";
+                            return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
+                        }
+
                         String parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
 
                         Integer chatPetId = null;
@@ -92,7 +98,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                             EthnicGroups ethnicGroups = ethnicGroupsService.getFounderEthnicGroups(wxPubOriginId);
 
-                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId);
+                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroups.getId(), ethnicGroupsId ,null);
                         } else {
                             Integer parentId = Integer.valueOf(parentIdStr);
 
@@ -104,24 +110,11 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
                             }
-                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, parentId, chatPet.getSecondEthnicGroupsId());
+
+                            Integer secondEthnicGroupsId = parentChatPet.getSecondEthnicGroupsId();
+                            Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
+                            chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
                         }
-
-                    /*EthnicGroupsCodeValidatedResp ethnicGroupsCodeValidatedResp = ethnicGroupsService.validated(chatPet.getId(),wxPubOriginId);
-
-                    if(ethnicGroupsCodeValidatedResp.getStatus().intValue() != EthnicGroupsService.ETHNIC_GROUPS_CODE_VALIDATED_STATUS_ENABLE.intValue()){
-                        String repltContent = ethnicGroupsCodeValidatedResp.getContent();
-
-                        textMsgRes.setContent(repltContent);
-                        textMsgRes.setMsgType("text");
-
-                        String fromUserName = subscribeEvent.getFromUserName();
-                        textMsgRes.setToUserName(fromUserName);
-
-                        String toUserName = subscribeEvent.getToUserName();
-                        textMsgRes.setFromUserName(toUserName);
-                        return XmlUtil.convertToXml(textMsgRes);
-                    }*/
 
                         String parentWxFanNickname = null;
                         if(parentChatPet != null){
@@ -153,6 +146,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
                         String uri = "/res/wedo/zebra.html?id=" + chatPetId;
                         String url = domain + uri;
+                        //url = url.replace("http://", "https://");
+
                         customerNewsItem.setUrl(url);
                         customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/kitties_normal_cover.png");
 

@@ -23,51 +23,60 @@ window.onload = function () {
             logs: [],
             twoImg: '',
             id: '',
-            svgUrl: ''
+            svgUrl: '',
+            url: ''
         },
         created() {
-            var i = location.search.indexOf('=')
-            this.id =location.search.slice(i+1)
+            var i = location.search.indexOf('=');
+            this.id = location.search.slice(i + 1);
             this.queryList()
             // this.getData()
         },
         methods: {
             shareShow($event) {
-                var _this = this
+                var _this = this;
                 if ($event.target.className == 'share-target' || $event.target.id == 'share') {
-                    this.share = !this.share
+                    this.share = !this.share;
                     if ($event.target.className == 'share-target' && this.canvasSign) {
-                        this.canvasImg()
-                        this.canvasSign = false
+                        var catImg = document.getElementById('cat-img')
+                        catImg.src = _this.list.appearanceUrl
+                        catImg.onload = function() {
+                            this.canvasImg()
+                            this.canvasSign = false
+                        }
                     }
                 }
             },
             queryList() {
                 var _self = this
                 var xhr = new XMLHttpRequest();
-                var data = JSON.stringify({"id": this.id})
+                var data = JSON.stringify({"id": this.id});
                 xhr.open('post', '/api/chat-pet/pet/info', true);
-                xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8')
-                xhr.send(data)
+                xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                xhr.send(data);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        var resp = JSON.parse(xhr.response)
+                        var resp = JSON.parse(xhr.response);
                         if (resp.retCode == 0) {
-                            _self.convertImgToBase64(resp.result.ownerInfo.headImg, function(base64Img){
+                            _self.convertImgToBase64(resp.result.ownerInfo.headImg, function (base64Img) {
                                 _self.userInfo.headImg = base64Img
                             });
-                            _self.userInfo.nickname = resp.result.ownerInfo.nickname
-                            _self.list = resp.result
+                            _self.userInfo.nickname = resp.result.ownerInfo.nickname;
+                            _self.list = resp.result;
                             //替换链接
                             var idx = _self.list.appearanceUrl.indexOf('googleapis.com');
-                            _self.list.appearanceUrl = 'https://test.keendo.com.cn'+_self.list.appearanceUrl.slice(idx+14);
+                            if (location.hostname == 'localhost') {
+                                _self.list.appearanceUrl = 'http://test.keendo.com.cn' + _self.list.appearanceUrl.slice(idx + 14);
+                            } else {
+                                _self.list.appearanceUrl = location.origin + _self.list.appearanceUrl.slice(idx + 14);
+                            }
                             //end 替换
-                            _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function(base64Img){
+                            _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function (base64Img) {
                                 _self.list.wPubHeadImgUrl = base64Img
                             });
-                            _self.convertSvgToBase64(resp.result.appearanceUrl, function(base64Img){
-                                _self.svgUrl = base64Img
-                            });
+                            // _self.convertImgToBase64(_self.list.appearanceUrl, function (base64Img) {
+                            //     _self.svgUrl = base64Img
+                            // });
                             _self.logs = resp.result.petLogs
                             _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode
                         } else {
@@ -78,12 +87,12 @@ window.onload = function () {
                 }
             },
             getData() {
-                var _this = this
-                console.log(_this.list)
+                var _this = this;
+                console.log(_this.list);
                 var xhr = new XMLHttpRequest();
                 xhr.open('get', _this.list.appearanceUrl, true);
-                xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8')
-                xhr.send()
+                xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                xhr.send();
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         _this.testImg = xhr.response
@@ -93,9 +102,11 @@ window.onload = function () {
             },
             canvasImg() {
                 var _this = this
-                html2canvas(document.getElementById('canvas_img')).then(function (canvas) {
+                html2canvas(document.getElementById('canvas_img'), {
+                    useCORS: true,
+                }).then(function (canvas) {
                     var img = new Image();
-                    img.src = canvas.toDataURL()
+                    img.src = canvas.toDataURL();
                     document.getElementById('share').replaceChild(img, document.getElementById('canvas_img'));
                     // document.getElementById('share').appendChild(img);
                 });
@@ -108,21 +119,6 @@ window.onload = function () {
                 img.onload = function () {
                     canvas.height = img.height;
                     canvas.width = img.width;
-                    ctx.drawImage(img, 0, 0);
-                    var dataURL = canvas.toDataURL(outputFormat || 'image/png');
-                    callback.call(this, dataURL);
-                    canvas = null;
-                };
-                img.src = url;
-            },
-            convertSvgToBase64(url, callback, outputFormat) {
-                var canvas = document.createElement('CANVAS'),
-                    ctx = canvas.getContext('2d'),
-                    img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = function () {
-                    canvas.height = '600';
-                    canvas.width = '600';
                     ctx.drawImage(img, 0, 0);
                     var dataURL = canvas.toDataURL(outputFormat || 'image/png');
                     callback.call(this, dataURL);

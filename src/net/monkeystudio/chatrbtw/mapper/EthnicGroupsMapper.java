@@ -16,5 +16,7 @@ public interface EthnicGroupsMapper {
 
     int insert(EthnicGroups ethnicGroupsCode);
 
+    EthnicGroups select(Integer ethnicGroupsId );
+
     int countByCode(String code);
 }

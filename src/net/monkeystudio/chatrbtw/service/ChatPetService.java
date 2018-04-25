@@ -59,7 +59,7 @@ public class ChatPetService {
      * @param wxFanOpenId
      * @return 生成的宠物的id
      */
-    public Integer generateChatPet(String wxPubOriginId , String wxFanOpenId ,Integer ethnicGroupsId ,Integer secondEthnicGroupsId){
+    public Integer generateChatPet(String wxPubOriginId , String wxFanOpenId ,Integer ethnicGroupsId ,Integer secondEthnicGroupsId ,Integer parentId){
 
         ChatPet chatPet = new ChatPet();
         //Integer appearance = this.ramdomGenerateAppearence();
@@ -74,6 +74,7 @@ public class ChatPetService {
         chatPet.setEthnicGroupsId(ethnicGroupsId);
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
         chatPet.setCreateTime(new Date());
+        chatPet.setParentId(parentId);
 
         this.save(chatPet);
 
