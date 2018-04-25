@@ -124,10 +124,6 @@ window.onload = function () {
                     img = new Image();
                 img.crossOrigin = 'Anonymous';
                 img.onload = function () {
-                    if (param.width) {
-                        img.width = param.width;
-                        img.height = param.height
-                    }
                     canvas.height = img.height;
                     canvas.width = img.width;
                     ctx.drawImage(img, 0, 0);
