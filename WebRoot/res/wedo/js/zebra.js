@@ -24,31 +24,38 @@ window.onload = function () {
             twoImg: '',
             id: '',
             svgUrl: '',
-            url: ''
+            url: '',
+            imgLoad: 0,
+            nowDate: new Date().getTime()
         },
         created() {
             var i = location.search.indexOf('=');
             this.id = location.search.slice(i + 1);
             this.queryList()
-            // this.getData()
         },
         methods: {
             shareShow($event) {
                 var _this = this;
-                if ($event.target.className == 'share-target' || $event.target.id == 'share') {
-                    this.share = !this.share;
-                    if ($event.target.className == 'share-target' && this.canvasSign) {
-                        var catImg = document.getElementById('cat-img')
-                        catImg.src = _this.list.appearanceUrl
-                        catImg.onload = function() {
-                            this.canvasImg()
-                            this.canvasSign = false
-                        }
+                if ($event.target.id == 'share') {
+                    this.share = false;
+                }
+                if ($event.target.className == 'share-target') {
+                    if (this.canvasSign) {
+                        var timer = setInterval(function () {
+                            if (_this.imgLoad == 3) {
+                                _this.share = true;
+                                _this.canvasImg();
+                                _this.canvasSign = false;
+                                clearInterval(timer)
+                            }
+                        }, 300)
+                    } else {
+                        _this.share = true;
                     }
                 }
             },
             queryList() {
-                var _self = this
+                var _self = this;
                 var xhr = new XMLHttpRequest();
                 var data = JSON.stringify({"id": this.id});
                 xhr.open('post', '/api/chat-pet/pet/info', true);
@@ -58,27 +65,42 @@ window.onload = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var resp = JSON.parse(xhr.response);
                         if (resp.retCode == 0) {
-                            _self.convertImgToBase64(resp.result.ownerInfo.headImg, function (base64Img) {
-                                _self.userInfo.headImg = base64Img
+                            _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg, function (base64Img) {
+                                _self.imgLoad++;
+                                _self.userInfo.headImg = base64Img;
+                                if (_self.imgLoad == 3) {
+                                    _self.list = resp.result;
+                                }
                             });
-                            _self.userInfo.nickname = resp.result.ownerInfo.nickname;
-                            _self.list = resp.result;
                             //替换链接
-                            var idx = _self.list.appearanceUrl.indexOf('googleapis.com');
+                            var idx = resp.result.appearanceUrl.indexOf('googleapis.com');
+                            console.log(resp.result.appearanceUrl.slice(idx + 14));
                             if (location.hostname == 'localhost') {
-                                _self.list.appearanceUrl = 'http://test.keendo.com.cn' + _self.list.appearanceUrl.slice(idx + 14);
+                                resp.result.appearanceUrl = 'http://localhost:12345' + resp.result.appearanceUrl.slice(idx + 14);
                             } else {
-                                _self.list.appearanceUrl = location.origin + _self.list.appearanceUrl.slice(idx + 14);
+                                resp.result.appearanceUrl = location.origin + resp.result.appearanceUrl.slice(idx + 14);
                             }
                             //end 替换
-                            _self.convertImgToBase64(resp.result.wPubHeadImgUrl, function (base64Img) {
-                                _self.list.wPubHeadImgUrl = base64Img
+                            _self.userInfo.nickname = resp.result.ownerInfo.nickname;
+                            _self.convertImgToBase64({
+                                width: 600,
+                                height: 600
+                            }, resp.result.appearanceUrl, function (base64Img) {
+                                _self.imgLoad++;
+                                resp.result.appearanceUrl = base64Img;
+                                if (_self.imgLoad == 3) {
+                                    _self.list = resp.result;
+                                }
                             });
-                            // _self.convertImgToBase64(_self.list.appearanceUrl, function (base64Img) {
-                            //     _self.svgUrl = base64Img
-                            // });
-                            _self.logs = resp.result.petLogs
-                            _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode
+                            _self.convertImgToBase64({width: null}, resp.result.wPubHeadImgUrl, function (base64Img) {
+                                _self.imgLoad++;
+                                resp.result.wPubHeadImgUrl = base64Img;
+                                if (_self.imgLoad == 3) {
+                                    _self.list = resp.result;
+                                }
+                            });
+                            _self.logs = resp.result.petLogs;
+                            _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode;
                         } else {
                             alert(resp.retMsg)
                         }
@@ -86,22 +108,7 @@ window.onload = function () {
                     }
                 }
             },
-            getData() {
-                var _this = this;
-                console.log(_this.list);
-                var xhr = new XMLHttpRequest();
-                xhr.open('get', _this.list.appearanceUrl, true);
-                xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-                xhr.send();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        _this.testImg = xhr.response
-                    } else {
-                    }
-                }
-            },
             canvasImg() {
-                var _this = this
                 html2canvas(document.getElementById('canvas_img'), {
                     useCORS: true,
                 }).then(function (canvas) {
@@ -111,7 +118,7 @@ window.onload = function () {
                     // document.getElementById('share').appendChild(img);
                 });
             },
-            convertImgToBase64(url, callback, outputFormat) {
+            convertImgToBase64(param, url, callback, outputFormat) {
                 var canvas = document.createElement('CANVAS'),
                     ctx = canvas.getContext('2d'),
                     img = new Image();
@@ -138,7 +145,6 @@ window.onload = function () {
                 }
 
                 function add_zero(temp) {
-
                     if (temp < 10) {
                         return "0" + temp;
                     } else {
@@ -161,16 +167,7 @@ window.onload = function () {
         }
     })
 }
-
 // } else {
-//     document.body.innerHTML='<p>只能微信浏览器打开</p>'
-//     document.body.style.background = 'none'
-// }
-// if (typeof WeixinJSBridge !== "undefined") {
-//     window.onload = function () {
-//         alert(2)
-//     }
-// } else {
-//     document.body.innerHTML = '<p>只能微信浏览器打开</p>'
+//     document.body.innerHTML='<p>只能微信浏览器打开</p>';
 //     document.body.style.background = 'none'
 // }

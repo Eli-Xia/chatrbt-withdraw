@@ -54,7 +54,8 @@
             <div class="tittle">喵小咪星球规则</div>
             <div>
                 <p class="text">
-                    喵小咪星球是一款基于分布式存储技术的数字宠物模拟游戏，由 Keendo AI 团队研发。星球中的数字宠物是外观各异的喵小咪，他们的等级代表算力。喵小咪产出的金币未来可以按照一定兑换比例兑换成数字资产、商品及服务。
+                    喵小咪星球是一款基于分布式存储技术的数字宠物模拟游戏，由 Keendo AI
+                    团队研发。星球中的数字宠物是外观各异的喵小咪，他们的等级代表算力。喵小咪产出的金币未来可以按照一定兑换比例兑换成数字资产、商品及服务。
                 </p>
                 <div class="gold">
                     <div>
@@ -86,12 +87,12 @@
         <div id="log">
             <div class="tittle">宠物日志</div>
             <div>
-                <div class="log-date" v-if="logs.length !== 0">
-                    {{logs[0].createTime | formatDate}}
+                <div class="log-date">
+                    {{nowDate | formatDate}}
                 </div>
                 <div class="nodata" v-if="logs.length == 0">
                     <img src="images/nodata.svg" alt="no-data">
-                    <p>没有消息</p>
+                    <p>今天还没有日志哦～</p>
                 </div>
                 <ul>
                     <li v-for="item in logs">
@@ -118,7 +119,7 @@
                         {{userInfo.nickname}}的喵小咪
                         </span>
                     <div class="zebra-msg">
-                        <img :src="svgUrl" id="cat-img" alt="cat">
+                        <img :src="list.appearanceUrl" id="cat-img" alt="cat">
                         <!-- <img src="images/nodata.svg" id="cat-img" alt="cat"> -->
                         <!-- <span v-html="testImg"></span> -->
                     </div>
