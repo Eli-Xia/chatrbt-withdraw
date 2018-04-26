@@ -86,7 +86,13 @@ public class ChatPetLogService {
      * @return
      */
     public void completeChatPetDailyTask(String wxPubOriginId,String wxFanOpenId,ChatPetTaskEnum taskEnum){
+        //公众号未开通陪聊宠
         if(rWxPubProductService.isUnable(ProductService.CHAT_PET, wxPubOriginId)){
+            return;
+        }
+        //粉丝未领取宠物
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        if(chatPet == null){
             return;
         }
         //判断粉丝当天宠物陪聊任务是否已经完成
@@ -99,10 +105,7 @@ public class ChatPetLogService {
         pl.setCoin(taskEnum.getCoinValue());
         pl.setCreateTime(new Date());
         pl.setContent("完成"+taskEnum.getName());
-        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
-        if(chatPet != null){
-            pl.setChatPetId(chatPet.getId());
-        }
+        pl.setChatPetId(chatPet.getId());
         pl.setWxPubOriginId(wxPubOriginId);
         pl.setWxFanOpenId(wxFanOpenId);
 
