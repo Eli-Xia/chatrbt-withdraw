@@ -213,6 +213,30 @@ public class RedisCacheTemplate {
         }
     }
 
+    /**
+     * 增加hash的field值
+     * @param key
+     * @param field
+     * @param count
+     * @return
+     */
+    public Long hincrby(String key, String field ,Long count){
+        Jedis redis = getPool().getResource();
+
+        try {
+            return redis.hincrBy(key.getBytes(Charset.forName(REDIS_CHARSET)), field.getBytes(REDIS_CHARSET), count);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e);
+        } finally {
+            redis.close();
+        }
+
+        return null;
+    }
+
+
 
     /**
      * 获取对象

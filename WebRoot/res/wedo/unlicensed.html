@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>未授权</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <script>
+        (function () {
+            var html = document.documentElement;
+            var hWidth = html.getBoundingClientRect().width;
+            if (hWidth > 750) {
+                hWidth = 750
+            }
+            html.style.fontSize = hWidth / 15 + "px";
+        })()
+    </script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            font-family: Helvetica;
+            overflow: hidden;
+        }
+        #center {
+            text-align: center;
+            padding-top: 7.08rem;
+            font-size: 0.72rem;
+        }
+        #center img {
+            width: 3.52rem;
+            margin-bottom: 1.12rem;
+        }
+    </style>
+</head>
+<body>
+<div id="center">
+    <img src="images/unlicensed.svg" alt="微信公众号">
+    <div>
+        公众号未授权
+    </div>
+</div>
+</body>
+</html>

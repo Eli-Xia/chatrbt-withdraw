@@ -89,7 +89,7 @@ public class ChatPetMissionService {
                 }
             }
         });
-
+        thread.setDaemon(true);
         thread.start();
         Log.d("finished Subscribe");
     }

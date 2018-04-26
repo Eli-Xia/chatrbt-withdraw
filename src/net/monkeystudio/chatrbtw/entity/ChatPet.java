@@ -13,6 +13,7 @@ public class ChatPet {
     private Integer ethnicGroupsId;
     private Integer secondEthnicGroupsId;
     private Date createTime;
+    private Integer parentId;
 
     public Integer getId() {
         return id;
@@ -68,5 +69,13 @@ public class ChatPet {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 }

@@ -74,4 +74,14 @@
       #{createTime}
     )
   </insert>
+
+
+  <select id="select" resultMap="baseResultMap" parameterType="java.lang.Integer">
+    select
+        <include refid="Base_Column_List"></include>
+    from
+        e_ethnic_groups
+    where
+        id = #{id}
+  </select>
 </mapper>
