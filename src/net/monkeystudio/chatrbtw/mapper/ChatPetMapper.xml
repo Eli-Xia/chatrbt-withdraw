@@ -52,5 +52,6 @@
                 and wx_fan_open_id = #{wxFanOpenId}
             </if>
         </where>
+        limit 1
     </select>
 </mapper>

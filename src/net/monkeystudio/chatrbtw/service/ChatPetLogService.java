@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
@@ -20,6 +21,9 @@ public class ChatPetLogService {
 
     @Autowired
     private ChatPetService chatPetService;
+
+    @Autowired
+    private RWxPubProductService rWxPubProductService;
 
 
     /**
@@ -82,6 +86,9 @@ public class ChatPetLogService {
      * @return
      */
     public void completeChatPetDailyTask(String wxPubOriginId,String wxFanOpenId,ChatPetTaskEnum taskEnum){
+        if(rWxPubProductService.isUnable(ProductService.CHAT_PET, wxPubOriginId)){
+            return;
+        }
         //判断粉丝当天宠物陪聊任务是否已经完成
         //完成则插入一条宠物日志
         if(isDailyTaskDone(wxPubOriginId,wxFanOpenId,taskEnum)){
@@ -92,7 +99,10 @@ public class ChatPetLogService {
         pl.setCoin(taskEnum.getCoinValue());
         pl.setCreateTime(new Date());
         pl.setContent("完成"+taskEnum.getName());
-        pl.setChatPetId(chatPetService.getChatPetByFans(wxPubOriginId,wxFanOpenId).getId());
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        if(chatPet != null){
+            pl.setChatPetId(chatPet.getId());
+        }
         pl.setWxPubOriginId(wxPubOriginId);
         pl.setWxFanOpenId(wxFanOpenId);
 

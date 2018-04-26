@@ -36,7 +36,7 @@
     <section>
         <div id="user_zebra">
             <div class="zebra-bg">
-                <img v-if="list.appearanceUrl" :src="list.appearanceUrl" alt="cat">
+                <img :src="list.appearanceUrl">
             </div>
             <div class="user-code" v-if="userCodeShow">
                 <div>
@@ -120,8 +120,6 @@
                         </span>
                     <div class="zebra-msg">
                         <img :src="list.appearanceUrl" id="cat-img" alt="cat">
-                        <!-- <img src="images/nodata.svg" id="cat-img" alt="cat"> -->
-                        <!-- <span v-html="testImg"></span> -->
                     </div>
                     <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
                     <div class="bg-left bg" :style="{'background-color': '#' + bgColor}"></div>
