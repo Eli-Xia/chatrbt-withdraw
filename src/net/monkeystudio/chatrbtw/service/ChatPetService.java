@@ -283,7 +283,7 @@ public class ChatPetService {
 
         String wxFanOpenId = wxOauthAccessToken.getWxFanOpenId();
 
-        if(isUserFollowWxPub(wxPubAppId,wxFanOpenId) || isFanOwnChatPet(wxPubAppId,wxFanOpenId)){
+        if(!isUserFollowWxPub(wxPubAppId,wxFanOpenId) || !isFanOwnChatPet(wxPubAppId,wxFanOpenId)){
             response.sendRedirect(NOFOLLOW_NOCHATPET_PAGE);
         }
 

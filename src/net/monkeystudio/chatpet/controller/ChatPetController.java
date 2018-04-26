@@ -17,6 +17,7 @@ import org.springframework.web.portlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by bint on 2018/4/19.
@@ -69,6 +70,7 @@ public class ChatPetController extends ChatPetBaseController{
         }
 
         ChatPetSessionVo vo = chatPetService.wxOauthHandle(response,code,appId);
+
 
         this.saveSessionUserId(vo.getWxFanId());
 

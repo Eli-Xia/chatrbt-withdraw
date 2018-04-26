@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
@@ -92,7 +93,10 @@ public class ChatPetLogService {
         pl.setCoin(taskEnum.getCoinValue());
         pl.setCreateTime(new Date());
         pl.setContent("完成"+taskEnum.getName());
-        pl.setChatPetId(chatPetService.getChatPetByFans(wxPubOriginId,wxFanOpenId).getId());
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        if(chatPet != null){
+            pl.setChatPetId(chatPet.getId());
+        }
         pl.setWxPubOriginId(wxPubOriginId);
         pl.setWxFanOpenId(wxFanOpenId);
 
