@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
@@ -11,6 +12,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,9 @@ public class ChatPetService {
 
     @Autowired
     private EthnicGroupsService ethnicGroupsService;
+
+    @Autowired
+    private CfgService cfgService;
 
     /**
      * 生成宠物
@@ -205,5 +210,28 @@ public class ChatPetService {
         return chatPetMapper.selectByParam(param);
     }
 
+    /**
+     * 得到宠物主页的URL
+     * @param chatPetId
+     * @return
+     */
+    public String getChatPetHomeUrl(Integer chatPetId){
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String uri = "/res/wedo/zebra.html?id=" + chatPetId;
+        String url = domain + uri;
+        return url;
+    }
 
+
+    /**
+     * 得到封面图的url
+     * @return
+     */
+    public String getNewsMessageCoverUrl(){
+
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String picUrl = "http://" + domain + "/res/wedo/images/kitties_normal_cover.png";
+
+        return picUrl;
+    }
 }

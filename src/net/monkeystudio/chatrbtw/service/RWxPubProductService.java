@@ -36,15 +36,21 @@ public class RWxPubProductService {
     public Boolean isEnable(Integer productId , String wxPubOriginId){
         RWxPubProduct rWxPubProduct = rWxPubProductMapper.selectByWxPubAndProduct(wxPubOriginId, productId);
 
-        if(rWxPubProduct == null){
-            rWxPubProduct = new RWxPubProduct();
+        if(rWxPubProduct == null ){
 
-            rWxPubProduct.setStatus(ENABLE_STATUS);
-            rWxPubProduct.setProductId(productId);
-            rWxPubProduct.setWxPubOriginId(wxPubOriginId);
+            if(productId.intValue() == ProductService.SMART_CHAT.intValue()){
+                rWxPubProduct = new RWxPubProduct();
 
-            rWxPubProductMapper.insert(rWxPubProduct);
-            return true;
+                rWxPubProduct.setStatus(ENABLE_STATUS);
+                rWxPubProduct.setProductId(productId);
+                rWxPubProduct.setWxPubOriginId(wxPubOriginId);
+
+                rWxPubProductMapper.insert(rWxPubProduct);
+                return true;
+            }
+
+            return false;
+
         }
 
         Integer status = rWxPubProduct.getStatus();
