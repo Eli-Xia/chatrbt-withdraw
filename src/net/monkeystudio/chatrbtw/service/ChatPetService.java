@@ -12,6 +12,7 @@ import net.monkeystudio.exception.BizException;
 import net.monkeystudio.utils.JsonHelper;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
+import net.monkeystudio.wx.vo.oauth.WxOauthAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,9 @@ import java.util.List;
 public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
+
+    //领取宠物页面
+    private final static String NOFOLLOW_NOCHATPET_PAGE = "https://test.keendo.com.cn/res/wedo/poster.html";
 
     @Autowired
     private ChatPetMapper chatPetMapper;
@@ -240,77 +244,134 @@ public class ChatPetService {
      openid	授权用户唯一标识
      scope	用户授权的作用域，使用逗号（,）分隔
 
+     //======================================================
+     获取粉丝信息:
+
+       GET（请使用https协议） https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
+
+        access_token	网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
+        openid	用户的唯一标识
+        lang	返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
+
+
+     {
+     "openid":" OPENID",
+     " nickname": NICKNAME,
+     "sex":"1",
+     "province":"PROVINCE"
+     "city":"CITY",
+     "country":"COUNTRY",
+     "headimgurl":    "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
+     "privilege":[ "PRIVILEGE1" "PRIVILEGE2"     ],
+     "unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
+     }
+
+
      /res/wedo/zebra.html?id=" + chatPetId
 
-     这个方法最好是改成
+     这个方法不解耦  全都揉在了一起  需要修改.
+     微信网页授权处理
      * @param code
      */
-    public ChatPetSessionVo handleWxOauthCode(HttpServletResponse resp,String code,String wxPubAppId) throws Exception{
-        String fetchAccessTokenUrl = wxOauthService.getAccessTokenUrl(code,wxPubAppId);
-        String response = HttpsHelper.get(fetchAccessTokenUrl);
-        String access_token = JsonHelper.getStringFromJson(response,"access_token");
-        String wxFanOpenId = JsonHelper.getStringFromJson(response,"openid");
-        Log.d("================通过code获取accessToken结果  access_token = {?}  , openId = {?} =====================");
-        /*String fetchFansInfoUrl = wxOauthService.getFansInfoUrl(access_token,fansOpenId);
-        String info = HttpsHelper.get(fetchFansInfoUrl);
-        String openid2 = JsonHelper.getStringFromJson(info,"openid");
-        String nickname = JsonHelper.getStringFromJson(info,"nickname");*/
-        String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
+    public ChatPetSessionVo wxOauthHandle(HttpServletResponse response,String code,String wxPubAppId) throws Exception{
 
-        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        WxOauthAccessToken wxOauthAccessToken = this.getOauthAccessTokenResponse(code, wxPubAppId);
 
-
-        ChatPet param = new ChatPet();
-        param.setWxFanOpenId(wxFanOpenId);
-        param.setWxPubOriginId(wxPubOriginId);
-        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
-
-        if(chatPet == null){
-            resp.sendRedirect("https://test.keendo.com.cn/res/wedo/poster.html");
+        if(wxOauthAccessToken == null){
+            throw  new BizException("未能成功获取wxOauthAccessToken!");
         }
 
-        ChatPetSessionVo vo = new ChatPetSessionVo();
-        vo.setChatPetId(chatPet.getId());
-        vo.setWxFanId(wxFan.getId());
+        String wxFanOpenId = wxOauthAccessToken.getWxFanOpenId();
+
+        if(isUserFollowWxPub(wxPubAppId,wxFanOpenId) || isFanOwnChatPet(wxPubAppId,wxFanOpenId)){
+            response.sendRedirect(NOFOLLOW_NOCHATPET_PAGE);
+        }
+
+        //准备跳转宠物日志h5数据
+        ChatPetSessionVo vo = this.createChatPetSessionVo(wxPubAppId, wxFanOpenId);
 
         return vo;
-
-
-
-
-        //获取粉丝信息  这个方法应该是要返回一个bean
-        /*
-        *   GET（请使用https协议） https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
-        *
-        *   access_token	网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
-            openid	用户的唯一标识
-            lang	返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-
-
-            {
-                "openid":" OPENID",
-                " nickname": NICKNAME,
-                  "sex":"1",
-                "province":"PROVINCE"
-                "city":"CITY",
-                "country":"COUNTRY",
-                "headimgurl":    "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
-                "privilege":[ "PRIVILEGE1" "PRIVILEGE2"     ],
-                "unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
-            }
-        * */
 
     }
 
     /**
-     * 跳转陪聊宠页
-     * 参数:wxAppId FanInfo openId
-     * @param response
-     * return fansid
+     * 获取存入chatPet session的fanId 以及跳转宠物日志页面所需参数chatPetId
+     * @param wxPubAppId
+     * @param wxFanOpenId
+     * @return
      */
-    public Integer loginChatPet(HttpServletResponse response, String wxPubAppId, String wxFanOpenId) throws Exception{
+    private ChatPetSessionVo createChatPetSessionVo(String wxPubAppId,String wxFanOpenId){
 
-        return null;
+        String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
+
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+
+        ChatPet fanChatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+        ChatPetSessionVo sessionVo = new ChatPetSessionVo();
+
+        sessionVo.setWxFanId(wxFan.getId());
+
+        sessionVo.setChatPetId(fanChatPet.getId());
+
+        return sessionVo;
+
+    }
+
+    /**
+     * 通过code获取access_token及openid
+     * @return
+     */
+    private WxOauthAccessToken getOauthAccessTokenResponse(String code,String wxPubAppId) throws BizException{
+
+        String fetchAccessTokenUrl = wxOauthService.getAccessTokenUrl(code,wxPubAppId);
+        String response = HttpsHelper.get(fetchAccessTokenUrl);
+
+        if(response == null || response.indexOf("errorcode") != -1){
+            return null;
+        }
+
+        WxOauthAccessToken wxOauthAccessToken = JsonUtil.readValue(response, WxOauthAccessToken.class);
+
+        if(wxOauthAccessToken != null){
+            Log.d("============ wxoauth access_token = {?} , openid = {?} =============",wxOauthAccessToken.getAccessToken(),wxOauthAccessToken.getWxFanOpenId());
+        }
+
+        return wxOauthAccessToken;
+    }
+
+    /**
+     * 判断用户是否关注公众号
+     * @param wxPubAppId
+     * @param wxFanOpenId
+     * @return
+     */
+    private boolean isUserFollowWxPub(String wxPubAppId,String wxFanOpenId){
+        String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
+
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+
+        if(wxFan != null){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断粉丝是否已经领取陪聊宠
+     * @param wxPubAppId
+     * @param wxFanOpenId
+     * @return
+     */
+    private boolean isFanOwnChatPet(String wxPubAppId,String wxFanOpenId){
+        String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
+
+        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+        if(chatPet != null){
+            return true;
+        }
+        return false;
     }
 
 }

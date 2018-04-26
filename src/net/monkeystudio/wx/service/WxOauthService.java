@@ -23,7 +23,7 @@ public class WxOauthService {
     private CfgService cfgService;
 
     private static final String OAUTH_CODE_URL_SCOPE = "snsapi_userinfo";
-    private static final String OAUTH_CODE_URL_STATE = "KEENdo";
+    public static final String OAUTH_CODE_URL_STATE = "KEENdo";
     private static final String WX_OAUTH_REDIRECT_URL = "https://test.keendo.com.cn/api/chat-pet/pet/oauth/fan-info";
     private static final String FETCH_OAUTH_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s&component_appid=%s#wechat_redirect";
     private static final String FETCH_OAUTH_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=authorization_code&component_appid=%s&component_access_token=%s";

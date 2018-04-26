@@ -2,12 +2,14 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.utils.RespHelper;
+import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,8 @@ public class ChatPetController extends ChatPetBaseController{
 
     @Autowired
     private RespHelper respHelper;
+
+    private final static String ZEBRA_HTML = "https://test.keendo.com.cn/res/wedo/zebra.html?id=";
 
 
     @ResponseBody
@@ -55,11 +59,20 @@ public class ChatPetController extends ChatPetBaseController{
     public ModelAndView oauth(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code",required = false)String code, @RequestParam("state")String state, @RequestParam(value = "appid",required = false)String appId)throws Exception{
         Log.d("============== code = {?}  , state = {?} ,  appid = {?}",code,state,appId);
 
-        ChatPetSessionVo vo = chatPetService.handleWxOauthCode(response,code,appId);
+        if(!WxOauthService.OAUTH_CODE_URL_STATE.equals(state)){
+            return null;
+        }
+
+        if(StringUtil.isEmpty(code)){
+            //若用户禁止授权 , 测试如果用户禁止授权则跳转到百度页面.
+            response.sendRedirect("https://www.baidu.com/");
+        }
+
+        ChatPetSessionVo vo = chatPetService.wxOauthHandle(response,code,appId);
 
         this.saveSessionUserId(vo.getWxFanId());
 
-        response.sendRedirect("https://test.keendo.com.cn/res/wedo/zebra.html?id="+vo.getChatPetId());
+        response.sendRedirect(ZEBRA_HTML+vo.getChatPetId());
 
         return null;
     }
