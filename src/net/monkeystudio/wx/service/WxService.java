@@ -26,12 +26,6 @@ public class WxService {
 	@Autowired
 	private WxEventMessageHandler wxEventMessageHandler;
 
-	@Autowired
-	private CfgService cfgService;
-
-	@Autowired
-	private WxAuthApiService wxAuthApiService;
-
 	public String handleData(String postContent,String timestamp ,String openId ){
 		String content = wxBizMsgCryptService.decryptEvent(postContent);
 
@@ -50,7 +44,7 @@ public class WxService {
 
 		if(MessageTypeConstants.TEXT.equals(dataType)){
 			try {
-				xmlStr = wxTextMessageHandler.handleTextMsg(content,openId);
+				xmlStr = wxTextMessageHandler.handleTextMsg(content);
 			} catch (BizException e) {
 				Log.e(e);
 			}
