@@ -119,6 +119,8 @@ public class AdClickLogService {
         Integer startIndex = (page-1) * pageSize;
         List<AdClickLog> adClickLogList = adClickLogMapper.selectByPage(startIndex, pageSize);
 
+        Collections.reverse(adClickLogList);
+
         return adClickLogList;
     }
 
