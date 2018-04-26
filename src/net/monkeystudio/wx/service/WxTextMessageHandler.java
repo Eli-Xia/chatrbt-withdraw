@@ -216,7 +216,6 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 }
         }
 
-
         return null;
 
     }
