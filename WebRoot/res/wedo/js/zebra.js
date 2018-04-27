@@ -130,9 +130,8 @@ if (isWeixin) {
                                 canvas.height = img.height;
                                 canvas.width = img.width;
                             } else {
-                                canvas.height = img.height * 2;
-                                canvas.width = img.width * 2;
-                                ctx.scale(2, 2);
+                                canvas.height = img.height;
+                                canvas.width = img.width;
                             }
                         } else {
                             canvas.height = img.height;
