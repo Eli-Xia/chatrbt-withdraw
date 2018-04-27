@@ -18,6 +18,8 @@ public class ChatPetInfo {
     private String invitationQrCode;
     private String wPubHeadImgUrl;
 
+    private Integer experience;
+
     public String getwPubHeadImgUrl() {
         return wPubHeadImgUrl;
     }
@@ -93,5 +95,13 @@ public class ChatPetInfo {
 
     public void setAppearanceUrl(String appearanceUrl) {
         this.appearanceUrl = appearanceUrl;
+    }
+
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
     }
 }

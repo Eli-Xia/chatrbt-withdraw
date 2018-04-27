@@ -186,6 +186,11 @@ public class ChatPetService {
         } catch (WriterException e) {
             Log.e(e);
         }
+
+        //宠物的经验
+        Integer experience = chatPet.getExperience();
+        chatPetBaseInfo.setExperience(experience);
+
         return chatPetBaseInfo;
     }
 
