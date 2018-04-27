@@ -274,6 +274,22 @@ public class WxAuthApiService {
                 chatRobotService.deleteRobotByWxPubOriginId(wxPubOriginId);
                 chatRobotService.designateChatRobot(chatRobotId, wxPubOriginId);
             }
+
+            //启用智能聊
+            RWxPubProduct smartChatRWxPubProduct = new RWxPubProduct();
+            smartChatRWxPubProduct.setWxPubOriginId(wxPubOriginId);
+            smartChatRWxPubProduct.setStatus(RWxPubProductService.ENABLE_STATUS);
+            smartChatRWxPubProduct.setProductId(ProductService.SMART_CHAT);
+
+            rWxPubProductService.insert(smartChatRWxPubProduct);
+
+            //启动问问搜
+            RWxPubProduct askSearchRWxPubProduct = new RWxPubProduct();
+            askSearchRWxPubProduct.setProductId(ProductService.ASK_SEARCH);
+            askSearchRWxPubProduct.setStatus(RWxPubProductService.ENABLE_STATUS);
+            askSearchRWxPubProduct.setWxPubOriginId(wxPubOriginId);
+
+            rWxPubProductService.insert(askSearchRWxPubProduct);
         }
 
         return source;

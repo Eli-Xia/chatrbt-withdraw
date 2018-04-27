@@ -37,20 +37,7 @@ public class RWxPubProductService {
         RWxPubProduct rWxPubProduct = rWxPubProductMapper.selectByWxPubAndProduct(wxPubOriginId, productId);
 
         if(rWxPubProduct == null ){
-
-            if(productId.intValue() == ProductService.SMART_CHAT.intValue()){
-                rWxPubProduct = new RWxPubProduct();
-
-                rWxPubProduct.setStatus(ENABLE_STATUS);
-                rWxPubProduct.setProductId(productId);
-                rWxPubProduct.setWxPubOriginId(wxPubOriginId);
-
-                rWxPubProductMapper.insert(rWxPubProduct);
-                return true;
-            }
-
             return false;
-
         }
 
         Integer status = rWxPubProduct.getStatus();
