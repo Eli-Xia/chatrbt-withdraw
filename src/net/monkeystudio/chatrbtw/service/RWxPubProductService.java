@@ -23,7 +23,22 @@ public class RWxPubProductService {
     public Integer insert(RWxPubProduct rWxPubProduct) {
 
         return rWxPubProductMapper.insert(rWxPubProduct);
+    }
 
+
+    /**
+     * 开通产品
+     * @param wxPubOriginId
+     * @param productId 产品id
+     */
+    public void openProduct(String wxPubOriginId , Integer productId){
+
+        RWxPubProduct smartChatRWxPubProduct = new RWxPubProduct();
+        smartChatRWxPubProduct.setWxPubOriginId(wxPubOriginId);
+        smartChatRWxPubProduct.setStatus(ENABLE_STATUS);
+        smartChatRWxPubProduct.setProductId(productId);
+
+        this.insert(smartChatRWxPubProduct);
     }
 
 
