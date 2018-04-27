@@ -224,6 +224,26 @@ public class ChatPetService {
 
 
     /**
+     * 增加经验
+     * @param chatPetId 宠物id
+     * @param experience  增加的经验值
+     */
+    public void increaseExperience(Integer chatPetId ,Integer experience){
+        chatPetMapper.increaseExperience(chatPetId,experience);
+    }
+
+    /**
+     * 获得宠物的经验
+     * @param chatPetid
+     * @return
+     */
+    public Integer getChatPetExperience(Integer chatPetid ){
+        ChatPet chatPet = this.getById(chatPetid);
+
+        return chatPet.getExperience();
+    }
+
+    /**
      * 得到封面图的url
      * @return
      */
