@@ -11,6 +11,7 @@ import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
+import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.service.WxPubService;
@@ -52,6 +53,9 @@ public class ChatPetService {
 
     @Autowired
     private CfgService cfgService;
+
+    @Autowired
+    private ChatPetLevelService chatPetLevelService;
 
     /**
      * 生成宠物
@@ -190,6 +194,10 @@ public class ChatPetService {
         //宠物的经验
         Integer experience = chatPet.getExperience();
         chatPetBaseInfo.setExperience(experience);
+
+        //经验条进度
+        ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
+        chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
 
         return chatPetBaseInfo;
     }

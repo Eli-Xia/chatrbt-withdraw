@@ -4,6 +4,7 @@ import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetLevel;
 import net.monkeystudio.chatrbtw.mapper.ChatPetLevelMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,10 +50,37 @@ public class ChatPetLevelService {
         return null;
     }
 
-    public static void main(String[] args) {
-        ChatPetLevelService chatPetLevelService = new ChatPetLevelService();
 
-        System.out.println(chatPetLevelService.calculateLevel(40));
+    /**
+     * 得到经验值进度
+     * @param experience
+     * @return
+     */
+    public ExperienceProgressRate getProgressRate(Integer experience){
+
+        int remaining = experience;
+
+        List<ChatPetLevel> allLevel = this.getAscAllLevel();
+        Integer lastRemainingExperience = 0;
+        Integer lastLevelExperience = null;
+
+        for(ChatPetLevel chatPetLevel : allLevel){
+
+            remaining = remaining - chatPetLevel.getExperience();
+
+            if(remaining >= 0){
+                lastLevelExperience = chatPetLevel.getExperience();
+                lastRemainingExperience = remaining;
+            }else {
+                break;
+            }
+        }
+
+        ExperienceProgressRate experienceProgressRate = new ExperienceProgressRate();
+
+        experienceProgressRate.setNeed(lastLevelExperience);
+        experienceProgressRate.setOwn(lastRemainingExperience);
+
+        return experienceProgressRate;
     }
-
 }
