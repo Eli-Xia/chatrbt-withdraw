@@ -63,4 +63,18 @@
         where
             id = #{id}
     </update>
+
+    <select id="selectListByExperience" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"></include>
+        from
+            e_chat_pet
+        where
+            second_ethnic_groups_id = #{secondEthnicGroupsId}
+        order by
+            experience
+        desc
+        limit #{startIndex},#{pageSize}
+
+    </select>
 </mapper>

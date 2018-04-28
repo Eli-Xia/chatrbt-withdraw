@@ -8,6 +8,7 @@ import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetExperinceRankItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
@@ -170,7 +171,6 @@ public class ChatPetService {
 
         //宠物的url
         CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-
         String appearanceUrl = cryptoKitties.getUrl();
         chatPetBaseInfo.setAppearanceUrl(appearanceUrl);
 
@@ -235,7 +235,6 @@ public class ChatPetService {
         return url;
     }
 
-
     /**
      * 增加经验
      * @param chatPetId 宠物id
@@ -255,6 +254,69 @@ public class ChatPetService {
 
         return chatPet.getExperience();
     }
+
+    /**
+     * 获取经验排行
+     * @param secondEthnicGroupsId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    private List<ChatPet> getListByExperience(Integer secondEthnicGroupsId ,Integer page,Integer pageSize){
+
+        Integer startIndex = (page - 1) * pageSize;
+
+        return chatPetMapper.selectListByExperience(secondEthnicGroupsId,startIndex,pageSize);
+    }
+
+    /**
+     * 通过宠物id获取二级族群排行
+     * @param chatPetId
+     * @param pageSize
+     * @return
+     */
+    public List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId ,Integer pageSize){
+        ChatPet chatPet = this.getById(chatPetId);
+
+        if(chatPet == null){
+            return null;
+        }
+
+        Integer secondEthnicGroupsId = chatPet.getSecondEthnicGroupsId();
+        return this.getChatPetExperinceRank(secondEthnicGroupsId, pageSize);
+    }
+
+    private List<ChatPetExperinceRankItem> getChatPetExperinceRank(Integer secondEthnicGroupsId ,Integer pageSize){
+        List<ChatPet> chatPetList = this.getListByExperience(secondEthnicGroupsId, 1, pageSize);
+
+        List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
+
+        for(ChatPet chatPet : chatPetList){
+
+            ChatPetExperinceRankItem chatPetExperinceRankItem = new ChatPetExperinceRankItem();
+
+            //宠物的等级
+            Integer experience = chatPet.getExperience();
+            Integer level = chatPetLevelService.calculateLevel(experience);
+            chatPetExperinceRankItem.setLevel(level);
+
+
+            String wxFanOpenId = chatPet.getWxFanOpenId();
+            String wxPubOriginId = chatPet.getWxPubOriginId();
+            WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+            //粉丝头像
+            String headImgUrl = wxFan.getHeadImgUrl();
+            chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
+
+            //粉丝的昵称
+            chatPetExperinceRankItem.setWxFanNickname(wxFan.getNickname());
+
+            chatPetExperinceRankItemList.add(chatPetExperinceRankItem);
+        }
+
+        return chatPetExperinceRankItemList;
+    }
+
 
     /**
      * 得到封面图的url

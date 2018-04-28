@@ -1,7 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.utils.BeanUtils;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetLevel;
 import net.monkeystudio.chatrbtw.mapper.ChatPetLevelMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;

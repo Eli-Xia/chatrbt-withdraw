@@ -3,6 +3,8 @@ package net.monkeystudio.chatrbtw.mapper;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Created by bint on 2018/4/16.
  */
@@ -15,4 +17,6 @@ public interface ChatPetMapper {
     ChatPet selectByParam(ChatPet chatPet);
 
     Integer increaseExperience(@Param("id") Integer chatPetId ,@Param("augend") Integer augend);
+
+    List<ChatPet> selectListByExperience(@Param("secondEthnicGroupsId") Integer secondEthnicGroupsId,@Param("startIndex") Integer startIndex,@Param("pageSize") Integer pageSize);
 }
