@@ -43,8 +43,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     @Autowired
     private ChatPetService chatPetService;
 
-    @Autowired
-    private CfgService cfgService;
 
     @Autowired
     private WxFanService wxFanService;
@@ -55,14 +53,18 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     @Autowired
     private WxPubService wxPubService;
 
+    @Autowired
+    private CfgService cfgService;
+
 
 
     private final static String SUBSCRIBE_EVENT = "subscribe";
+    private final static String SCAN_EVENT = "scan";
 
     public String handleEvent(String content) {
         String eventType = this.judgeEventType(content);
 
-        if (SUBSCRIBE_EVENT.equals(eventType)) {
+        if (SUBSCRIBE_EVENT.equals(eventType) || SUBSCRIBE_EVENT.equals(SCAN_EVENT)) {
 
             SubscribeEvent subscribeEvent = XmlUtil.converyToJavaBean(content, SubscribeEvent.class);
             String wxPubOriginId = subscribeEvent.getToUserName();
@@ -131,17 +133,19 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         }
 
                         CustomerNewsItem customerNewsItem = new CustomerNewsItem();
-                        String description = wxFan.getNickname() + "的斑马，出生于2018年4月12日8点30分您已经成功接受# " + parentWxFanNickname + "#的邀请，创造了一只独一无二的斑马，\n" +
+                        /*String description = wxFan.getNickname() + "的斑马，出生于2018年4月12日8点30分您已经成功接受# " + parentWxFanNickname + "#的邀请，创造了一只独一无二的斑马，\n" +
                                 "加入了斑马星球。\n" +
                                 "\n" +
                                 "斑马星球的基本规律：多爱心互动，多真诚聊天\n" +
                                 "等到长大，虚拟宠物带回现实Money，报效宠爸宠妈\n" +
                                 "\n" +
                                 "聊天中会随机触发事件\n" +
-                                "每一次点击链接，完成每日任务，即获得成长经验值";
+                                "每一次点击链接，完成每日任务，即获得成长经验值";*/
 
                         Calendar calendar = Calendar.getInstance();
-                        description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
+                        Date date = chatPet.getCreateTime();
+                        calendar.setTime(date);
+                        String description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
                                 "自此历史浓重的记录了一笔：#" + wxFan.getNickname() + "#的喵小咪，出生于" + (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH)+ "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分。\n" +
                                 " \n" +
                                 "现在，可以在下面聊天栏里跟我说第一句话。\n" +
@@ -158,7 +162,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         //url = url.replace("http://", "https://");
 
                         customerNewsItem.setUrl(url);
-                        customerNewsItem.setPicUrl("http://" + domain + "/res/wedo/images/kitties_normal_cover.png");
+                        customerNewsItem.setPicUrl(chatPetService.getNewsMessageCoverUrl());
 
                         String replyContent = "喵！World!";
                         customerNewsItem.setTitle(replyContent);
@@ -184,7 +188,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
             }
-
         }
 
         return null;

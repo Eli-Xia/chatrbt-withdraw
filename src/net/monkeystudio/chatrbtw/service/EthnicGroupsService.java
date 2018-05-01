@@ -190,9 +190,9 @@ public class EthnicGroupsService {
      * @return
      */
     private Boolean allowToAdopt(Integer ethnicGroupsId){
-        String key = getEthnicGroupsExistingNumberKey(ethnicGroupsId);
+        String key = getEthnicGroupsExistingNumberKey();
 
-        Long num = redisCacheTemplate.incr(key);
+        Long num = redisCacheTemplate.hincrby(key,String.valueOf(ethnicGroupsId),1L);
 
         EthnicGroups ethnicGroups = this.getById(ethnicGroupsId);
         Integer limit = ethnicGroups.getTotalValidCount();
@@ -211,7 +211,17 @@ public class EthnicGroupsService {
     }
 
 
-    private static String getEthnicGroupsExistingNumberKey(Integer ethnicGroupsId){
+    /**
+     * 重置当日的数量
+     */
+    public void resetDailyRestrictions(){
+        String key = this.getEthnicGroupsExistingNumberKey();
+
+        redisCacheTemplate.del(key);
+    }
+
+
+    private static String getEthnicGroupsExistingNumberKey(){
 
         String ethnicGroupsExistingNumberKey = "hash:ethnicGroupsExistingNumber";
 

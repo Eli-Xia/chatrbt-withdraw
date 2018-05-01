@@ -451,6 +451,8 @@ public class AdService {
         boolean callback(Ad ad);
     }
 
+
+
     /**
      * 随机获取一条接入指定公众号的问问搜广告
      * @param wxPub

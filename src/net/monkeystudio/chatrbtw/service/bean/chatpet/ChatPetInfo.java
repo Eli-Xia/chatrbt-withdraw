@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.service.bean.chatpet;
 
+import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,10 @@ public class ChatPetInfo {
 
     private String invitationQrCode;
     private String wPubHeadImgUrl;
+
+    private Integer experience;
+
+    private ExperienceProgressRate experienceProgressRate;
 
     public String getwPubHeadImgUrl() {
         return wPubHeadImgUrl;
@@ -93,5 +99,21 @@ public class ChatPetInfo {
 
     public void setAppearanceUrl(String appearanceUrl) {
         this.appearanceUrl = appearanceUrl;
+    }
+
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    public ExperienceProgressRate getExperienceProgressRate() {
+        return experienceProgressRate;
+    }
+
+    public void setExperienceProgressRate(ExperienceProgressRate experienceProgressRate) {
+        this.experienceProgressRate = experienceProgressRate;
     }
 }

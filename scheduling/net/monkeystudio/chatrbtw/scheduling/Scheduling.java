@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.scheduling;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.service.ChatRobotService;
+import net.monkeystudio.chatrbtw.service.EthnicGroupsService;
 import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.PushMessageService;
 import net.monkeystudio.mapper.GlobalConfigMapper;
@@ -30,13 +31,26 @@ public class Scheduling {
     @Autowired
 	private GlobalConfigMapper globalConfigMapper;
 
+    @Autowired
+    private EthnicGroupsService ethnicGroupsService;
+
     /**
      * 删除无效的机器人
      */
-    @Scheduled(cron="0 0 2 * * ?") //间隔30分钟执行
+    @Scheduled(cron="0 0 2 * * ?") //当日2点
     public void deleteRobotInfo(){
     	opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_INVALID_ROBOT, "删除无效机器人任务启动。");
         chatRobotService.deleteInvalidRobot();
+    }
+
+
+    /**
+     * 删除无效的机器人
+     */
+    @Scheduled(cron="0 0 0 * * ?") //当日晚上12点重置限制
+    public void resetDailyRestrictions(){
+        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONSv, "重置当日族群接入个数限制");
+        ethnicGroupsService.resetDailyRestrictions();
     }
 
     

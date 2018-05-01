@@ -14,6 +14,7 @@ public class ChatPet {
     private Integer secondEthnicGroupsId;
     private Date createTime;
     private Integer parentId;
+    private Integer experience;
 
     public Integer getId() {
         return id;
@@ -77,5 +78,13 @@ public class ChatPet {
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
     }
 }

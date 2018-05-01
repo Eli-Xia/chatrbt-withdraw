@@ -11,7 +11,9 @@ import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
+import net.monkeystudio.chatrbtw.service.bean.asksearch.AskSearchVo;
 import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
+import net.monkeystudio.chatrbtw.service.bean.wxmessage.ReplyMessage;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -93,6 +96,9 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     @Autowired
     private CfgService cfgService;
 
+    @Autowired
+    private AskSearchService askSearchService;
+
     private final static int REPLY_TYPE_NONE = -1;//不做回复类型
     private final static int REPLY_TYPE_TEST = 0;//测试类型
     private final static int REPLY_TYPE_NEED_TO_FILTER = 1;//需要过滤的类型
@@ -105,13 +111,8 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     private final static int REPLY_MSG_TYPE_TEXT = 1;//文本回复类型
     private final static int REPLY_MSG_TYPE_ARTICLES = 2;//图文回复类型
 
-    private final static String ASK_SEARCH_FIRST_ITEM_TITLE = " 搜索结果";
-    private final static String ASK_SEARCH_FIRST_ITEM_DESC = "Powered by keendo.com.cn";
-    private final static String ASK_SEARCH_LAST_ITEM_TITLE = "在下面↓回复\"更多\"即可获取更多结果";
-    private final static String ASK_SEARCH_REPLY_TIP = "更多";
+
     private final static Integer  PUSH_TASK_AD_CHAT_COUNT = 3;//聊天次数到达推送陪聊宠任务广告
-
-
 
 
     @Autowired
@@ -120,11 +121,6 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     //统计周期
     private final static Integer COUNT_CACHE_PERIOD = 24 * 60 * 60;
 
-    //问问搜"更多"有效时长为半小时
-    private final static Integer MORE_NEWS_VALID_TIME = 60 * 30;
-
-    //微信文章推送个数
-    private final static Integer WX_PUB_ARTICLE_PUSH_COUNT = 5;
 
     //图灵机器人名字
     private final static String TU_LING_ROBOT_NAME =  "keendooo";
@@ -134,277 +130,42 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             "【收到不支援的訊息類型，無法顯示】"
     };
 
-    public String handleTextMsg(String body, String openId) throws BizException{
+    public String handleTextMsg(String body) throws BizException{
         TextMsgRec textMsgRec = XmlUtil.converyToJavaBean(body, TextMsgRec.class);
         return this.textMsgRecHandle(textMsgRec);
     }
 
-    /*public String textMsgRecHandle(TextMsgRec textMsgRec) throws BizException{
-        if (textMsgRec == null) {
-            return "parse body error";
-        } else if (textMsgRec.getContent() == null) {
-            return "content empty.";
-        }
-        String replySrc = null;
-
-        TextMsgRes textMsgRes = new TextMsgRes();//消息回复对象
-
-        String wxUserOpenId = textMsgRec.getFromUserName(); //用户openId
-        String wxPubOriginId = textMsgRec.getToUserName(); //公众号 originId
-        String content = textMsgRec.getContent();
-
-        //如果需要过滤掉，返回空让上层处理
-        if (needFiltered(content)) {
-            return null;
-        }
-
-        String wxPubOpenId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);//在redis里面获取 appid
-        //如果是微信公众号的关键字不用处理
-        if (wxPubService.isAuotReplyKeyword(content, wxPubOpenId)) {
-            return null;
-        }
-
-        Integer chatLogId = chatLogService.saveReceive(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), textMsgRec.getContent());
-
-        //如果是测试账号,做wx要求的回复内容
-        if ("gh_3c884a361561".equals(wxPubOriginId)) {
-            return this.wxTestReply(textMsgRec, chatLogId);
-        }
-
-        //粉丝信息的处理
-        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxUserOpenId);
-        Integer chatUid = AppConstants.CHAT_UID_DEFAULT;
-        Integer wxFanId = null;
-        if (wxFan != null) {
-            Log.d("wxFan:id=" + wxFan.getId() + ",nickname=" + wxFan.getNickname() + ",openid=" + wxFan.getWxFanOpenId());
-            chatUid = wxFan.getId();
-            wxFanId = wxFan.getId();
-        }
-
-        //公众号定制的关键字回复
-        KrResponse krResponse = keywordResponseService.getWxPubResponse(textMsgRec.getContent(), wxPubOriginId);
-        String respStr = "";
-        if (krResponse == null) {
-
-            respStr = this.metarialHandle(textMsgRec);
-            //如果图文消息回复
-            if(respStr != null){
-                replySrc = "N";
-            }else {
-
-                //公共关键字
-                krResponse = keywordResponseService.getBaseResponse(textMsgRec.getContent());
-
-                if(krResponse == null){
-                    //走图灵
-                    replySrc = "T";
-                    respStr = tuLingInterService.getResponse(chatUid, textMsgRec.getContent());
-
-                    if(respStr.indexOf(TU_LING_ROBOT_NAME) != -1){
-                        ChatRobotInfoResp chatRobotInfoResp = chatRobotService.getChatRobotInfoRespByWxPubOriginId(wxPubOriginId);
-
-                        if(chatRobotInfoResp != null && chatRobotInfoResp.getNickname() != null){
-                            respStr = respStr.replace(TU_LING_ROBOT_NAME,chatRobotInfoResp.getNickname());
-                        }
-                    }
-                }else {
-
-                    //公众关键字回复
-                    replySrc = "BK";
-                    if (krResponse.getType().equals("text")) {
-                        //文本消息
-                        respStr = krResponse.getResponse();
-                    } else if (krResponse.getType().equals("mpnews")) {
-                        respStr = "";
-                    }
-
-                }
-            }
-
-        }else {
-
-            //公众号自定义关键字回复
-            replySrc = "PK";
-            if (krResponse.getType().equals("text")) {
-                //文本消息
-                respStr = krResponse.getResponse();
-            } else if (krResponse.getType().equals("mpnews")) {
-                respStr = "";
-            }
-        }
-
-
-        //如果返回的是空白就返回空，让上层做处理
-        if ("".equals(respStr)) {
-            return null;
-        }
-
-        respStr = responseProcessService.responseProecess(wxPubOriginId, respStr);
-
-        textMsgRes.setContent(respStr);
-
-        String countCacheKey = this.getChatLogCountCacheKey(wxPubOriginId, wxUserOpenId);
-        Long count = redisCacheTemplate.incr(countCacheKey);
-
-        if (count == 1) {
-            redisCacheTemplate.expire(countCacheKey, COUNT_CACHE_PERIOD);
-        }
-
-        String chatAdPushCountStr = pushMessageConfigService.getByKey(PushMessageConfigService.CHAT_PUSH_AD_COUNT_KEY);
-        if (chatAdPushCountStr != null) {
-            Long chatAdPushCount = Long.valueOf(chatAdPushCountStr);
-            //如果刚好到达次数，则触发推送广告机制
-            if (count.longValue() == chatAdPushCount.longValue()) {
-
-                WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
-                if(wxPub != null ){
-                    Integer wxPubVerifyTypeInfo = wxPub.getVerifyTypeInfo();
-
-                    if(wxPubVerifyTypeInfo  == null){
-                        this.reviseWxPub(wxPubOriginId);
-                        wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
-                        wxPubVerifyTypeInfo = wxPub.getVerifyTypeInfo();
-                    }
-
-                    if(wxPubVerifyTypeInfo.intValue() == wxPubService.WX_PUB_VERIFY_TYPE_WX_VERIFY){
-                        try {
-                            this.sendAd(wxFanId, wxPubOriginId);
-                        } catch (Exception e) {
-                            Log.e(e);
-                        }
-                    }
-                }
-
-            }
-        }
-
-        textMsgRes.setCreateTime(new Date().getTime() / 1000L);
-        textMsgRes.setMsgType("text");
-        textMsgRes.setToUserName(wxUserOpenId);
-        textMsgRes.setFromUserName(wxPubOriginId);
-
-        try {
-            String respXml = XmlUtil.convertToXml(textMsgRes);
-            chatLogService.saveResponse(textMsgRes.getFromUserName(), textMsgRes.getToUserName(), textMsgRes.getContent(), chatLogId, replySrc);
-            return respXml;
-
-        } catch (Exception e) {
-            Log.e(e);
-            return "error";
-        }
-    }*/
-
-
+    /**
+     * 文本消息接收处理
+     * @param textMsgRec
+     * @return
+     * @throws BizException
+     */
     public String textMsgRecHandle(TextMsgRec textMsgRec) throws BizException{
         if (textMsgRec == null) {
             return "parse body error";
         } else if (textMsgRec.getContent() == null) {
             return "content empty.";
         }
-        String replySrc = null;
-
-        Integer replyMsgType = REPLY_MSG_TYPE_TEXT;//当前默认消息回复类型为文本类型
 
         String wxFanOpenId = textMsgRec.getFromUserName(); //用户openId
         String wxPubOriginId = textMsgRec.getToUserName(); //公众号 originId
-        String content = textMsgRec.getContent();
-
 
         Integer responseType = this.getRespType(textMsgRec);
-        Log.d("############responseType = [?]#############",responseType.toString());
 
         //粉丝信息的处理
         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
 
         String respStr = null;
 
-        Integer chatLogId = null;
-        switch (responseType.intValue()){
-
-            //过滤掉的类型
-            case REPLY_TYPE_NEED_TO_FILTER :
-                return null;
-
-            //微信关键字的类型
-            case REPLY_TYPE_WX_PUB_REPLY_KEYWORD:
-                return null;
-
-            //测试类型
-            case REPLY_TYPE_TEST:
-                chatLogId = chatLogService.saveReceive(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), textMsgRec.getContent());
-                return this.wxTestReply(textMsgRec, chatLogId);
-
-            //金豆公众号关键字回复
-            case REPLY_TYPE_WX_PUB_CUSTOM_KEYWORDS:
-                chatLogId = chatLogService.saveReceive(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), textMsgRec.getContent());
-
-                KrResponse krResponse = keywordResponseService.getWxPubResponse(textMsgRec.getContent(), wxPubOriginId);
-                replySrc = "BK";
-                if (krResponse.getType().equals("text")) {
-                    //文本消息
-                    respStr = krResponse.getResponse();
-                } else if (krResponse.getType().equals("mpnews")) {
-                    respStr = "";
-                }
-                break;
-
-            //素材回复
-            case REPLY_TYPE_WX_MATERIAL:
-                chatLogId = chatLogService.saveReceive(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), textMsgRec.getContent());
-
-                replySrc = "N";
-                respStr = this.metarialHandle(textMsgRec,chatLogId,replySrc);
-                replyMsgType = REPLY_MSG_TYPE_ARTICLES;//问问搜回复图文消息
-                break;
-
-            //金豆公众号公众关键字回复
-            case REPLY_TYPE_BASE_KEYWORDS:
-                chatLogId = chatLogService.saveReceive(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), textMsgRec.getContent());
-
-                KrResponse baseWxPubKrResponse = keywordResponseService.getBaseResponse(textMsgRec.getContent());
-                replySrc = "BK";
-                if (baseWxPubKrResponse.getType().equals("text")) {
-                    //文本消息
-                    respStr = baseWxPubKrResponse.getResponse();
-                } else if (baseWxPubKrResponse.getType().equals("mpnews")) {
-                    respStr = "";
-                }
-                break;
-
-            //图灵回复
-            case REPLY_TYPE_TU_LING:
-                chatLogId = chatLogService.saveReceive(textMsgRec.getToUserName(), textMsgRec.getFromUserName(), content);
-
-                replySrc = "T";
-
-                Integer chatUid = AppConstants.CHAT_UID_DEFAULT;
-                if (wxFan != null) {
-                    Log.d("wxFan:id=" + wxFan.getId() + ",nickname=" + wxFan.getNickname() + ",openid=" + wxFan.getWxFanOpenId());
-                    chatUid = wxFan.getId();
-                }
-
-                respStr = tuLingInterService.getResponse(chatUid, textMsgRec.getContent());
-
-                if(respStr.indexOf(TU_LING_ROBOT_NAME) != -1){
-                    ChatRobotInfoResp chatRobotInfoResp = chatRobotService.getChatRobotInfoRespByWxPubOriginId(wxPubOriginId);
-
-                    if(chatRobotInfoResp != null && chatRobotInfoResp.getNickname() != null){
-                        respStr = respStr.replace(TU_LING_ROBOT_NAME,chatRobotInfoResp.getNickname());
-                    }
-                }
-                break;
-
-            case REPLY_TYPE_NONE:
-                return null;
-        }
+        ReplyMessage replyMessage = this.reply(responseType, textMsgRec);
 
 
         //如果返回的是空白就返回空，让上层做处理
-        if ("".equals(respStr)) {
+        if (replyMessage == null || "".equals(replyMessage.getObject()) ) {
             return null;
         }
+
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
             //完成陪聊宠每日任务
@@ -417,6 +178,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             this.smartChatAdProecess(wxPubOriginId,wxFanOpenId);
         }
 
+        Integer replyMsgType  = replyMessage.getReplyMsgType();
+
+        Integer chatLogId = replyMessage.getChatLogId();
+
+        String replySource = replyMessage.getReplySource();
+
         switch (replyMsgType){
             //文本消息回复
             case REPLY_MSG_TYPE_TEXT:
@@ -425,22 +192,140 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 String respXml = this.replyTextStr(wxPubOriginId, wxFanOpenId, respStr);
 
                 try {
-                    chatLogService.saveResponse(wxPubOriginId, wxFanOpenId, respStr , chatLogId, replySrc);
+                    chatLogService.saveResponse(wxPubOriginId, wxFanOpenId, respStr , chatLogId, replySource);
                     return respXml;
                 } catch (Exception e) {
                     Log.e(e);
                     return null;
                 }
-
+            //图文消息回复
             case REPLY_MSG_TYPE_ARTICLES:
+                List<CustomerNewsItem> customerNewsList = (List<CustomerNewsItem>) replyMessage.getObject();
+                String respNewsXml = this.replyNewsStr(wxPubOriginId, wxFanOpenId, customerNewsList);
 
-                return respStr;
+                try {
+                    this.saveCustomerNewsLog(wxPubOriginId, wxFanOpenId, customerNewsList , chatLogId, replySource);
+                    return respNewsXml;
+                } catch (Exception e) {
+                    Log.e(e);
+                    return null;
+                }
         }
-
 
         return null;
 
     }
+
+
+    private ReplyMessage reply(Integer responseType , TextMsgRec textMsgRec){
+
+        String wxPubOriginId = textMsgRec.getToUserName();
+        String wxFanOpenId = textMsgRec.getFromUserName();
+
+        ReplyMessage replyMessage = new ReplyMessage();
+
+        //日志记录的id
+        Integer chatLogId = null;
+        //回复的来源
+        String replySrc = null;
+        //回复的样式
+        Integer replyMsgType = REPLY_MSG_TYPE_TEXT;
+
+        //回复的内容
+        Object reployCotent = null;
+
+        switch (responseType.intValue()){
+
+            //过滤掉的类型
+            case REPLY_TYPE_NEED_TO_FILTER :
+                return null;
+
+            //微信关键字的类型
+            case REPLY_TYPE_WX_PUB_REPLY_KEYWORD:
+                return null;
+
+            //测试类型
+            case REPLY_TYPE_TEST:
+                chatLogId = chatLogService.saveReceive(wxPubOriginId, textMsgRec.getFromUserName(), textMsgRec.getContent());
+                reployCotent = this.wxTestReply(textMsgRec, chatLogId);
+
+            //金豆公众号关键字回复
+            case REPLY_TYPE_WX_PUB_CUSTOM_KEYWORDS:
+                chatLogId = chatLogService.saveReceive(wxPubOriginId, textMsgRec.getFromUserName(), textMsgRec.getContent());
+
+                KrResponse krResponse = keywordResponseService.getWxPubResponse(textMsgRec.getContent(), wxPubOriginId);
+                replySrc = "BK";
+                if (krResponse.getType().equals("text")) {
+                    //文本消息
+                    reployCotent = krResponse.getResponse();
+                } else if (krResponse.getType().equals("mpnews")) {
+                    reployCotent = "";
+                }
+                break;
+
+            //问问搜回复
+            case REPLY_TYPE_WX_MATERIAL:
+                chatLogId = chatLogService.saveReceive(wxPubOriginId, textMsgRec.getFromUserName(), textMsgRec.getContent());
+
+                replySrc = "N";
+                reployCotent = askSearchService.getAskSearchNews(textMsgRec);
+                replyMsgType = REPLY_MSG_TYPE_ARTICLES;//问问搜回复图文消息
+                break;
+
+            //金豆公众号公众关键字回复
+            case REPLY_TYPE_BASE_KEYWORDS:
+                chatLogId = chatLogService.saveReceive(wxPubOriginId, textMsgRec.getFromUserName(), textMsgRec.getContent());
+
+                KrResponse baseWxPubKrResponse = keywordResponseService.getBaseResponse(textMsgRec.getContent());
+                replySrc = "BK";
+                if (baseWxPubKrResponse.getType().equals("text")) {
+                    //文本消息
+                    reployCotent = baseWxPubKrResponse.getResponse();
+                } else if (baseWxPubKrResponse.getType().equals("mpnews")) {
+                    reployCotent = "";
+                }
+                break;
+
+            //图灵回复
+            case REPLY_TYPE_TU_LING:
+                chatLogId = chatLogService.saveReceive(wxPubOriginId, textMsgRec.getFromUserName(), textMsgRec.getContent());
+
+                replySrc = "T";
+
+                Integer chatUid = AppConstants.CHAT_UID_DEFAULT;
+
+                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+                if (wxFan != null) {
+                    Log.d("wxFan:id=" + wxFan.getId() + ",openid=" + wxFan.getWxFanOpenId());
+                    chatUid = wxFan.getId();
+                }
+
+                String respStr = tuLingInterService.getResponse(chatUid, textMsgRec.getContent());
+
+                if(respStr.indexOf(TU_LING_ROBOT_NAME) != -1){
+                    ChatRobotInfoResp chatRobotInfoResp = chatRobotService.getChatRobotInfoRespByWxPubOriginId(wxPubOriginId);
+
+                    if(chatRobotInfoResp != null && chatRobotInfoResp.getNickname() != null){
+                        respStr = respStr.replace(TU_LING_ROBOT_NAME,chatRobotInfoResp.getNickname());
+                    }
+                }
+
+                reployCotent = respStr;
+                break;
+
+            case REPLY_TYPE_NONE:
+                return null;
+        }
+
+        replyMessage.setChatLogId(chatLogId);
+        replyMessage.setReplyMsgType(replyMsgType);
+        replyMessage.setReplySource(replySrc);
+
+        replyMessage.setObject(reployCotent);
+
+        return replyMessage;
+    }
+
     //推送任务广告
     public String pushTaskAdChatCountKey(String wxPubOriginId,String wxFanOpenId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "PushTaskAdChatCount:" + wxPubOriginId + ":" + wxFanOpenId;
@@ -573,7 +458,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 return REPLY_TYPE_WX_MATERIAL;
             }
             //素材回复
-            List<WxPubNews> wxPubNews = wxMaterialMgrService.getWxPubNews(wxPubOriginId, content, WX_PUB_ARTICLE_PUSH_COUNT);
+            List<WxPubNews> wxPubNews = wxMaterialMgrService.getWxPubNews(wxPubOriginId, content, 1);
             if(ListUtil.isNotEmpty(wxPubNews)){
                 return REPLY_TYPE_WX_MATERIAL;
             }
@@ -682,24 +567,213 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         return false;
     }
-    public String metarialHandle(TextMsgRec textMsgRec,Integer chatLogId,String replySrc){
 
-        String content = textMsgRec.getContent();
+
+    /*private ReplyMessage askSearchHandle(TextMsgRec textMsgRec ,Integer requestChatLogId){
+
+        String wxPubOriginId = textMsgRec.getToUserName();
+        String wxfanOpenId = textMsgRec.getFromUserName();
+        String requestContent = textMsgRec.getContent();
+
+        List<AskSearchVo> askSearchVoList = askSearchService.getAskSearchContent(textMsgRec);
+
+
+        if(askSearchVoList == null){
+            return null;
+        }
+
+        //记录日志
+        StringBuffer chatLogSb = new StringBuffer();
+        for(int i = 0; i < askSearchVoList.size(); i++){
+            if(i == 1){
+                chatLogSb.append(askSearchVoList.get(i).getTitle());
+            }else{
+                chatLogSb.append("\n");
+                chatLogSb.append(askSearchVoList.get(i).getTitle());
+            }
+        }
+        Integer responseChatLogId = chatLogService.saveResponse(wxPubOriginId, wxfanOpenId, chatLogSb.toString(), requestChatLogId, "N");
+
+        if(askSearchService.newsAnble()){
+            ReplyMessage replyMessage = new ReplyMessage();
+
+            replyMessage.setReplySource("N");
+            replyMessage.setChatLogId(responseChatLogId);
+            replyMessage.setReplyMsgType(REPLY_MSG_TYPE_ARTICLES);
+
+            List<CustomerNewsItem> customerNewsList = this.convertCustomerNews(askSearchVoList);
+            replyMessage.setObject(customerNewsList);
+            return replyMessage;
+        }
+
+        return null;
+    }*/
+
+
+    private Integer saveCustomerNewsLog(String wxPubOriginId,String wxfanOpenId, List<CustomerNewsItem> customerNewsList ,Integer requestChatLogId ,String replySource){
+
+        StringBuffer chatLogSb = new StringBuffer();
+        for(int i = 0; i < customerNewsList.size(); i++){
+            //排除首尾
+            if(i == 0 || i == customerNewsList.size()-1){
+                continue;
+            }else if(i == 1){
+                chatLogSb.append(customerNewsList.get(i).getTitle());
+            }else{
+                chatLogSb.append("\n");
+                chatLogSb.append(customerNewsList.get(i).getTitle());
+            }
+        }
+
+        Integer responseChatLogId = chatLogService.saveResponse(wxPubOriginId, wxfanOpenId, chatLogSb.toString(), requestChatLogId, replySource);
+        return responseChatLogId;
+    }
+
+    /**
+     * 获取问问搜的回复的内容
+     * @param textMsgRec
+     * @return
+     */
+    public  List<AskSearchVo> getAskSearchContent(TextMsgRec textMsgRec){
+        return null;
+
+        /*String content = textMsgRec.getContent();
         String wxPubOriginId = textMsgRec.getToUserName();
         String wxfanOpenId = textMsgRec.getFromUserName();
 
 
-        String askSearchCountCacheKey = this.getAskSearchCountCacheKey(wxPubOriginId, wxfanOpenId);
-        String moreNewsCountCacheKey = null;
-        String askSearchKeywordCacheKey = this.getAskSearchKeywordCacheKey(wxPubOriginId,wxfanOpenId);
+        List<WxPubNews> wxPubNewsList = null;
+        Integer currentPage = null;
+
+        //获取素材的内容
+        if(isMoreWord(content)){
+
+            //TODO 用getMoreNews方法获取
+            // "更多"从缓存中获取
+            String lastContent = this.getLastContentFromCache(wxPubOriginId, wxfanOpenId);
+
+            if(lastContent == null){
+               return null;
+            }
+
+            Long currentPageLong = this.incrWordCacheCount(wxPubOriginId,wxfanOpenId);
+            currentPage = currentPageLong.intValue();
+
+            QueryWxPubNewsList qo = new QueryWxPubNewsList();
+            qo.setTitle(lastContent);
+            qo.setWxPubOriginId(wxPubOriginId);
+            qo.setPage(currentPage.intValue());
+            qo.setPageSize(WX_PUB_ARTICLE_PUSH_COUNT);
+            wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(qo.getMap());
+
+
+
+        }else {
+
+            //非更多的处理
+            this.resetFirstPage(wxPubOriginId,wxfanOpenId);
+            this.setWordCache(wxPubOriginId,wxfanOpenId,content);
+            currentPage = 1;
+
+            //从第一页查询
+            QueryWxPubNewsList qo = new QueryWxPubNewsList();
+            qo.setTitle(content);
+            qo.setWxPubOriginId(wxPubOriginId);
+            qo.setPage(currentPage);
+            qo.setPageSize(WX_PUB_ARTICLE_PUSH_COUNT);
+            wxPubNewsList = wxMaterialMgrService.getWxPubNewsList(qo.getMap());
+
+        }
+
+        List<AskSearchVo> askSearchVoList = new ArrayList<>();
+
+        //第一条为"XXX关键字"的提醒
+        String lastContent = this.getLastContentFromCache(wxPubOriginId, wxfanOpenId);
+        AskSearchVo firstItem = this.getFirstItem(lastContent);
+        askSearchVoList.add(firstItem);
+
+        List<AskSearchVo> askSearchVoFromNews = convert2AskSearchList(wxPubNewsList);
+        askSearchVoList.addAll(askSearchVoFromNews);
+
+        //最后一条为提示是否还有"更多"
+        AskSearchVo finalItem = this.getFinalItem(wxPubOriginId, wxfanOpenId);
+        if(finalItem != null){
+            askSearchVoList.add(finalItem);
+        }
+
+        //获取问问搜广告
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+        Ad ad = adService.getAskSearchPushAd(wxPub);
+
+        //当前页数为1且为空
+        if(currentPage == 1 && ad != null){
+            //插入广告
+            for(int i=0;i<askSearchVoList.size();i++){
+
+                AskSearchVo askSearchVo = askSearchVoList.get(i);
+
+                if(i==1){
+                    AskSearchVo adAaskSearchVo = new AskSearchVo();
+
+                    adAaskSearchVo.setTitle(ad.getTitle());
+                    adAaskSearchVo.setUrl(ad.getUrl());
+                    adAaskSearchVo.setPicUrl(ad.getPicUrl());
+
+                    askSearchVoList.add(adAaskSearchVo);
+                }
+
+                askSearchVoList.add(askSearchVo);
+            }
+        }
+
+        return askSearchVoList;*/
+
+        /*StringBuffer chatLogSb = new StringBuffer();
+        for(int i = 0; i < wxPubNewsListResult.size(); i++){
+            if(i == 1){
+                chatLogSb.append(wxPubNewsListResult.get(i).getTitle());
+            }else{
+                chatLogSb.append("\n");
+                chatLogSb.append(wxPubNewsListResult.get(i).getTitle());
+            }
+        }*/
+
+
+        //chatLogService.saveResponse(wxPubOriginId, wxfanOpenId, chatLogSb.toString() , chatLogId);
+
+
+        /*ReplyMessage replyMessage = new ReplyMessage();
+        //是否需要使用卡片
+        if(true){
+
+            replyMessage.setReplySource("N");
+            replyMessage.setChatLogId();
+
+
+            List<CustomerNewsItem> customerNewsList = this.convertCustomerNews(wxPubNewsListResult,content);
+            replyMessage.setObject(customerNewsList);
+        }*/
+
+
+
+        /*String lastContent = this.getLastContentFromCache(wxPubOriginId, wxfanOpenId);
+        //"更多"时间失效
+        if(lastContent == null){
+            redisCacheTemplate.del(moreNewsCountCacheKey);
+            return "";
+        }
 
 
         Ad ad = null;//问问搜广告
+
+
+
 
         if(!ASK_SEARCH_REPLY_TIP.equals(StringUtils.trimWhitespace(content))){
             //获取问问搜广告
             WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
             ad = adService.getAskSearchPushAd(wxPub);
+
             moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,content,wxPubOriginId);
             redisCacheTemplate.del(moreNewsCountCacheKey);//关键字搜索,每次应从第一页开始
             redisCacheTemplate.setString(askSearchKeywordCacheKey,content);
@@ -743,11 +817,11 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         List<CustomerNewsItem> pushArticleList = new ArrayList<>();
 
         //问问搜开头
-        /*Article startItem = new Article();
+        *//*Article startItem = new Article();
         startItem.setTitle(content+ASK_SEARCH_FIRST_ITEM_TITLE);
         startItem.setDescription(ASK_SEARCH_FIRST_ITEM_DESC);
         startItem.setUrl(null);
-        startItem.setPicUrl(null);*/
+        startItem.setPicUrl(null);*//*
 
         CustomerNewsItem startItem = new CustomerNewsItem();
         startItem.setTitle(content+ASK_SEARCH_FIRST_ITEM_TITLE);
@@ -793,10 +867,10 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             //如果没有"更多",再回复更多无响应
             redisCacheTemplate.del(askSearchKeywordCacheKey);
             redisCacheTemplate.del(moreNewsCountCacheKey);
-        }
+        }*/
 
         //图文消息回复日志
-        StringBuffer chatLogSb = new StringBuffer();
+        /*StringBuffer chatLogSb = new StringBuffer();
         for(int i = 0; i < pushArticleList.size(); i++){
             //排除首尾
             if(i == 0 || i == pushArticleList.size()-1){
@@ -807,59 +881,45 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 chatLogSb.append("\n");
                 chatLogSb.append(pushArticleList.get(i).getTitle());
             }
-        }
+        }*/
 
 
-        String resXml = this.replyNewsStr(wxPubOriginId, wxfanOpenId, pushArticleList);
 
-        chatLogService.saveResponse(wxPubOriginId, wxfanOpenId, chatLogSb.toString() , chatLogId, replySrc);
+        //chatLogService.saveResponse(wxPubOriginId, wxfanOpenId, chatLogSb.toString() , chatLogId, "N");
 
-        return resXml;
+        //return resXml;
 
     }
-    private void  handleNewsMsgList(List<WxPubNews> news,List<CustomerNewsItem> as){
-        for (WxPubNews wxPubNews:news){
+
+
+
+
+    private List<CustomerNewsItem> convertCustomerNews(List<AskSearchVo> askSearchVoList){
+        ArrayList<CustomerNewsItem> customerNewsItemList = new ArrayList<>();
+
+        /*CustomerNewsItem startItem = new CustomerNewsItem();
+        startItem.setTitle(keyword+ASK_SEARCH_FIRST_ITEM_TITLE);
+        startItem.setDescription(ASK_SEARCH_FIRST_ITEM_DESC);
+        startItem.setUrl(null);
+        startItem.setPicUrl(null);*/
+
+        for (AskSearchVo askSearchVo:askSearchVoList){
             CustomerNewsItem article = new CustomerNewsItem();
             article.setDescription("");
-            article.setTitle(wxPubNews.getTitle());
-            article.setPicUrl(wxPubNews.getThumbUrl());
-            String realUrl = wxPubNews.getUrl2();
-
-            //如果文章真实地址存在，则用正式的
-            if(StringUtil.isNotEmpty(realUrl)){
-                article.setUrl(realUrl);
-            }else{
-                article.setUrl(wxPubNews.getUrl());
-            }
-            as.add(article);
+            article.setTitle(askSearchVo.getTitle());
+            article.setPicUrl(askSearchVo.getPicUrl());
+            customerNewsItemList.add(article);
         }
+        return customerNewsItemList;
     }
 
 
 
-    public String getAskSearchKeywordCacheKey(String wxPubOriginId, String wxfanOpenId) {
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchKw:" + wxPubOriginId + ":" + wxfanOpenId;
+    private List<WxPubNews> getMoreNews(String wxPubOriginId ,String wxfanOpenId){
+         return null;
     }
 
-    /**
-     * 获取问问搜聊天次数cache的key
-     * @param wxPubOpenId
-     * @param wxUserOpenId
-     * @return
-     */
-    public String getAskSearchCountCacheKey(String wxPubOpenId,String wxUserOpenId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "AskSearchCount:" + wxPubOpenId + ":" + wxUserOpenId;
-    }
-
-
-
-    public String getMoreNewsCountCacheKey(String wxfanOpenId,String content,String wxPubOriginId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "moreNewsCount:" + wxPubOriginId + ":" + wxfanOpenId + ":" + content ;
-    }
-
-
-    public String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
-
+    private String getChatLogCountCacheKey(String wxPubOpenId, String wxUserOpenId) {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "ChatLogCount:" + wxPubOpenId + ":" + wxUserOpenId;
     }
 
@@ -912,15 +972,15 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         }
 
-        textMsgRes.setCreateTime(new Date().getTime() / 1000L);
+        /*textMsgRes.setCreateTime(new Date().getTime() / 1000L);
         textMsgRes.setMsgType("text");
         textMsgRes.setToUserName(wxFanOpenId);
-        textMsgRes.setFromUserName(wxPubOriginId);
+        textMsgRes.setFromUserName(wxPubOriginId);*/
 
 
-        String respXml = XmlUtil.convertToXml(textMsgRes);
-        chatLogService.saveResponse(textMsgRes.getFromUserName(), textMsgRes.getToUserName(), textMsgRes.getContent(), chatLogId, textMsgRes.getContent());
-        return respXml;
+        //String respXml = XmlUtil.convertToXml(textMsgRes);
+        //chatLogService.saveResponse(textMsgRes.getFromUserName(), textMsgRes.getToUserName(), textMsgRes.getContent(), chatLogId, textMsgRes.getContent());
+        return content;
     }
 
 
