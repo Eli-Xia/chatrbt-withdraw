@@ -3,7 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.PetLog;
-import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +43,9 @@ public class ChatPetLogService {
     public Float getFanTotalCoin(String wxPubOriginId,String wxFanOpenId){
 
         Float totalCoin = petLogMapper.countFanTotalCoin(wxPubOriginId,wxFanOpenId,new Date());
+        if(totalCoin == null){
+            totalCoin = 0F;
+        }
         return totalCoin;
     }
 

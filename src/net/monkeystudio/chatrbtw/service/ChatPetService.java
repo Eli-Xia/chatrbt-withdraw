@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -9,6 +10,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.service.CfgService;
 import net.monkeystudio.utils.JsonHelper;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
@@ -55,6 +57,9 @@ public class ChatPetService {
 
     @Autowired
     private WxOauthService wxOauthService;
+
+    @Autowired
+    private CfgService cfgService;
 
 
     /**
@@ -131,15 +136,15 @@ public class ChatPetService {
 
         String headImgUrl = owner.getHeadImgUrl();
         if(headImgUrl == null){
-            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
-        }
+        wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+    }
 
-        owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+    owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
         ownerInfo.setHeadImg(owner.getHeadImgUrl());
 
         chatPetBaseInfo.setOwnerInfo(ownerInfo);
 
-        String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+    String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
         chatPetBaseInfo.setOwnerId(owerId);
 
         //宠物基因
@@ -163,9 +168,6 @@ public class ChatPetService {
 
         //粉丝拥有代币
         Float fanTotalCoin = chatPetLogService.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
-        if(fanTotalCoin == null){
-            fanTotalCoin = 0F;
-        }
         chatPetBaseInfo.setFanTotalCoin(fanTotalCoin);
 
         //宠物的url
@@ -217,60 +219,7 @@ public class ChatPetService {
 
 
     /**
-     * 通过code获取access_token
-     *
-     * https://api.weixin.qq.com/sns/oauth2/component/access_token
-     * ?appid=APPID&code=CODE&grant_type=authorization_code&component_appid=COMPONENT_APPID&component_access_token=COMPONENT_ACCESS_TOKEN
-
-
-     appid	是	公众号的appid
-     code	是	填写第一步获取的code参数
-     grant_type	是	填authorization_code
-     component_appid	是	服务开发方的appid
-     component_access_token	是	服务开发方的access_token
-
-
-     {
-     "access_token":"ACCESS_TOKEN",
-     "expires_in":7200,
-     "refresh_token":"REFRESH_TOKEN",
-     "openid":"OPENID",
-     "scope":"SCOPE"
-     }
-
-     access_token	接口调用凭证
-     expires_in	access_token接口调用凭证超时时间，单位（秒）
-     refresh_token	用户刷新access_token
-     openid	授权用户唯一标识
-     scope	用户授权的作用域，使用逗号（,）分隔
-
-     //======================================================
-     获取粉丝信息:
-
-       GET（请使用https协议） https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
-
-        access_token	网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
-        openid	用户的唯一标识
-        lang	返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-
-
-     {
-     "openid":" OPENID",
-     " nickname": NICKNAME,
-     "sex":"1",
-     "province":"PROVINCE"
-     "city":"CITY",
-     "country":"COUNTRY",
-     "headimgurl":    "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
-     "privilege":[ "PRIVILEGE1" "PRIVILEGE2"     ],
-     "unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL"
-     }
-
-
-     /res/wedo/zebra.html?id=" + chatPetId
-
-     这个方法不解耦  全都揉在了一起  需要修改.
-     微信网页授权处理
+     * 微信网页授权处理
      * @param code
      */
     public ChatPetSessionVo wxOauthHandle(HttpServletResponse response,String code,String wxPubAppId) throws Exception{
@@ -372,6 +321,17 @@ public class ChatPetService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 宠物日志页面url
+     *
+     * @return
+     */
+    public String createZebraHtmlUrl(){
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String url = "https://"+domain+"/res/wedo/zebra.html?id=";
+        return url;
     }
 
 }

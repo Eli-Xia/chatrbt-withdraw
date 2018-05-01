@@ -8,6 +8,7 @@ import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.exception.BizException;
+import net.monkeystudio.local.Msg;
 import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +33,18 @@ public class ChatPetController extends ChatPetBaseController{
     @Autowired
     private RespHelper respHelper;
 
-    private final static String ZEBRA_HTML = "https://test.keendo.com.cn/res/wedo/zebra.html?id=";
+    //private final static String ZEBRA_HTML = "https://test.keendo.com.cn/res/wedo/zebra.html?id=";
 
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(@RequestBody ChatPetIdReq chatPetIdReq){
 
+        Integer userId = getUserId();
+
+        if(userId == null){
+            return respHelper.failed(Msg.text("common.user.nologin"));
+        }
         Integer ChatPetId = chatPetIdReq.getId();
 
         ChatPetInfo chatPetInfo = chatPetService.getInfo(ChatPetId);
@@ -64,17 +70,15 @@ public class ChatPetController extends ChatPetBaseController{
             return null;
         }
 
-        if(StringUtil.isEmpty(code)){
-            //若用户禁止授权 , 测试如果用户禁止授权则跳转到百度页面.
-            response.sendRedirect("https://www.baidu.com/");
-        }
-
         ChatPetSessionVo vo = chatPetService.wxOauthHandle(response,code,appId);
 
 
         this.saveSessionUserId(vo.getWxFanId());
 
-        response.sendRedirect(ZEBRA_HTML+vo.getChatPetId());
+        //"https://test.keendo.com.cn/res/wedo/zebra.html?id="
+        String zebraHtml = chatPetService.createZebraHtmlUrl();
+
+        response.sendRedirect(zebraHtml+vo.getChatPetId());
 
         return null;
     }

@@ -4,10 +4,9 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.JedisPubSub;
 
 import javax.annotation.PostConstruct;
 import java.util.List;

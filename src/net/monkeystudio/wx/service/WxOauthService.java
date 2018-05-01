@@ -3,6 +3,7 @@ package net.monkeystudio.wx.service;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.service.CfgService;
 import net.monkeystudio.utils.JsonHelper;
@@ -21,14 +22,25 @@ public class WxOauthService {
     private WxAuthApiService wxAuthApiService;
     @Autowired
     private CfgService cfgService;
+    @Autowired
+    private WxPubService wxPubService;
 
     private static final String OAUTH_CODE_URL_SCOPE = "snsapi_userinfo";
     public static final String OAUTH_CODE_URL_STATE = "KEENdo";
-    private static final String WX_OAUTH_REDIRECT_URL = "https://test.keendo.com.cn/api/chat-pet/pet/oauth/fan-info";
+    //private static final String WX_OAUTH_REDIRECT_URL = "https://test.keendo.com.cn/api/chat-pet/pet/oauth/fan-info";
     private static final String FETCH_OAUTH_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s&component_appid=%s#wechat_redirect";
     private static final String FETCH_OAUTH_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=authorization_code&component_appid=%s&component_access_token=%s";
     private static final String FETCH_OAUTH_USER_INFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
 
+    /**
+     * 微信网页授权回调接口url
+     * @return
+     */
+    private String createWxOauthRedirectUrl(){
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String url = "https://"+domain+"/api/chat-pet/pet/oauth/fan-info";
+        return url;
+    }
     /*
     *       流程:
     *       1,调用获取code接口需要在微信端打开  拼接url 然后重定向过去
@@ -45,7 +57,12 @@ public class WxOauthService {
 	    https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE&component_appid=component_appid#wechat_redirect
 	 *
     * */
-    private String getRequestCodeUrl(String redirectUrl,String wxPubAppId) throws Exception {
+    private String getRequestCodeUrl(String redirectUrl,Integer wxPubId) throws Exception {
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+
+        String wxPubAppId = wxPub.getAppId();
+
         String componentAppid = cfgService.get(GlobalConfigConstants.COMPONENT_APP_ID_KEY);
 
         return String.format(FETCH_OAUTH_CODE_URL,
@@ -54,12 +71,13 @@ public class WxOauthService {
 
     /**
      * 网页授权获取code URL拼接
-     * @param wxPubAppId
+     * @param
      * @return
      * @throws Exception
      */
-    public String getRequestCodeUrl(String wxPubAppId) throws  Exception{
-        return this.getRequestCodeUrl(WX_OAUTH_REDIRECT_URL,wxPubAppId);
+    public String getRequestCodeUrl(Integer wxPubId) throws  Exception{
+        String redirectUrl = this.createWxOauthRedirectUrl();
+        return this.getRequestCodeUrl(redirectUrl,wxPubId);
     }
 
 

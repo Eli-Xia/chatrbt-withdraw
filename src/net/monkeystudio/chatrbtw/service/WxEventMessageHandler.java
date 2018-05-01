@@ -8,12 +8,14 @@ import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
 import net.monkeystudio.chatrbtw.service.bean.ethnicgroupscode.EthnicGroupsCodeValidatedResp;
 import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 
+import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,9 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
     @Autowired
     private ChatPetLogService chatPetLogService;
+
+    @Autowired
+    private WxPubService wxPubService;
 
 
 
@@ -143,8 +148,12 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                                 "喵~期待~";
                         customerNewsItem.setDescription(description);
 
+                        //微信网页授权url参数拼接
+                        Integer wxPubIdParam = this.createChatPetH5Param(wxPubOriginId);
+
                         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-                        String uri = "/res/wedo/zebra.html?id=" + chatPetId;
+                        //String uri = "/res/wedo/zebra.html?id=" + chatPetId;
+                        String uri = "/api/wx/oauth/redirect?id="+wxPubIdParam;
                         String url = domain + uri;
                         //url = url.replace("http://", "https://");
 
@@ -179,6 +188,16 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
         }
 
         return null;
+    }
+
+    /**
+     * 微信h5授权url参数拼接  ?wxPubId = ?
+     * @param wxPubOriginId
+     * @return
+     */
+    private Integer createChatPetH5Param(String wxPubOriginId){
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+        return wxPub.getId();
     }
 
     public String testEventHandle(String content) {

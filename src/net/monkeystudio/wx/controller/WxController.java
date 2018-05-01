@@ -3,7 +3,6 @@ package net.monkeystudio.wx.controller;
 import net.monkeystudio.base.BaseController;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxService;
@@ -121,16 +120,15 @@ public class WxController extends BaseController{
 
 	/**
 	 * 网页授权
-	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
-	public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("wxPubAppId")String wxPubAppId) throws Exception{
-		String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubAppId);
+		@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
+		public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("id")Integer wxPubId) throws Exception{
+			String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubId);
 
-		response.sendRedirect(redirectUrl);
+			response.sendRedirect(redirectUrl);
 
-		return null;
+			return null;
 	}
 
 

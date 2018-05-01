@@ -1,6 +1,5 @@
 package net.monkeystudio.wx.service;
 
-import com.aliyun.oss.common.utils.DateUtil;
 import net.monkeystudio.admin.controller.req.wxpubmaterial.QueryWxPubNewsList;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
@@ -8,18 +7,15 @@ import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.service.CfgService;
-import net.monkeystudio.wx.controller.bean.Article;
-import net.monkeystudio.wx.controller.bean.NewsMsgRes;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
-import net.monkeystudio.wx.vo.customerservice.CustomerNews;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import net.monkeystudio.wx.vo.thirtparty.AuthorizerInfo;
 import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
