@@ -40,6 +40,10 @@ public class EthnicGroupsController {
 
         Integer pageSize = ethnicGroupsRankReq.getPageSize();
 
+        if(pageSize == null || chatPetId == null){
+            return respHelper.failed("参数有误");
+        }
+
         if (pageSize > 10){
             pageSize = 10;
         }
