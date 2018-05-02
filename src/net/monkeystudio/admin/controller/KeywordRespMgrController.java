@@ -1,15 +1,15 @@
 package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.QueryKeywordList;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.KrKeyword;
 import net.monkeystudio.chatrbtw.service.KeywordRespMgrService;
 import net.monkeystudio.chatrbtw.service.bean.kr.KeywordResponse;
 import net.monkeystudio.chatrbtw.service.bean.kr.SetBaseKeywordResponse;
 import net.monkeystudio.portal.controller.req.kr.UpdateKeywordResponse;
-import net.monkeystudio.utils.RespHelper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping(value = "/admin/kr")
-public class KeywordRespMgrController extends BaseController{
+public class KeywordRespMgrController extends BaseController {
 
     @Autowired
     private RespHelper respHelper;

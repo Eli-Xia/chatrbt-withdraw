@@ -1,9 +1,9 @@
 package net.monkeystudio.wx.service;
 
-import com.aliyun.oss.common.utils.DateUtil;
-import net.monkeystudio.admin.controller.req.wxpubmaterial.QueryWxPubNewsList;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
@@ -15,13 +15,8 @@ import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.asksearch.AskSearchVo;
 import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
 import net.monkeystudio.chatrbtw.service.bean.wxmessage.ReplyMessage;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.service.CfgService;
-import net.monkeystudio.wx.controller.bean.Article;
-import net.monkeystudio.wx.controller.bean.NewsMsgRes;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
-import net.monkeystudio.wx.vo.customerservice.CustomerNews;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import net.monkeystudio.wx.vo.thirtparty.AuthorizerInfo;
 import net.monkeystudio.wx.vo.thirtparty.PubBaseInfo;
@@ -341,7 +336,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
      * @param wxFanOpenId
      * @throws BizException
      */
-    private void petChatAdProcess(String wxPubOriginId,String wxFanOpenId) throws BizException{
+    private void petChatAdProcess(String wxPubOriginId,String wxFanOpenId) throws BizException {
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
 
         if(wxPub != null ){

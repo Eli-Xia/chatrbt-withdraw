@@ -1,13 +1,10 @@
 package net.monkeystudio.chatrbtw.sdk.wx;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.TimeUtil;
-import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.service.WxFanService;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;
 import net.monkeystudio.wx.vo.user.WxFanBaseInfo;

@@ -1,7 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.req.AddUpdateWxPubTag;
-import net.monkeystudio.base.req.ListPaginationReq;
+import net.monkeystudio.base.controller.bean.req.ListPaginationReq;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.RAdWxPubMapper;

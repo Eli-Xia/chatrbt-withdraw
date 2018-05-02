@@ -2,12 +2,12 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.req.res.AddUpdateRes;
 import net.monkeystudio.admin.controller.resp.ResForResp;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.Res;
 import net.monkeystudio.chatrbtw.entity.Role;
 import net.monkeystudio.chatrbtw.mapper.ResMapper;
-import net.monkeystudio.utils.CommonUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

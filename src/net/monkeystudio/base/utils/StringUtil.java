@@ -1,7 +1,5 @@
 package net.monkeystudio.base.utils;
 
-import net.monkeystudio.utils.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 

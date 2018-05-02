@@ -1,16 +1,15 @@
 package net.monkeystudio.admin.controller;
 
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
-import net.monkeystudio.base.req.ListPaginationReq;
 import net.monkeystudio.admin.controller.req.moneywithdraw.AdminMoneyWithdrawDetail;
 import net.monkeystudio.admin.controller.req.moneywithdraw.InvoiceAuditReq;
 import net.monkeystudio.admin.controller.req.moneywithdraw.RemitConfirmReq;
-import net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.controller.bean.req.ListPaginationReq;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.MoneyWithdrawService;
 import net.monkeystudio.chatrbtw.service.bean.moneywithdraw.MoneyWithdrawRecordListResp;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +34,7 @@ public class MoneyWithdrawMgrController extends BaseController {
     //提现记录列表
     @RequestMapping(value = "/record/list", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase moneyWithdrawRecordList(HttpServletRequest request,@RequestBody ListPaginationReq paginationReq){
+    public RespBase moneyWithdrawRecordList(HttpServletRequest request, @RequestBody ListPaginationReq paginationReq){
 
         Integer userId = getUserId();
         if ( userId == null ){
@@ -114,7 +113,7 @@ public class MoneyWithdrawMgrController extends BaseController {
     //打款确认
     @RequestMapping(value = "/remit/confirm", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase confirmRemit(HttpServletRequest request, @RequestBody RemitConfirmReq req) throws BizException{
+    public RespBase confirmRemit(HttpServletRequest request, @RequestBody RemitConfirmReq req) throws BizException {
 
         Integer userId = getUserId();
         if ( userId == null ){

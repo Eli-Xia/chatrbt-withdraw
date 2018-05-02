@@ -2,11 +2,11 @@ package net.monkeystudio.chatrbtw.scheduling;
 
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.AppConstants;
+import net.monkeystudio.chatrbtw.mapper.GlobalConfigMapper;
 import net.monkeystudio.chatrbtw.service.ChatRobotService;
 import net.monkeystudio.chatrbtw.service.EthnicGroupsService;
 import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.PushMessageService;
-import net.monkeystudio.mapper.GlobalConfigMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

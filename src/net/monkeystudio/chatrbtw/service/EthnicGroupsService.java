@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.ImageUtils;
 import net.monkeystudio.base.utils.JsonUtil;
@@ -12,7 +13,6 @@ import net.monkeystudio.chatrbtw.mapper.EthnicGroupsMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.QrCodeHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.QrCodeTicker;
 import net.monkeystudio.chatrbtw.service.bean.ethnicgroupscode.EthnicGroupsCodeValidatedResp;
-import net.monkeystudio.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,6 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.chatrbtw.entity.RWxPubProduct;
 import net.monkeystudio.chatrbtw.mapper.RWxPubProductMapper;
-import net.monkeystudio.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

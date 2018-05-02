@@ -2,6 +2,9 @@ package net.monkeystudio.portal.controller;
 
 import java.util.List;
 
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatlog.ChatStatisticsChartQueryObject;
 import net.monkeystudio.chatrbtw.service.bean.chatlog.YesterdayChatManVO;
 import net.monkeystudio.chatrbtw.service.bean.chatlog.YesterdayChatNumVO;
@@ -10,13 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.service.ChatLogService;
 import net.monkeystudio.chatrbtw.service.bean.chatlog.ChatLogListItem;
-import net.monkeystudio.local.Msg;
 import net.monkeystudio.portal.controller.req.chatlog.QueryChatLog;
-import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.service.WxPubService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class PortalChatLogController extends PortalBaseController{
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase list( @RequestBody QueryChatLog queryChatLog){
+    public RespBase list(@RequestBody QueryChatLog queryChatLog){
         Integer userId = getUserId();
 
         if(userId == null){

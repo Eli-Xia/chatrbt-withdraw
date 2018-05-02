@@ -7,22 +7,22 @@ import net.monkeystudio.admin.controller.req.Login;
 import net.monkeystudio.admin.controller.req.QueryUserList;
 import net.monkeystudio.admin.controller.req.UpdateUser;
 import net.monkeystudio.admin.controller.resp.UserDetail;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.utils.CommonUtils;
+import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.Role;
+import net.monkeystudio.chatrbtw.entity.User;
+import net.monkeystudio.chatrbtw.entity.UserProfile;
 import net.monkeystudio.chatrbtw.local.Msg;
 import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.UserRoleService;
+import net.monkeystudio.chatrbtw.service.UserService;
 import net.monkeystudio.chatrbtw.service.bean.user.UserResp;
-import net.monkeystudio.entity.User;
-import net.monkeystudio.entity.UserProfile;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.service.CfgService;
-import net.monkeystudio.service.UserService;
-import net.monkeystudio.utils.CommonUtils;
-import net.monkeystudio.utils.Log;
-import net.monkeystudio.utils.RespHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/admin/user")
-public class UserController extends BaseController{
+public class UserController extends BaseController {
 
     @Autowired
     private RespHelper respHelper;

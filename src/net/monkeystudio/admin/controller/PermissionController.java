@@ -2,14 +2,14 @@ package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.AddUpdateRole;
 import net.monkeystudio.admin.controller.req.QueryResList;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.admin.controller.req.res.AddUpdateRes;
 import net.monkeystudio.admin.controller.resp.ResForResp;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.Role;
 import net.monkeystudio.chatrbtw.service.PermissionService;
 import net.monkeystudio.chatrbtw.service.UserRoleService;
-import net.monkeystudio.utils.RespHelper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RequestMapping(value = "/admin/permission")
 @Controller
-public class PermissionController extends BaseController{
+public class PermissionController extends BaseController {
     @Autowired
     private RespHelper respHelper;
 

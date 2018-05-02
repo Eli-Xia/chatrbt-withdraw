@@ -1,18 +1,18 @@
 package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.QueryAdList;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.admin.controller.req.ad.AddAd;
 import net.monkeystudio.admin.controller.req.ad.UpdateAd;
 import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.Ad;
 import net.monkeystudio.chatrbtw.service.AdService;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdDistribute2WxPubConfirmReq;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdDistribute2WxPubResp;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdUpdateReq;
-import net.monkeystudio.utils.RespHelper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 @RequestMapping(value = "/admin/ad")
 @Controller
-public class AdController extends BaseController{
+public class AdController extends BaseController {
 
     @Autowired
     private RespHelper respHelper;

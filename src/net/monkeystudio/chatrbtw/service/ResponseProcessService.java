@@ -5,12 +5,12 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import net.monkeystudio.base.utils.Log;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.monkeystudio.chatrbtw.entity.WxPub;
-import net.monkeystudio.utils.Log;
 import net.monkeystudio.wx.service.WxPubService;
 
 /**

@@ -5,8 +5,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatlog.ChatStatisticsChartQueryObject;
-import net.monkeystudio.local.Msg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,11 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.monkeystudio.admin.controller.req.QueryChatLogs;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.chatrbtw.entity.ChatLog;
 import net.monkeystudio.chatrbtw.service.ChatLogService;
-import net.monkeystudio.utils.RespHelper;
 
 
 /**
@@ -29,7 +29,7 @@ import net.monkeystudio.utils.RespHelper;
  */
 @Controller
 @RequestMapping(value = "/admin/chatlog")
-public class ChatLogMgrController extends BaseController{
+public class ChatLogMgrController extends BaseController {
 
 	@Autowired
 	private RespHelper respHelper;

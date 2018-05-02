@@ -9,8 +9,6 @@ import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
-import net.monkeystudio.chatrbtw.service.bean.ethnicgroupscode.EthnicGroupsCodeValidatedResp;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 
