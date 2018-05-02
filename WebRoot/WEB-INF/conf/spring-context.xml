@@ -36,6 +36,9 @@
     <!---->
 
 
+    <!-- 设置使用注解的类所在的jar包 ,把标记了@Controller注解的类转换为bean-->
+    <!--<context:component-scan base-package="net.monkeystudio"/>-->
+
 
     <!-- 自定义AOP支持 -->
     <aop:aspectj-autoproxy/>
@@ -52,6 +55,8 @@
         <property value="${redis.cache.timeout}" name="timeout"/>
     </bean>
 
+    <!-- 设置使用注解的类所在的jar包 ,把标记了@Controller注解的类转换为bean-->
+    <context:component-scan base-package="net.monkeystudio"/>
 
     <!-- 开启事务注解驱动 -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -102,9 +107,9 @@
         </property>
     </bean>
 
-    <bean id="userService" class="net.monkeystudio.base.service.UserService"></bean>
-    <bean id="cfgService" class="net.monkeystudio.base.service.CfgService"></bean>
-    <bean id="emailService" class="net.monkeystudio.base.service.EmailService"></bean>
+    <!--<bean id="userService" class="net.monkeystudio.chatrbtw.service.UserService"></bean>-->
+    <!--<bean id="cfgService" class="net.monkeystudio.base.service.CfgService"></bean>
+    <bean id="emailService" class="net.monkeystudio.base.service.EmailService"></bean>-->
     <!--自动扫描定时任务-->
     <task:annotation-driven/>
 

@@ -4,7 +4,6 @@ import net.monkeystudio.admin.controller.req.AddUpdateRole;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.local.Msg;
 import net.monkeystudio.base.service.CfgService;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.chatrbtw.entity.Role;
 import net.monkeystudio.chatrbtw.entity.User;
 import net.monkeystudio.chatrbtw.entity.UserRole;

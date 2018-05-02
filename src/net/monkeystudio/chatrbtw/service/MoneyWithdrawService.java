@@ -7,7 +7,6 @@ import net.monkeystudio.base.controller.bean.req.ListPaginationReq;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.base.utils.FloatArithmeticUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.AccountSetting;

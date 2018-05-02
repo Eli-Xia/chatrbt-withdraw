@@ -5,9 +5,9 @@ import java.util.List;
 
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.AdminMenu;
+import net.monkeystudio.chatrbtw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

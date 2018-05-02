@@ -1,13 +1,10 @@
-package net.monkeystudio.base.service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.service.EmailService;
 import net.monkeystudio.base.service.bean.UserDetail;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.chatrbtw.entity.Role;
@@ -19,7 +16,12 @@ import net.monkeystudio.chatrbtw.mapper.UserMapper;
 import net.monkeystudio.chatrbtw.mapper.UserRoleMapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,7 +29,7 @@ import org.springframework.stereotype.Service;
  * @author hebo
  *
  */
-@Service
+@Component
 public class UserService {
 
 	@Autowired
@@ -174,7 +176,7 @@ public class UserService {
 	/**
 	 * 用户名-密码 鉴权
 	 * @param username
-	 * @param passord
+	 * @param password
 	 * @return
 	 */
 	public boolean auth(String username, String password){

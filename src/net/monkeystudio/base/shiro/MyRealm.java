@@ -1,10 +1,10 @@
 package net.monkeystudio.base.shiro;
 
 import net.monkeystudio.base.Constants;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.chatrbtw.entity.Role;
 import net.monkeystudio.chatrbtw.entity.User;
 import net.monkeystudio.chatrbtw.mapper.RoleMapper;
+import net.monkeystudio.chatrbtw.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;

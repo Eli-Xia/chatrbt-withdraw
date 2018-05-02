@@ -24,10 +24,9 @@
             
     <!--启用spring mvc 注解 -->
     <context:annotation-config />
-    
-    <!-- 设置使用注解的类所在的jar包 ,把标记了@Controller注解的类转换为bean-->
-    <context:component-scan base-package="net.monkeystudio"/>
-    
+
+	<context:component-scan base-package="net.monkeystudio.portal.controller,net.monkeystudio.admin.controller,net.monkeystudio.chatpet.controller" />
+
     <task:annotation-driven/>
     
     <mvc:annotation-driven>

@@ -2,10 +2,10 @@ package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.chatrbtw.entity.ChatRobotCharacter;
 import net.monkeystudio.chatrbtw.entity.UserProfile;
 import net.monkeystudio.chatrbtw.service.ChatRobotCharacterService;
+import net.monkeystudio.chatrbtw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

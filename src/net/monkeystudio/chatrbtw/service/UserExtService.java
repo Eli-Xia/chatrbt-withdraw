@@ -7,7 +7,6 @@ import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.local.Msg;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.chatrbtw.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

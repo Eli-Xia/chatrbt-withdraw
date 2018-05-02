@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.chatrbtw.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
