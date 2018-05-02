@@ -35,6 +35,14 @@
     </header>
     <section>
         <div id="user_zebra">
+            <div class="pet-class">
+                <div class="class-scroll">
+                    {{list.experienceProgressRate.own}}/{{list.experienceProgressRate.need}}
+                    <div class="scroll-bg"
+                         :style="{'width':list.experienceProgressRate.own*100/list.experienceProgressRate.need+'%'}"></div>
+                </div>
+                <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
+            </div>
             <div class="zebra-bg">
                 <img :src="list.appearanceUrl">
             </div>
@@ -49,17 +57,24 @@
             <i @click="userCodeShow = !userCodeShow"></i>
         </div>
     </section>
-    <section>
+    <section v-if="!ruleShow" class="show-rule">
+        <div>
+            星球规则
+            <div @click="ruleShow=true">展开</div>
+        </div>
+    </section>
+    <section v-if="ruleShow">
         <div id="rule">
-            <div class="tittle">喵小咪星球规则</div>
+            <div class="hide-rule" @click="ruleShow=false">收起</div>
+            <div class="tittle">星球规则</div>
             <div>
                 <p class="text">
-                    喵小咪星球是一款基于分布式存储技术的数字宠物模拟游戏，由 Keendo AI
-                    团队研发。星球中的数字宠物是外观各异的喵小咪，他们的等级代表算力。喵小咪产出的金币未来可以按照一定兑换比例兑换成数字资产、商品及服务。
+                    魔鬼猫星球是一款基于分布式存储技术的数字宠物模拟游戏，由 Keendo AI
+                    团队研发。星球中的数字宠物是外观各异的魔鬼猫，他们的等级代表算力。魔鬼猫产出的金币未来可以按照一定兑换比例兑换成数字资产、商品及服务。
                 </p>
                 <div class="gold">
                     <div>
-                        <img src="images/token.png">
+                        <img src="images/token.svg">
                         什么是猫爪金币？
                     </div>
                     <ul>
@@ -91,14 +106,37 @@
                     {{nowDate | formatDate}}
                 </div>
                 <div class="nodata" v-if="logs.length == 0">
-                    <img src="images/nodata.svg" alt="no-data">
+                    <img src="images/nodata.png" alt="no-data">
                     <p>今天还没有日志哦～</p>
                 </div>
                 <ul>
-                    <li v-for="item in logs">
+                    <li v-for="item in Group">
                         {{item.content}}
                         <em v-if="item.coin">＋{{item.coin}}</em>
                         <span>{{item.createTime | formatTime}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div id="groups">
+            <div class="tittle">族群</div>
+            <div>
+                <div class="date">
+                    已有{{groupList.length}}人加入该族群
+                </div>
+                <div class="nodata" v-if="groupList.length == 0">
+                    <img src="images/nodata.png" alt="no-data">
+                    <p>邀请好友加入族群</p>
+                </div>
+                <ul v-else>
+                    <li v-for="item in groupList">
+                        <img :src="item.wxFanHeadImgUrl">
+                        {{item.wxFanNickname}}
+                        <div class="pet-class">
+                            <img :src="'images/class_'+item.level+'.png'">
+                        </div>
                     </li>
                 </ul>
             </div>
