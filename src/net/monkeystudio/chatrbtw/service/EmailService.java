@@ -1,4 +1,4 @@
-package net.monkeystudio.base.service;
+package net.monkeystudio.chatrbtw.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.Log;
 import org.springframework.beans.factory.annotation.Autowired;

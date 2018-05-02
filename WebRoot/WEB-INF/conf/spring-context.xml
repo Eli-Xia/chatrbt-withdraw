@@ -109,7 +109,7 @@
 
     <bean id="userService" class="net.monkeystudio.chatrbtw.service.UserService"></bean>
     <bean id="cfgService" class="net.monkeystudio.base.service.CfgService"></bean>
-    <bean id="emailService" class="net.monkeystudio.base.service.EmailService"></bean>
+    <bean id="emailService" class="net.monkeystudio.chatrbtw.service.EmailService"></bean>
 
     <!--自动扫描定时任务-->
     <task:annotation-driven/>

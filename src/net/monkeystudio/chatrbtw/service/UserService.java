@@ -4,7 +4,6 @@ import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.local.Msg;
 import net.monkeystudio.base.service.CfgService;
-import net.monkeystudio.base.service.EmailService;
 import net.monkeystudio.base.service.bean.UserDetail;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.chatrbtw.entity.Role;
