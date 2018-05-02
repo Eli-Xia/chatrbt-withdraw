@@ -25,7 +25,9 @@
     <!--启用spring mvc 注解 -->
     <context:annotation-config />
 
-	<context:component-scan base-package="net.monkeystudio.portal.controller,net.monkeystudio.admin.controller,net.monkeystudio.chatpet.controller" />
+	<!--<context:component-scan base-package="net.monkeystudio.portal.controller,net.monkeystudio.admin.controller,net.monkeystudio.chatpet.controller" />-->
+
+	<context:component-scan base-package="net.monkeystudio"></context:component-scan>
 
     <task:annotation-driven/>
     
