@@ -1,17 +1,17 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.req.AddUpdateRole;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.service.UserService;
 import net.monkeystudio.chatrbtw.entity.Role;
+import net.monkeystudio.chatrbtw.entity.User;
 import net.monkeystudio.chatrbtw.entity.UserRole;
 import net.monkeystudio.chatrbtw.mapper.RoleMapper;
+import net.monkeystudio.chatrbtw.mapper.UserMapper;
 import net.monkeystudio.chatrbtw.mapper.UserRoleMapper;
 import net.monkeystudio.chatrbtw.service.bean.user.UserResp;
-import net.monkeystudio.entity.User;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.local.Msg;
-import net.monkeystudio.mapper.UserMapper;
-import net.monkeystudio.service.CfgService;
-import net.monkeystudio.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

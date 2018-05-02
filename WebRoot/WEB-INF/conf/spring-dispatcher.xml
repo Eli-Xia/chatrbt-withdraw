@@ -32,7 +32,7 @@
     
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
-            <bean class="net.monkeystudio.springmvc.MyStringHttpMessageConverter"/>
+            <bean class="net.monkeystudio.base.springmvc.MyStringHttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
     
@@ -86,7 +86,7 @@
  	</bean>
  	
  	<!-- 配置freeMarker视图解析器, .htm后缀的用freemarker解析 -->  
-    <bean id="freemarkerViewResolver" class="net.monkeystudio.springmvc.MyFreemarkerViewResolver">  
+    <bean id="freemarkerViewResolver" class="net.monkeystudio.base.springmvc.MyFreemarkerViewResolver">
         <property name="contentType" value="text/html; charset=utf-8"/>  
         <property name="cache" value="true" />
         <property name="prefix" value="/"/>     
@@ -131,11 +131,11 @@
      -->
 
 	<!--rest接口的一些公用逻辑实现，目前主要是实现了异常处理-->
-	<bean id="RestControllerAspectBean" class="net.monkeystudio.spring.RestControllerAspect"></bean>
+	<bean id="RestControllerAspectBean" class="net.monkeystudio.base.controller.RestControllerAspect"></bean>
 	<aop:config>
 		<aop:aspect id="myOpenApiAspect" ref="RestControllerAspectBean">
 			<aop:pointcut id="openApiPointCut"
-						  expression="execution(public net.monkeystudio.base.RespBase net.monkeystudio..controller..*.*(..))"/>
+						  expression="execution(public net.monkeystudio.base.controller.bean.RespBase net.monkeystudio..controller..*.*(..))"/>
 			<aop:around pointcut-ref="openApiPointCut" method="apiWrap"/>
 		</aop:aspect>
 	</aop:config>

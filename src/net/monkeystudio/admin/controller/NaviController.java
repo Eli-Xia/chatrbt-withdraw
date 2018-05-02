@@ -3,6 +3,11 @@ package net.monkeystudio.admin.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.service.UserService;
+import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.entity.AdminMenu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,15 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.monkeystudio.admin.controller.resp.NaviItem;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
-import net.monkeystudio.entity.AdminMenu;
 import net.monkeystudio.chatrbtw.service.NaviService;
-import net.monkeystudio.service.UserService;
-import net.monkeystudio.utils.RespHelper;
 
 @Controller
-public class NaviController extends BaseController{
+public class NaviController extends BaseController {
 
 	@Autowired
 	private NaviService naviService;

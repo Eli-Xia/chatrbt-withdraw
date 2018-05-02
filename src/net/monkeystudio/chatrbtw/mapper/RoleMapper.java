@@ -5,18 +5,23 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-    @Component("rbtwRoleMapper")
-    public interface RoleMapper {
 
-        int insert(Role record);
+@Component("rbtwRoleMapper")
+public interface RoleMapper {
 
-        int insertSelective(Role record);
+    int insert(Role record);
 
-        List<Role> selectByUserName(@Param("username") String username);
+    int insertSelective(Role record);
 
-        List<Role> selectAll();
+    List<Role> selectByUserName(@Param("username") String username);
 
-        Integer update(@Param("role") Role role,@Param("oriCode") String oriCode);
+    List<Role> selectAll();
 
-        Integer delete(String code);
+    Integer update(@Param("role") Role role,@Param("oriCode") String oriCode);
+
+    Integer delete(String code);
+
+    Role selectByCode(@Param("code") String code);
+
+    List<Role> select();
 }

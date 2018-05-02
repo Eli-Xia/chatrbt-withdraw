@@ -1,10 +1,10 @@
 package net.monkeystudio.chatpet.controller;
 
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -14,12 +14,6 @@ import net.monkeystudio.chatrbtw.entity.WxPubNews;
 import net.monkeystudio.chatrbtw.entity.WxPubNewsWithBLOBs;
 import net.monkeystudio.chatrbtw.mapper.WxPubMaterialMapper;
 import net.monkeystudio.chatrbtw.mapper.WxPubNewsMapper;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.CommonUtils;
-import net.monkeystudio.wx.utils.WxApiUrlUtil;
-import net.monkeystudio.wx.vo.material.BatchGetMaterial;
-import net.monkeystudio.wx.vo.material.BatchMaterialNews;
-import net.monkeystudio.wx.vo.material.GetMaterialCountResp;
 
 /**
  * 微信公众号素材管理

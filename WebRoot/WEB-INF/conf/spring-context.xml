@@ -102,11 +102,9 @@
         </property>
     </bean>
 
-    <!-- saimiri-core -->
-    <bean id="cfgService" class="net.monkeystudio.service.CfgService"></bean>
-    <bean id="emailService" class="net.monkeystudio.service.EmailService"></bean>
-    <bean id="respHelper" class="net.monkeystudio.utils.RespHelper"></bean>
-    <bean id="userService" class="net.monkeystudio.service.UserService"></bean>
+    <bean id="userService" class="net.monkeystudio.base.service.UserService"></bean>
+    <bean id="cfgService" class="net.monkeystudio.base.service.CfgService"></bean>
+    <bean id="emailService" class="net.monkeystudio.base.service.EmailService"></bean>
     <!--自动扫描定时任务-->
     <task:annotation-driven/>
 

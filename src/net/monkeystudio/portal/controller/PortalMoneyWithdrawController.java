@@ -1,14 +1,14 @@
 package net.monkeystudio.portal.controller;
 
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.AccountSettingService;
 import net.monkeystudio.chatrbtw.service.MoneyWithdrawService;
 import net.monkeystudio.chatrbtw.service.bean.moneywithdraw.MoneyWithdrawIncomeMgrResp;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.local.Msg;
 import net.monkeystudio.portal.controller.req.moneywithdraw.MoneyWithdrawApplyReq;
 import net.monkeystudio.portal.controller.resp.moneywithdraw.MoneyWithdrawDetail;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

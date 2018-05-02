@@ -6,11 +6,11 @@ import com.qcloud.cos.request.GetFileInputStreamRequest;
 import com.qcloud.cos.request.UpdateFileRequest;
 import com.qcloud.cos.request.UploadFileRequest;
 import com.qcloud.cos.sign.Credentials;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.service.bean.cos.COSUploadSuccessResp;
-import net.monkeystudio.service.CfgService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

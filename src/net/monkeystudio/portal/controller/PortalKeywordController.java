@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.WxPubKeywordStatus;
 import net.monkeystudio.chatrbtw.service.WxPubKeywordStatusService;
 import org.apache.commons.lang.StringUtils;
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.KrKeyword;
 import net.monkeystudio.chatrbtw.service.KeywordRespMgrService;
@@ -19,7 +20,6 @@ import net.monkeystudio.chatrbtw.service.bean.kr.KeywordResponse;
 import net.monkeystudio.portal.controller.req.kr.GetKeywordResponseList;
 import net.monkeystudio.portal.controller.req.kr.SetKeywordResponse;
 import net.monkeystudio.portal.controller.req.kr.UpdateKeywordResponse;
-import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.service.WxPubService;
 
 /**

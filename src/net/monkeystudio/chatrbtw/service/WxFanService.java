@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.BeanUtils;
@@ -8,7 +9,6 @@ import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.WxFanMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.user.WxFanBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,10 @@
 package net.monkeystudio.admin.controller.resp;
 
+import net.monkeystudio.chatrbtw.entity.User;
+
 import java.util.Date;
 import java.util.List;
 
-import net.monkeystudio.entity.User;
 
 /**
  * 用户详情

@@ -1,11 +1,11 @@
 package net.monkeystudio.chatrbtw.sdk.wx;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.CustomerMsgImage;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.CustomerMsgImageItem;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import net.monkeystudio.wx.service.WxService;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;

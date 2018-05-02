@@ -1,11 +1,11 @@
 package net.monkeystudio.wx.service;
 
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
+import net.monkeystudio.base.utils.JsonHelper;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.service.CfgService;
-import net.monkeystudio.utils.JsonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,7 +89,7 @@ public class WxOauthService {
      scope	用户授权的作用域，使用逗号（,）分隔
      * @param code
      */
-    public void handleCode(String code,String wxPubAppId) throws BizException{
+    public void handleCode(String code,String wxPubAppId) throws BizException {
         String fetchAccessTokenUrl = this.getAccessTokenUrl(code,wxPubAppId);
         String response = HttpsHelper.get(fetchAccessTokenUrl);
         String access_token = JsonHelper.getStringFromJson(response,"access_token");

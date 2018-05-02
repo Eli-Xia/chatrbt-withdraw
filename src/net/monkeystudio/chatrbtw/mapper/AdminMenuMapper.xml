@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.AdminMenuMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.AdminMenu" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="TEXT" property="text" jdbcType="VARCHAR" />
+    <result column="LINK" property="link" jdbcType="VARCHAR" />
+    <result column="LEVEL" property="level" jdbcType="INTEGER" />
+    <result column="PARENT_ID" property="parentId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    `ID`, `TEXT`, `LEVEL`, `PARENT_ID`
+  </sql>
+  
+  <!-- 查询所有记录 -->
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select * from e_navi
+  </select>
+
+</mapper>

@@ -1,8 +1,8 @@
 package net.monkeystudio.wx.service;
 
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.wx.mp.aes.AesException;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.mp.aes.WXBizMsgCrypt;
 import net.monkeystudio.wx.mp.beam.ComponentVerifyTicket;
 import net.monkeystudio.wx.vo.pub.TextMessage;

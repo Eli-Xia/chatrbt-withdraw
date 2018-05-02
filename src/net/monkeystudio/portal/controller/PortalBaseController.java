@@ -1,12 +1,12 @@
 package net.monkeystudio.portal.controller;
 
+import net.monkeystudio.base.Constants;
+import net.monkeystudio.base.controller.BaseController;
 import org.springframework.stereotype.Controller;
 
-import net.monkeystudio.Constants;
-import net.monkeystudio.base.BaseController;
 
 @Controller
-public class PortalBaseController extends BaseController{
+public class PortalBaseController extends BaseController {
 	
 	@Override
 	protected String getSessionUserIdAttrName(){

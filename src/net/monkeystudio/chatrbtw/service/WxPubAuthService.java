@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.service.GlobalConstants;
 import net.monkeystudio.base.utils.Base64EncodingUtil;
@@ -7,9 +9,7 @@ import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.URLUtil;
 import net.monkeystudio.chatrbtw.entity.ChatRobotBaseInfo;
 import net.monkeystudio.chatrbtw.entity.RRobotCharacter;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.portal.controller.req.chatrotot.AddChatRobot;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;
 import net.monkeystudio.wx.vo.thirtparty.ComponentAccessToken;

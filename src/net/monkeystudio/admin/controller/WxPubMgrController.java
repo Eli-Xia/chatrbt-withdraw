@@ -2,11 +2,11 @@ package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.QueryWxPubList;
 import net.monkeystudio.admin.controller.req.SetWxPubAdm;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.bean.wxpub.WxPubResp;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/admin/wx/pub")
-public class WxPubMgrController extends BaseController{
+public class WxPubMgrController extends BaseController {
 
 	@Autowired
 	private RespHelper respHelper;

@@ -62,4 +62,14 @@
     where
     code = #{oriCode,jdbcType=VARCHAR}
   </update>
+
+
+  <select id="select" resultMap="BaseResultMap">
+    SELECT * from e_role
+  </select>
+
+  <select id="selectByCode" resultMap="BaseResultMap">
+    SELECT * from e_role
+    WHERE `code` = #{code,jdbcType=VARCHAR}
+  </select>
 </mapper>

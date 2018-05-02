@@ -1,9 +1,8 @@
 package net.monkeystudio.wx.controller;
 
-import net.monkeystudio.base.BaseController;
+import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxService;
@@ -18,7 +17,7 @@ import java.io.BufferedReader;
 
 @Controller
 @RequestMapping(value = "/wx")
-public class WxController extends BaseController{
+public class WxController extends BaseController {
 
 	@Autowired
 	private WxService wxService;
@@ -140,7 +139,7 @@ public class WxController extends BaseController{
      * @param state
      * @param appId
      * @return
-     * @throws BizException
+     * @throws Exception
      */
 	@RequestMapping(value = "/oauth/code", method = RequestMethod.GET)
 	public ModelAndView oauth(HttpServletResponse response,HttpServletRequest request,@RequestParam(value = "code",required = false)String code,@RequestParam("state")String state,@RequestParam(value = "appid",required = false)String appId)throws Exception{

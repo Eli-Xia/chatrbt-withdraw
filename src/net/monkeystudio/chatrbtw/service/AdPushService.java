@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HtmlTagUtil;
 import net.monkeystudio.base.utils.Log;
@@ -11,8 +13,6 @@ import net.monkeystudio.chatrbtw.entity.AdPushLog;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import org.springframework.beans.factory.annotation.Autowired;
