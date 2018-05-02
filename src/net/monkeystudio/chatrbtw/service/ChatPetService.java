@@ -199,6 +199,9 @@ public class ChatPetService {
         ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
         chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
 
+        Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
+        chatPetBaseInfo.setChatPetLevel(chatPetLevel);
+
         return chatPetBaseInfo;
     }
 
