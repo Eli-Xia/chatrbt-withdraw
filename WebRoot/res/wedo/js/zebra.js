@@ -29,7 +29,8 @@ if (isWeixin) {
                 url: '',
                 imgLoad: 0,
                 nowDate: new Date().getTime(),
-                groupList: []
+                groupList: [],
+                taskList: {}
             },
             created() {
                 var i = location.search.indexOf('=');
@@ -103,6 +104,7 @@ if (isWeixin) {
                                     }
                                 });
                                 _self.logs = resp.result.petLogs;
+                                _self.taskList = resp.result.todayMissions;
                                 _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode;
                             } else {
                                 alert(resp.retMsg)
@@ -128,6 +130,37 @@ if (isWeixin) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
                                 _self.groupList = resp.result
+                            } else {
+                                alert(resp.retMsg)
+                            }
+                        } else {
+                        }
+                    }
+                },
+                sureReward($event, id) {
+                    var _self = this;
+                    var xhr = new XMLHttpRequest();
+                    var data = JSON.stringify(
+                        {
+                            "chatPetId": this.id,
+                            "itemId": id,
+                            "rewardState": 2
+                        }
+                    );
+                    xhr.open('post', '/api/chat-pet/pet/mission/reward', true);
+                    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                    xhr.send(data);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var resp = JSON.parse(xhr.response);
+                            if (resp.retCode == 0) {
+                                var i = $event.path[1];
+                                i.style.width = '150px';
+                                i.querySelector('i').className = "active";
+                                setTimeout(function () {
+                                    _self.logs = resp.result.petLogs;
+                                    _self.taskList = resp.result.todayMissions;
+                                }, 500);
                             } else {
                                 alert(resp.retMsg)
                             }
