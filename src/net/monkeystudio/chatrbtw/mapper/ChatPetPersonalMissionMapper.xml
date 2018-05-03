@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="mission_code" property="missionCode" jdbcType="INTEGER" />
+    <result column="incr_coin" property="incrCoin" jdbcType="REAL" />
+    <result column="ad_id" property="adId" jdbcType="INTEGER" />
+    <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
+    <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, mission_code, incr_coin, ad_id, wx_pub_origin_id, wx_fan_open_id, create_time, 
+    state, finish_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_chat_pet_personal_mission
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from e_chat_pet_personal_mission
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
+    insert into e_chat_pet_personal_mission (id, mission_code, incr_coin, 
+      ad_id, wx_pub_origin_id, wx_fan_open_id, 
+      create_time, state, finish_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{missionCode,jdbcType=INTEGER}, #{incrCoin,jdbcType=REAL}, 
+      #{adId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
+    insert into e_chat_pet_personal_mission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="missionCode != null" >
+        mission_code,
+      </if>
+      <if test="incrCoin != null" >
+        incr_coin,
+      </if>
+      <if test="adId != null" >
+        ad_id,
+      </if>
+      <if test="wxPubOriginId != null" >
+        wx_pub_origin_id,
+      </if>
+      <if test="wxFanOpenId != null" >
+        wx_fan_open_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="finishTime != null" >
+        finish_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="missionCode != null" >
+        #{missionCode,jdbcType=INTEGER},
+      </if>
+      <if test="incrCoin != null" >
+        #{incrCoin,jdbcType=REAL},
+      </if>
+      <if test="adId != null" >
+        #{adId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null" >
+        #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="wxFanOpenId != null" >
+        #{wxFanOpenId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="finishTime != null" >
+        #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
+    update e_chat_pet_personal_mission
+    <set >
+      <if test="missionCode != null" >
+        mission_code = #{missionCode,jdbcType=INTEGER},
+      </if>
+      <if test="incrCoin != null" >
+        incr_coin = #{incrCoin,jdbcType=REAL},
+      </if>
+      <if test="adId != null" >
+        ad_id = #{adId,jdbcType=INTEGER},
+      </if>
+      <if test="wxPubOriginId != null" >
+        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      </if>
+      <if test="wxFanOpenId != null" >
+        wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="finishTime != null" >
+        finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
+    update e_chat_pet_personal_mission
+    set mission_code = #{missionCode,jdbcType=INTEGER},
+      incr_coin = #{incrCoin,jdbcType=REAL},
+      ad_id = #{adId,jdbcType=INTEGER},
+      wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
+      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      finish_time = #{finishTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="sumTotalCoinByParam" resultType="java.lang.Float" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission">
+    select
+    sum(coin)
+    from e_chat_pet_personal_mission
+    <where>
+      <if test="wxPubOriginId != null">
+        and wx_pub_origin_id = #{wxPubOriginId}
+      </if>
+      <if test="wxFanOpenId != null">
+        and wx_fan_open_id = #{wxFanOpenId}
+      </if>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="finishTime != null">
+        and finish_time &lt;= #{finishTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectListByParam" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from e_chat_pet_personal_mission
+    <where>
+      <if test="wxPubOriginId != null">
+        and wx_pub_origin_id = #{wxPubOriginId}
+      </if>
+      <if test="wxFanOpenId != null">
+        and wx_fan_open_id = #{wxFanOpenId}
+      </if>
+      <if test="missionCode != null">
+        and mission_code = #{missionCode}
+      </if>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="createTime != null">
+        and create_time &gt;= #{createTime}
+      </if>
+      <if test="finishTime != null">
+        and finish_time &lt;= #{finishTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByParam" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from e_chat_pet_personal_mission
+    <where>
+      <if test="wxPubOriginId != null">
+        and wx_pub_origin_id = #{wxPubOriginId}
+      </if>
+      <if test="wxFanOpenId != null">
+        and wx_fan_open_id = #{wxFanOpenId}
+      </if>
+      <if test="missionCode != null">
+        and mission_code = #{missionCode}
+      </if>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="createTime != null">
+        and create_time &gt;= #{createTime}
+      </if>
+      <if test="finishTime != null">
+        and finish_time &lt;= #{finishTime}
+      </if>
+    </where>
+  </select>
+</mapper>

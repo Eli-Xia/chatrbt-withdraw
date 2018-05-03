@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatPetMissionMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="mission_name" property="missionName" jdbcType="VARCHAR" />
+    <result column="mission_code" property="missionCode" jdbcType="INTEGER" />
+    <result column="is_active" property="isActive" jdbcType="INTEGER" />
+    <result column="coin" property="coin" jdbcType="REAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, mission_name, mission_code, is_active, coin
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_chat_pet_mission
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from e_chat_pet_mission
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
+    insert into e_chat_pet_mission (id, mission_name, mission_code, 
+      is_active, coin)
+    values (#{id,jdbcType=INTEGER}, #{missionName,jdbcType=VARCHAR}, #{missionCode,jdbcType=INTEGER}, 
+      #{isActive,jdbcType=INTEGER}, #{coin,jdbcType=REAL})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
+    insert into e_chat_pet_mission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="missionName != null" >
+        mission_name,
+      </if>
+      <if test="missionCode != null" >
+        mission_code,
+      </if>
+      <if test="isActive != null" >
+        is_active,
+      </if>
+      <if test="coin != null" >
+        coin,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="missionName != null" >
+        #{missionName,jdbcType=VARCHAR},
+      </if>
+      <if test="missionCode != null" >
+        #{missionCode,jdbcType=INTEGER},
+      </if>
+      <if test="isActive != null" >
+        #{isActive,jdbcType=INTEGER},
+      </if>
+      <if test="coin != null" >
+        #{coin,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
+    update e_chat_pet_mission
+    <set >
+      <if test="missionName != null" >
+        mission_name = #{missionName,jdbcType=VARCHAR},
+      </if>
+      <if test="missionCode != null" >
+        mission_code = #{missionCode,jdbcType=INTEGER},
+      </if>
+      <if test="isActive != null" >
+        is_active = #{isActive,jdbcType=INTEGER},
+      </if>
+      <if test="coin != null" >
+        coin = #{coin,jdbcType=REAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
+    update e_chat_pet_mission
+    set mission_name = #{missionName,jdbcType=VARCHAR},
+      mission_code = #{missionCode,jdbcType=INTEGER},
+      is_active = #{isActive,jdbcType=INTEGER},
+      coin = #{coin,jdbcType=REAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByMissionCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from e_chat_pet_mission
+    where mission_code = #{code,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectActiveMissionList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from e_chat_pet_mission
+    where is_active = 1
+  </select>
+</mapper>

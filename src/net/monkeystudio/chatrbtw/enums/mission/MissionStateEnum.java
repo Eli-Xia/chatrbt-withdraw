@@ -1,4 +1,4 @@
-package net.monkeystudio.chatrbtw.enums.chatpet;
+package net.monkeystudio.chatrbtw.enums.mission;
 
 /**
  * @author xiaxin

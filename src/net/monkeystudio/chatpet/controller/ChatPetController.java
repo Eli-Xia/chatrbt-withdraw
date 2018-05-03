@@ -4,6 +4,8 @@ import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
+import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
+import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
@@ -29,6 +31,9 @@ public class ChatPetController extends ChatPetBaseController{
 
     @Autowired
     private ChatPetService chatPetService;
+
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private RespHelper respHelper;
@@ -82,4 +87,22 @@ public class ChatPetController extends ChatPetBaseController{
 
         return null;
     }
+
+    /**
+     * 完成今日任务领取奖励
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
+    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req){
+        //领取奖励需要返回什么内容  info  接收什么参数???   任务池记录id   chatpetid
+
+        chatPetService.missionReward(req.getItemId(),req.getChatPetId());
+        ChatPetInfo info = chatPetService.getInfo(req.getChatPetId());
+
+        return respHelper.ok(info);
+    }
+
+
 }

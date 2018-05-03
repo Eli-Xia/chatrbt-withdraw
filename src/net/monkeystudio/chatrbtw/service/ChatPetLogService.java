@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
@@ -24,6 +25,9 @@ public class ChatPetLogService {
 
     @Autowired
     private RWxPubProductService rWxPubProductService;
+
+    @Autowired
+    private ChatPetMissionService chatPetMissionService;
 
 
     /**
@@ -83,6 +87,29 @@ public class ChatPetLogService {
         this.savePetLog(pl);
 
     }
+
+    /**
+     * 完成任务领取奖励后插入宠物日志
+     */
+    public void savePetLogWhenReward(String wxPubOriginId,String wxFanOpenId,Integer chatPetId,Integer missionCode){
+        ChatPetMission cpm = chatPetMissionService.getByMissionCode(missionCode);
+        Float coin = cpm.getCoin();
+        Integer experience = cpm.getExperience();
+
+        if(coin!=null){
+
+        }
+        PetLog pl1 = new PetLog();
+
+        pl1.setWxPubOriginId(wxPubOriginId);
+        pl1.setWxFanOpenId(wxFanOpenId);
+        pl1.setContent("完成"+cpm.getMissionName());
+        pl1.setCreateTime(new Date());
+        pl1.setChatPetId(chatPetId);
+        //pl1.setRewardType();
+
+    }
+
 
     /**
      * 粉丝完成

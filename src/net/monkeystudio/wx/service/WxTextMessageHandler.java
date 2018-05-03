@@ -38,6 +38,8 @@ import java.util.List;
  */
 @Service
 public class WxTextMessageHandler extends WxBaseMessageHandler{
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private AdService adService;
@@ -168,8 +170,11 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
-            //完成陪聊宠每日任务
-            chatPetLogService.completeChatPetDailyTask(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT);
+            //第一次聊天填充任务池
+            chatPetMissionPoolService.createMissionWhenFirstChat(wxPubOriginId,wxFanOpenId);
+
+            //完成陪聊宠每日签到任务
+            chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());
 
             this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
 

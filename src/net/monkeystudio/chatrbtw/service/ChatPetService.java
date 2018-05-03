@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.*;
+import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
@@ -36,6 +37,9 @@ public class ChatPetService {
 
     //领取宠物页面
     private final static String NOFOLLOW_NOCHATPET_PAGE = "https://test.keendo.com.cn/res/wedo/poster.html";
+
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private ChatPetMapper chatPetMapper;
@@ -202,7 +206,47 @@ public class ChatPetService {
         ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
         chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
 
+        //第一进入H5填充任务池任务
+        chatPetMissionPoolService.createMissionWhenFirstComeH5(wxPubOriginId,wxFanOpenId);
+
+        //今日任务
+
         return chatPetBaseInfo;
+    }
+
+    /**
+     * 完成每日任务领取奖励
+     * @param itemId
+     */
+    public void missionReward(Integer chatPetId,Integer itemId) {
+        //更新任务池记录
+        chatPetMissionPoolService.updateMissionWhenReward(itemId);
+
+
+        //增加金币
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
+
+        Integer missionCode = cppm.getMissionCode();
+
+        Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
+
+        this.increaseCoin(chatPetId,incrCoin);
+
+
+        //增加经验
+        ChatPet chatPet = this.getById(chatPetId);
+        Integer oldExperience = chatPet.getExperience();
+
+        Integer addExperience = incrCoin.intValue();
+        this.increaseExperience(chatPetId,addExperience);
+
+        Integer newExprience = this.getChatPetExperience(chatPetId);
+
+
+        //插入日志
+        boolean isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExprience);
+
+
     }
 
     private String calculateGeneticCode(Long createTime){
@@ -356,6 +400,34 @@ public class ChatPetService {
     }
 
     /**
+     * 增加金币
+     * @param chatPetId 宠物id
+     * @param coin  增加的金币
+     */
+    public void increaseCoin(Integer chatPetId ,Float coin){
+        chatPetMapper.increaseCoin(chatPetId,coin);
+    }
+
+    /**
+     * 获取宠物的总金币
+     * @return
+     */
+    public Float getChatPetTotalCoin(Integer chatPetId){
+        ChatPet chatPet = this.getById(chatPetId);
+
+        return chatPet.getCoin();
+    }
+
+    /**
+     * TODO
+     * 获取一个微信用户在多个公众号中的总金币 unionId
+     * @return
+     */
+    public Float getFansTotalCoin(){
+        return null;
+    }
+
+    /**
      * 增加经验
      * @param chatPetId 宠物id
      * @param experience  增加的经验值
@@ -363,6 +435,9 @@ public class ChatPetService {
     public void increaseExperience(Integer chatPetId ,Integer experience){
         chatPetMapper.increaseExperience(chatPetId,experience);
     }
+
+
+
 
     /**
      * 获得宠物的经验

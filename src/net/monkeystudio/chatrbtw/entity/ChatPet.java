@@ -15,6 +15,15 @@ public class ChatPet {
     private Date createTime;
     private Integer parentId;
     private Integer experience;
+    private Float coin;
+
+    public Float getCoin() {
+        return coin;
+    }
+
+    public void setCoin(Float coin) {
+        this.coin = coin;
+    }
 
     public Integer getId() {
         return id;

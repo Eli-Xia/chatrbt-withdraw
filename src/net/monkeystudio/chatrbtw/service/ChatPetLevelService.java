@@ -81,4 +81,16 @@ public class ChatPetLevelService {
 
         return experienceProgressRate;
     }
+
+    /**
+     * 判断完成任务增加经验后是否会升级
+     * @return
+     */
+    public boolean isUpgrade(Integer oldExperience,Integer newExperience){
+        Integer oldLevel = this.calculateLevel(oldExperience);
+
+        Integer newLevel = this.calculateLevel(newExperience);
+
+        return oldLevel.intValue() == newLevel.intValue() - 1;
+    }
 }

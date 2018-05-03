@@ -1,0 +1,367 @@
+package net.monkeystudio.chatrbtw.service;
+
+import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetMission;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
+import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
+import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author xiaxin
+ */
+@Service
+public class ChatPetMissionPoolService {
+    @Autowired
+    private ChatPetPersonalMissionMapper chatPetPersonalMissionMapper;
+
+    @Autowired
+    private ChatPetMissionService chatPetMissionService;
+
+    @Autowired
+    private RedisCacheTemplate redisCacheTemplate;
+
+    @Autowired
+    private WxFanService wxFanService;
+
+    @Autowired
+    private ChatPetService chatPetService;
+
+    @Autowired
+    private RWxPubProductService rWxPubProductService;
+
+
+    /**
+     * 获取粉丝总金币数
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     * @return
+     */
+    public Float getFansOwnCoin(String wxPubOriginId,String wxFanOpenId){
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+
+        param.setWxPubOriginId(wxPubOriginId);
+        param.setWxFanOpenId(wxFanOpenId);
+        param.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
+        Date now = new Date();
+        param.setFinishTime(now);
+
+        chatPetPersonalMissionMapper.sumTotalCoinByParam(param);
+
+        return null;
+    }
+
+    /**
+     * 当日第一次进入宠物陪聊h5创建当日任务
+     */
+    public void createMissionWhenFirstComeH5(String wxPubOriginId,String wxFanOpenId){
+        String comeH5CountCacheKey = this.getComeH5CountCacheKey(wxPubOriginId, wxFanOpenId);
+
+        Long incr = redisCacheTemplate.incr(comeH5CountCacheKey);
+
+        if(incr == 1){
+            //填充任务池
+            this.createDailyMission(wxPubOriginId,wxFanOpenId);
+            //缓存时间为当日
+            redisCacheTemplate.expire(comeH5CountCacheKey, DateUtils.getCacheSeconds());
+        }
+    }
+
+    /**
+     * 组装当日任务数据
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     */
+    private void createDailyMission(String wxPubOriginId,String wxFanOpenId){
+        List<ChatPetMission> activeMissions = this.chatPetMissionService.getActiveMissions();
+        if(ListUtil.isEmpty(activeMissions)){
+            return;
+        }
+
+        for(ChatPetMission cpm:activeMissions){
+            ChatPetPersonalMission cppm = new ChatPetPersonalMission();
+
+            cppm.setWxFanOpenId(wxFanOpenId);
+            cppm.setWxPubOriginId(wxPubOriginId);
+            cppm.setCreateTime(new Date());
+            cppm.setState(MissionStateEnum.GOING_ON.getCode());
+            cppm.setMissionCode(cpm.getMissionCode());
+            cppm.setIncrCoin(cpm.getCoin());
+
+            this.save(cppm);
+        }
+    }
+
+    /**
+     *  当日粉丝第一次聊天创建当日任务
+     */
+    public void createMissionWhenFirstChat(String wxPubOriginId,String wxFanOpenId){
+        String fanChatCountCacheKey = this.getFanChatCountCacheKey(wxPubOriginId, wxFanOpenId);
+
+        Long incr = redisCacheTemplate.incr(fanChatCountCacheKey);
+
+        if(incr == 1){
+
+            this.createDailyMission(wxPubOriginId,wxFanOpenId);
+
+            redisCacheTemplate.expire(fanChatCountCacheKey, DateUtils.getCacheSeconds());
+        }
+    }
+
+
+    /**
+     * 任务池新增记录
+     * @param chatPetPersonalMission
+     */
+    public void save(ChatPetPersonalMission chatPetPersonalMission){
+        ChatPetPersonalMission cppm = new ChatPetPersonalMission();
+
+        BeanUtils.copyProperties(chatPetPersonalMission,cppm);
+
+        chatPetPersonalMissionMapper.insert(cppm);
+    }
+
+    /**
+     * 推送当日阅读任务广告时,维护任务与广告关联关系
+     * @param adId 广告id
+     * @param wxfanId 微信粉丝id
+     */
+    public void updateMissionWhenPushChatPetAd(Integer adId,Integer wxfanId){
+        //获取fanopenid
+        WxFan wxfan = wxFanService.getById(wxfanId);
+        String wxFanOpenId = wxfan.getWxFanOpenId();
+        String wxPubOriginId = wxfan.getWxPubOriginId();
+
+        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
+
+        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+
+        //update adId
+        cppm.setAdId(adId);
+
+        this.update(cppm);
+
+    }
+
+    /**
+     * 完成任务但是未领取奖励时更新任务池记录
+     */
+    public void updateMissionWhenFinish(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
+        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, missionCode);
+
+        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+
+        cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+
+        this.update(cppm);
+}
+
+    /**
+     * 完成每日聊天签到任务
+     */
+    public void completeDailyChatCheckinMission(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
+        //公众号未开通陪聊宠
+        if(rWxPubProductService.isUnable(ProductService.CHAT_PET, wxPubOriginId)){
+            return;
+        }
+        //粉丝未领取宠物
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        if(chatPet == null){
+            return;
+        }
+
+        //任务是否已经完成
+        boolean isMissionDone = this.isDailyMissionDone(wxPubOriginId, wxFanOpenId,missionCode);
+
+        //未完成时:
+        if(!isMissionDone){
+            this.updateMissionWhenFinish(wxPubOriginId,wxFanOpenId,missionCode);
+        }
+    }
+
+    /**
+     * 完成每日阅读任务
+     * @param wxfanId
+     * @param adId
+     */
+    public void completeDailyReadMission(Integer wxfanId,Integer adId){
+        WxFan wxfan = wxFanService.getById(wxfanId);
+        String wxPubOriginId = wxfan.getWxPubOriginId();
+        String wxFanOpenId = wxfan.getWxFanOpenId();
+
+        this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,ChatPetTaskEnum.DAILY_READ_NEWS.getCode(),adId);
+    }
+
+    /**
+     * 完成每日阅读任务
+     */
+    private void completeDailyReadMission(String wxPubOriginId,String wxFanOpenId,Integer missionCode,Integer adId){
+        //公众号未开通陪聊宠
+        if(rWxPubProductService.isUnable(ProductService.CHAT_PET, wxPubOriginId)){
+            return;
+        }
+        //粉丝未领取宠物
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        if(chatPet == null){
+            return;
+        }
+
+        //此次点击阅读任务广告与今日任务广告应为同一条广告
+        boolean isEquals = checkMissionAdIsEqual(wxPubOriginId, wxFanOpenId, missionCode, adId);
+        if(!isEquals){
+            return;
+        }
+
+        //判断今日阅读任务是否完成
+        boolean isDone = this.isDailyMissionDone(wxPubOriginId, wxFanOpenId, missionCode);
+        if(!isDone){
+            return;
+        }
+
+        this.updateMissionWhenFinish(wxPubOriginId,wxFanOpenId,missionCode);
+
+    }
+
+    private boolean  checkMissionAdIsEqual(String wxPubOriginId,String wxFanOpenId,Integer missionCode,Integer adId){
+        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, missionCode);
+
+        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+
+        Integer missionAdId = cppm.getAdId();
+
+        return adId.equals(missionAdId);
+    }
+
+    /**
+     * 今日任务是否完成
+     * @return
+     */
+    public boolean isDailyMissionDone(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
+        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, missionCode);
+
+        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+
+        Integer state = cppm.getState();
+
+        //任务完成判断:  已完成未领奖 或  完成且领奖状态
+        if(MissionStateEnum.FINISH_NOT_AWARD.getCode() == state || MissionStateEnum.FINISH_AND_AWARD.getCode() == state){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 获取粉丝今日任务记录查询对象创建
+     * @param missionCode 任务编号
+     * @return
+     */
+    private ChatPetPersonalMission createPersonalMissionSelectParam(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
+        Date now = new Date();
+        Date startTime = DateUtils.getBeginDate(now);
+
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+        param.setWxPubOriginId(wxPubOriginId);
+        param.setWxFanOpenId(wxFanOpenId);
+        param.setCreateTime(startTime);
+        param.setMissionCode(missionCode);
+
+        return param;
+    }
+
+
+    /**
+     * 查询任务池记录
+     * @param param 查询条件
+     * @return
+     */
+    private ChatPetPersonalMission getPersonalMissionByParam(ChatPetPersonalMission param){
+        return this.chatPetPersonalMissionMapper.selectByParam(param);
+    }
+
+    /**
+     * 查询任务池记录集
+     * @param param 查询条件
+     * @return
+     */
+    private List<ChatPetPersonalMission> getPersonalMissionListByParam(ChatPetPersonalMission param){
+        return this.chatPetPersonalMissionMapper.selectListByParam(param);
+    }
+
+
+
+    /**
+     * 获取今日任务
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     * @return
+     */
+    public List<TodayMissionItem> getTodayMissionList(String wxPubOriginId,String wxFanOpenId){
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+        param.setWxFanOpenId(wxFanOpenId);
+        param.setWxPubOriginId(wxPubOriginId);
+
+        List<ChatPetPersonalMission> cppms = this.getPersonalMissionListByParam(param);
+
+        List<TodayMissionItem> items = new ArrayList<>();
+
+        for (ChatPetPersonalMission cppm : cppms){
+            TodayMissionItem item = new TodayMissionItem();
+            item.setMissionName(ChatPetTaskEnum.codeOf(cppm.getMissionCode()).getName());
+            item.setState(cppm.getState());
+            item.setItemId(cppm.getId());
+
+            items.add(item);
+        }
+
+        return items;
+    }
+
+    /**
+     * 领取奖励后更新任务池记录
+     * @param itemId
+     */
+    public void updateMissionWhenReward(Integer itemId){
+        ChatPetPersonalMission cppm = this.getById(itemId);
+        cppm.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
+        cppm.setFinishTime(new Date());
+
+        this.update(cppm);
+    }
+
+
+
+    public ChatPetPersonalMission getById(Integer id){
+        return chatPetPersonalMissionMapper.selectByPrimaryKey(id);
+    }
+
+
+
+    public void update(ChatPetPersonalMission id){
+        chatPetPersonalMissionMapper.updateByPrimaryKey(id);
+    }
+
+
+    private String getFanChatCountCacheKey(String wxPubOriginid,String wxFanOpenId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatCreateMission:" +wxPubOriginid +":"+ wxFanOpenId;
+    }
+
+    private String getComeH5CountCacheKey(String wxPubOriginId,String wxFanOpenId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "comeH5CreateMission:"+wxPubOriginId+":"+wxFanOpenId;
+    }
+
+
+}

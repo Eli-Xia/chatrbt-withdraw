@@ -3,8 +3,11 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.mapper.ChatPetMissionMapper;
+import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,13 @@ public class ChatPetMissionService {
 
     @Autowired
     private ChatPetLogService chatPetLogService;
+
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
+
+    @Autowired
+    private ChatPetMissionMapper chatPetMissionMapper;
+
 
     private final static String MESSAGE_KEY = "chat_pet_mission";
 
@@ -81,7 +91,7 @@ public class ChatPetMissionService {
                     if(validatedWxFan(wxFanId,wxFanOpenId)){
                         WxFan wxFan = wxFanService.getById(wxFanId);
 
-                        chatPetLogService.completeChatPetDailyTask(wxFan.getWxPubOriginId(),wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS);
+                        chatPetMissionPoolService.completeDailyReadMission(wxFanId,adId);
                     }
 
 
@@ -114,6 +124,47 @@ public class ChatPetMissionService {
 
         return false;
     }
+
+    /**
+     * 后台新增任务类型
+     * @param chatPetMission
+     */
+    public void save(ChatPetMission chatPetMission){
+        ChatPetMission cpm = new ChatPetMission();
+
+        cpm.setCoin(chatPetMission.getCoin());
+        cpm.setIsActive(chatPetMission.getIsActive());
+        cpm.setMissionCode(chatPetMission.getMissionCode());
+        cpm.setMissionName(chatPetMission.getMissionName());
+
+        chatPetMissionMapper.insert(cpm);
+    }
+
+    /**
+     * 更新任务类型
+     */
+    public void update(ChatPetMission chatPetMission){
+        chatPetMissionMapper.updateByPrimaryKey(chatPetMission);
+    }
+
+    /**
+     * 根据任务code获取任务对象
+     * @param missionCode
+     * @return
+     */
+    public ChatPetMission getByMissionCode(Integer missionCode){
+        return chatPetMissionMapper.selectByMissionCode(missionCode);
+    }
+
+    public ChatPetMission getById(Integer id){
+        return chatPetMissionMapper.selectByPrimaryKey(id);
+    }
+
+    public List<ChatPetMission> getActiveMissions(){
+        return chatPetMissionMapper.selectActiveMissionList();
+    }
+
+
 
 
 }

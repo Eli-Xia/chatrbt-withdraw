@@ -19,6 +19,16 @@ public class PetLog {
 
     private Integer taskCode;
 
+    private Integer rewardType;
+
+    public Integer getRewardType() {
+        return rewardType;
+    }
+
+    public void setRewardType(Integer rewardType) {
+        this.rewardType = rewardType;
+    }
+
     public Integer getId() {
         return id;
     }

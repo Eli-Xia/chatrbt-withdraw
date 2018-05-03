@@ -24,6 +24,10 @@ public class ChatPetInfo {
 
     private ExperienceProgressRate experienceProgressRate;
 
+    private List<PetLogResp> petLogs = new ArrayList<>();
+
+    private Float fanTotalCoin = 0F;
+
     public String getwPubHeadImgUrl() {
         return wPubHeadImgUrl;
     }
@@ -40,10 +44,6 @@ public class ChatPetInfo {
     public void setInvitationQrCode(String invitationQrCode) {
         this.invitationQrCode = invitationQrCode;
     }
-
-    private List<PetLogResp> petLogs = new ArrayList<>();
-
-    private Float fanTotalCoin = 0F;
 
     public Integer getTempAppearance() {
         return tempAppearance;
