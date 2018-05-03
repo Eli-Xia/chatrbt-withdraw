@@ -9,6 +9,7 @@ if (isWeixin) {
                 userCodeShow: false,
                 bgColor: '1b0035',
                 canvasSign: true,
+                ruleShow: true,
                 userInfo: {
                     headImg: '',
                     nickname: ''
@@ -18,7 +19,8 @@ if (isWeixin) {
                     geneticCode: null,
                     fanTotalCoin: 0.0,
                     appearanceUrl: '',
-                    wPubHeadImgUrl: ''
+                    wPubHeadImgUrl: '',
+                    experienceProgressRate: {}
                 },
                 logs: [],
                 twoImg: '',
@@ -26,12 +28,14 @@ if (isWeixin) {
                 svgUrl: '',
                 url: '',
                 imgLoad: 0,
-                nowDate: new Date().getTime()
+                nowDate: new Date().getTime(),
+                groupList: []
             },
             created() {
                 var i = location.search.indexOf('=');
                 this.id = location.search.slice(i + 1);
-                this.queryList()
+                this.queryList();
+                this.queryGroup()
             },
             methods: {
                 shareShow($event) {
@@ -100,6 +104,30 @@ if (isWeixin) {
                                 });
                                 _self.logs = resp.result.petLogs;
                                 _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode;
+                            } else {
+                                alert(resp.retMsg)
+                            }
+                        } else {
+                        }
+                    }
+                },
+                queryGroup() {
+                    var _self = this;
+                    var xhr = new XMLHttpRequest();
+                    var data = JSON.stringify(
+                        {
+                            "chatPetId": this.id,
+                            "pageSize": 5
+                        }
+                    );
+                    xhr.open('post', '/api/chat-pet/ethnic-groups/rank', true);
+                    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                    xhr.send(data);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var resp = JSON.parse(xhr.response);
+                            if (resp.retCode == 0) {
+                                _self.groupList = resp.result
                             } else {
                                 alert(resp.retMsg)
                             }
