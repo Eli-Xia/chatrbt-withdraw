@@ -60,7 +60,8 @@ public class ChatPetLevelService {
 
         List<ChatPetLevel> allLevel = this.getAscAllLevel();
         Integer lastRemainingExperience = 0;
-        Integer lastLevelExperience = null;
+
+        Integer lastLevelExperience = allLevel.get(0).getExperience();
 
         for(ChatPetLevel chatPetLevel : allLevel){
 

@@ -32,9 +32,6 @@ import java.util.List;
 public class WxEventMessageHandler extends WxBaseMessageHandler {
 
     @Autowired
-    private PushMessageConfigService pushMessageConfigService;
-
-    @Autowired
     private RWxPubProductService rWxPubProductService;
 
     @Autowired
@@ -64,7 +61,9 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     public String handleEvent(String content) {
         String eventType = this.judgeEventType(content);
 
-        if (SUBSCRIBE_EVENT.equals(eventType) || SUBSCRIBE_EVENT.equals(SCAN_EVENT)) {
+        eventType = eventType.toLowerCase();
+
+        if (SUBSCRIBE_EVENT.equals(eventType) || SCAN_EVENT.equals(eventType)) {
 
             SubscribeEvent subscribeEvent = XmlUtil.converyToJavaBean(content, SubscribeEvent.class);
             String wxPubOriginId = subscribeEvent.getToUserName();
@@ -83,18 +82,25 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                         ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId,wxFanOpenId);
 
+                        //已经有宠物的，不做处理
                         if(chatPet != null){
                             return null;
                         }
                         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-
 
                         if(!ethnicGroupsService.allowToAdopt(wxPubOriginId)){
                             String replyContent = "今日宠物已经领完了，明天早点来哟！";
                             return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
                         }
 
-                        String parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
+                        String parentIdStr = null;
+                        if(qrSceneStr.indexOf("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR) != -1){
+                            parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
+                        }
+
+                        if(qrSceneStr.indexOf(EthnicGroupsService.EVENT_SPECIAL_STR) != -1){
+                            parentIdStr = qrSceneStr.replace(EthnicGroupsService.EVENT_SPECIAL_STR, "");
+                        }
 
                         Integer chatPetId = null;
                         ChatPet parentChatPet = null;
@@ -143,7 +149,9 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                                 "每一次点击链接，完成每日任务，即获得成长经验值";*/
 
                         Calendar calendar = Calendar.getInstance();
-                        Date date = chatPet.getCreateTime();
+
+                        ChatPet myChatPet = chatPetService.getById(chatPetId);
+                        Date date = myChatPet.getCreateTime();
                         calendar.setTime(date);
                         String description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
                                 "自此历史浓重的记录了一笔：#" + wxFan.getNickname() + "#的喵小咪，出生于" + (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH)+ "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分。\n" +
@@ -221,15 +229,17 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
         return XmlUtil.convertToXml(textMsgRes);
     }
 
-
+    /**
+     * 回复单一图文消息
+     * @param wxPubOriginId
+     * @param wxFanOpendId
+     * @param customerNewsItem
+     * @return
+     */
     private String replySingleNewsStr(String wxPubOriginId, String wxFanOpendId, CustomerNewsItem customerNewsItem) {
-
         List<CustomerNewsItem> customerNewsList = new ArrayList<>();
-
         customerNewsList.add(customerNewsItem);
-
         return this.replyNewsStr(wxPubOriginId, wxFanOpendId, customerNewsList);
-
     }
 
     /**

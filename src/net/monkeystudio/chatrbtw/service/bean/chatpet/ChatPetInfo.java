@@ -21,6 +21,7 @@ public class ChatPetInfo {
     private String wPubHeadImgUrl;
 
     private Integer experience;
+    private Integer chatPetLevel;
 
     private ExperienceProgressRate experienceProgressRate;
 
@@ -115,5 +116,13 @@ public class ChatPetInfo {
 
     public void setExperienceProgressRate(ExperienceProgressRate experienceProgressRate) {
         this.experienceProgressRate = experienceProgressRate;
+    }
+
+    public Integer getChatPetLevel() {
+        return chatPetLevel;
+    }
+
+    public void setChatPetLevel(Integer chatPetLevel) {
+        this.chatPetLevel = chatPetLevel;
     }
 }

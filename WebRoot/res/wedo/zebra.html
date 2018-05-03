@@ -2,7 +2,7 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>喵小咪</title>
+    <title>魔鬼猫</title>
     <meta content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1, user-scalable=no"
           name="viewport">
     <script>
@@ -35,6 +35,14 @@
     </header>
     <section>
         <div id="user_zebra">
+            <div class="pet-class">
+                <div class="class-scroll">
+                    {{list.experienceProgressRate.own}}/{{list.experienceProgressRate.need}}
+                    <div class="scroll-bg"
+                         :style="{'width':list.experienceProgressRate.own*100/list.experienceProgressRate.need+'%'}"></div>
+                </div>
+                <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
+            </div>
             <div class="zebra-bg">
                 <img :src="list.appearanceUrl">
             </div>
@@ -49,22 +57,29 @@
             <i @click="userCodeShow = !userCodeShow"></i>
         </div>
     </section>
-    <section>
+    <section v-if="!ruleShow" class="show-rule">
+        <div>
+            星球规则
+            <div @click="ruleShow=true">展开</div>
+        </div>
+    </section>
+    <section v-if="ruleShow">
         <div id="rule">
-            <div class="tittle">喵小咪星球规则</div>
+            <div class="hide-rule" @click="ruleShow=false">收起</div>
+            <div class="tittle">星球规则</div>
             <div>
                 <p class="text">
-                    喵小咪星球是一款基于分布式存储技术的数字宠物模拟游戏，由 Keendo AI
-                    团队研发。星球中的数字宠物是外观各异的喵小咪，他们的等级代表算力。喵小咪产出的金币未来可以按照一定兑换比例兑换成数字资产、商品及服务。
+                    魔鬼猫星球是一款基于分布式存储技术的数字宠物模拟游戏，由 Keendo AI
+                    团队研发。星球中的数字宠物是外观各异的魔鬼猫，他们的等级代表算力。魔鬼猫产出的金币未来可以按照一定兑换比例兑换成数字资产、商品及服务。
                 </p>
                 <div class="gold">
                     <div>
-                        <img src="images/token.png">
+                        <img src="images/token.svg">
                         什么是猫爪金币？
                     </div>
                     <ul>
                         <li>猫爪金币可以充当游戏中的积分</li>
-                        <li>猫爪金币主要产生于喵小咪的聊天互动，及聊天中随机触发的任务</li>
+                        <li>猫爪金币主要产生于魔鬼猫的聊天互动，及聊天中随机触发的任务</li>
                         <li>释放猫爪金币总量有限，随时间推移，获取难度逐步变大</li>
                         <li>猫爪金币每隔24小时分配一次</li>
                     </ul>
@@ -72,12 +87,12 @@
                 <div class="cat">
                     <div>
                         <img src="images/cat.png">
-                        什么是虚拟宠物喵小咪？
+                        什么是虚拟宠物魔鬼猫？
                     </div>
                     <ul>
-                        <li>每一只喵小咪都是星球游戏中独一无二的虚拟数字宠物</li>
-                        <li>喵小咪的等级代表算力，等级越高，每日获取的猫爪金币越多</li>
-                        <li>喵小咪未来将逐步推出出售、转让、孵化等功能</li>
+                        <li>每一只魔鬼猫都是星球游戏中独一无二的虚拟数字宠物</li>
+                        <li>魔鬼猫的等级代表算力，等级越高，每日获取的猫爪金币越多</li>
+                        <li>魔鬼猫未来将逐步推出出售、转让、孵化等功能</li>
                     </ul>
                 </div>
             </div>
@@ -91,11 +106,11 @@
                     {{nowDate | formatDate}}
                 </div>
                 <div class="nodata" v-if="logs.length == 0">
-                    <img src="images/nodata.svg" alt="no-data">
+                    <img src="images/nodata.png" alt="no-data">
                     <p>今天还没有日志哦～</p>
                 </div>
                 <ul>
-                    <li v-for="item in logs">
+                    <li v-for="item in Group">
                         {{item.content}}
                         <em v-if="item.coin">＋{{item.coin}}</em>
                         <span>{{item.createTime | formatTime}}</span>
@@ -104,8 +119,31 @@
             </div>
         </div>
     </section>
+    <section>
+        <div id="groups">
+            <div class="tittle">族群</div>
+            <div>
+                <div class="date">
+                    已有{{groupList.length}}人加入该族群
+                </div>
+                <div class="nodata" v-if="groupList.length == 0">
+                    <img src="images/nodata.png" alt="no-data">
+                    <p>邀请好友加入族群</p>
+                </div>
+                <ul v-else>
+                    <li v-for="item in groupList">
+                        <img :src="item.wxFanHeadImgUrl">
+                        {{item.wxFanNickname}}
+                        <div class="pet-class">
+                            <img :src="'images/class_'+item.level+'.png'">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
     <footer>
-        <p>喵小咪星球持续建设中</p>
+        <p>魔鬼猫星球持续建设中</p>
         <p>敬请期待</p>
     </footer>
     <div v-cloak id="share" v-show="share" @click="shareShow($event)">
@@ -116,7 +154,7 @@
                         <img :src="userInfo.headImg" alt="avatar">
                     </div>
                     <span>
-                        {{userInfo.nickname}}的喵小咪
+                        {{userInfo.nickname}}的魔鬼猫
                         </span>
                     <div class="zebra-msg">
                         <img :src="list.appearanceUrl" id="cat-img" alt="cat">
@@ -133,7 +171,7 @@
                     </div>
                     <div class="hint">
                         长按识别二维码<br/>
-                        领取专属喵小咪
+                        领取专属魔鬼猫
                     </div>
                     <div class="tip">
                         数量有限 <br/>请把名额留给热爱互联网，关注科技的小伙伴们

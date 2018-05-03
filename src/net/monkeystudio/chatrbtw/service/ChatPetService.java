@@ -210,6 +210,8 @@ public class ChatPetService {
         chatPetMissionPoolService.createMissionWhenFirstComeH5(wxPubOriginId,wxFanOpenId);
 
         //今日任务
+        Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
+        chatPetBaseInfo.setChatPetLevel(chatPetLevel);
 
         return chatPetBaseInfo;
     }
