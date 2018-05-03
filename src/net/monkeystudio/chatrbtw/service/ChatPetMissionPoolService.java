@@ -44,39 +44,20 @@ public class ChatPetMissionPoolService {
     private RWxPubProductService rWxPubProductService;
 
 
-    /**
-     * 获取粉丝总金币数
-     * @param wxPubOriginId
-     * @param wxFanOpenId
-     * @return
-     */
-    public Float getFansOwnCoin(String wxPubOriginId,String wxFanOpenId){
-        ChatPetPersonalMission param = new ChatPetPersonalMission();
-
-        param.setWxPubOriginId(wxPubOriginId);
-        param.setWxFanOpenId(wxFanOpenId);
-        param.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
-        Date now = new Date();
-        param.setFinishTime(now);
-
-        chatPetPersonalMissionMapper.sumTotalCoinByParam(param);
-
-        return null;
-    }
 
     /**
-     * 当日第一次进入宠物陪聊h5创建当日任务
+     * 当日第一次进入宠物陪聊h5或者粉丝第一次聊天互动时创建当日任务
      */
-    public void createMissionWhenFirstComeH5(String wxPubOriginId,String wxFanOpenId){
-        String comeH5CountCacheKey = this.getComeH5CountCacheKey(wxPubOriginId, wxFanOpenId);
+    public void createMissionWhenFirstChatOrComeH5(String wxPubOriginId,String wxFanOpenId){
+        String createDailyMissionCountCacheKey = this.getCreateDailyMissionCountCacheKey(wxPubOriginId, wxFanOpenId);
 
-        Long incr = redisCacheTemplate.incr(comeH5CountCacheKey);
+        Long incr = redisCacheTemplate.incr(createDailyMissionCountCacheKey);
 
         if(incr == 1){
             //填充任务池
             this.createDailyMission(wxPubOriginId,wxFanOpenId);
             //缓存时间为当日
-            redisCacheTemplate.expire(comeH5CountCacheKey, DateUtils.getCacheSeconds());
+            redisCacheTemplate.expire(createDailyMissionCountCacheKey, DateUtils.getCacheSeconds());
         }
     }
 
@@ -99,25 +80,8 @@ public class ChatPetMissionPoolService {
             cppm.setCreateTime(new Date());
             cppm.setState(MissionStateEnum.GOING_ON.getCode());
             cppm.setMissionCode(cpm.getMissionCode());
-            cppm.setIncrCoin(cpm.getCoin());
 
             this.save(cppm);
-        }
-    }
-
-    /**
-     *  当日粉丝第一次聊天创建当日任务
-     */
-    public void createMissionWhenFirstChat(String wxPubOriginId,String wxFanOpenId){
-        String fanChatCountCacheKey = this.getFanChatCountCacheKey(wxPubOriginId, wxFanOpenId);
-
-        Long incr = redisCacheTemplate.incr(fanChatCountCacheKey);
-
-        if(incr == 1){
-
-            this.createDailyMission(wxPubOriginId,wxFanOpenId);
-
-            redisCacheTemplate.expire(fanChatCountCacheKey, DateUtils.getCacheSeconds());
         }
     }
 
@@ -145,9 +109,7 @@ public class ChatPetMissionPoolService {
         String wxFanOpenId = wxfan.getWxFanOpenId();
         String wxPubOriginId = wxfan.getWxPubOriginId();
 
-        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
-
-        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
 
         //update adId
         cppm.setAdId(adId);
@@ -160,9 +122,7 @@ public class ChatPetMissionPoolService {
      * 完成任务但是未领取奖励时更新任务池记录
      */
     public void updateMissionWhenFinish(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
-        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, missionCode);
-
-        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, missionCode);
 
         cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
 
@@ -227,7 +187,8 @@ public class ChatPetMissionPoolService {
 
         //判断今日阅读任务是否完成
         boolean isDone = this.isDailyMissionDone(wxPubOriginId, wxFanOpenId, missionCode);
-        if(!isDone){
+
+        if(isDone){
             return;
         }
 
@@ -236,9 +197,7 @@ public class ChatPetMissionPoolService {
     }
 
     private boolean  checkMissionAdIsEqual(String wxPubOriginId,String wxFanOpenId,Integer missionCode,Integer adId){
-        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, missionCode);
-
-        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, missionCode);
 
         Integer missionAdId = cppm.getAdId();
 
@@ -250,9 +209,7 @@ public class ChatPetMissionPoolService {
      * @return
      */
     public boolean isDailyMissionDone(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
-        ChatPetPersonalMission param = this.createPersonalMissionSelectParam(wxPubOriginId, wxFanOpenId, missionCode);
-
-        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, missionCode);
 
         Integer state = cppm.getState();
 
@@ -265,11 +222,11 @@ public class ChatPetMissionPoolService {
     }
 
     /**
-     * 获取粉丝今日任务记录查询对象创建
+     * 获取粉丝今日任务记录
      * @param missionCode 任务编号
      * @return
      */
-    private ChatPetPersonalMission createPersonalMissionSelectParam(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
+    private ChatPetPersonalMission getDailyPersonalMission(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
         Date now = new Date();
         Date startTime = DateUtils.getBeginDate(now);
 
@@ -279,7 +236,9 @@ public class ChatPetMissionPoolService {
         param.setCreateTime(startTime);
         param.setMissionCode(missionCode);
 
-        return param;
+        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+
+        return cppm;
     }
 
 
@@ -355,12 +314,8 @@ public class ChatPetMissionPoolService {
     }
 
 
-    private String getFanChatCountCacheKey(String wxPubOriginid,String wxFanOpenId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatCreateMission:" +wxPubOriginid +":"+ wxFanOpenId;
-    }
-
-    private String getComeH5CountCacheKey(String wxPubOriginId,String wxFanOpenId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "comeH5CreateMission:"+wxPubOriginId+":"+wxFanOpenId;
+    public String getCreateDailyMissionCountCacheKey(String wxPubOriginid,String wxFanOpenId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "createDailyMission:" +wxPubOriginid +":"+ wxFanOpenId;
     }
 
 

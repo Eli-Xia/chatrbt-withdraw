@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:task="http://www.springframework.org/schema/task"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-            http://www.springframework.org/schema/context 
-            http://www.springframework.org/schema/context/spring-context-4.3.xsd
-            http://www.springframework.org/schema/aop 
-            http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-            http://www.springframework.org/schema/tx 
-            http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
-            http://www.springframework.org/schema/mvc 
-            http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
-            http://www.springframework.org/schema/context 
-            http://www.springframework.org/schema/context/spring-context-4.3.xsd
-            http://www.springframework.org/schema/task    
-            http://www.springframework.org/schema/task/spring-task-4.3.xsd">
-            
-    <!--启用spring mvc 注解 -->
-    <context:annotation-config />
-    
-    <!-- 设置使用注解的类所在的jar包 ,把标记了@Controller注解的类转换为bean-->
-    <context:component-scan base-package="net.monkeystudio"/>
-    
-    <task:annotation-driven/>
-    
-    <mvc:annotation-driven>
-        <mvc:message-converters register-defaults="true">
-            <bean class="net.monkeystudio.springmvc.MyStringHttpMessageConverter"/>
-        </mvc:message-converters>
-    </mvc:annotation-driven>
-    
-    <!-- 对静态文件进行筛选 递交给默认的servlet处理  而不是dispatchServlet处理-->
-	<mvc:default-servlet-handler/> 
-	
-    <!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
-	<bean  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" >  
-    	<property name="messageConverters">
-         	<list>
-             	<bean class = "org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  
-                	<property name = "supportedMediaTypes">
-                      	<list>
-                         	<value>application/json;charset=UTF-8</value>
-                     	</list>
-                	</property>
-             	</bean>
-         	</list>
-    	</property>
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:task="http://www.springframework.org/schema/task"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                http://www.springframework.org/schema/aop
+                http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+                http://www.springframework.org/schema/tx
+                http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+                http://www.springframework.org/schema/mvc
+                http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                http://www.springframework.org/schema/task
+                http://www.springframework.org/schema/task/spring-task-4.3.xsd">
+
+	<!--启用spring mvc 注解 -->
+	<context:annotation-config />
+
+	<!-- 设置使用注解的类所在的jar包 ,把标记了@Controller注解的类转换为bean-->
+	<context:component-scan base-package="net.monkeystudio"/>
+
+	<task:annotation-driven/>
+
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean class="net.monkeystudio.springmvc.MyStringHttpMessageConverter"/>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 对静态文件进行筛选 递交给默认的servlet处理  而不是dispatchServlet处理-->
+	<mvc:default-servlet-handler/>
+
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+	<bean  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" >
+		<property name="messageConverters">
+			<list>
+				<bean class = "org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+					<property name = "supportedMediaTypes">
+						<list>
+							<value>application/json;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
 	</bean>
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 	</bean>
-	
-	<context:property-placeholder location="/WEB-INF/conf/config.properties" ignore-unresolvable="true"/>  
-	
-    <!-- freemarker的配置 -->
- 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-  		<property name="templateLoaderPaths">
-	  		<list>
+
+	<context:property-placeholder location="/WEB-INF/conf/config.properties" ignore-unresolvable="true"/>
+
+	<!-- freemarker的配置 -->
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPaths">
+			<list>
 				<value>/WEB-INF/</value>
 			</list>
 		</property>
-  		<property name="defaultEncoding" value="utf-8" />
-  		<property name="freemarkerSettings">
-   			<props>
-   				<prop key="template_update_delay">10</prop>
-    			<prop key="locale">zh_CN</prop>
-    			<prop key="datetime_format">yyyy-MM-dd</prop>
-    			<prop key="date_format">yyyy-MM-dd</prop>
-    			<prop key="number_format">#.##</prop>
-    			<prop key="classic_compatible">true</prop>
-    		</props>
-  		</property>
-  		<!-- 一些页面使用的变量 -->
-  		<property name="freemarkerVariables">  
-            <map>
-                <!-- 资源 -->
-                <!-- <entry key="resbase" value="http://www.mysouwu.com/saimirires"></entry> -->
-            </map>  
-        </property> 
- 	</bean>
- 	
- 	<!-- 配置freeMarker视图解析器, .htm后缀的用freemarker解析 -->  
-    <bean id="freemarkerViewResolver" class="net.monkeystudio.springmvc.MyFreemarkerViewResolver">  
-        <property name="contentType" value="text/html; charset=utf-8"/>  
-        <property name="cache" value="true" />
-        <property name="prefix" value="/"/>     
-        <property name="suffix" value=".html" />   
-        
-        <!-- 请求和会话属性都附到freemarker model中 -->
-        <property name="exposeRequestAttributes" value="true" /> 
-  		<property name="exposeSessionAttributes" value="true" />
-  		<property name="exposeSpringMacroHelpers" value="true" />
-  		<property name="order" value="0"/>  
-    </bean>
-    
-
-    <bean  
-    class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
-	    <property name="exceptionMappings">  
-	        <props>  
-	            <prop key="java.lang.Exception">  
-	                /exception  
-	            </prop>
-	            <prop key="javax.servlet.ServletException">  
-	                /exception  
-	            </prop>
-	        </props>  
-	    </property>  
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">10</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="datetime_format">yyyy-MM-dd</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="number_format">#.##</prop>
+				<prop key="classic_compatible">true</prop>
+			</props>
+		</property>
+		<!-- 一些页面使用的变量 -->
+		<property name="freemarkerVariables">
+			<map>
+				<!-- 资源 -->
+				<!-- <entry key="resbase" value="http://www.mysouwu.com/saimirires"></entry> -->
+			</map>
+		</property>
 	</bean>
-	
-	<!-- 文件上传表单的视图解析器 -->  
-    <bean id="multipartResolver"    
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">    
-        <!-- one of the properties available; the maximum file size in bytes -->    
-        <property name="maxUploadSize" value="-1" />
-    </bean>
-     
-    <!-- 登录拦截器
+
+	<!-- 配置freeMarker视图解析器, .htm后缀的用freemarker解析 -->
+	<bean id="freemarkerViewResolver" class="net.monkeystudio.springmvc.MyFreemarkerViewResolver">
+		<property name="contentType" value="text/html; charset=utf-8"/>
+		<property name="cache" value="true" />
+		<property name="prefix" value="/"/>
+		<property name="suffix" value=".html" />
+
+		<!-- 请求和会话属性都附到freemarker model中 -->
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="order" value="0"/>
+	</bean>
+
+
+	<bean
+			class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Exception">
+					/exception
+				</prop>
+				<prop key="javax.servlet.ServletException">
+					/exception
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 文件上传表单的视图解析器 -->
+	<bean id="multipartResolver"
+		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- one of the properties available; the maximum file size in bytes -->
+		<property name="maxUploadSize" value="-1" />
+	</bean>
+
+	<!-- 登录拦截器
     <mvc:interceptors>
-    	<mvc:interceptor>
-    		<mvc:mapping path="/**/"/>
-    		<bean class="net.saimiri.springmvc.ReqAuthInterceptor"></bean>
-    	</mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**/"/>
+            <bean class="net.saimiri.springmvc.ReqAuthInterceptor"></bean>
+        </mvc:interceptor>
     </mvc:interceptors>
      -->
 
@@ -140,3 +140,4 @@
 		</aop:aspect>
 	</aop:config>
 </beans>
+

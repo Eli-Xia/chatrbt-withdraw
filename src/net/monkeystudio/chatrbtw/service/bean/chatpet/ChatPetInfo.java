@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service.bean.chatpet;
 
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,19 @@ public class ChatPetInfo {
 
     private ExperienceProgressRate experienceProgressRate;
 
+    private Float fanTotalCoin = 0F;
+
     private List<PetLogResp> petLogs = new ArrayList<>();
 
-    private Float fanTotalCoin = 0F;
+    private List<TodayMissionItem> todayMissions = new ArrayList<>();
+
+    public List<TodayMissionItem> getTodayMissions() {
+        return todayMissions;
+    }
+
+    public void setTodayMissions(List<TodayMissionItem> todayMissions) {
+        this.todayMissions = todayMissions;
+    }
 
     public String getwPubHeadImgUrl() {
         return wPubHeadImgUrl;

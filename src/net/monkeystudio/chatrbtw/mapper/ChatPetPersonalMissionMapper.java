@@ -17,11 +17,8 @@ public interface ChatPetPersonalMissionMapper {
 
     int updateByPrimaryKey(ChatPetPersonalMission record);
 
-    Float sumTotalCoinByParam(ChatPetPersonalMission param);
-
     List<ChatPetPersonalMission> selectListByParam(ChatPetPersonalMission param);
 
     ChatPetPersonalMission selectByParam(ChatPetPersonalMission param);
-
 
 }

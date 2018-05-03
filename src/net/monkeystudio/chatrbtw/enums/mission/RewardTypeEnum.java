@@ -4,7 +4,7 @@ package net.monkeystudio.chatrbtw.enums.mission;
  * @author xiaxin
  */
 public enum RewardTypeEnum {
-    GOLD_REWARD(1,"金币奖励"),EXPERIENCE_REWARD(2,"经验奖励");
+    NULL_REWARD(0,"没有奖励"),GOLD_REWARD(1,"金币奖励"),EXPERIENCE_REWARD(2,"经验奖励");
 
     private int type;
     private String name;

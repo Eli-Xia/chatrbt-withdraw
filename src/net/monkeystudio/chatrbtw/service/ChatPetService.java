@@ -8,9 +8,11 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.exception.BizException;
 import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.service.WxOauthService;
@@ -18,6 +20,7 @@ import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.oauth.WxOauthAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -145,36 +148,25 @@ public class ChatPetService {
         wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
     }
 
-    owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
         ownerInfo.setHeadImg(owner.getHeadImgUrl());
 
         chatPetBaseInfo.setOwnerInfo(ownerInfo);
 
-    String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+        String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
         chatPetBaseInfo.setOwnerId(owerId);
 
         //宠物基因
         String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
         chatPetBaseInfo.setGeneticCode(geneticCode);
 
-        //宠物日志
-        List<PetLog> dailyPetLogList = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
-        List<PetLogResp> resps = new ArrayList<>();
-
-        for(PetLog pl:dailyPetLogList){
-            PetLogResp resp = new PetLogResp();
-            resp.setChatPetId(pl.getChatPetId());
-            resp.setCoin(pl.getCoin());
-            resp.setContent(pl.getContent());
-            resp.setCreateTime(pl.getCreateTime());
-            resp.setId(pl.getId());
-            resps.add(resp);
-        }
+        //今日宠物日志
+        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
         chatPetBaseInfo.setPetLogs(resps);
 
         //粉丝拥有代币
-        Float fanTotalCoin = chatPetLogService.getFanTotalCoin(wxPubOriginId,wxFanOpenId);
-        chatPetBaseInfo.setFanTotalCoin(fanTotalCoin);
+        Float fansTotalCoin = this.getFansTotalCoin();
+        chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
 
         //宠物的url
         CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
@@ -206,20 +198,87 @@ public class ChatPetService {
         ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
         chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
 
-        //第一进入H5填充任务池任务
-        chatPetMissionPoolService.createMissionWhenFirstComeH5(wxPubOriginId,wxFanOpenId);
-
-        //今日任务
+        //宠物等级
         Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
         chatPetBaseInfo.setChatPetLevel(chatPetLevel);
 
+        //第一进入H5填充任务池任务
+        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
+
+        //今日任务
+        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
+        chatPetBaseInfo.setTodayMissions(todayMissionList);
+
         return chatPetBaseInfo;
+    }
+
+
+    /**
+     * 获取宠物的信息
+     * @param chatPetId
+     * @return
+     */
+    public ChatPetInfo getInfoAfterReward(Integer chatPetId){
+        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        if(chatPet == null){
+            return null;
+        }
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        String wxFanOpenId = chatPet.getWxFanOpenId();
+
+        //今日宠物日志
+        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
+        chatPetBaseInfo.setPetLogs(resps);
+
+        //粉丝拥有代币
+        Float fansTotalCoin = this.getFansTotalCoin();
+        chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
+
+        //宠物的经验
+        Integer experience = chatPet.getExperience();
+        chatPetBaseInfo.setExperience(experience);
+
+        //经验条进度
+        ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
+        chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
+
+        //宠物等级
+        Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
+        chatPetBaseInfo.setChatPetLevel(chatPetLevel);
+
+        //今日任务
+        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
+        chatPetBaseInfo.setTodayMissions(todayMissionList);
+
+        return chatPetBaseInfo;
+    }
+
+    public ChatPetInfo rewardHandle(Integer chatPetId,Integer itemId){
+
+        this.missionReward(chatPetId,itemId);
+        ChatPetInfo info = this.getInfoAfterReward(chatPetId);
+        return info;
+    }
+
+    /**
+     * 点击"领取"时判断是否为可领取的状态
+     * @param rewardState
+     * @return
+     */
+    public boolean isFinishNotAwardState(Integer rewardState){
+        Integer shouldState = Integer.valueOf(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+        return shouldState.equals(rewardState);
     }
 
     /**
      * 完成每日任务领取奖励
      * @param itemId
      */
+    @Transactional
     public void missionReward(Integer chatPetId,Integer itemId) {
         //更新任务池记录
         chatPetMissionPoolService.updateMissionWhenReward(itemId);
@@ -227,11 +286,9 @@ public class ChatPetService {
 
         //增加金币
         ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
-
         Integer missionCode = cppm.getMissionCode();
 
         Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
-
         this.increaseCoin(chatPetId,incrCoin);
 
 
@@ -244,9 +301,8 @@ public class ChatPetService {
 
         Integer newExprience = this.getChatPetExperience(chatPetId);
 
-
         //插入日志
-        boolean isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExprience);
+        chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
 
 
     }

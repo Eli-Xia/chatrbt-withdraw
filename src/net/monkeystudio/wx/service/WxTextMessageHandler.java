@@ -171,7 +171,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
             //第一次聊天填充任务池
-            chatPetMissionPoolService.createMissionWhenFirstChat(wxPubOriginId,wxFanOpenId);
+            chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
             //完成陪聊宠每日签到任务
             chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());

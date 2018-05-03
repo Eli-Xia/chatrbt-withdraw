@@ -4,7 +4,6 @@
   <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="mission_code" property="missionCode" jdbcType="INTEGER" />
-    <result column="incr_coin" property="incrCoin" jdbcType="REAL" />
     <result column="ad_id" property="adId" jdbcType="INTEGER" />
     <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
     <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
@@ -13,7 +12,7 @@
     <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, mission_code, incr_coin, ad_id, wx_pub_origin_id, wx_fan_open_id, create_time, 
+    id, mission_code, ad_id, wx_pub_origin_id, wx_fan_open_id, create_time,
     state, finish_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -27,11 +26,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
-    insert into e_chat_pet_personal_mission (id, mission_code, incr_coin, 
+    insert into e_chat_pet_personal_mission (id, mission_code,
       ad_id, wx_pub_origin_id, wx_fan_open_id, 
       create_time, state, finish_time
       )
-    values (#{id,jdbcType=INTEGER}, #{missionCode,jdbcType=INTEGER}, #{incrCoin,jdbcType=REAL}, 
+    values (#{id,jdbcType=INTEGER}, #{missionCode,jdbcType=INTEGER},
       #{adId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP}
       )
@@ -44,9 +43,6 @@
       </if>
       <if test="missionCode != null" >
         mission_code,
-      </if>
-      <if test="incrCoin != null" >
-        incr_coin,
       </if>
       <if test="adId != null" >
         ad_id,
@@ -74,9 +70,6 @@
       <if test="missionCode != null" >
         #{missionCode,jdbcType=INTEGER},
       </if>
-      <if test="incrCoin != null" >
-        #{incrCoin,jdbcType=REAL},
-      </if>
       <if test="adId != null" >
         #{adId,jdbcType=INTEGER},
       </if>
@@ -103,9 +96,6 @@
       <if test="missionCode != null" >
         mission_code = #{missionCode,jdbcType=INTEGER},
       </if>
-      <if test="incrCoin != null" >
-        incr_coin = #{incrCoin,jdbcType=REAL},
-      </if>
       <if test="adId != null" >
         ad_id = #{adId,jdbcType=INTEGER},
       </if>
@@ -130,7 +120,6 @@
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     update e_chat_pet_personal_mission
     set mission_code = #{missionCode,jdbcType=INTEGER},
-      incr_coin = #{incrCoin,jdbcType=REAL},
       ad_id = #{adId,jdbcType=INTEGER},
       wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
       wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
@@ -140,25 +129,6 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="sumTotalCoinByParam" resultType="java.lang.Float" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission">
-    select
-    sum(coin)
-    from e_chat_pet_personal_mission
-    <where>
-      <if test="wxPubOriginId != null">
-        and wx_pub_origin_id = #{wxPubOriginId}
-      </if>
-      <if test="wxFanOpenId != null">
-        and wx_fan_open_id = #{wxFanOpenId}
-      </if>
-      <if test="state != null">
-        and state = #{state}
-      </if>
-      <if test="finishTime != null">
-        and finish_time &lt;= #{finishTime}
-      </if>
-    </where>
-  </select>
 
   <select id="selectListByParam" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" resultMap="BaseResultMap">
     select

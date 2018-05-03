@@ -4,17 +4,17 @@
   <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.PetLog" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="coin" property="coin" jdbcType="REAL" />
     <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
     <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
     <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
     <result column="task_code" property="taskCode" jdbcType="INTEGER" />
+    <result column="reward_type" property="rewardType" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.PetLog" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, coin, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code
+    id, create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type
   </sql>
   <sql id="Blob_Column_List" >
     content
@@ -27,17 +27,14 @@
     from e_pet_log
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from e_pet_log
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
-    insert into e_pet_log (id, create_time, coin, 
+    insert into e_pet_log (id, create_time,
       chat_pet_id, wx_pub_origin_id, wx_fan_open_id, 
-      content,task_code)
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{coin,jdbcType=REAL}, 
+      content,task_code,reward_type)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
       #{chatPetId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
-      #{content,jdbcType=LONGVARCHAR}, #{taskCode})
+      #{content,jdbcType=LONGVARCHAR}, #{taskCode},#{rewardType})
   </insert>
   <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
     insert into e_pet_log
@@ -47,9 +44,6 @@
       </if>
       <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="coin != null" >
-        coin,
       </if>
       <if test="chatPetId != null" >
         chat_pet_id,
@@ -66,6 +60,9 @@
       <if test="taskCode != null" >
         task_code,
       </if>
+      <if test="reward_type != null" >
+        reward_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -73,9 +70,6 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="coin != null" >
-        #{coin,jdbcType=REAL},
       </if>
       <if test="chatPetId != null" >
         #{chatPetId,jdbcType=INTEGER},
@@ -92,56 +86,12 @@
       <if test="taskCode != null" >
         #{taskCode,jdbcType=INTEGER},
       </if>
+      <if test="rewardType != null" >
+        #{rewardType,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
-    update e_pet_log
-    <set >
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="coin != null" >
-        coin = #{coin,jdbcType=REAL},
-      </if>
-      <if test="chatPetId != null" >
-        chat_pet_id = #{chatPetId,jdbcType=INTEGER},
-      </if>
-      <if test="wxPubOriginId != null" >
-        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
-      </if>
-      <if test="wxFanOpenId != null" >
-        wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
-      </if>
-      <if test="content != null" >
-        content = #{content,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="taskCode != null" >
-        task_code = #{taskCode,jdbcType=INTEGER},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
-    update e_pet_log
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      coin = #{coin,jdbcType=REAL},
-      chat_pet_id = #{chatPetId,jdbcType=INTEGER},
-      wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
-      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
-      content = #{content,jdbcType=LONGVARCHAR},
-      task_code = #{taskCode}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
-    update e_pet_log
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      coin = #{coin,jdbcType=REAL},
-      chat_pet_id = #{chatPetId,jdbcType=INTEGER},
-      wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
-      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
-      task_code = #{taskCode}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+
 
   <select id="selectDailyPetLog" resultMap="ResultMapWithBLOBs">
     SELECT <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/>FROM  e_pet_log
@@ -149,15 +99,14 @@
     AND create_time &gt;= #{beginTime} AND  create_time &lt;= #{endTime} ORDER BY create_time DESC
   </select>
 
-  <select id="countFanTotalCoin" resultType="java.lang.Float">
-    SELECT sum(coin) from e_pet_log WHERE  wx_pub_origin_id = #{wxPubOriginId} AND wx_fan_open_id = #{wxFanOpenId}
-    AND create_time &lt;= #{nowTime}
-  </select>
+  <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
 
-  <select id="countTaskLog" resultType="java.lang.Integer">
-    select count(id) FROM  e_pet_log WHERE wx_pub_origin_id = #{wxPubOriginId} AND wx_fan_open_id = #{wxFanOpenId}
-    AND create_time &gt;= #{beginTime} AND  create_time &lt;= #{endTime} AND task_code = #{taskCode}
-  </select>
+    insert into e_pet_log (create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.create_time}, #{item.chat_pet_id},#{item.wx_pub_origin_id},#{item.wx_fan_open_id},#{item.task_code},#{item.reward_type})
+    </foreach>
+  </insert>
 
 
 </mapper>

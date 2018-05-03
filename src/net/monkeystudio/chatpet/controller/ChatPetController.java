@@ -45,11 +45,11 @@ public class ChatPetController extends ChatPetBaseController{
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(@RequestBody ChatPetIdReq chatPetIdReq){
 
-        Integer userId = getUserId();
+        /*Integer userId = getUserId();
 
         if(userId == null){
             return respHelper.failed(Msg.text("common.user.nologin"));
-        }
+        }*/
         Integer ChatPetId = chatPetIdReq.getId();
 
         ChatPetInfo chatPetInfo = chatPetService.getInfo(ChatPetId);
@@ -96,10 +96,12 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req){
-        //领取奖励需要返回什么内容  info  接收什么参数???   任务池记录id   chatpetid
 
-        chatPetService.missionReward(req.getItemId(),req.getChatPetId());
-        ChatPetInfo info = chatPetService.getInfo(req.getChatPetId());
+        if(!chatPetService.isFinishNotAwardState(req.getRewardState())){
+            return respHelper.failed(Msg.text("can not reward"));
+        }
+
+        ChatPetInfo info = chatPetService.rewardHandle(req.getChatPetId(), req.getItemId());
 
         return respHelper.ok(info);
     }

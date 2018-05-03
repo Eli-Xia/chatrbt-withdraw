@@ -7,8 +7,6 @@ public class ChatPetPersonalMission {
 
     private Integer missionCode;
 
-    private Float incrCoin;
-
     private Integer adId;
 
     private String wxPubOriginId;
@@ -35,14 +33,6 @@ public class ChatPetPersonalMission {
 
     public void setMissionCode(Integer missionCode) {
         this.missionCode = missionCode;
-    }
-
-    public Float getIncrCoin() {
-        return incrCoin;
-    }
-
-    public void setIncrCoin(Float incrCoin) {
-        this.incrCoin = incrCoin;
     }
 
     public Integer getAdId() {
