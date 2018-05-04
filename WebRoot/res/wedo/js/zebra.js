@@ -143,8 +143,7 @@ if (isWeixin) {
                     var data = JSON.stringify(
                         {
                             "chatPetId": this.id,
-                            "itemId": id,
-                            "rewardState": 2
+                            "itemId": id
                         }
                     );
                     xhr.open('post', '/api/chat-pet/pet/mission/reward', true);
