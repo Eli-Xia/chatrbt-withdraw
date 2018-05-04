@@ -104,7 +104,6 @@ public class ChatPetService {
         return chatPetMapper.selectById(id);
     }
 
-
     private Integer save(ChatPet chatPet){
         return chatPetMapper.insert(chatPet);
     }
