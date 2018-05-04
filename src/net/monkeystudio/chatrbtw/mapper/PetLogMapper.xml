@@ -101,10 +101,10 @@
 
   <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
 
-    insert into e_pet_log (create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type)
+    insert into e_pet_log (create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type,content)
     values
     <foreach collection="list" item="item" index="index" separator=",">
-      (#{item.create_time}, #{item.chat_pet_id},#{item.wx_pub_origin_id},#{item.wx_fan_open_id},#{item.task_code},#{item.reward_type})
+      (#{item.createTime}, #{item.chatPetId},#{item.wxPubOriginId},#{item.wxFanOpenId},#{item.taskCode},#{item.rewardType},#{item.content})
     </foreach>
   </insert>
 

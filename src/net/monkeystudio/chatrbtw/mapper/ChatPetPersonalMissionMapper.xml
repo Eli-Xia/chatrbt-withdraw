@@ -150,9 +150,6 @@
       <if test="createTime != null">
         and create_time &gt;= #{createTime}
       </if>
-      <if test="finishTime != null">
-        and finish_time &lt;= #{finishTime}
-      </if>
     </where>
   </select>
 
@@ -175,9 +172,6 @@
       </if>
       <if test="createTime != null">
         and create_time &gt;= #{createTime}
-      </if>
-      <if test="finishTime != null">
-        and finish_time &lt;= #{finishTime}
       </if>
     </where>
   </select>

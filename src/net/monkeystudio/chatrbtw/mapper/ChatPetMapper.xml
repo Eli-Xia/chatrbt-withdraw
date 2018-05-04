@@ -82,7 +82,7 @@
     <update id="increaseCoin" parameterType="map">
         update
         e_chat_pet
-        set coin = coin + #{rewardCoin}
+        set coin = IFNULL(coin,0) + #{rewardCoin}
         where
         id = #{id}
     </update>

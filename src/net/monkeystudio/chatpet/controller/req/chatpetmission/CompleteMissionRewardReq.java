@@ -5,18 +5,9 @@ package net.monkeystudio.chatpet.controller.req.chatpetmission;
  * @author xiaxin
  */
 public class CompleteMissionRewardReq {
-    private Integer rewardState;//当前领奖状态
     private Integer chatPetId;//宠物id
     private Integer itemId;//任务池记录id
 
-
-    public Integer getRewardState() {
-        return rewardState;
-    }
-
-    public void setRewardState(Integer rewardState) {
-        this.rewardState = rewardState;
-    }
 
     public Integer getChatPetId() {
         return chatPetId;

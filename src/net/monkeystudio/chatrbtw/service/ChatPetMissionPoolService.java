@@ -272,6 +272,7 @@ public class ChatPetMissionPoolService {
         ChatPetPersonalMission param = new ChatPetPersonalMission();
         param.setWxFanOpenId(wxFanOpenId);
         param.setWxPubOriginId(wxPubOriginId);
+        param.setCreateTime(DateUtils.getBeginDate(new Date()));
 
         List<ChatPetPersonalMission> cppms = this.getPersonalMissionListByParam(param);
 

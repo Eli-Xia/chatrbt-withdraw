@@ -7,8 +7,6 @@ public class PetLog {
 
     private Date createTime;
 
-    private Float coin;
-
     private Integer chatPetId;
 
     private String wxPubOriginId;
@@ -43,14 +41,6 @@ public class PetLog {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Float getCoin() {
-        return coin;
-    }
-
-    public void setCoin(Float coin) {
-        this.coin = coin;
     }
 
     public Integer getChatPetId() {

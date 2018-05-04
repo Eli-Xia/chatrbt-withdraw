@@ -27,9 +27,6 @@ public class ChatPetLogService {
     private ChatPetService chatPetService;
 
     @Autowired
-    private RWxPubProductService rWxPubProductService;
-
-    @Autowired
     private ChatPetMissionService chatPetMissionService;
 
     @Autowired
@@ -87,7 +84,6 @@ public class ChatPetLogService {
     public void savePetLog(PetLog petLog){
         PetLog pl = new PetLog();
 
-        pl.setCoin(petLog.getCoin());
         pl.setCreateTime(petLog.getCreateTime());
         pl.setContent(petLog.getContent());
         pl.setChatPetId(petLog.getChatPetId());
@@ -166,10 +162,9 @@ public class ChatPetLogService {
                     pl3.setChatPetId(chatPetId);
 
                     pls.add(pl3);
-
-                    this.petLogMapper.batchInsert(pls);
                 }
             }
+            this.petLogMapper.batchInsert(pls);
 
 
         }else{

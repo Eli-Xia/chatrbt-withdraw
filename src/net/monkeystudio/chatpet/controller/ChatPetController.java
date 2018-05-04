@@ -43,13 +43,13 @@ public class ChatPetController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(@RequestBody ChatPetIdReq chatPetIdReq){
+    public RespBase getAdClickLogList(@RequestBody ChatPetIdReq chatPetIdReq,HttpServletResponse response){
 
-        /*Integer userId = getUserId();
+        Integer userId = getUserId();
 
         if(userId == null){
-            return respHelper.failed(Msg.text("common.user.nologin"));
-        }*/
+            //response.sendRedirect();
+        }
         Integer ChatPetId = chatPetIdReq.getId();
 
         ChatPetInfo chatPetInfo = chatPetService.getInfo(ChatPetId);
@@ -95,11 +95,7 @@ public class ChatPetController extends ChatPetBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
-    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req){
-
-        if(!chatPetService.isFinishNotAwardState(req.getRewardState())){
-            return respHelper.failed(Msg.text("can not reward"));
-        }
+    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException{
 
         ChatPetInfo info = chatPetService.rewardHandle(req.getChatPetId(), req.getItemId());
 

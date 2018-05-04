@@ -165,7 +165,7 @@ public class ChatPetService {
         chatPetBaseInfo.setPetLogs(resps);
 
         //粉丝拥有代币
-        Float fansTotalCoin = this.getFansTotalCoin();
+        Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
         chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
 
         //宠物的url
@@ -235,7 +235,7 @@ public class ChatPetService {
         chatPetBaseInfo.setPetLogs(resps);
 
         //粉丝拥有代币
-        Float fansTotalCoin = this.getFansTotalCoin();
+        Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
         chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
 
         //宠物的经验
@@ -257,21 +257,28 @@ public class ChatPetService {
         return chatPetBaseInfo;
     }
 
-    public ChatPetInfo rewardHandle(Integer chatPetId,Integer itemId){
+    public ChatPetInfo rewardHandle(Integer chatPetId,Integer itemId) throws BizException{
 
+        if(!isAble2Reward(itemId)){
+            throw new BizException("请完成任务后再领取奖励");
+        }
         this.missionReward(chatPetId,itemId);
         ChatPetInfo info = this.getInfoAfterReward(chatPetId);
         return info;
     }
 
     /**
-     * 点击"领取"时判断是否为可领取的状态
-     * @param rewardState
+     * 点击"领取"时判断当前是否能够领取
+     * @param itemId 任务池记录id
      * @return
      */
-    public boolean isFinishNotAwardState(Integer rewardState){
-        Integer shouldState = Integer.valueOf(MissionStateEnum.FINISH_NOT_AWARD.getCode());
-        return shouldState.equals(rewardState);
+    public boolean isAble2Reward(Integer itemId){
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
+
+        Integer nowState = cppm.getState();//当前任务领取状态
+        Integer shouldState = MissionStateEnum.FINISH_NOT_AWARD.getCode();//当前任务领取状态应为 已完成未领取
+
+        return shouldState.equals(nowState);
     }
 
     /**
@@ -453,7 +460,7 @@ public class ChatPetService {
      */
     public String createZebraHtmlUrl(){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "https://"+domain+"/res/wedo/zebra.html?id=";
+        String url = "http://"+domain+"/res/wedo/zebra.html?id=";
         return url;
     }
 
@@ -582,4 +589,16 @@ public class ChatPetService {
 
         return picUrl;
     }
+
+    //用户未授权跳转到授权页面
+    /*public String getNoAuthRedirectUrl(Integer wxFanId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+
+
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
+        return null;
+    }*/
 }
