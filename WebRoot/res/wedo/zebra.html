@@ -99,6 +99,26 @@
         </div>
     </section>
     <section>
+        <div id="task">
+            <div class="tittle">今日任务</div>
+            <div>
+                <div class="date">
+                    {{nowDate | formatDate}}
+                </div>
+                <ul>
+                    <li v-for="item in taskList" :class="{'after':item.state==3}">
+                        {{item.missionName}}
+                        <div v-if="item.state==1">领取</div>
+                        <div class="active" v-if="item.state==2" @click="sureReward($event,item.itemId)">
+                            <div><i></i>领取</div>
+                        </div>
+                        <div v-if="item.state==3">已领取</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section>
         <div id="log">
             <div class="tittle">宠物日志</div>
             <div>
@@ -110,7 +130,7 @@
                     <p>今天还没有日志哦～</p>
                 </div>
                 <ul>
-                    <li v-for="item in Group">
+                    <li v-for="item in logs">
                         {{item.content}}
                         <em v-if="item.coin">＋{{item.coin}}</em>
                         <span>{{item.createTime | formatTime}}</span>

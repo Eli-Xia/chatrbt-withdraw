@@ -16,4 +16,5 @@ public interface AdPushLogMapper {
 
     List<AdPushLogDailyCount> countDaily(@Param("startTime") Long startTime ,@Param("endTime") Long enTime ,@Param("adId") Integer adId);
 
+    AdPushLog selectByPrimaryKey(Integer id);
 }

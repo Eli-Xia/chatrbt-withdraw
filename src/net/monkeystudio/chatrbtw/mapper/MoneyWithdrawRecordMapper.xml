@@ -12,9 +12,21 @@
     <result column="bank_flow_number" property="bankFlowNumber" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="success_time" property="successTime" jdbcType="TIMESTAMP" />
+    <result column="letter_of_delegation_img_url" property="letterOfDelegationImgUrl" jdbcType="VARCHAR" />
+    <result column="account_type" property="accountType" jdbcType="INTEGER" />
+    <result column="account_holder" property="accountHolder" jdbcType="VARCHAR" />
+    <result column="id_number" property="idNumber" jdbcType="VARCHAR" />
+    <result column="account_name" property="accountName" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="bank_fork_name" property="bankForkName" jdbcType="VARCHAR" />
+    <result column="account_number" property="accountNumber" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, apply_time, amount,invoice_number,invoice_audit_ret,invoice_receive_time,bank_flow_number, state, success_time
+    id, user_id, apply_time, amount,invoice_number,invoice_audit_ret,invoice_receive_time,bank_flow_number, state, success_time, letter_of_delegation_img_url, account_type, account_holder, id_number, account_name,
+    bank_name, province, city, bank_fork_name, account_number, email
   </sql>
 
   <sql id="Base_Where">
@@ -46,6 +58,39 @@
       <if test="successTime != null">
         and success_time = #{successTime}
       </if>
+      <if test="letterOfDelegationImgUrl != null" >
+        and letter_of_delegation_img_url = #{letterOfDelegationImgUrl}
+      </if>
+      <if test="accountType != null" >
+        and account_type = #{accountType}
+      </if>
+      <if test="accountHolder != null" >
+        and account_holder = #{accountHolder}
+      </if>
+      <if test="idNumber != null" >
+        and id_number = #{idNumber}
+      </if>
+      <if test="accountName != null" >
+        and account_name = #{accountName}
+      </if>
+      <if test="bankName != null" >
+        and bank_name = #{bankName}
+      </if>
+      <if test="province != null" >
+        and province = #{province}
+      </if>
+      <if test="city != null" >
+        and city = #{city}
+      </if>
+      <if test="bankForkName != null" >
+        and bank_fork_name #{bankForkName}
+      </if>
+      <if test="accountNumber != null" >
+        and account_number = #{accountNumber}
+      </if>
+      <if test="email != null" >
+        and email = #{email}
+      </if>
 
     </where>
   </sql>
@@ -62,10 +107,16 @@
   </delete>
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
     insert into e_money_withdraw_record (id, user_id, apply_time, 
-      amount, state, success_time
+      amount, state, success_time , letter_of_delegation_img_url, account_type,
+      account_holder, id_number, account_name,
+      bank_name, province, city,
+      bank_fork_name, account_number, email
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{applyTime,jdbcType=TIMESTAMP}, 
-      #{amount,jdbcType=REAL}, #{state,jdbcType=INTEGER}, #{successTime,jdbcType=TIMESTAMP}
+      #{amount,jdbcType=REAL}, #{state,jdbcType=INTEGER}, #{successTime,jdbcType=TIMESTAMP}, #{letterOfDelegationImgUrl,jdbcType=VARCHAR}, #{accountType,jdbcType=INTEGER},
+      #{accountHolder,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, #{accountName,jdbcType=VARCHAR},
+      #{bankName,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
+      #{bankForkName,jdbcType=VARCHAR}, #{accountNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.MoneyWithdrawRecord" >
@@ -101,6 +152,39 @@
       <if test="successTime != null" >
         success_time,
       </if>
+      <if test="letterOfDelegationImgUrl != null" >
+        letter_of_delegation_img_url,
+      </if>
+      <if test="accountType != null" >
+        account_type,
+      </if>
+      <if test="accountHolder != null" >
+        account_holder,
+      </if>
+      <if test="idNumber != null" >
+        id_number,
+      </if>
+      <if test="accountName != null" >
+        account_name,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="bankForkName != null" >
+        bank_fork_name,
+      </if>
+      <if test="accountNumber != null" >
+        account_number,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -132,6 +216,39 @@
       </if>
       <if test="successTime != null" >
         #{successTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="letterOfDelegationImgUrl != null" >
+        #{letterOfDelegationImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        #{accountType,jdbcType=INTEGER},
+      </if>
+      <if test="accountHolder != null" >
+        #{accountHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null" >
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null" >
+        #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="bankForkName != null" >
+        #{bankForkName,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNumber != null" >
+        #{accountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -165,6 +282,39 @@
       <if test="successTime != null" >
         success_time = #{successTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="letterOfDelegationImgUrl != null" >
+        letter_of_delegation_img_url = #{letterOfDelegationImgUrl}
+      </if>
+      <if test="accountType != null" >
+        account_type = #{accountType}
+      </if>
+      <if test="accountHolder != null" >
+        account_holder = #{accountHolder}
+      </if>
+      <if test="idNumber != null" >
+        id_number = #{idNumber}
+      </if>
+      <if test="accountName != null" >
+        account_name = #{accountName}
+      </if>
+      <if test="bankName != null" >
+        bank_name = #{bankName}
+      </if>
+      <if test="province != null" >
+        province = #{province}
+      </if>
+      <if test="city != null" >
+        city = #{city}
+      </if>
+      <if test="bankForkName != null" >
+        bank_fork_name #{bankForkName}
+      </if>
+      <if test="accountNumber != null" >
+        account_number = #{accountNumber}
+      </if>
+      <if test="email != null" >
+        email = #{email}
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -178,7 +328,18 @@
       invoice_receive_time = #{invoiceReceiveTime},
       bank_flow_number = #{bankFlowNumber},
       state = #{state,jdbcType=INTEGER},
-      success_time = #{successTime,jdbcType=TIMESTAMP}
+      success_time = #{successTime,jdbcType=TIMESTAMP},
+      letter_of_delegation_img_url = #{letterOfDelegationImgUrl},
+      account_type = #{accountType},
+      account_holder = #{accountHolder},
+      id_number = #{idNumber},
+      account_name = #{accountName},
+      bank_name = #{bankName},
+      province = #{province},
+      city = #{city},
+      bank_fork_name #{bankForkName},
+      account_number = #{accountNumber},
+      email = #{email}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

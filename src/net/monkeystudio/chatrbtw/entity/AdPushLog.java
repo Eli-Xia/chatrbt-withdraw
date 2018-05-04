@@ -47,4 +47,6 @@ public class AdPushLog {
     public void setWxFanOpenId(String wxFanOpenId) {
         this.wxFanOpenId = wxFanOpenId;
     }
+
+
 }

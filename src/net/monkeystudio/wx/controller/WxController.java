@@ -120,16 +120,15 @@ public class WxController extends BaseController {
 
 	/**
 	 * 网页授权
-	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
-	public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("wxPubAppId")String wxPubAppId) throws Exception{
-		String redirectUrl = wxOauthService.getRequestCodeUrl("https://test.keendo.com.cn/api/wx/oauth/code",wxPubAppId);
+		@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
+		public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("id")Integer wxPubId) throws Exception{
+			String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubId);
 
-		response.sendRedirect(redirectUrl);
+			response.sendRedirect(redirectUrl);
 
-		return null;
+			return null;
 	}
 
     /**
