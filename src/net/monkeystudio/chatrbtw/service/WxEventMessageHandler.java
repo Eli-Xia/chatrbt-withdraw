@@ -161,13 +161,10 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         customerNewsItem.setDescription(description);
 
                         //微信网页授权url参数拼接
-                        Integer wxPubIdParam = this.createChatPetH5Param(wxPubOriginId);
+                        Integer wxPubId = this.createChatPetH5Param(wxPubOriginId);
 
-                        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-                        //String uri = "/res/wedo/zebra.html?id=" + chatPetId;
-                        String uri = "/api/wx/oauth/redirect?id="+wxPubIdParam;
-                        String url = domain + uri;
-                        //url = url.replace("http://", "https://");
+                        //url = www.keendo.com.cn/res/wedo/zebra.html?id=wxPubId
+                        String url = chatPetService.getZebraHtmlUrl(wxPubId);
 
                         customerNewsItem.setUrl(url);
                         customerNewsItem.setPicUrl(chatPetService.getNewsMessageCoverUrl());

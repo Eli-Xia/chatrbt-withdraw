@@ -2,15 +2,12 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.RespBase;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.StringUtil;
-import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.exception.BizException;
-import net.monkeystudio.local.Msg;
 import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,6 @@ import org.springframework.web.portlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * Created by bint on 2018/4/19.
@@ -43,16 +39,15 @@ public class ChatPetController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(@RequestBody ChatPetIdReq chatPetIdReq,HttpServletResponse response){
+    public RespBase getAdClickLogList(/**@RequestBody ChatPetIdReq chatPetIdReq,*/ HttpServletResponse response){
 
-        Integer userId = getUserId();
+        Integer fanId = getUserId();
 
-        if(userId == null){
-            //response.sendRedirect();
+        if(fanId == null){
+            respHelper.nologin();
         }
-        Integer ChatPetId = chatPetIdReq.getId();
 
-        ChatPetInfo chatPetInfo = chatPetService.getInfo(ChatPetId);
+        ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
 
         return respHelper.ok(chatPetInfo);
     }
@@ -75,15 +70,15 @@ public class ChatPetController extends ChatPetBaseController{
             return null;
         }
 
+        //微信网页授权处理
         ChatPetSessionVo vo = chatPetService.wxOauthHandle(response,code,appId);
 
-
+        //fanId存入session
         this.saveSessionUserId(vo.getWxFanId());
 
-        //"https://test.keendo.com.cn/res/wedo/zebra.html?id="
-        String zebraHtml = chatPetService.createZebraHtmlUrl();
+        String zebraHtml = chatPetService.getZebraHtmlUrl(vo.getWxPubId());
 
-        response.sendRedirect(zebraHtml+vo.getChatPetId());
+        response.sendRedirect(zebraHtml);
 
         return null;
     }
