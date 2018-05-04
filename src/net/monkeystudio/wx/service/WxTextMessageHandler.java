@@ -186,6 +186,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         switch (replyMsgType){
             //文本消息回复
             case REPLY_MSG_TYPE_TEXT:
+                respStr = (String) replyMessage.getObject();
                 respStr = responseProcessService.responseProecess(wxPubOriginId, respStr);
 
                 String respXml = this.replyTextStr(wxPubOriginId, wxFanOpenId, respStr);

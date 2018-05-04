@@ -272,19 +272,19 @@ public class AskSearchService {
 
     private Integer getCurrentPage(String wxPubOriginId ,String wxfanOpenId ){
         String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,wxPubOriginId);
-        String result = redisCacheTemplate.getObject(moreNewsCountCacheKey);
+        Integer result = redisCacheTemplate.getObject(moreNewsCountCacheKey);
 
         if(result == null){
-            result = "1";
+            result = 1;
         }
 
-        return Integer.valueOf(result);
+        return result;
     }
 
 
     private void resetFirstPage(String wxPubOriginId ,String wxfanOpenId ){
         String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,wxPubOriginId);
-        redisCacheTemplate.del(moreNewsCountCacheKey);//关键字搜索,每次应从第一页开始
+        redisCacheTemplate.setObject(moreNewsCountCacheKey,1);//关键字搜索,每次应从第一页开始
     }
 
     private void setWordCache(String wxPubOriginId ,String wxfanOpenId , String word){
