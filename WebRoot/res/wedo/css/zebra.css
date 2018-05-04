@@ -234,6 +234,69 @@ header {
   background: url("../images/li_bg.png") no-repeat 0 0.2rem;
   background-size: 0.26rem;
 }
+#task > div + div {
+  padding: 0.56rem 0.8rem 0.8rem;
+}
+#task .date {
+  font-size: 0.48rem;
+  color: #8e8e93;
+  padding: 0.22rem 0;
+}
+#task li {
+  position: relative;
+  padding: 0.32rem 0;
+  font-size: 0.48rem;
+}
+#task li.after {
+  color: #8e8e93;
+}
+#task li.after div {
+  background-color: #8e8e93;
+  color: #fff;
+}
+#task li > div {
+  position: absolute;
+  top: 0.16rem;
+  right: 0;
+  text-align: center;
+  font-size: 0.4rem;
+  width: 1.58rem;
+  padding: 0.18rem 0;
+  border-radius: 3px;
+  background-color: #efeff4;
+  color: #ceced2;
+  overflow: hidden;
+}
+#task li > div > div {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  padding: 0.18rem 0;
+  width: 1.58rem;
+  background-color: #f9b721;
+  color: #fff;
+}
+#task li > div.active {
+  text-align: right;
+  padding: 0;
+  background-color: #fff;
+  color: #fff;
+}
+#task li > div.active i {
+  position: absolute;
+  top: 0;
+  left: -1rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  background: url("../images/token.svg") no-repeat;
+  background-size: 100%;
+  transition: all .5s linear;
+}
+#task li > div.active i.active {
+  transform: rotateY(180deg);
+  top: -0.2rem;
+  opacity: 0;
+}
 #log .tittle + div {
   padding: 0 0.8rem 0.9rem;
 }
@@ -280,9 +343,12 @@ header {
   height: 0.66rem;
   line-height: 0.66rem;
 }
-#log li + li,
+#log li + li {
+  border-bottom: #ceced2;
+}
+#task li + li,
 #groups li + li {
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #ceced2;
 }
 #groups {
   padding-bottom: 0.58rem;
