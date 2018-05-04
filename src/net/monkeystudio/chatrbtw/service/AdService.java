@@ -2,19 +2,15 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.req.ad.AddAd;
 import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
-import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.RandomUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.AdMapper;
 import net.monkeystudio.chatrbtw.mapper.RAdWxPubMapper;
 import net.monkeystudio.chatrbtw.mapper.RAdWxPubTagMapper;
 import net.monkeystudio.chatrbtw.service.bean.ad.*;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.CommonUtils;
-import net.monkeystudio.utils.JsonHelper;
 import net.monkeystudio.wx.service.WxPubAuthorizerRefreshTokenService;
 import net.monkeystudio.wx.service.WxPubService;
 import org.apache.commons.io.IOUtils;
@@ -637,7 +633,7 @@ public class AdService {
      * @param ad
      * @return
      */
-    public boolean isReachMaxClick(Ad ad) throws BizException{
+    public boolean isReachMaxClick(Ad ad) throws BizException {
         Integer currentClickAmount = adClickLogService.getAdTotalClick(ad.getId());
 
         Integer maxClickAmount = ad.getClickAmount();

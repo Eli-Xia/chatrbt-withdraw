@@ -3,18 +3,17 @@ package net.monkeystudio.chatrbtw.service;
 import java.util.Date;
 import java.util.Map;
 
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.entity.User;
-import net.monkeystudio.service.CfgService;
+import net.monkeystudio.chatrbtw.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.UserExt;
 import net.monkeystudio.chatrbtw.mapper.UserExtMapper;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.local.Msg;
-import net.monkeystudio.service.UserService;
 
 /**
  * 用户扩展信息管理
@@ -47,7 +46,7 @@ public class UserExtService {
 	 * @param userId
 	 * @param params
 	 */
-	public void update(Integer userId, Map<String,Object> params) throws BizException{
+	public void update(Integer userId, Map<String,Object> params) throws BizException {
 		
 		if ( !userService.checkUserIdExist(userId) ){
 			throw new BizException(Msg.text("user.notfound"));

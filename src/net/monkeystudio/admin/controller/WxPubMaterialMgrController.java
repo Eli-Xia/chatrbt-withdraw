@@ -3,6 +3,8 @@ package net.monkeystudio.admin.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,13 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.admin.controller.req.wxpubmaterial.QueryWxPubNewsList;
 import net.monkeystudio.admin.controller.req.wxpubmaterial.SetWxPubNewsUrl;
 import net.monkeystudio.admin.controller.resp.wxpubmaterial.WxPubNewsDetail;
 import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.entity.WxPubNews;
-import net.monkeystudio.utils.RespHelper;
 import net.monkeystudio.wx.service.WxMaterialMgrService;
 import net.monkeystudio.wx.service.WxPubService;
 
@@ -41,7 +41,7 @@ public class WxPubMaterialMgrController {
 	
 	/**
 	 * 公众号素材列表
-	 * @param wxPubOriginId
+	 * @param queryWxPubNewsList
 	 * @return
 	 * @throws Exception
 	 */
@@ -67,7 +67,7 @@ public class WxPubMaterialMgrController {
 	
 	/**
 	 * 设置公众号素材url2
-	 * @param wxPubOriginId
+	 * @param setWxPubNewsUrl
 	 * @return
 	 * @throws Exception
 	 */

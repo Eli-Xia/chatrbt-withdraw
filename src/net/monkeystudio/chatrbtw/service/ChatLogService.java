@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.monkeystudio.admin.controller.req.QueryChatLogs;
 import net.monkeystudio.base.utils.BeanUtils;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.service.bean.chatlog.*;
 
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import net.monkeystudio.chatrbtw.entity.ChatLog;
 import net.monkeystudio.chatrbtw.mapper.ChatLogMapper;
-import net.monkeystudio.utils.CommonUtils;
 
 @Service
 public class ChatLogService {

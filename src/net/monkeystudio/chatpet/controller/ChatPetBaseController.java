@@ -1,7 +1,7 @@
 package net.monkeystudio.chatpet.controller;
 
-import net.monkeystudio.Constants;
-import net.monkeystudio.base.BaseController;
+
+import net.monkeystudio.base.controller.BaseController;
 
 /**
  * @author xiaxin

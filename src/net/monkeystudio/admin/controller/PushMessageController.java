@@ -1,12 +1,11 @@
 package net.monkeystudio.admin.controller;
 
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
-import net.monkeystudio.chatrbtw.entity.Ad;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.PushMessageConfigService;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdConfigReq;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdConfigResp;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

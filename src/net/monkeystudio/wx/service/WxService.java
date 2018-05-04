@@ -1,11 +1,10 @@
 package net.monkeystudio.wx.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.service.WxEventMessageHandler;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

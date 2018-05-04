@@ -27,7 +27,7 @@
 
     <!--Realm充当了Shiro与应用安全数据间的“桥梁”或者“连接器”。
     也就是说，当对用户执行认证（登录）和授权（访问控制）验证时，Shiro会从应用配置的Realm中查找用户及其权限信息。 -->
-    <bean id="realm" class="net.monkeystudio.shiro.MyRealm">
+    <bean id="realm" class="net.monkeystudio.base.shiro.MyRealm">
         <property name="credentialsMatcher" ref="credentialsMatcher"></property>
     </bean>
 
@@ -37,10 +37,10 @@
         <property name="cacheManager" ref="cacheManager"></property>
     </bean>
 
-    <bean id="authInfoLoader" class="net.monkeystudio.shiro.AuthInfoLoader"/>
+    <bean id="authInfoLoader" class="net.monkeystudio.base.shiro.AuthInfoLoader"/>
 
     <!--扩展后的shiroFilter，支持以其他方式加载权限配置信息，例如重数据库加载-->
-    <bean id="shiroFilter" class="net.monkeystudio.shiro.MyShiroFilterFactoryBean">
+    <bean id="shiroFilter" class="net.monkeystudio.base.shiro.MyShiroFilterFactoryBean">
 
         <!-- Shiro的核心安全接口，这个属性是必须的 -->
         <property name="securityManager" ref="securityManager"></property>

@@ -1,15 +1,16 @@
 package net.monkeystudio.admin.controller.req.wxpubmaterial;
 
+import net.monkeystudio.base.controller.bean.req.ListPaginationReq;
+
 import java.util.Map;
 
-import net.monkeystudio.base.req.ListPaginationReq;
 
 /**
  * 获取微信公众号永久素材列表请求
  * @author hebo
  *
  */
-public class QueryWxPubNewsList extends ListPaginationReq{
+public class QueryWxPubNewsList extends ListPaginationReq {
 
 	private String wxPubOriginId;
 	private String title;

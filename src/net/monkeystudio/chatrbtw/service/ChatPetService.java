@@ -1,6 +1,8 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
@@ -12,9 +14,10 @@ import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.oauth.WxOauthAccessToken;
@@ -110,7 +113,6 @@ public class ChatPetService {
     public ChatPet getById(Integer id){
         return chatPetMapper.selectById(id);
     }
-
 
     private Integer save(ChatPet chatPet){
         return chatPetMapper.insert(chatPet);
@@ -567,7 +569,19 @@ public class ChatPetService {
      */
     public String getZebraHtmlUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "http://"+domain+"/res/wedo/zebra.html?id="+wxPubId;
+        String url = "http://" + domain + "/res/wedo/zebra.html?id=" + wxPubId;
+        return url;
+    }
+
+    public String getCheckLoginUrl(Integer wxPubId){
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String url = "http://" + domain + "/api/chat-pet/pet/check-login" + wxPubId;
+        return url;
+    }
+
+    public String getWxOauthUrl(Integer wxPubId){
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String url = "http://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
         return url;
     }
 

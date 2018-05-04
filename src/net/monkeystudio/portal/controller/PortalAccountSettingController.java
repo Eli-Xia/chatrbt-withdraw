@@ -1,11 +1,11 @@
 package net.monkeystudio.portal.controller;
 
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.AccountSettingService;
-import net.monkeystudio.local.Msg;
 import net.monkeystudio.portal.controller.req.accountsetting.AccountSettingReq;
 import net.monkeystudio.portal.controller.resp.accountsetting.AccountSettingVO;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

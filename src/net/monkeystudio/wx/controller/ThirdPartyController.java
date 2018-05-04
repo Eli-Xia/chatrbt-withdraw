@@ -1,13 +1,9 @@
 package net.monkeystudio.wx.controller;
 
-import net.monkeystudio.base.BaseController;
-
 /**
  * Created by bint on 2017/10/24.
  */
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.local.Msg;
+import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/third-party")
-public class ThirdPartyController extends BaseController{
+public class ThirdPartyController extends BaseController {
 
     @Autowired
     private WxAuthApiService wxAuthApiService;

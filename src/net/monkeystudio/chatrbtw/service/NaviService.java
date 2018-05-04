@@ -2,11 +2,11 @@ package net.monkeystudio.chatrbtw.service;
 
 import java.util.List;
 
+import net.monkeystudio.chatrbtw.entity.AdminMenu;
+import net.monkeystudio.chatrbtw.mapper.AdminMenuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.monkeystudio.entity.AdminMenu;
-import net.monkeystudio.mapper.AdminMenuMapper;
 
 @Service
 public class NaviService {
@@ -17,7 +17,7 @@ public class NaviService {
 	/**
 	 * 获取用户有权限操作的菜单列表
 	 * （目前没有多管理员需求，直接返回所有菜单）
-	 * @param userId
+	 * @param roles
 	 * @return
 	 */
 	public List<AdminMenu> getAdminMenu(List<String> roles){

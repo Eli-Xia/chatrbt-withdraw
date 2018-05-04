@@ -3,6 +3,13 @@ package net.monkeystudio.portal.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.code.kaptcha.Constants;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.entity.User;
+import net.monkeystudio.chatrbtw.entity.UserProfile;
+import net.monkeystudio.chatrbtw.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -18,16 +25,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.UserExt;
 import net.monkeystudio.chatrbtw.local.Msg;
 import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.UserExtService;
 import net.monkeystudio.portal.controller.req.Login;
-import net.monkeystudio.entity.User;
-import net.monkeystudio.entity.UserProfile;
-import net.monkeystudio.exception.BizException;
 import net.monkeystudio.portal.controller.req.Register;
 import net.monkeystudio.portal.controller.req.ResendActiveEmail;
 import net.monkeystudio.portal.controller.req.ResetPassword;
@@ -35,9 +38,6 @@ import net.monkeystudio.portal.controller.req.RetrievePassword;
 import net.monkeystudio.portal.controller.req.UpdatePassword;
 import net.monkeystudio.portal.controller.req.UpdateUser;
 import net.monkeystudio.portal.controller.resp.user.UserDetail;
-import net.monkeystudio.service.UserService;
-import net.monkeystudio.utils.Log;
-import net.monkeystudio.utils.RespHelper;
 
 /**
  * portal用户接口
@@ -151,7 +151,7 @@ public class PortalUserController extends PortalBaseController{
 	/**
 	 * 用户登录
 	 * @param request
-	 * @param Login
+	 * @param login
 	 * @return
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST) 
@@ -331,7 +331,7 @@ public class PortalUserController extends PortalBaseController{
 	/**
 	 * 修改用户个人信息
 	 * @param request
-	 * @param updatePassword
+	 * @param updateUser
 	 * @return
 	 */
 	@RequestMapping(value = "/info/update", method = RequestMethod.POST) 
@@ -361,7 +361,6 @@ public class PortalUserController extends PortalBaseController{
 	/**
 	 * 获取用户个人信息
 	 * @param request
-	 * @param updatePassword
 	 * @return
 	 */
 	@RequestMapping(value = "/info/query", method = RequestMethod.POST) 

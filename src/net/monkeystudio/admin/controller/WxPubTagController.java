@@ -1,12 +1,12 @@
 package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.AddUpdateWxPubTag;
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
-import net.monkeystudio.base.req.ListPaginationReq;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.controller.bean.req.ListPaginationReq;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.WxPubTag;
 import net.monkeystudio.chatrbtw.service.WxPubTagService;
-import net.monkeystudio.utils.RespHelper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/admin/wxPub-tag")
-public class WxPubTagController extends BaseController{
+public class WxPubTagController extends BaseController {
 
     @Autowired
     private RespHelper respHelper;

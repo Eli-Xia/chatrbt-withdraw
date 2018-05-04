@@ -1,11 +1,11 @@
 package net.monkeystudio.chatrbtw.sdk.wx;
 
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.HttpUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.ActionInfo;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.CreateQrCode;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.qrcode.Scene;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.HttpUtils;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;
 import org.springframework.beans.factory.annotation.Autowired;

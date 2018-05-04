@@ -1,24 +1,23 @@
 package net.monkeystudio.admin.controller;
 
-import net.monkeystudio.base.BaseController;
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.admin.controller.req.income.UserImcomeReq;
+import net.monkeystudio.base.controller.BaseController;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.IncomeSerivce;
 import net.monkeystudio.chatrbtw.service.bean.income.UserTotalIncomeDetail;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 
 /**
  * Created by bint on 20/03/2018.
  */
 @Controller
 @RequestMapping(value = "/admin/income")
-public class IncomeController extends BaseController{
+public class IncomeController extends BaseController {
 
     @Autowired
     private RespHelper respHelper;

@@ -1,6 +1,6 @@
 package net.monkeystudio.wx.controller;
 
-import net.monkeystudio.base.BaseController;
+import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.wx.service.WxAuthApiService;
@@ -17,7 +17,7 @@ import java.io.BufferedReader;
 
 @Controller
 @RequestMapping(value = "/wx")
-public class WxController extends BaseController{
+public class WxController extends BaseController {
 
 	@Autowired
 	private WxService wxService;
@@ -122,16 +122,33 @@ public class WxController extends BaseController{
 	 * 网页授权
 	 * @return
 	 */
-		@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
-		public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("id")Integer wxPubId) throws Exception{
-			String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubId);
+	@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
+    public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("id")Integer wxPubId) throws Exception{
+	    String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubId);
 
-			response.sendRedirect(redirectUrl);
+	    response.sendRedirect(redirectUrl);
 
-			return null;
+	    return null;
 	}
 
+    /**
+     * 当用户禁止授权的时候,只会传state值过来.
+     * * @param request
+     * @param code
+     * @param state
+     * @param appId
+     * @return
+     * @throws Exception
+     */
+	@RequestMapping(value = "/oauth/code", method = RequestMethod.GET)
+	public ModelAndView oauth(HttpServletResponse response,HttpServletRequest request,@RequestParam(value = "code",required = false)String code,@RequestParam("state")String state,@RequestParam(value = "appid",required = false)String appId)throws Exception{
+		Log.d("============== code = {?}  , state = {?} ,  appid = {?}",code,state,appId);
 
+		wxOauthService.handleCode(code,appId);
+
+		response.sendRedirect("http://www.baidu.com");//测试,跳转h5
+		return null;
+	}
 
 
 

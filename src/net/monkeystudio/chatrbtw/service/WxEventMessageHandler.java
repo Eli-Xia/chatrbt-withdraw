@@ -1,7 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.base.utils.HtmlTagUtil;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
@@ -10,8 +10,6 @@ import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
-import net.monkeystudio.chatrbtw.service.bean.ethnicgroupscode.EthnicGroupsCodeValidatedResp;
-import net.monkeystudio.service.CfgService;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 
@@ -164,7 +162,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         Integer wxPubId = this.createChatPetH5Param(wxPubOriginId);
 
                         //url = www.keendo.com.cn/res/wedo/zebra.html?id=wxPubId
-                        String url = chatPetService.getZebraHtmlUrl(wxPubId);
+                        String url = chatPetService.getCheckLoginUrl(wxPubId);
 
                         customerNewsItem.setUrl(url);
                         customerNewsItem.setPicUrl(chatPetService.getNewsMessageCoverUrl());

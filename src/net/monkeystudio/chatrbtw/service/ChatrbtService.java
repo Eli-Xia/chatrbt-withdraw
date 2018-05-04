@@ -2,16 +2,16 @@ package net.monkeystudio.chatrbtw.service;
 
 import javax.annotation.PostConstruct;
 
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.utils.HttpUtils;
+import net.monkeystudio.base.utils.JsonHelper;
+import net.monkeystudio.base.utils.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.monkeystudio.base.RespBase;
 import net.monkeystudio.chatrbtw.service.bean.TuLingReq;
 import net.monkeystudio.chatrbtw.service.bean.TuLingResp;
-import net.monkeystudio.service.CfgService;
-import net.monkeystudio.utils.HttpUtils;
-import net.monkeystudio.utils.JsonHelper;
-import net.monkeystudio.utils.Log;
 
 @Service
 public class ChatrbtService {

@@ -7,6 +7,9 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.utils.HttpUtils;
+import net.monkeystudio.base.utils.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +21,6 @@ import net.monkeystudio.chatrbtw.mapper.TuLingRobotMapper;
 import net.monkeystudio.chatrbtw.service.bean.TuLingReq;
 import net.monkeystudio.chatrbtw.service.bean.TuLingResp;
 import net.monkeystudio.chatrbtw.service.bean.TuLingRespItem;
-import net.monkeystudio.service.CfgService;
-import net.monkeystudio.utils.HttpUtils;
-import net.monkeystudio.utils.JsonHelper;
-import net.monkeystudio.utils.Log;
 
 /**
  * 图灵接口服务
@@ -100,7 +99,7 @@ public class TuLingInterService {
 	
 	/**
 	 * 根据用户ID选择图灵机器人
-	 * @param uIdentify
+	 * @param chatUid
 	 * @return
 	 */
 	private TuLingRobot getRobot(Integer chatUid){

@@ -1,12 +1,12 @@
 package net.monkeystudio.portal.controller;
 
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.local.Msg;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.AdHallService;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdHallDetailConfirmReq;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdHallItemDetail;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdHallResp;
-import net.monkeystudio.local.Msg;
-import net.monkeystudio.utils.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class PortalAdHallController extends PortalBaseController {
      */
     @RequestMapping(value = "/state/update", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase updateAdPushState(@RequestParam Integer state,@RequestParam Integer adId){
+    public RespBase updateAdPushState(@RequestParam Integer state, @RequestParam Integer adId){
         Integer userId = getUserId();
 
         if(userId == null){

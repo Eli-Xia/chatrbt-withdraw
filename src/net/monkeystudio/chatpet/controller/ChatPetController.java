@@ -1,14 +1,15 @@
 package net.monkeystudio.chatpet.controller;
 
-import net.monkeystudio.base.RespBase;
+import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
-import net.monkeystudio.exception.BizException;
-import net.monkeystudio.utils.RespHelper;
+
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -88,9 +89,26 @@ public class ChatPetController extends ChatPetBaseController{
      * @param
      * @return
      */
+    @RequestMapping(value = "/check-login", method = RequestMethod.GET)
+    public String asd(@RequestParam("id") Integer wxPubId,HttpServletResponse response) throws Exception {
+        Integer userId = getUserId();
+        if(userId == null){
+            //授权
+            response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
+        }else{
+            response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+        }
+        return null;
+    }
+
+    /**
+     * 完成今日任务领取奖励
+     * @param
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
-    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException{
+    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
 
         ChatPetInfo info = chatPetService.rewardHandle(req.getChatPetId(), req.getItemId());
 

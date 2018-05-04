@@ -1,10 +1,10 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.KrKeyword;
 import net.monkeystudio.chatrbtw.entity.KrResponse;
 import net.monkeystudio.chatrbtw.mapper.KrKeywordMapper;
 import net.monkeystudio.chatrbtw.mapper.KrResponseMapper;
-import net.monkeystudio.utils.Log;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
