@@ -319,6 +319,7 @@ footer a {
     background-color: #F7D4C7;
     color: red;
     margin-bottom: 14px;
+    display: none;
 }
 
 .err_msg img {

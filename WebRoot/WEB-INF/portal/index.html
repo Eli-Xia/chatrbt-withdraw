@@ -8,6 +8,7 @@
     <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
     <link rel="stylesheet" href="${base}/res/portal/css/new_index.css"/>
     <script src="${base}/res/vendor/jquery-3.1.1.min.js" async="async"></script>
+    <script src="${base}/res/vendor/vue.js" async="async"></script>
 </head>
 <body>
 <div class="logo">
@@ -28,7 +29,7 @@
             <div class="join-box">
                 <img src="${base}/res/portal/images/text.png">
                 <div id="login">
-                    <div class="err_msg" v-if="errShow">
+                    <div class="err_msg">
                         <img src="${base}/res/portal/images/err.png" alt="金豆传媒">
                         账号或密码错误，请重新输入
                     </div>
@@ -53,7 +54,7 @@
                     </div>
                 </div>
                 <div id="register">
-                    <div class="err_msg" v-if="show">
+                    <div class="err_msg">
                         <img src="${base}/res/portal/images/err.png" alt="金豆传媒">
                         <span>{{msg}}</span>
                     </div>
@@ -153,7 +154,6 @@
         Rights Reserved</a>
 </footer>
 <script src="${base}/res/js/config.js" async="async"></script>
-<script src="${base}/res/vendor/vue.js" async="async"></script>
 <script src="${base}/res/portal/js/new_index.js"></script>
 </body>
 </html>

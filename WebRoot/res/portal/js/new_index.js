@@ -195,8 +195,7 @@ window.onload = function () {
             email: '',
             password: '',
             remember: false,
-            active: "remember-sure",
-            errShow: false
+            active: "remember-sure"
         },
         created: function () {
             var _self = this;
@@ -260,14 +259,14 @@ window.onload = function () {
                             }
                             window.location.href = base + '/home.html';
                         } else {
-                            _self.errShow = true
+                            $("#login .err_msg").show();
                         }
                     }
                 })
             },
             registerClick: function () {
                 registerModel();
-                this.errShow = false
+                $("#login .err_msg").hide();
             }
         }
     });
@@ -282,8 +281,7 @@ window.onload = function () {
             regEmail: /^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,//邮箱格式
             regNick: /^[\u4e00-\u9fa5a-zA-Z0-9_-]{1,30}$/,
             regPassword: /^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9_`~!@#$%^&*+=()<>{};:,."\/'[\]-]{6,16}$/,//必须要有数字和字母   可以有 特殊字符
-            msg: "",
-            show: false,
+            msg: ""
         },
         created: function () {
             var _self = this;
@@ -363,11 +361,11 @@ window.onload = function () {
                     success: function (res) {
                         if (res.retCode == RetCode.SUCCESS) {
                             sessionStorage.setItem("userEmail", data.email);
-                            _self.show = false;
+                            $("#register .err_msg").hide();
                             location.replace(base + "/email_success.html");
                         } else if (res.retCode == RetCode.FAILED) {
                             _self.requireCode();
-                            _self.show = true;
+                            $("#register .err_msg").show();
                             _self.msg = res.retMsg
                         }
                     }
@@ -375,6 +373,7 @@ window.onload = function () {
             },
             loginClick: function () {
                 loginModel();
+                $("#register .err_msg").hide();
             }
         }
     });
