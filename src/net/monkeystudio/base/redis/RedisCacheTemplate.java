@@ -875,4 +875,26 @@ public class RedisCacheTemplate {
 
         return reuslt;
     }
+
+    /**
+     * 返回列表 key 的长度。
+     * 如果 key 不存在，则 key 被解释为一个空列表，返回 0
+     * @param key
+     * @return
+     */
+    public Long llen(String key ){
+        Jedis redis = getPool().getResource();
+        Long reuslt = null;
+        try {
+            reuslt = redis.llen(key);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e);
+        } finally {
+            redis.close();
+        }
+
+        return reuslt;
+    }
 }

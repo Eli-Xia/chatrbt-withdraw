@@ -736,10 +736,20 @@ public class ChatPetService {
         return posterUrl;
     }
 
+    public RedisCacheTemplate getRedisCacheTemplate() {
+        return redisCacheTemplate;
+    }
+
+    private void generateChatPetAppearence(Integer count){
+        while (count.intValue() > 0){
+            this.generateChatPetAppearence();
+            count--;
+        }
+    }
     /**
      * 生成一个宠物外观放入外观池
      */
-    public void generateChatPetAppearence(){
+    private void generateChatPetAppearence(){
 
         Boolean flag = false;
         String appearanceCode = null;
@@ -789,6 +799,11 @@ public class ChatPetService {
         String key = this.getAppearenceCodePoolKey();
 
         String appearenceCode = redisCacheTemplate.lpop(key);
+
+        Long count = redisCacheTemplate.llen(key);
+        if(count.longValue() < 100L){
+            this.generateChatPetAppearence(10);
+        }
 
         return appearenceCode;
     }
