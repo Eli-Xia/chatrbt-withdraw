@@ -473,6 +473,7 @@ public class ChatPetService {
         //未关注公众号或未领取宠物
         if(!isUserFollowWxPub(wxPubAppId,wxFanOpenId) || !isFanOwnChatPet(wxPubAppId,wxFanOpenId)){
             response.sendRedirect(this.getChatPetPosterUrl());
+            return null;
         }
 
         //准备跳转宠物日志h5数据
