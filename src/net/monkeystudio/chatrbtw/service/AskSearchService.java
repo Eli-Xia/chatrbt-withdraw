@@ -293,7 +293,9 @@ public class AskSearchService {
 
     private void resetFirstPage(String wxPubOriginId ,String wxfanOpenId ){
         String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,wxPubOriginId);
-        redisCacheTemplate.setObject(moreNewsCountCacheKey,1L);//关键字搜索,每次应从第一页开始
+
+        redisCacheTemplate.del(moreNewsCountCacheKey);
+        redisCacheTemplate.incr(moreNewsCountCacheKey);
     }
 
     private void setWordCache(String wxPubOriginId ,String wxfanOpenId , String word){
