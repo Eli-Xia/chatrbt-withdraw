@@ -6,6 +6,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping(value = "/chat-pet/pet")
 public class ChatPetController extends ChatPetBaseController{
 
+    private final static String POSTER_URI = "/res/wedo/poster.html";
     @Autowired
     private ChatPetService chatPetService;
 
@@ -35,7 +37,6 @@ public class ChatPetController extends ChatPetBaseController{
     @Autowired
     private RespHelper respHelper;
 
-    //private final static String ZEBRA_HTML = "https://test.keendo.com.cn/res/wedo/zebra.html?id=";
 
 
     @ResponseBody
@@ -81,7 +82,6 @@ public class ChatPetController extends ChatPetBaseController{
 
         //未关注或未领取跳到海报页面
         if(vo.isRedirectPoster()){
-            Log.d("===================跑到这里说明是需要跳转poster==============");
             response.sendRedirect(chatPetService.getChatPetPosterUrl());
             return null;
         }
@@ -100,14 +100,15 @@ public class ChatPetController extends ChatPetBaseController{
      * @param
      * @return
      */
-    @RequestMapping(value = "/home/page", method = RequestMethod.GET)
-    public String asd(@RequestParam("id") Integer wxPubId,HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/home-page", method = RequestMethod.GET)
+    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
         Integer userId = getUserId();
         if(userId == null){
             //授权
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
-            response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+            request.getRequestDispatcher(POSTER_URI).forward(request, response);
+
         }
         return null;
     }

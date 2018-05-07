@@ -112,7 +112,7 @@ public class WxFanService {
      */
     public Integer save(WxFan wxFan){
 
-        /*String nickname = wxFan.getNickname();
+        String nickname = wxFan.getNickname();
         nickname = this.filter(nickname);
         wxFan.setNickname(nickname);
 
@@ -122,8 +122,7 @@ public class WxFanService {
             result = wxFanMapper.insert(wxFan);
         }catch (Exception e){
             Log.e(e);
-        }*/
-        Integer result = wxFanMapper.insert(wxFan);
+        }
 
         this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan);
         return result;

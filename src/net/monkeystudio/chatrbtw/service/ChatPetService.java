@@ -37,6 +37,7 @@ public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
+
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
@@ -596,6 +597,8 @@ public class ChatPetService {
         return false;
     }
 
+
+
     /**
      * 宠物日志页面url
      *
@@ -609,7 +612,7 @@ public class ChatPetService {
 
     public String getHomePageUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/api/chat-pet/pet/home/page" + wxPubId;
+        String url = "http://" + domain + "/api/chat-pet/pet/home-page" + wxPubId;
         return url;
     }
 
