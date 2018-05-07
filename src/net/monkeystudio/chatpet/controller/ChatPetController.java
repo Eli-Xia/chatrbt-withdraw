@@ -4,6 +4,7 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
@@ -40,7 +41,7 @@ public class ChatPetController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(/**@RequestBody ChatPetIdReq chatPetIdReq,*/ HttpServletResponse response){
+    public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
 
         Integer fanId = getUserId();
 
@@ -65,7 +66,6 @@ public class ChatPetController extends ChatPetBaseController{
      */
     @RequestMapping(value = "/oauth/fan-info", method = RequestMethod.GET)
     public ModelAndView oauth(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code",required = false)String code, @RequestParam("state")String state, @RequestParam(value = "appid",required = false)String appId)throws Exception{
-        Log.d("============== code = {?}  , state = {?} ,  appid = {?}",code,state,appId);
 
         if(!WxOauthService.OAUTH_CODE_URL_STATE.equals(state)){
             return null;
@@ -85,7 +85,6 @@ public class ChatPetController extends ChatPetBaseController{
     }
 
     /**
-     * 完成今日任务领取奖励
      * @param
      * @return
      */
@@ -109,7 +108,9 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
-
+        if(req!=null){
+            Log.d("=============== itemid = {?} , chatpetid = {?} ===========",req.getItemId().toString(),req.getChatPetId().toString());
+        }
         ChatPetInfo info = chatPetService.rewardHandle(req.getChatPetId(), req.getItemId());
 
         return respHelper.ok(info);
