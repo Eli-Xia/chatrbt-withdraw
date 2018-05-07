@@ -1,4 +1,5 @@
 window.onload = function () {
+    $("#loading").hide();
     // canvas
     var canvas = document.getElementById('canvas'),
         container = document.getElementById('container'),
@@ -382,5 +383,4 @@ window.onload = function () {
     }
     //滚动滑轮触发scrollFunc方法  //ie 谷歌
     window.onmousewheel = document.onmousewheel = scrollFunc;
-
 }
