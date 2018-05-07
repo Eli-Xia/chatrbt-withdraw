@@ -86,4 +86,14 @@
         where
         id = #{id}
     </update>
+
+
+    <select id="countByAppearceCode" parameterType="map">
+        select
+            count(id)
+        from
+            e_chat_pet
+        where
+            appearance_code = #{appearanceCode}
+    </select>
 </mapper>

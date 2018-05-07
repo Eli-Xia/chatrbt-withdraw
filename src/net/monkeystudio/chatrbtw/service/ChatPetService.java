@@ -1,7 +1,10 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -71,6 +74,9 @@ public class ChatPetService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
 
+    @Autowired
+    private RedisCacheTemplate redisCacheTemplate;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -93,6 +99,10 @@ public class ChatPetService {
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
+
+        String appearenceCode = this.getChatPetAppearenceCodeFromPool();
+        chatPet.setAppearenceCode(appearenceCode);
+
 
         this.save(chatPet);
 
@@ -146,8 +156,8 @@ public class ChatPetService {
 
         String headImgUrl = owner.getHeadImgUrl();
         if(headImgUrl == null){
-        wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
-    }
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+        }
 
         owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
         ownerInfo.setHeadImg(owner.getHeadImgUrl());
@@ -347,6 +357,8 @@ public class ChatPetService {
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
 
+
+
         return chatPetBaseInfo;
     }
 
@@ -403,9 +415,9 @@ public class ChatPetService {
 
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
-
-
     }
+
+
 
     private String calculateGeneticCode(Long createTime){
 
@@ -699,6 +711,7 @@ public class ChatPetService {
     }
 
 
+
     /**
      * 得到封面图的url
      * @return
@@ -723,12 +736,73 @@ public class ChatPetService {
         return posterUrl;
     }
 
+    /**
+     * 生成一个宠物外观放入外观池
+     */
+    public void generateChatPetAppearence(){
+
+        Boolean flag = false;
+        String appearanceCode = null;
+        while (!flag){
+            String[] appearance = this.randomAppearence();
+            appearanceCode = appearance.toString();
+            if(!this.appearenceIsExist(null,appearanceCode)){
+                flag = true;
+            }
+        }
+
+        this.pushAppearence(appearanceCode);
+    }
+
+
+    private void pushAppearence(String appearenceCode){
+        String key = this.getAppearenceCodePoolKey();
+
+        redisCacheTemplate.rpush(key, appearenceCode);
+    }
+
+    /**
+     * 外貌是否已经存在
+     * @param appeareanceType 外观的类型
+     * @param appearenceCode 外观的组成码
+     * @return
+     */
+    private Boolean appearenceIsExist (Integer appeareanceType ,String appearenceCode){
+
+        Integer count = chatPetMapper.countByAppearceCode(appearenceCode);
+
+        if(count.intValue() != 0){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private String[] randomAppearence(){
+
+        return null;
+    }
+
+
+    private String getChatPetAppearenceCodeFromPool(){
+        String key = this.getAppearenceCodePoolKey();
+
+        String appearenceCode = redisCacheTemplate.lpop(key);
+
+        return appearenceCode;
+    }
+
+    private String getAppearenceCodePoolKey(){
+        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:appearence-code:pool";
+        return key;
+    }
+
     //用户未授权跳转到授权页面
     /*public String getNoAuthRedirectUrl(Integer wxFanId){
         WxFan wxFan = wxFanService.getById(wxFanId);
         String wxPubOriginId = wxFan.getWxPubOriginId();
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
 
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;

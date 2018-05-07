@@ -21,4 +21,6 @@ public interface ChatPetMapper {
     Integer increaseCoin(@Param("id") Integer chatPetId ,@Param("rewardCoin") Float rewardCoin);
 
     List<ChatPet> selectListByExperience(@Param("secondEthnicGroupsId") Integer secondEthnicGroupsId,@Param("startIndex") Integer startIndex,@Param("pageSize") Integer pageSize);
+
+    Integer countByAppearceCode(@Param("appearenceCode") String appearenceCode);
 }

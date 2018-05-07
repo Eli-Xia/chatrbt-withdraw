@@ -833,5 +833,46 @@ public class RedisCacheTemplate {
         return count;
     }
 
+    /**
+     * 移除并返回列表 key 的头元素。
+     * @param key
+     * @return
+     */
+    public String lpop(String key) {
+        Jedis redis = getPool().getResource();
+        String reuslt = null;
+        try {
+            reuslt = redis.lpop(key);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e);
+        } finally {
+            redis.close();
+        }
 
+        return reuslt;
+    }
+
+
+    /**
+     * 将一个或多个值 value 插入到列表 key 的表尾(最右边)
+     * @param key
+     * @return 执行 RPUSH 操作后，表的长度
+     */
+    public Long rpush(String key ,String... value){
+        Jedis redis = getPool().getResource();
+        Long reuslt = null;
+        try {
+            reuslt = redis.rpush(key,value);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e);
+        } finally {
+            redis.close();
+        }
+
+        return reuslt;
+    }
 }
