@@ -60,6 +60,7 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    font-size: 14px;
     font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }
 
@@ -107,6 +108,7 @@ body > .login > button {
     text-align: center;
     padding: 23px 0;
     color: #fefefe;
+    font-size: 14px;
     border: none;
     cursor: pointer;
     float: right;
@@ -148,10 +150,10 @@ body > .login > button {
     left: 50%;
     margin-left: -242px;
     height: 34px;
-    transition: all 1s linear;
-    -moz-transition: all 1s linear;
-    -webkit-transition: all 1s linear;
-    -o-transition: all 1s linear;
+    transition: top 1s linear;
+    -moz-transition: top 1s linear;
+    -webkit-transition: top 1s linear;
+    -o-transition: top 1s linear;
     z-index: 60;
 }
 
@@ -214,7 +216,6 @@ body > .login > button {
     left: 2.4%;
 }
 
-/*625  617*/
 #img_box .circle {
     position: absolute;
     bottom: 6.2%;
