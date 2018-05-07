@@ -73,6 +73,10 @@ public class AskSearchService {
 
         List<CustomerNewsItem> customerNewsList = new ArrayList<>();
 
+        if(askSearchVoList == null){
+            return customerNewsList;
+        }
+
         for(AskSearchVo askSearchVo : askSearchVoList){
             CustomerNewsItem customerNewsItem = new CustomerNewsItem();
 
@@ -114,7 +118,12 @@ public class AskSearchService {
             }
 
             Long currentPageLong = this.incrWordCachePage(wxPubOriginId, wxfanOpenId);
-            currentPage = currentPageLong.intValue();
+
+            if(currentPageLong != null){
+                currentPage = currentPageLong.intValue();
+            }else {
+                currentPage = 1;
+            }
 
             QueryWxPubNewsList qo = new QueryWxPubNewsList();
             qo.setTitle(lastContent);
@@ -192,7 +201,7 @@ public class AskSearchService {
     }
 
     private Boolean needToSendAd(String wxPubOriginId ,String wxFanOpenId){
-        Integer page = this.getCurrentPage(wxPubOriginId, wxFanOpenId);
+        Long page = this.getCurrentPage(wxPubOriginId, wxFanOpenId);
 
         if(page.intValue() == ASK_SEARCH_SEND_COUNT.intValue()){
             return true;
@@ -206,10 +215,10 @@ public class AskSearchService {
         String lastContent = this.getAskSearchLastContentFromCache(wxPubOriginId,wxFanOpenId);
         Integer totalCount = wxMaterialMgrService.getWxPubNewsCount(wxPubOriginId,lastContent);
 
-        Integer page = this.getCurrentPage(wxPubOriginId, wxFanOpenId);
+        Long page = this.getCurrentPage(wxPubOriginId, wxFanOpenId);
 
         //当前素材总数
-        Integer nowCount = page * WX_PUB_ARTICLE_PUSH_COUNT;
+        Integer nowCount = page.intValue() * WX_PUB_ARTICLE_PUSH_COUNT;
         //判断是否有"更多"图文消息
         if(totalCount.intValue() > nowCount.intValue()){
             AskSearchVo askSearchVo = new AskSearchVo();
@@ -270,21 +279,21 @@ public class AskSearchService {
         return redisCacheTemplate.incr(moreNewsPageCacheKey);//关键字搜索,每次应从第一页开始
     }
 
-    private Integer getCurrentPage(String wxPubOriginId ,String wxfanOpenId ){
+    private Long getCurrentPage(String wxPubOriginId ,String wxfanOpenId ){
         String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,wxPubOriginId);
-        String result = redisCacheTemplate.getObject(moreNewsCountCacheKey);
+        Long result = redisCacheTemplate.getObject(moreNewsCountCacheKey);
 
         if(result == null){
-            result = "1";
+            result = 1L;
         }
 
-        return Integer.valueOf(result);
+        return result;
     }
 
 
     private void resetFirstPage(String wxPubOriginId ,String wxfanOpenId ){
         String moreNewsCountCacheKey = this.getMoreNewsCountCacheKey(wxfanOpenId,wxPubOriginId);
-        redisCacheTemplate.del(moreNewsCountCacheKey);//关键字搜索,每次应从第一页开始
+        redisCacheTemplate.setObject(moreNewsCountCacheKey,1L);//关键字搜索,每次应从第一页开始
     }
 
     private void setWordCache(String wxPubOriginId ,String wxfanOpenId , String word){
