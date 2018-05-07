@@ -94,11 +94,13 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         String parentIdStr = null;
                         if(qrSceneStr.indexOf("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR) != -1){
                             parentIdStr = qrSceneStr.replace("qrscene_" + EthnicGroupsService.EVENT_SPECIAL_STR, "");
+                        }else {
+                            if(qrSceneStr.indexOf(EthnicGroupsService.EVENT_SPECIAL_STR) != -1){
+                                parentIdStr = qrSceneStr.replace(EthnicGroupsService.EVENT_SPECIAL_STR, "");
+                            }
                         }
 
-                        if(qrSceneStr.indexOf(EthnicGroupsService.EVENT_SPECIAL_STR) != -1){
-                            parentIdStr = qrSceneStr.replace(EthnicGroupsService.EVENT_SPECIAL_STR, "");
-                        }
+
 
                         Integer chatPetId = null;
                         ChatPet parentChatPet = null;
