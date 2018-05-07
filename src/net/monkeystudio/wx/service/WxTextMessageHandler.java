@@ -92,7 +92,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     private RWxPubProductService rWxPubProductService;
 
     @Autowired
-    private ChatPetLogService chatPetLogService;
+    private ChatPetService chatPetService;
 
     @Autowired
     private CfgService cfgService;
@@ -169,13 +169,16 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
-            //第一次聊天填充任务池
-            chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
+            if(chatPetService.isFansOwnChatPet(wxPubOriginId,wxFanOpenId)){
 
-            //完成陪聊宠每日签到任务
-            chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());
+                //第一次聊天填充任务池
+                chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
-            this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+                //完成陪聊宠每日签到任务
+                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());
+
+                this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+            }
 
         }else{
 

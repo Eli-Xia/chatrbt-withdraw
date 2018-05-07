@@ -14,9 +14,6 @@ import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
@@ -25,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,6 +67,8 @@ public class ChatPetService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
 
+    @Autowired
+    private RWxPubProductService rWxPubProductService;
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -123,7 +121,7 @@ public class ChatPetService {
      * 获取宠物的信息
      * @param wxFanId
      * @return
-     */
+
     public ChatPetInfo getInfo(Integer wxFanId){
         ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
 
@@ -212,12 +210,13 @@ public class ChatPetService {
 
         return chatPetBaseInfo;
     }
+     */
 
     /**
      * 获取宠物的信息
      * @param chatPetId
      * @return
-
+     */
     public ChatPetInfo getInfo(Integer chatPetId){
         ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
 
@@ -304,7 +303,7 @@ public class ChatPetService {
 
         return chatPetBaseInfo;
     }
-     */
+
 
     /**
      * 获取宠物的信息
@@ -407,6 +406,36 @@ public class ChatPetService {
 
     }
 
+    /**
+     * 粉丝是否拥有宠物
+     * @param wxFanOpenId
+     * @return
+     */
+    public boolean isFansOwnChatPet(String wxPubOriginId,String wxFanOpenId){
+        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        return chatPet != null;
+    }
+
+    /**
+     * 是否满足宠陪聊要求 1:公众号开通产品线 2:粉丝拥有宠物
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     * @return
+     */
+    public boolean isSatisfyChatPetRequire(String wxPubOriginId,String wxFanOpenId){
+        boolean isFanOwnChatPet = false;
+
+        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+        if(chatPet != null){
+            isFanOwnChatPet = true;
+        }
+
+        boolean isProductEnable = rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId);
+
+        return isFanOwnChatPet && isProductEnable;
+    }
+
     private String calculateGeneticCode(Long createTime){
 
         Calendar calendar = Calendar.getInstance();
@@ -460,7 +489,7 @@ public class ChatPetService {
      * 微信网页授权处理
      * @param code
      */
-    public ChatPetSessionVo wxOauthHandle(HttpServletResponse response,String code,String wxPubAppId) throws Exception{
+    public ChatPetSessionVo wxOauthHandle(String code,String wxPubAppId) throws Exception{
 
         WxOauthAccessToken wxOauthAccessToken = this.getOauthAccessTokenResponse(code, wxPubAppId);
 
@@ -470,14 +499,16 @@ public class ChatPetService {
 
         String wxFanOpenId = wxOauthAccessToken.getWxFanOpenId();
 
+        boolean isRedirectPoster = false;
         //未关注公众号或未领取宠物
         if(!isUserFollowWxPub(wxPubAppId,wxFanOpenId) || !isFanOwnChatPet(wxPubAppId,wxFanOpenId)){
-            response.sendRedirect(this.getChatPetPosterUrl());
-            return null;
+            /*response.sendRedirect(this.getChatPetPosterUrl());
+            return null;*/
+            isRedirectPoster = true;
         }
 
         //准备跳转宠物日志h5数据
-        ChatPetSessionVo vo = this.createChatPetSessionVo(wxPubAppId, wxFanOpenId);
+        ChatPetSessionVo vo = this.createChatPetSessionVo(wxPubAppId, wxFanOpenId,isRedirectPoster);
 
         return vo;
 
@@ -489,7 +520,7 @@ public class ChatPetService {
      * @param wxFanOpenId
      * @return
      */
-    private ChatPetSessionVo createChatPetSessionVo(String wxPubAppId,String wxFanOpenId){
+    private ChatPetSessionVo createChatPetSessionVo(String wxPubAppId,String wxFanOpenId,Boolean isRedirectPoster){
 
         WxPub wxPub = wxPubService.getWxPubByAppId(wxPubAppId);
 
@@ -502,6 +533,8 @@ public class ChatPetService {
         sessionVo.setWxFanId(wxFan.getId());
 
         sessionVo.setWxPubId(wxPub.getId());
+
+        sessionVo.setRedirectPoster(isRedirectPoster);
 
         return sessionVo;
 
@@ -574,9 +607,9 @@ public class ChatPetService {
         return url;
     }
 
-    public String getCheckLoginUrl(Integer wxPubId){
+    public String getHomePageUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/api/chat-pet/pet/check-login" + wxPubId;
+        String url = "http://" + domain + "/api/chat-pet/pet/home/page" + wxPubId;
         return url;
     }
 
@@ -719,7 +752,7 @@ public class ChatPetService {
     public String getChatPetPosterUrl(){
         //"https://test.keendo.com.cn/res/wedo/poster.html"
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String posterUrl = "http://" + domain + "res/wedo/poster.html";
+        String posterUrl = "http://" + domain + "/res/wedo/poster.html";
 
         return posterUrl;
     }

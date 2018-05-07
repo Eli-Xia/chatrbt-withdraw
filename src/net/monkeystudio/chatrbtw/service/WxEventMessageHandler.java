@@ -162,7 +162,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         Integer wxPubId = this.createChatPetH5Param(wxPubOriginId);
 
                         //url = www.keendo.com.cn/res/wedo/zebra.html?id=wxPubId
-                        String url = chatPetService.getCheckLoginUrl(wxPubId);
+                        String url = chatPetService.getHomePageUrl(wxPubId);
 
                         customerNewsItem.setUrl(url);
                         customerNewsItem.setPicUrl(chatPetService.getNewsMessageCoverUrl());

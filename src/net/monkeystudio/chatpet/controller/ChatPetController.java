@@ -2,15 +2,14 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
-
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,15 +40,17 @@ public class ChatPetController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
+    public RespBase getAdClickLogList(@RequestBody ChatPetIdReq req, HttpServletRequest request,HttpServletResponse response) throws Exception{
 
         Integer fanId = getUserId();
 
         if(fanId == null){
             respHelper.nologin();
+            //response.sendRedirect("localhost:8080/api/chat-pet/pet/check-login?id=8");
+            //return null;
         }
 
-        ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
+        ChatPetInfo chatPetInfo = chatPetService.getInfo(req.getId());
 
         return respHelper.ok(chatPetInfo);
     }
@@ -72,7 +73,18 @@ public class ChatPetController extends ChatPetBaseController{
         }
 
         //微信网页授权处理
-        ChatPetSessionVo vo = chatPetService.wxOauthHandle(response,code,appId);
+        ChatPetSessionVo vo = chatPetService.wxOauthHandle(code,appId);
+
+        if(vo == null){
+            return null;
+        }
+
+        //未关注或未领取跳到海报页面
+        if(vo.isRedirectPoster()){
+            Log.d("===================跑到这里说明是需要跳转poster==============");
+            response.sendRedirect(chatPetService.getChatPetPosterUrl());
+            return null;
+        }
 
         //fanId存入session
         this.saveSessionUserId(vo.getWxFanId());
@@ -88,7 +100,7 @@ public class ChatPetController extends ChatPetBaseController{
      * @param
      * @return
      */
-    @RequestMapping(value = "/check-login", method = RequestMethod.GET)
+    @RequestMapping(value = "/home/page", method = RequestMethod.GET)
     public String asd(@RequestParam("id") Integer wxPubId,HttpServletResponse response) throws Exception {
         Integer userId = getUserId();
         if(userId == null){
