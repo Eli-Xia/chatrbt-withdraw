@@ -3,18 +3,31 @@ window.onload = function () {
     var canvas = document.getElementById('canvas'),
         container = document.getElementById('container'),
         ctx = canvas.getContext('2d'),
-        w = canvas.width = window.innerWidth,
+        w = window.innerWidth,
         h = canvas.height = window.innerHeight,
         stars = [],
         count = 0,
         maxStars = 300;
+    if (w < 1000) {
+        w = 1000;
+    }
+    canvas.width = w;
     container.style.width = w + 'px';
     container.style.height = h + 'px';
     $(window).resize(function () {
-        w = canvas.width = window.innerWidth;
+        w = window.innerWidth;
         h = canvas.height = window.innerHeight;
+        if (w < 1000) {
+            w = 1000;
+        }
+        canvas.width = w;
         container.style.width = w + 'px';
         container.style.height = h + 'px';
+        stars = [];
+        count = 0;
+        for (var i = 0; i < maxStars; i++) {
+            new Star();
+        }
     });
     var canvas2 = document.createElement('canvas'),
         ctx2 = canvas2.getContext('2d');
@@ -72,29 +85,6 @@ window.onload = function () {
     }
 
     animation();
-    // 第二页 抖动
-    // var circle = $('.circle'),
-    //     err = $('.err'),
-    //     triangle = $('.triangle');
-    //
-    // function randomWiggle(min, max) {
-    //     return Math.floor(Math.random() * (max - min)) + min;
-    // }
-    //
-    // setInterval(function () {
-    //     triangle.animate({
-    //         top: randomWiggle(98, 105),
-    //         left: randomWiggle(-22, -10)
-    //     }, 500);
-    //     circle.animate({
-    //         bottom: randomWiggle(34, 40),
-    //         left: randomWiggle(260, 266)
-    //     }, 500);
-    //     err.animate({
-    //         bottom: randomWiggle(134, 140),
-    //         left: randomWiggle(12, 18)
-    //     }, 500);
-    // }, 500);
     var joinBox = document.querySelector('.join-box'),
         Login = document.querySelector('#login'),
         Register = document.querySelector('#register'),
@@ -153,6 +143,14 @@ window.onload = function () {
     };
     btns[1].addEventListener('click', loginModel);
     btns[0].addEventListener('click', registerModel);
+    liTarget[0].addEventListener('click', function () {
+        targetSign = 0;
+        scrollTarget()
+    });
+    liTarget[1].addEventListener('click', function () {
+        targetSign = 9;
+        scrollTarget()
+    });
     var scrollFunc = function (e) {
         e = e || window.event;
         if (e.wheelDelta) {
