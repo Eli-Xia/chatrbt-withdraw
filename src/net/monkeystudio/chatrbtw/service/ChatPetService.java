@@ -801,17 +801,4 @@ public class ChatPetService {
         return posterUrl;
     }
 
-    //用户未授权跳转到授权页面
-    /*public String getNoAuthRedirectUrl(Integer wxFanId){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
-
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
-        return null;
-    }*/
-    public static void main(String[]args){
-    }
 }
