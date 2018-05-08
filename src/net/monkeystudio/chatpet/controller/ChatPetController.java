@@ -5,6 +5,7 @@ import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
+import net.monkeystudio.chatpet.controller.req.WxFanId;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
@@ -123,10 +124,10 @@ public class ChatPetController extends ChatPetBaseController{
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase login(HttpServletResponse response,HttpServletRequest request) {
-        Integer fanId = 42;
-        this.saveSessionUserId(fanId);
-        ChatPetInfo info = chatPetService.getInfo(fanId);
+    public RespBase login(@RequestBody WxFanId wxFanId, HttpServletResponse response, HttpServletRequest request) {
+        Integer id = wxFanId.getId();
+        this.saveSessionUserId(id);
+        ChatPetInfo info = chatPetService.getInfo(id);
         return respHelper.ok(info);
     }
 
