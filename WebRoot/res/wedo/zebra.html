@@ -132,7 +132,8 @@
                 <ul>
                     <li v-for="item in logs">
                         {{item.content}}
-                        <em v-if="item.coin">＋{{item.coin}}</em>
+                        <em v-if="item.coin && item.rewardType == 1" class="token">＋{{item.coin}}</em>
+                        <em v-if="item.coin && item.rewardType == 2" class="experience">＋{{item.coin}}</em>
                         <span>{{item.createTime | formatTime}}</span>
                     </li>
                 </ul>
@@ -177,7 +178,7 @@
                         {{userInfo.nickname}}的魔鬼猫
                         </span>
                     <div class="zebra-msg">
-                        <img :src="list.appearanceUrl" id="cat-img" alt="cat">
+                        <img :src="petBase" id="cat-img" alt="cat">
                     </div>
                     <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
                     <div class="bg-left bg" :style="{'background-color': '#' + bgColor}"></div>

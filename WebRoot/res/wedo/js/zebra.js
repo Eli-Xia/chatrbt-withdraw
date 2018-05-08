@@ -109,12 +109,7 @@ if (isWeixin) {
                 queryGroup() {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
-                    var data = JSON.stringify(
-                        {
-                            "chatPetId": this.id,
-                            "pageSize": 5
-                        }
-                    );
+                    var data = JSON.stringify({"pageSize": 5});
                     xhr.open('post', '/api/chat-pet/ethnic-groups/rank', true);
                     xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                     xhr.send(data);
@@ -150,6 +145,7 @@ if (isWeixin) {
                                 i.style.width = '150px';
                                 i.querySelector('i').className = "active";
                                 setTimeout(function () {
+                                    _self.list = resp.result;
                                     _self.logs = resp.result.petLogs;
                                     _self.taskList = resp.result.todayMissions;
                                 }, 500);

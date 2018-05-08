@@ -112,11 +112,17 @@ public class ChatPetController extends ChatPetBaseController{
     /**
      * 测试接口
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ResponseBody
-    public RespBase login(@RequestParam("id") Integer wxFanId, HttpServletResponse response, HttpServletRequest request) {
-        this.saveSessionUserId(wxFanId);
-        ChatPetInfo info = chatPetService.getInfo(wxFanId);
+    public RespBase login(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
+        if(!wxFanId.startsWith("keendo")){
+            return respHelper.failed("fail");
+        }
+        int i = wxFanId.lastIndexOf(".");
+        String wxFanIdStr = wxFanId.substring(i + 1);
+        int id = Integer.parseInt(wxFanIdStr);
+        this.saveSessionUserId(id);
+        ChatPetInfo info = chatPetService.getInfo(id);
         return respHelper.ok(info);
     }
 
@@ -137,6 +143,13 @@ public class ChatPetController extends ChatPetBaseController{
         ChatPetInfo info = chatPetService.rewardHandle(userId, req.getItemId());
 
         return respHelper.ok(info);
+    }
+
+    public static void main(String[]args){
+        String str = "keendo.42";
+        int i = str.lastIndexOf(".");
+        String substring = str.substring(i + 1);
+        System.out.println(1);
     }
 
 
