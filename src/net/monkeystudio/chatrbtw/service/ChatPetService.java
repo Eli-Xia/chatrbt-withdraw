@@ -351,13 +351,23 @@ public class ChatPetService {
         return chatPetBaseInfo;
     }
 
-    public ChatPetInfo rewardHandle(Integer chatPetId,Integer itemId) throws BizException{
+    public ChatPetInfo rewardHandle(Integer wxFanId,Integer itemId) throws BizException{
+        ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
+
+        if(chatPet == null){
+            throw new BizException("尚未领取宠物");
+        }
+
+        Integer chatPetId = chatPet.getId();
 
         if(!isAble2Reward(itemId)){
             throw new BizException("请完成任务后再领取奖励");
         }
+
         this.missionReward(chatPetId,itemId);
+
         ChatPetInfo info = this.getInfoAfterReward(chatPetId);
+
         return info;
     }
 
@@ -504,8 +514,6 @@ public class ChatPetService {
         boolean isRedirectPoster = false;
         //未关注公众号或未领取宠物
         if(!isUserFollowWxPub(wxPubAppId,wxFanOpenId) || !isFanOwnChatPet(wxPubAppId,wxFanOpenId)){
-            /*response.sendRedirect(this.getChatPetPosterUrl());
-            return null;*/
             isRedirectPoster = true;
         }
 
@@ -573,12 +581,9 @@ public class ChatPetService {
     private boolean isUserFollowWxPub(String wxPubAppId,String wxFanOpenId){
         String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
 
-        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        boolean isFans = wxFanService.isFans(wxPubOriginId, wxFanOpenId);
 
-        if(wxFan != null){
-            return true;
-        }
-        return false;
+        return isFans;
     }
 
     /**
@@ -744,7 +749,7 @@ public class ChatPetService {
     public String getNewsMessageCoverUrl(){
 
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/res/wedo/images/kitties_normal_cover.png";
+        String picUrl = "http://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
 
         return picUrl;
     }

@@ -192,4 +192,13 @@ public class WxFanService {
     private Integer update(WxFan wxFan) {
         return wxFanMapper.update(wxFan);
     }
+
+    public boolean isFans(String wxPubOriginId ,String wxFanOpenId){
+        boolean isFans = false;
+        WxFan wxFan = this.getWxFanFromDb(wxPubOriginId, wxFanOpenId);
+        if(wxFan != null){
+            isFans = true;
+        }
+        return isFans;
+    }
 }
