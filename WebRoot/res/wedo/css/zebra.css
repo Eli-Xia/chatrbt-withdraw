@@ -333,15 +333,23 @@ header {
 }
 #log li em {
   display: inline-block;
-  padding-left: 0.84rem;
-  color: #f9b721;
   font-size: 0.48rem;
   font-weight: 600;
-  background: url("../images/token.svg") no-repeat;
-  background-size: 0.66rem 0.66rem;
   font-style: normal;
   height: 0.66rem;
   line-height: 0.66rem;
+}
+#log li em.experience {
+  background: url("../images/lab.png") no-repeat;
+  color: #2196f9;
+  padding-left: 0.48rem;
+  background-size: 0.48rem 0.6rem;
+}
+#log li em.token {
+  background: url("../images/token.svg") no-repeat;
+  color: #f9b721;
+  padding-left: 0.84rem;
+  background-size: 0.66rem 0.66rem;
 }
 #log li + li {
   border-bottom: #ceced2;
