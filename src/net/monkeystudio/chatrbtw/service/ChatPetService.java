@@ -651,12 +651,33 @@ public class ChatPetService {
     }
 
     /**
+     * 通过微信粉丝id获取二级族群排行
+     * @param wxFanId
+     * @param pageSize
+     * @return
+     */
+    public List<ChatPetExperinceRankItem> getChatPetExperinceRankByWxFan(Integer wxFanId , Integer pageSize){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+
+        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+        if(chatPet == null){
+            return null;
+        }
+
+        Integer chatPetId = chatPet.getId();
+        return this.getChatPetExperinceRankByPet(chatPetId,pageSize);
+    }
+
+    /**
      * 通过宠物id获取二级族群排行
      * @param chatPetId
      * @param pageSize
      * @return
      */
-    public List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId , Integer pageSize){
+    private List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId , Integer pageSize){
         ChatPet chatPet = this.getById(chatPetId);
 
         if(chatPet == null){

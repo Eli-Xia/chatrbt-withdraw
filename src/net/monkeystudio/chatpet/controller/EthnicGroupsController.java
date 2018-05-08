@@ -19,7 +19,7 @@ import java.util.List;
  */
 @RequestMapping(value = "/chat-pet/ethnic-groups")
 @Service
-public class EthnicGroupsController {
+public class EthnicGroupsController extends ChatPetBaseController{
 
     @Autowired
     private ChatPetService chatPetService;
@@ -36,11 +36,15 @@ public class EthnicGroupsController {
     @RequestMapping(value = "/rank", method = RequestMethod.POST)
     public RespBase getSecondEthnicGroups(@RequestBody EthnicGroupsRankReq ethnicGroupsRankReq){
 
-        Integer chatPetId = ethnicGroupsRankReq.getChatPetId();
+        Integer wxFanId = this.getUserId();
 
         Integer pageSize = ethnicGroupsRankReq.getPageSize();
 
-        if(pageSize == null || chatPetId == null){
+        if(wxFanId == null){
+            return respHelper.nologin();
+        }
+
+        if(pageSize == null){
             return respHelper.failed("参数有误");
         }
 
@@ -48,7 +52,7 @@ public class EthnicGroupsController {
             pageSize = 10;
         }
 
-        List<ChatPetExperinceRankItem> list = chatPetService.getChatPetExperinceRankByPet(chatPetId, pageSize);
+        List<ChatPetExperinceRankItem> list = chatPetService.getChatPetExperinceRankByWxFan(wxFanId, pageSize);
         return respHelper.ok(list);
     }
 }
