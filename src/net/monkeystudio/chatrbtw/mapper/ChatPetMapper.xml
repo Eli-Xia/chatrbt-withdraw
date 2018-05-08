@@ -86,4 +86,13 @@
         where
         id = #{id}
     </update>
+
+    <select id="countSecondEthnicGroupsById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select
+            count(id)
+        from
+            e_chat_pet
+        where
+            second_ethnic_groups_id = #{secondEthnicGroupsId}
+    </select>
 </mapper>

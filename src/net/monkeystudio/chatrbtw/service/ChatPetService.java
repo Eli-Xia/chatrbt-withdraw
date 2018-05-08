@@ -699,7 +699,7 @@ public class ChatPetService {
      * @param pageSize
      * @return
      */
-    public List<ChatPetExperinceRankItem> getChatPetExperinceRankByWxFan(Integer wxFanId , Integer pageSize){
+    public ChatPetExperinceRank getChatPetExperinceRankByWxFan(Integer wxFanId , Integer pageSize){
         WxFan wxFan = wxFanService.getById(wxFanId);
         String wxFanOpenId = wxFan.getWxFanOpenId();
         String wxPubOriginId = wxFan.getWxPubOriginId();
@@ -711,7 +711,17 @@ public class ChatPetService {
         }
 
         Integer chatPetId = chatPet.getId();
-        return this.getChatPetExperinceRankByPet(chatPetId,pageSize);
+
+        ChatPetExperinceRank chatPetExperinceRank = new ChatPetExperinceRank();
+
+        //获取排行
+        List<ChatPetExperinceRankItem> chatPetExperinceRankList = this.getChatPetExperinceRankByPet(chatPetId,pageSize);
+        chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperinceRankList);
+
+        Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
+        chatPetExperinceRank.setTotal(count);
+
+        return chatPetExperinceRank;
     }
 
     /**
@@ -773,6 +783,10 @@ public class ChatPetService {
         String picUrl = "http://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
 
         return picUrl;
+    }
+
+    private Integer countSecondEthnicGroupsById(Integer secondEthnicGroupsId){
+        return chatPetMapper.countSecondEthnicGroupsById(secondEthnicGroupsId);
     }
 
     /**

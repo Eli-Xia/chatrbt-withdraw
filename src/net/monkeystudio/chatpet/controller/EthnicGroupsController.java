@@ -4,6 +4,7 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.ethnicgroups.EthnicGroupsRankReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetExperinceRank;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetExperinceRankItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,9 @@ public class EthnicGroupsController extends ChatPetBaseController{
             pageSize = 10;
         }
 
-        List<ChatPetExperinceRankItem> list = chatPetService.getChatPetExperinceRankByWxFan(wxFanId, pageSize);
-        return respHelper.ok(list);
+
+        ChatPetExperinceRank chatPetExperinceRank = chatPetService.getChatPetExperinceRankByWxFan(wxFanId, pageSize);
+
+        return respHelper.ok(chatPetExperinceRank);
     }
 }
