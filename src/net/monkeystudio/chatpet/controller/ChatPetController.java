@@ -47,10 +47,10 @@ public class ChatPetController extends ChatPetBaseController{
 
         Integer fanId = getUserId();
 
-        /*if(fanId == null){
+        if(fanId == null){
             respHelper.nologin();
         }
-*/
+
         ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
 
         return respHelper.ok(chatPetInfo);
@@ -108,7 +108,8 @@ public class ChatPetController extends ChatPetBaseController{
             //授权
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
-            request.getRequestDispatcher(HOME_PAGE).forward(request, response);
+            //request.getRequestDispatcher(HOME_PAGE).forward(request, response);
+            response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
 
         }
         return null;
