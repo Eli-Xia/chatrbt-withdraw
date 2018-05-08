@@ -126,7 +126,8 @@ public class ChatPetController extends ChatPetBaseController{
     public RespBase login(HttpServletResponse response,HttpServletRequest request) {
         Integer fanId = 42;
         this.saveSessionUserId(fanId);
-        return respHelper.ok();
+        ChatPetInfo info = chatPetService.getInfo(fanId);
+        return respHelper.ok(info);
     }
 
     /**
@@ -142,9 +143,7 @@ public class ChatPetController extends ChatPetBaseController{
         if(userId == null){
             respHelper.nologin();
         }
-        if(req!=null){
-            Log.d("=============== itemid = {?} , chatpetid = {?} ===========",req.getItemId().toString(),req.getChatPetId().toString());
-        }
+
         ChatPetInfo info = chatPetService.rewardHandle(userId, req.getItemId());
 
         return respHelper.ok(info);
