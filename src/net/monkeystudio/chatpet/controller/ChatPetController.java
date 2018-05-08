@@ -2,21 +2,12 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
-import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
-import net.monkeystudio.chatpet.controller.req.WxFanId;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.mapper.WxFanMapper;
-import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
-import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.wx.service.WxOauthService;
-import net.monkeystudio.wx.vo.user.WxFanBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -119,15 +110,13 @@ public class ChatPetController extends ChatPetBaseController{
     }
 
     /**
-     * @param
-     * @return
+     * 测试接口
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase login(@RequestBody WxFanId wxFanId, HttpServletResponse response, HttpServletRequest request) {
-        Integer id = wxFanId.getId();
-        this.saveSessionUserId(id);
-        ChatPetInfo info = chatPetService.getInfo(id);
+    public RespBase login(@RequestParam("id") Integer wxFanId, HttpServletResponse response, HttpServletRequest request) {
+        this.saveSessionUserId(wxFanId);
+        ChatPetInfo info = chatPetService.getInfo(wxFanId);
         return respHelper.ok(info);
     }
 
