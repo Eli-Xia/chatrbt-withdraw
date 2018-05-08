@@ -145,14 +145,14 @@
             <div class="tittle">族群</div>
             <div>
                 <div class="date">
-                    已有{{groupList.length}}人加入该族群
+                    已有{{groupList.total}}人加入该族群
                 </div>
-                <div class="nodata" v-if="groupList.length == 0">
+                <div class="nodata" v-if="groupList.chatPetExperinceRankItemList.length == 0">
                     <img src="images/nodata.png" alt="no-data">
                     <p>邀请好友加入族群</p>
                 </div>
                 <ul v-else>
-                    <li v-for="item in groupList">
+                    <li v-for="item in groupList.chatPetExperinceRankItemList">
                         <img :src="item.wxFanHeadImgUrl">
                         {{item.wxFanNickname}}
                         <div class="pet-class">

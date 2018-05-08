@@ -31,12 +31,13 @@ if (isWeixin) {
                 url: '',
                 imgLoad: 0,
                 nowDate: new Date().getTime(),
-                groupList: [],
+                groupList: {
+                    chatPetExperinceRankItemList:[]
+                },
+                groupNum: "",
                 taskList: {}
             },
             created() {
-                var i = location.search.indexOf('=');
-                this.id = location.search.slice(i + 1);
                 this.queryList();
                 this.queryGroup()
             },
@@ -117,7 +118,7 @@ if (isWeixin) {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                _self.groupList = resp.result
+                                _self.groupList = resp.result;
                             } else {
                                 alert(resp.retMsg)
                             }
