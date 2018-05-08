@@ -44,7 +44,7 @@
                 <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
             </div>
             <div class="zebra-bg">
-                <img :src="list.appearanceUrl">
+                <img :src="petBase">
             </div>
             <div class="user-code" v-if="userCodeShow">
                 <div>
@@ -186,7 +186,7 @@
                     <div>
                         <div class="code">
                             <img :src="twoImg" alt="QRcode" class="two">
-                            <img :src="list.wPubHeadImgUrl" alt="背景" class="two-bg">
+                            <img :src="wPubImg" alt="背景" class="two-bg">
                         </div>
                     </div>
                     <div class="hint">
