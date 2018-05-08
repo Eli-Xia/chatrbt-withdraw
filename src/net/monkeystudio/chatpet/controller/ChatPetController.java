@@ -43,15 +43,15 @@ public class ChatPetController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(@RequestBody ChatPetIdReq req, HttpServletRequest request,HttpServletResponse response) throws Exception{
+    public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response) throws Exception{
 
         Integer fanId = getUserId();
 
-        if(fanId == null){
+        /*if(fanId == null){
             respHelper.nologin();
         }
-
-        ChatPetInfo chatPetInfo = chatPetService.getInfo(req.getId());
+*/
+        ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
 
         return respHelper.ok(chatPetInfo);
     }

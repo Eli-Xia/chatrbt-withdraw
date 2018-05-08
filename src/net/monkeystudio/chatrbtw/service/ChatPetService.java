@@ -122,7 +122,7 @@ public class ChatPetService {
      * 获取宠物的信息
      * @param wxFanId
      * @return
-
+     */
     public ChatPetInfo getInfo(Integer wxFanId){
         ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
 
@@ -211,13 +211,13 @@ public class ChatPetService {
 
         return chatPetBaseInfo;
     }
-     */
+
 
     /**
      * 获取宠物的信息
      * @param chatPetId
      * @return
-     */
+
     public ChatPetInfo getInfo(Integer chatPetId){
         ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
 
@@ -304,6 +304,7 @@ public class ChatPetService {
 
         return chatPetBaseInfo;
     }
+     */
 
 
     /**
