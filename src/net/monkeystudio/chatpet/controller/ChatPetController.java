@@ -7,11 +7,15 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.ChatPetIdReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.mapper.WxFanMapper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.wx.service.WxOauthService;
+import net.monkeystudio.wx.vo.user.WxFanBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +31,14 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping(value = "/chat-pet/pet")
 public class ChatPetController extends ChatPetBaseController{
 
-    private final static String POSTER_URI = "/res/wedo/poster.html";
+    private final static String HOME_PAGE = "/res/wedo/zebra.html";
+
     @Autowired
     private ChatPetService chatPetService;
 
-    @Autowired
-    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private RespHelper respHelper;
-
 
 
     @ResponseBody
@@ -47,8 +49,6 @@ public class ChatPetController extends ChatPetBaseController{
 
         if(fanId == null){
             respHelper.nologin();
-            //response.sendRedirect("localhost:8080/api/chat-pet/pet/check-login?id=8");
-            //return null;
         }
 
         ChatPetInfo chatPetInfo = chatPetService.getInfo(req.getId());
@@ -96,6 +96,7 @@ public class ChatPetController extends ChatPetBaseController{
         return null;
     }
 
+
     /**
      * @param
      * @return
@@ -107,7 +108,7 @@ public class ChatPetController extends ChatPetBaseController{
             //授权
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
-            request.getRequestDispatcher(POSTER_URI).forward(request, response);
+            request.getRequestDispatcher(HOME_PAGE).forward(request, response);
 
         }
         return null;
