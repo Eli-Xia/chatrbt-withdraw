@@ -62,7 +62,6 @@ if (isWeixin) {
                 queryList() {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
-                    // var data = JSON.stringify({"id": this.id});
                     xhr.open('post', '/api/chat-pet/pet/info', true);
                     xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                     xhr.send(null);
