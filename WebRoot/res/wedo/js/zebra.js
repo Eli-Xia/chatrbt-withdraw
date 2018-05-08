@@ -129,12 +129,7 @@ if (isWeixin) {
                 sureReward($event, id) {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
-                    var data = JSON.stringify(
-                        {
-                            "chatPetId": this.id,
-                            "itemId": id
-                        }
-                    );
+                    var data = JSON.stringify({"itemId": id});
                     xhr.open('post', '/api/chat-pet/pet/mission/reward', true);
                     xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                     xhr.send(data);
