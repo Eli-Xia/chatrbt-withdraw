@@ -6,6 +6,15 @@ package net.monkeystudio.chatrbtw.service.bean.chatpet;
 public class ChatPetSessionVo {
     private Integer wxPubId;
     private Integer wxFanId;
+    private boolean isRedirectPoster ;
+
+    public boolean isRedirectPoster() {
+        return isRedirectPoster;
+    }
+
+    public void setRedirectPoster(boolean redirectPoster) {
+        isRedirectPoster = redirectPoster;
+    }
 
     public Integer getWxPubId() {
         return wxPubId;

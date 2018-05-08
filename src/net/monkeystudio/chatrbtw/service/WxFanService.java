@@ -112,9 +112,9 @@ public class WxFanService {
      */
     public Integer save(WxFan wxFan){
 
-        String nickname = wxFan.getNickname();
+        /*String nickname = wxFan.getNickname();
         nickname = this.filter(nickname);
-        wxFan.setNickname(nickname);
+        wxFan.setNickname(nickname);*/
 
         Integer result = null;
 
@@ -191,5 +191,14 @@ public class WxFanService {
 
     private Integer update(WxFan wxFan) {
         return wxFanMapper.update(wxFan);
+    }
+
+    public boolean isFans(String wxPubOriginId ,String wxFanOpenId){
+        boolean isFans = false;
+        WxFan wxFan = this.getWxFanFromDb(wxPubOriginId, wxFanOpenId);
+        if(wxFan != null){
+            isFans = true;
+        }
+        return isFans;
     }
 }

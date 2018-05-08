@@ -32,6 +32,7 @@
         <property name="maxIdle" value="${db.maxIdle}"></property>
         <property name="maxWait" value="${db.maxWait}"></property>
         <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"></property>
+        <property name="connectionInitSqls" value="set names utf8mb4;"></property>
     </bean>
     <!---->
 

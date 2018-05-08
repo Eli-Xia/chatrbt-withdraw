@@ -24,6 +24,8 @@ if (isWeixin) {
                 },
                 logs: [],
                 twoImg: '',
+                petBase: '',
+                wPubImg: '',
                 id: '',
                 svgUrl: '',
                 url: '',
@@ -62,10 +64,9 @@ if (isWeixin) {
                 queryList() {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
-                    var data = JSON.stringify({"id": this.id});
                     xhr.open('post', '/api/chat-pet/pet/info', true);
                     xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-                    xhr.send(data);
+                    xhr.send(null);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
@@ -73,9 +74,6 @@ if (isWeixin) {
                                 _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg, function (base64Img) {
                                     _self.imgLoad++;
                                     _self.userInfo.headImg = base64Img;
-                                    if (_self.imgLoad == 3) {
-                                        _self.list = resp.result;
-                                    }
                                 });
                                 //替换链接
                                 var idx = resp.result.appearanceUrl.indexOf('googleapis.com');
@@ -91,21 +89,16 @@ if (isWeixin) {
                                     height: 600
                                 }, resp.result.appearanceUrl, function (base64Img) {
                                     _self.imgLoad++;
-                                    resp.result.appearanceUrl = base64Img;
-                                    if (_self.imgLoad == 3) {
-                                        _self.list = resp.result;
-                                    }
+                                    _self.petBase = base64Img;
                                 });
                                 _self.convertImgToBase64({width: null}, resp.result.wPubHeadImgUrl, function (base64Img) {
                                     _self.imgLoad++;
-                                    resp.result.wPubHeadImgUrl = base64Img;
-                                    if (_self.imgLoad == 3) {
-                                        _self.list = resp.result;
-                                    }
+                                    _self.wPubImg = base64Img;
                                 });
                                 _self.logs = resp.result.petLogs;
                                 _self.taskList = resp.result.todayMissions;
                                 _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode;
+                                _self.list = resp.result;
                             } else {
                                 alert(resp.retMsg)
                             }
