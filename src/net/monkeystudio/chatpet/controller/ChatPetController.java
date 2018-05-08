@@ -122,6 +122,7 @@ public class ChatPetController extends ChatPetBaseController{
      * @return
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ResponseBody
     public RespBase login(HttpServletResponse response,HttpServletRequest request) {
         Integer fanId = 42;
         this.saveSessionUserId(fanId);
@@ -144,7 +145,7 @@ public class ChatPetController extends ChatPetBaseController{
         if(req!=null){
             Log.d("=============== itemid = {?} , chatpetid = {?} ===========",req.getItemId().toString(),req.getChatPetId().toString());
         }
-        ChatPetInfo info = chatPetService.rewardHandle(req.getChatPetId(), req.getItemId());
+        ChatPetInfo info = chatPetService.rewardHandle(userId, req.getItemId());
 
         return respHelper.ok(info);
     }
