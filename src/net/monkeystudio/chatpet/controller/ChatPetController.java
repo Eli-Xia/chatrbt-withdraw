@@ -51,6 +51,8 @@ public class ChatPetController extends ChatPetBaseController{
             respHelper.nologin();
         }
 
+        //Integer fanId = 104;
+
         ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
 
         return respHelper.ok(chatPetInfo);
@@ -113,6 +115,17 @@ public class ChatPetController extends ChatPetBaseController{
 
         }
         return null;
+    }
+
+    /**
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public RespBase login(HttpServletResponse response,HttpServletRequest request) {
+        Integer fanId = 42;
+        this.saveSessionUserId(fanId);
+        return respHelper.ok();
     }
 
     /**

@@ -112,9 +112,9 @@ public class WxFanService {
      */
     public Integer save(WxFan wxFan){
 
-        String nickname = wxFan.getNickname();
+        /*String nickname = wxFan.getNickname();
         nickname = this.filter(nickname);
-        wxFan.setNickname(nickname);
+        wxFan.setNickname(nickname);*/
 
         Integer result = null;
 
