@@ -812,4 +812,6 @@ public class ChatPetService {
         String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
         return null;
     }*/
+    public static void main(String[]args){
+    }
 }

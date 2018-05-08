@@ -145,12 +145,6 @@ public class ChatPetController extends ChatPetBaseController{
         return respHelper.ok(info);
     }
 
-    public static void main(String[]args){
-        String str = "keendo.42";
-        int i = str.lastIndexOf(".");
-        String substring = str.substring(i + 1);
-        System.out.println(1);
-    }
 
 
 }
