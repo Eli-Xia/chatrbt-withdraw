@@ -272,27 +272,28 @@ header {
   background: url("../images/li_bg.png") no-repeat 0 0.2rem;
   background-size: 0.26rem;
 }
-#task{
-  >div+div{
+
+#task {
+  > div + div {
     padding: 28/@r 40/@r 40/@r;
   }
-  .date{
+  .date {
     font-size: 24/@r;
     color: #8e8e93;
     padding: 11/@r 0;
   }
-  li{
+  li {
     position: relative;
     padding: 16/@r 0;
     font-size: 24/@r;
-    &.after{
+    &.after {
       color: #8e8e93;
-      div{
+      div {
         background-color: #8e8e93;
         color: #fff;
       }
     }
-    >div{
+    > div {
       position: absolute;
       top: 8/@r;
       right: 0;
@@ -304,7 +305,7 @@ header {
       background-color: #efeff4;
       color: #ceced2;
       overflow: hidden;
-      >div{
+      > div {
         display: inline-block;
         position: relative;
         text-align: center;
@@ -313,14 +314,14 @@ header {
         background-color: #f9b721;
         color: #fff;
       }
-      &.active{
+      &.active {
         text-align: right;
         padding: 0;
         background-color: #fff;
         color: #fff;
-        i{
+        i {
           position: absolute;
-          top:0;
+          top: 0;
           left: -50/@r;
           width: 45/@r;
           height: 45/@r;
@@ -328,15 +329,16 @@ header {
           background-size: 100%;
           transition: all .5s linear;
         }
-        i.active{
+        i.active {
           transform: rotateY(180deg);
-          top:-10/@r;
+          top: -10/@r;
           opacity: 0;
         }
       }
     }
   }
 }
+
 #log .tittle + div {
   padding: 0 0.8rem 0.9rem;
 }
@@ -381,19 +383,29 @@ header {
 
 #log li em {
   display: inline-block;
-  padding-left: 0.84rem;
-  color: #f9b721;
   font-size: 0.48rem;
   font-weight: 600;
-  background: url("../images/token.svg") no-repeat;
-  background-size: 0.66rem 0.66rem;
   font-style: normal;
   height: 0.66rem;
   line-height: 0.66rem;
+  &.experience{
+    background: url("../images/lab.png") no-repeat;
+    color: #2196f9;
+    padding-left: 24/@r;
+    background-size: 24/@r 30/@r;
+  }
+  &.token{
+    background: url("../images/token.svg") no-repeat;
+    color: #f9b721;
+    padding-left: 0.84rem;
+    background-size: 0.66rem 0.66rem;
+  }
 }
-#log li+li{
+
+#log li + li {
   border-bottom: #ceced2;
 }
+
 #task li + li, #groups li + li {
   border-top: 1px solid #ceced2;
 }
