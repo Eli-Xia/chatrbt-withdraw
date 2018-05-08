@@ -613,7 +613,7 @@ public class ChatPetService {
 
     public String getHomePageUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/api/chat-pet/pet/home-page" + wxPubId;
+        String url = "http://" + domain + "/api/chat-pet/pet/home-page?id=" + wxPubId;
         return url;
     }
 

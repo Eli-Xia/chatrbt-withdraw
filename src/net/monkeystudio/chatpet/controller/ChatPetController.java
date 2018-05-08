@@ -43,7 +43,7 @@ public class ChatPetController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response) throws Exception{
+    public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
 
         Integer fanId = getUserId();
 
