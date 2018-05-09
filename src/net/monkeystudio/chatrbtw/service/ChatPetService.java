@@ -112,7 +112,7 @@ public class ChatPetService {
         return chatPetId;
     }
 
-    /**e
+    /**
      * 随机生成
      * @return
      */
@@ -373,11 +373,20 @@ public class ChatPetService {
 
         Integer chatPetId = chatPet.getId();
 
-        if(!isAble2Reward(itemId)){
+        //获取当前任务领取状态
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
+        Integer nowState = cppm.getState();
+
+        if(Integer.valueOf(MissionStateEnum.GOING_ON.getCode()).equals(nowState)){
             throw new BizException("请完成任务后再领取奖励");
         }
+        if(Integer.valueOf(MissionStateEnum.FINISH_AND_AWARD.getCode()).equals(nowState)){
+            throw new BizException("您已领取过奖励");
+        }
 
-        this.missionReward(chatPetId,itemId);
+        if(isAble2Reward(nowState)){
+            this.missionReward(chatPetId,itemId);
+        }
 
         ChatPetInfo info = this.getInfoAfterReward(chatPetId);
 
@@ -386,13 +395,11 @@ public class ChatPetService {
 
     /**
      * 点击"领取"时判断当前是否能够领取
-     * @param itemId 任务池记录id
+     * @param nowState : 当前任务状态
      * @return
      */
-    public boolean isAble2Reward(Integer itemId){
-        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
+    public boolean isAble2Reward(Integer nowState){
 
-        Integer nowState = cppm.getState();//当前任务领取状态
         Integer shouldState = MissionStateEnum.FINISH_NOT_AWARD.getCode();//当前任务领取状态应为 已完成未领取
 
         return shouldState.equals(nowState);
@@ -514,7 +521,7 @@ public class ChatPetService {
      * 微信网页授权处理
      * @param code
      */
-    public ChatPetSessionVo wxOauthHandle(String code,String wxPubAppId) throws Exception{
+    public ChatPetSessionVo wxOauthHandle(String code,String wxPubAppId) throws BizException{
 
         WxOauthAccessToken wxOauthAccessToken = this.getOauthAccessTokenResponse(code, wxPubAppId);
 
@@ -814,20 +821,6 @@ public class ChatPetService {
 
         return posterUrl;
     }
-
-    public RedisCacheTemplate getRedisCacheTemplate() {
-        return redisCacheTemplate;
-    }
-
-
-
-
-
-
-
-
-
-
 
     //用户未授权跳转到授权页面
     /*public String getNoAuthRedirectUrl(Integer wxFanId){

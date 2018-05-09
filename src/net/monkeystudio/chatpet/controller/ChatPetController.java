@@ -2,6 +2,7 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
@@ -15,6 +16,7 @@ import org.springframework.web.portlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by bint on 2018/4/19.
@@ -61,7 +63,7 @@ public class ChatPetController extends ChatPetBaseController{
      * @throws BizException
      */
     @RequestMapping(value = "/oauth/fan-info", method = RequestMethod.GET)
-    public ModelAndView oauth(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code",required = false)String code, @RequestParam("state")String state, @RequestParam(value = "appid",required = false)String appId)throws Exception{
+    public ModelAndView oauth(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code",required = false)String code, @RequestParam("state")String state, @RequestParam(value = "appid",required = false)String appId) throws BizException, IOException {
 
         if(!WxOauthService.OAUTH_CODE_URL_STATE.equals(state)){
             return null;
@@ -134,6 +136,7 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
+        Log.d("=========itemdi = {?} =============",req.getItemId().toString());
         Integer userId = this.getUserId();
 
         if(userId == null){
@@ -145,12 +148,6 @@ public class ChatPetController extends ChatPetBaseController{
         return respHelper.ok(info);
     }
 
-    public static void main(String[]args){
-        String str = "keendo.42";
-        int i = str.lastIndexOf(".");
-        String substring = str.substring(i + 1);
-        System.out.println(1);
-    }
 
 
 }

@@ -31,12 +31,13 @@ if (isWeixin) {
                 url: '',
                 imgLoad: 0,
                 nowDate: new Date().getTime(),
-                groupList: [],
+                groupList: {
+                    chatPetExperinceRankItemList:[]
+                },
+                groupNum: "",
                 taskList: {}
             },
             created() {
-                var i = location.search.indexOf('=');
-                this.id = location.search.slice(i + 1);
                 this.queryList();
                 this.queryGroup()
             },
@@ -71,7 +72,7 @@ if (isWeixin) {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg, function (base64Img) {
+                                _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg + "?1", function (base64Img) {
                                     _self.imgLoad++;
                                     _self.userInfo.headImg = base64Img;
                                 });
@@ -117,7 +118,7 @@ if (isWeixin) {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                _self.groupList = resp.result
+                                _self.groupList = resp.result;
                             } else {
                                 alert(resp.retMsg)
                             }
@@ -128,12 +129,7 @@ if (isWeixin) {
                 sureReward($event, id) {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
-                    var data = JSON.stringify(
-                        {
-                            "chatPetId": this.id,
-                            "itemId": id
-                        }
-                    );
+                    var data = JSON.stringify({"itemId": id});
                     xhr.open('post', '/api/chat-pet/pet/mission/reward', true);
                     xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                     xhr.send(data);
