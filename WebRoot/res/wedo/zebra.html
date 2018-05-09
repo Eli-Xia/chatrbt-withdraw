@@ -37,9 +37,9 @@
         <div id="user_zebra">
             <div class="pet-class">
                 <div class="class-scroll">
-                    {{list.experience}}/{{list.experienceProgressRate.need}}
+                    {{list.experienceProgressRate.own}}/{{list.experienceProgressRate.need}}
                     <div class="scroll-bg"
-                         :style="{'width':list.experience*100/list.experienceProgressRate.need+'%'}"></div>
+                         :style="{'width':list.experienceProgressRate.own*100/list.experienceProgressRate.need+'%'}"></div>
                 </div>
                 <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
             </div>
