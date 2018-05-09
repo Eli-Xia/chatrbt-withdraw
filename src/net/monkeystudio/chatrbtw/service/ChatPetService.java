@@ -71,7 +71,10 @@ public class ChatPetService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
 
+    @Autowired
     private RWxPubProductService rWxPubProductService;
+
+    @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
     @Autowired
@@ -622,7 +625,6 @@ public class ChatPetService {
         }
         return false;
     }
-
 
 
     /**
