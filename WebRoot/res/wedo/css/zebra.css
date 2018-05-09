@@ -9,8 +9,8 @@ body {
   max-width: 750px;
   -webkit-user-select: none;
   -webkit-text-size-adjust: 100%;
-  background: #310858 url("../images/body_bg.png") no-repeat;
-  background-size: 100% 100%;
+  background: #310858 url("../images/body_bg.png") repeat-y;
+  background-size: 100% auto;
   position: relative;
 }
 body * {
