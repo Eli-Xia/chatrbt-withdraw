@@ -716,6 +716,23 @@ public class RedisCacheTemplate {
     }
 
 
+    public List<String> lrange(String key,Long start ,Long end ) {
+
+        Jedis redis = getPool().getResource();
+        List<String> result = null;
+        try {
+            result = redis.lrange(key , start ,end);
+        } catch (JedisConnectionException e) {
+            Log.e("Jedis connection exception.");
+        } catch (Exception e) {
+            Log.e(e.getMessage());
+        } finally {
+            redis.close();
+        }
+        return result;
+    }
+
+
     public List<String> brpop(Integer blockTimeout ,String key ) {
 
         Jedis redis = getPool().getResource();

@@ -77,6 +77,9 @@ public class ChatPetService {
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
+    @Autowired
+    private ChatPetAppearenceService chatPetAppearenceService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -100,7 +103,7 @@ public class ChatPetService {
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
 
-        String appearenceCode = this.getChatPetAppearenceCodeFromPool();
+        String appearenceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
         chatPet.setAppearenceCode(appearenceCode);
 
 
@@ -740,78 +743,15 @@ public class ChatPetService {
         return redisCacheTemplate;
     }
 
-    private void generateChatPetAppearence(Integer count){
-        while (count.intValue() > 0){
-            this.generateChatPetAppearence();
-            count--;
-        }
-    }
-    /**
-     * 生成一个宠物外观放入外观池
-     */
-    private void generateChatPetAppearence(){
-
-        Boolean flag = false;
-        String appearanceCode = null;
-        while (!flag){
-            String[] appearance = this.randomAppearence();
-            appearanceCode = appearance.toString();
-            if(!this.appearenceIsExist(null,appearanceCode)){
-                flag = true;
-            }
-        }
-
-        this.pushAppearence(appearanceCode);
-    }
 
 
-    private void pushAppearence(String appearenceCode){
-        String key = this.getAppearenceCodePoolKey();
-
-        redisCacheTemplate.rpush(key, appearenceCode);
-    }
-
-    /**
-     * 外貌是否已经存在
-     * @param appeareanceType 外观的类型
-     * @param appearenceCode 外观的组成码
-     * @return
-     */
-    private Boolean appearenceIsExist (Integer appeareanceType ,String appearenceCode){
-
-        Integer count = chatPetMapper.countByAppearceCode(appearenceCode);
-
-        if(count.intValue() != 0){
-            return true;
-        }
-
-        return false;
-    }
 
 
-    private String[] randomAppearence(){
-
-        return null;
-    }
 
 
-    private String getChatPetAppearenceCodeFromPool(){
-        String key = this.getAppearenceCodePoolKey();
 
-        String appearenceCode = redisCacheTemplate.lpop(key);
 
-        Long count = redisCacheTemplate.llen(key);
-        if(count.longValue() < 100L){
-            this.generateChatPetAppearence(10);
-        }
 
-        return appearenceCode;
-    }
-
-    private String getAppearenceCodePoolKey(){
-        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:appearence-code:pool";
-        return key;
-    }
 
     //用户未授权跳转到授权页面
     /*public String getNoAuthRedirectUrl(Integer wxFanId){

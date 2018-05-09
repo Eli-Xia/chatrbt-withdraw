@@ -88,12 +88,12 @@
     </update>
 
 
-    <select id="countByAppearceCode" parameterType="map">
+    <select id="countByAppearceCode" parameterType="map" resultType="java.lang.Integer">
         select
             count(id)
         from
             e_chat_pet
         where
-            appearance_code = #{appearanceCode}
+            appearance_code = #{appearenceCode}
     </select>
 </mapper>
