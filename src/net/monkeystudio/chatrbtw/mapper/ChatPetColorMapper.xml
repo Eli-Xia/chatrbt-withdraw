@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatPetColorMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPetColor" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="key" property="key" jdbcType="VARCHAR" />
+    <result column="RGB_value" property="RGBValue" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+      `id`, `key`, `RGB_value`
+  </sql>
+  
+  <!-- 查询所有记录 -->
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select * from e_chat_pet_color
+  </select>
+
+</mapper>

@@ -23,4 +23,6 @@ public interface ChatPetMapper {
     List<ChatPet> selectListByExperience(@Param("secondEthnicGroupsId") Integer secondEthnicGroupsId,@Param("startIndex") Integer startIndex,@Param("pageSize") Integer pageSize);
 
     Integer countSecondEthnicGroupsById(@Param("secondEthnicGroupsId") Integer secondEthnicGroupsId);
+
+    Integer countByAppearceCode(@Param("appearenceCode") String appearenceCode);
 }

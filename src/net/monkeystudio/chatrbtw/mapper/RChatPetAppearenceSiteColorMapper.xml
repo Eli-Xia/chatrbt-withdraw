@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RChatPetAppearenceSiteColorMapper">
+  <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RChatPetAppearenceSiteColor">
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
+    <result column="site" property="site" jdbcType="INTEGER" />
+    <result column="color_key" property="colorKey" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+      id, chat_pet_type, site, color_key
+  </sql>
+
+  <select id="selectByAppearenceSite" parameterType="map" resultMap="baseResultMap">
+      select
+          <include refid="Base_Column_List"></include>
+      from
+          r_chat_pet_appearence_site_color
+      where
+          chat_pet_type = #{chatPetType}
+      and
+          `site` = #{chatPetSite}
+  </select>
+</mapper>

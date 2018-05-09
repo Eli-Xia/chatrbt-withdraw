@@ -1,7 +1,10 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -68,8 +71,12 @@ public class ChatPetService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
 
-    @Autowired
     private RWxPubProductService rWxPubProductService;
+    private RedisCacheTemplate redisCacheTemplate;
+
+    @Autowired
+    private ChatPetAppearenceService chatPetAppearenceService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -92,6 +99,10 @@ public class ChatPetService {
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
+
+        String appearenceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
+        chatPet.setAppearenceCode(appearenceCode);
+
 
         this.save(chatPet);
 
@@ -145,8 +156,8 @@ public class ChatPetService {
 
         String headImgUrl = owner.getHeadImgUrl();
         if(headImgUrl == null){
-        wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
-    }
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+        }
 
         owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
         ownerInfo.setHeadImg(owner.getHeadImgUrl());
@@ -348,6 +359,8 @@ public class ChatPetService {
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
 
+
+
         return chatPetBaseInfo;
     }
 
@@ -414,9 +427,9 @@ public class ChatPetService {
 
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
-
-
     }
+
+
 
     /**
      * 粉丝是否拥有宠物
@@ -773,6 +786,7 @@ public class ChatPetService {
     }
 
 
+
     /**
      * 得到封面图的url
      * @return
@@ -801,12 +815,25 @@ public class ChatPetService {
         return posterUrl;
     }
 
+    public RedisCacheTemplate getRedisCacheTemplate() {
+        return redisCacheTemplate;
+    }
+
+
+
+
+
+
+
+
+
+
+
     //用户未授权跳转到授权页面
     /*public String getNoAuthRedirectUrl(Integer wxFanId){
         WxFan wxFan = wxFanService.getById(wxFanId);
         String wxPubOriginId = wxFan.getWxPubOriginId();
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
 
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
