@@ -72,7 +72,7 @@ if (isWeixin) {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg, function (base64Img) {
+                                _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg + "?1", function (base64Img) {
                                     _self.imgLoad++;
                                     _self.userInfo.headImg = base64Img;
                                 });
