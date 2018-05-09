@@ -10,10 +10,12 @@
         <result column="second_ethnic_groups_id" property="secondEthnicGroupsId" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="VARCHAR" />
         <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="experience" property="experience" jdbcType="INTEGER" />
+        <result column="coin" property="coin" jdbcType="REAL" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id
+        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin
     </sql>
 
     <select id="select" parameterType="map">
@@ -29,7 +31,7 @@
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet" keyProperty="id" useGeneratedKeys="true">
         insert into
             e_chat_pet
-                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id )
+                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ) 
         values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId})
     </insert>
 
@@ -53,5 +55,54 @@
             </if>
         </where>
         limit 1
+    </select>
+    
+    <update id="increaseExperience" parameterType="map">
+        update
+            e_chat_pet
+            set experience = experience + #{augend}
+        where
+            id = #{id}
+    </update>
+
+    <select id="selectListByExperience" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"></include>
+        from
+            e_chat_pet
+        where
+            second_ethnic_groups_id = #{secondEthnicGroupsId}
+        order by
+            experience
+        desc
+        limit #{startIndex},#{pageSize}
+
+    </select>
+
+    <update id="increaseCoin" parameterType="map">
+        update
+        e_chat_pet
+        set coin = IFNULL(coin,0) + #{rewardCoin}
+        where
+        id = #{id}
+    </update>
+
+    <select id="countSecondEthnicGroupsById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+          select
+            count(id)
+        from
+            e_chat_pet
+        where
+            second_ethnic_groups_id = #{secondEthnicGroupsId}
+        where
+    </select>
+
+    <select id="countByAppearceCode" parameterType="map" resultType="java.lang.Integer">
+        select
+            count(id)
+        from
+            e_chat_pet
+        where
+            appearance_code = #{appearenceCode}
     </select>
 </mapper>

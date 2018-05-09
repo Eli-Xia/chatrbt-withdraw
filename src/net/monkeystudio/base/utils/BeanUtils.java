@@ -1,6 +1,8 @@
 package net.monkeystudio.base.utils;
 
 
+import java.lang.reflect.Field;
+
 /**
  * Created by bint on 2017/12/5.
  */
@@ -89,4 +91,22 @@ public class BeanUtils {
         System.out.println(adUpdateReq.toString());
 
     }*/
+
+
+    public static void setFieldValue(Field field , Object object , Object value){
+
+        if(object == null){
+            return ;
+        }
+
+        field.setAccessible(true);
+        try {
+            field.set(object,value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        field.setAccessible(false);
+
+    }
 }

@@ -8,7 +8,7 @@ import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.ChatPetTaskEnum;
+import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
@@ -37,6 +37,8 @@ import java.util.List;
  */
 @Service
 public class WxTextMessageHandler extends WxBaseMessageHandler{
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private AdService adService;
@@ -90,7 +92,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
     private RWxPubProductService rWxPubProductService;
 
     @Autowired
-    private ChatPetLogService chatPetLogService;
+    private ChatPetService chatPetService;
 
     @Autowired
     private CfgService cfgService;
@@ -167,10 +169,16 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         //开通宠物陪聊,不走智能聊
         if(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId)){
-            //完成陪聊宠每日任务
-            chatPetLogService.completeChatPetDailyTask(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT);
+            if(chatPetService.isFansOwnChatPet(wxPubOriginId,wxFanOpenId)){
 
-            this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+                //第一次聊天填充任务池
+                chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
+
+                //完成陪聊宠每日签到任务
+                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());
+
+                this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+            }
 
         }else{
 

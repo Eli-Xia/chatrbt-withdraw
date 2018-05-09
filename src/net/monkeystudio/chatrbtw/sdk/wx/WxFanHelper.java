@@ -36,6 +36,8 @@ public class WxFanHelper {
 
         String response = HttpsHelper.get(fetchUserBaseInfoUrl);
 
+        Log.d("============ wx fan response = {?} ==================",response);
+
         if (response.indexOf("errcode") != -1){
             Log.i(response);
             return null;

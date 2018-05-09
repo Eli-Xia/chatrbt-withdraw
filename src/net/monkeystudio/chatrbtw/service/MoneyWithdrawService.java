@@ -68,7 +68,7 @@ public class MoneyWithdrawService {
      * @param userId
      * @return
      */
-    private List<MoneyWithdrawRecord> getMoneyWithdrawRecordList(Integer userId){
+    public List<MoneyWithdrawRecord> getMoneyWithdrawRecordList(Integer userId){
         Map<String,Object> param = new HashMap<>();
         param.put("userId",userId);
         return moneyWithdrawRecordMapper.selectByParamMap(param);
@@ -306,25 +306,23 @@ public class MoneyWithdrawService {
 
         MoneyWithdrawRecord record = this.getRecordById(id);
 
-        AccountSetting as = accountSettingService.getAccountSettingByUserId(record.getUserId());
-
         AdminMoneyWithdrawDetail detail = new AdminMoneyWithdrawDetail();
 
         detail.setBankFlowNumber(record.getBankFlowNumber());
-        detail.setAccountNumber(as.getAccountNumber());
-        detail.setAccountType(as.getAccountType());
+        detail.setAccountNumber(record.getAccountNumber());
+        detail.setAccountType(record.getAccountType());
         detail.setAmount(record.getAmount());
-        detail.setBankForkName(as.getBankForkName());
-        detail.setBankName(as.getBankName());
-        detail.setEmail(as.getEmail());
+        detail.setBankForkName(record.getBankForkName());
+        detail.setBankName(record.getBankName());
+        detail.setEmail(record.getEmail());
         detail.setInvoiceNumber(record.getInvoiceNumber());
         detail.setInvoiceRet(record.getInvoiceAuditRet());
-        detail.setLocation(as.getProvince()+as.getCity());
-        detail.setAccountName(as.getAccountName());
+        detail.setLocation(record.getProvince()+record.getCity());
+        detail.setAccountName(record.getAccountName());
 
-        if(as.getAccountType() == PERSONAL_ACCOUNT_TYPE){
-            detail.setAccountHolder(as.getAccountHolder());
-            detail.setIdNumber(as.getIdNumber());
+        if(record.getAccountType() == PERSONAL_ACCOUNT_TYPE){
+            detail.setAccountHolder(record.getAccountHolder());
+            detail.setIdNumber(record.getIdNumber());
         }
         User user = null;
         try{
@@ -343,13 +341,9 @@ public class MoneyWithdrawService {
 
         MoneyWithdrawRecord record = this.getRecordById(id);
 
-        Integer wxPubOwnerId = record.getUserId();
+        if(accountSettingService.isPersonalAccountType(record.getAccountType())){
 
-        AccountSetting setting = accountSettingService.getAccountSettingByUserId(wxPubOwnerId);
-
-        if(accountSettingService.isPersonalAccountType(setting.getAccountType())){
-
-            accountSettingService.handleSensitivePic(wxPubOwnerId,response);
+            accountSettingService.handleSensitivePic(record.getUserId(),response);
         }
     }
 

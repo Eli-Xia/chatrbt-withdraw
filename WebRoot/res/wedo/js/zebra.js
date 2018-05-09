@@ -9,6 +9,7 @@ if (isWeixin) {
                 userCodeShow: false,
                 bgColor: '1b0035',
                 canvasSign: true,
+                ruleShow: true,
                 userInfo: {
                     headImg: '',
                     nickname: ''
@@ -18,20 +19,27 @@ if (isWeixin) {
                     geneticCode: null,
                     fanTotalCoin: 0.0,
                     appearanceUrl: '',
-                    wPubHeadImgUrl: ''
+                    wPubHeadImgUrl: '',
+                    experienceProgressRate: {}
                 },
                 logs: [],
                 twoImg: '',
+                petBase: '',
+                wPubImg: '',
                 id: '',
                 svgUrl: '',
                 url: '',
                 imgLoad: 0,
-                nowDate: new Date().getTime()
+                nowDate: new Date().getTime(),
+                groupList: {
+                    chatPetExperinceRankItemList:[]
+                },
+                groupNum: "",
+                taskList: {}
             },
             created() {
-                var i = location.search.indexOf('=');
-                this.id = location.search.slice(i + 1);
-                this.queryList()
+                this.queryList();
+                this.queryGroup()
             },
             methods: {
                 shareShow($event) {
@@ -57,20 +65,16 @@ if (isWeixin) {
                 queryList() {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
-                    var data = JSON.stringify({"id": this.id});
                     xhr.open('post', '/api/chat-pet/pet/info', true);
                     xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-                    xhr.send(data);
+                    xhr.send(null);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg, function (base64Img) {
+                                _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg + "?1", function (base64Img) {
                                     _self.imgLoad++;
                                     _self.userInfo.headImg = base64Img;
-                                    if (_self.imgLoad == 3) {
-                                        _self.list = resp.result;
-                                    }
                                 });
                                 //替换链接
                                 var idx = resp.result.appearanceUrl.indexOf('googleapis.com');
@@ -86,20 +90,61 @@ if (isWeixin) {
                                     height: 600
                                 }, resp.result.appearanceUrl, function (base64Img) {
                                     _self.imgLoad++;
-                                    resp.result.appearanceUrl = base64Img;
-                                    if (_self.imgLoad == 3) {
-                                        _self.list = resp.result;
-                                    }
+                                    _self.petBase = base64Img;
                                 });
                                 _self.convertImgToBase64({width: null}, resp.result.wPubHeadImgUrl, function (base64Img) {
                                     _self.imgLoad++;
-                                    resp.result.wPubHeadImgUrl = base64Img;
-                                    if (_self.imgLoad == 3) {
-                                        _self.list = resp.result;
-                                    }
+                                    _self.wPubImg = base64Img;
                                 });
                                 _self.logs = resp.result.petLogs;
+                                _self.taskList = resp.result.todayMissions;
                                 _self.twoImg = 'data:image/png;base64,' + resp.result.invitationQrCode;
+                                _self.list = resp.result;
+                            } else {
+                                alert(resp.retMsg)
+                            }
+                        } else {
+                        }
+                    }
+                },
+                queryGroup() {
+                    var _self = this;
+                    var xhr = new XMLHttpRequest();
+                    var data = JSON.stringify({"pageSize": 5});
+                    xhr.open('post', '/api/chat-pet/ethnic-groups/rank', true);
+                    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                    xhr.send(data);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var resp = JSON.parse(xhr.response);
+                            if (resp.retCode == 0) {
+                                _self.groupList = resp.result;
+                            } else {
+                                alert(resp.retMsg)
+                            }
+                        } else {
+                        }
+                    }
+                },
+                sureReward($event, id) {
+                    var _self = this;
+                    var xhr = new XMLHttpRequest();
+                    var data = JSON.stringify({"itemId": id});
+                    xhr.open('post', '/api/chat-pet/pet/mission/reward', true);
+                    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                    xhr.send(data);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var resp = JSON.parse(xhr.response);
+                            if (resp.retCode == 0) {
+                                var i = $event.path[1];
+                                i.style.width = '150px';
+                                i.querySelector('i').className = "active";
+                                setTimeout(function () {
+                                    _self.list = resp.result;
+                                    _self.logs = resp.result.petLogs;
+                                    _self.taskList = resp.result.todayMissions;
+                                }, 500);
                             } else {
                                 alert(resp.retMsg)
                             }

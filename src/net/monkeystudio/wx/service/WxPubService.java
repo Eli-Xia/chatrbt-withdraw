@@ -136,7 +136,7 @@ public class WxPubService {
 		WxPub wxPub = this.getWxPubByAppId(wxPubAppId);
 
 		if(wxPub != null){
-			return wxPub.getAppId();
+			return wxPub.getOriginId();
 		}
 
 		return null;

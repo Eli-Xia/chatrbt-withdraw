@@ -6,22 +6,20 @@ import java.util.Date;
  * @author xiaxin
  */
 public class PetLogResp {
-    private Integer id;
-
     private Date createTime;
 
-    private Float coin;
-
-    private Integer chatPetId;
+    private Integer coin;
 
     private String content;
 
-    public Integer getId() {
-        return id;
+    private Integer rewardType;
+
+    public Integer getRewardType() {
+        return rewardType;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setRewardType(Integer rewardType) {
+        this.rewardType = rewardType;
     }
 
     public Date getCreateTime() {
@@ -32,20 +30,12 @@ public class PetLogResp {
         this.createTime = createTime;
     }
 
-    public Float getCoin() {
+    public Integer getCoin() {
         return coin;
     }
 
-    public void setCoin(Float coin) {
+    public void setCoin(Integer coin) {
         this.coin = coin;
-    }
-
-    public Integer getChatPetId() {
-        return chatPetId;
-    }
-
-    public void setChatPetId(Integer chatPetId) {
-        this.chatPetId = chatPetId;
     }
 
     public String getContent() {

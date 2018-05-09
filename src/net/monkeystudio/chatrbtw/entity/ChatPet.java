@@ -14,6 +14,17 @@ public class ChatPet {
     private Integer secondEthnicGroupsId;
     private Date createTime;
     private Integer parentId;
+    private Integer experience;
+    private Float coin;
+    private String appearenceCode;
+
+    public Float getCoin() {
+        return coin;
+    }
+
+    public void setCoin(Float coin) {
+        this.coin = coin;
+    }
 
     public Integer getId() {
         return id;
@@ -77,5 +88,21 @@ public class ChatPet {
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    public String getAppearenceCode() {
+        return appearenceCode;
+    }
+
+    public void setAppearenceCode(String appearenceCode) {
+        this.appearenceCode = appearenceCode;
     }
 }

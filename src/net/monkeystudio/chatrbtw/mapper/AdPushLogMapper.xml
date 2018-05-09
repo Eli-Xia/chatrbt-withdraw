@@ -3,8 +3,8 @@
 <mapper namespace="net.monkeystudio.chatrbtw.mapper.AdPushLogMapper">
     <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.AdPushLog">
         <result column="id" property="id" jdbcType="INTEGER" />
-        <result column="wx_pub_app_id" property="wxPubOpenId" jdbcType="VARCHAR" />
-        <result column="wx_fan_open_id" property="wxUserOpenId" jdbcType="VARCHAR" />
+        <result column="wx_pub_app_id" property="wxPubAppId" jdbcType="VARCHAR" />
+        <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
         <result column="push_ad_timestamp" property="pushAdTimestamp" jdbcType="INTEGER" />
         <result column="ad_id" property="adId" jdbcType="INTEGER" />
     </resultMap>
@@ -38,6 +38,10 @@
             and push_ad_timestamp <![CDATA[  >  ]]> #{startTime}
             and push_ad_timestamp <![CDATA[  <  ]]> #{endTime}
         GROUP BY from_unixtime( push_ad_timestamp, "%Y-%m-%d" )
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseResultMap">
+        SELECT id, wx_pub_app_id, wx_fan_open_id,push_ad_timestamp , ad_id  FROM e_ad_push_log WHERE id = #{id}
     </select>
 
 

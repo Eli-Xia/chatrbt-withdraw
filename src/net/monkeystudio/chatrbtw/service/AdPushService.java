@@ -27,6 +27,8 @@ import java.util.List;
  */
 @Service
 public class AdPushService {
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private PushMessageConfigService pushMessageConfigService;
@@ -145,6 +147,9 @@ public class AdPushService {
             this.pushTextAd(wxPubAppId,wxFanOpenId,adRecommendStatement);
         }
 
+        //如果是宠物陪聊任务广告,即阅读任务,维护任务与广告关系
+        chatPetMissionPoolService.updateMissionWhenPushChatPetAd(ad.getId(),wxFanId);
+
         //推送广告
         String pushAdRespStr = this.pushAd(wxPubAppId,wxFanId,ad);
 
@@ -153,6 +158,7 @@ public class AdPushService {
 
             return ;
         }
+
 
         //记录广告推送日志
         AdPushLog adPushLog = new AdPushLog();

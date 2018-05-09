@@ -1,5 +1,6 @@
 package net.monkeystudio.base.utils;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -35,5 +36,18 @@ public class RandomUtil {
     public static int randomIndex(int size){
         Random random = new Random();
         return random.nextInt(size);
+    }
+
+
+    public static <T> T randomPick(List<T> list){
+        Integer size = list.size();
+
+        if(list.size() == 0){
+            return null;
+        }
+
+        Integer ramdom = randomIndex(size);
+
+        return list.get(ramdom);
     }
 }
