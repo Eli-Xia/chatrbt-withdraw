@@ -141,7 +141,9 @@ if (isWeixin) {
                                 i.style.width = '150px';
                                 i.querySelector('i').className = "active";
                                 setTimeout(function () {
-                                    _self.list = resp.result;
+                                    _self.list.fanTotalCoin = resp.result.fanTotalCoin;
+                                    _self.list.experienceProgressRate = resp.result.experienceProgressRate;
+                                    _self.list.chatPetLevel = resp.result.chatPetLevel;
                                     _self.logs = resp.result.petLogs;
                                     _self.taskList = resp.result.todayMissions;
                                 }, 500);
