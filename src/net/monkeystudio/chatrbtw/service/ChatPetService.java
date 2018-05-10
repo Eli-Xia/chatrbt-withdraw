@@ -1,8 +1,10 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
+import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -821,6 +823,5 @@ public class ChatPetService {
 
         return posterUrl;
     }
-
 
 }
