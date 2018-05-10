@@ -1,10 +1,8 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
-import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
-import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -824,14 +822,5 @@ public class ChatPetService {
         return posterUrl;
     }
 
-    //用户未授权跳转到授权页面
-    /*public String getNoAuthRedirectUrl(Integer wxFanId){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
 
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
-        return null;
-    }*/
 }

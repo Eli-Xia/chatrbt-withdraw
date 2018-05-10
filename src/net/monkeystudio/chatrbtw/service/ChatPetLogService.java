@@ -123,7 +123,7 @@ public class ChatPetLogService {
 
         List<PetLog> pls = new ArrayList<>();
 
-        if(coin!=null){
+        if(coin != 0F){
             PetLog pl1 = new PetLog();
 
             pl1.setWxPubOriginId(wxPubOriginId);
@@ -136,7 +136,7 @@ public class ChatPetLogService {
 
             pls.add(pl1);
 
-            if(experience != null){
+            if(experience != 0){
                 PetLog pl2 = new PetLog();
 
                 pl2.setWxPubOriginId(wxPubOriginId);

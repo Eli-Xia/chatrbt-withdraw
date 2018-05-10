@@ -6,7 +6,6 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRat
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -54,7 +53,7 @@ public class ChatPetLevelService {
      * @param experience
      * @return
      */
-    public ExperienceProgressRate getProgressRate(Integer experience){
+    /*public ExperienceProgressRate getProgressRate(Integer experience){
 
         int remaining = experience;
 
@@ -81,6 +80,66 @@ public class ChatPetLevelService {
         experienceProgressRate.setOwn(lastRemainingExperience);
 
         return experienceProgressRate;
+    }*/
+
+    public ExperienceProgressRate getProgressRate(Integer experience){
+        //当前等级
+        Integer nowLevel = this.calculateLevel(experience);
+
+        //当前等级的最低经验值
+        Integer nowLevelExperience = this.lowestExperienceOfLevel(nowLevel);
+
+        //当前分数超出最低分几分
+        Integer overExperience = experience - nowLevelExperience;
+
+        //下一级
+        Integer nextLevel = nowLevel + 1;
+
+        //下一级所需经验值
+        Integer updateNeedExperience = this.upgradeNeedExperience(nextLevel);
+
+        ExperienceProgressRate experienceProgressRate = new ExperienceProgressRate();
+
+        experienceProgressRate.setOwn(overExperience);
+        experienceProgressRate.setNeed(updateNeedExperience);
+
+        return experienceProgressRate;
+    }
+
+    /**
+     * 从下一级升到当前等级所需经验值
+     * @param level
+     * @return
+     */
+    private Integer upgradeNeedExperience(Integer level){
+        List<ChatPetLevel> allLevel = this.getAscAllLevel();
+        for (ChatPetLevel cpl : allLevel){
+            if(cpl.getLevel() == level){
+                return cpl.getExperience();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 到达该等级所需总经验值
+     * @param level
+     * @return
+     */
+    private Integer lowestExperienceOfLevel(Integer level){
+
+        Integer experience = 0;
+
+        List<ChatPetLevel> allLevel = this.getAscAllLevel();
+
+        for(ChatPetLevel cpl : allLevel){
+            if(cpl.getLevel() > level){
+                break;
+            }
+            experience += cpl.getExperience();
+        }
+
+        return experience;
     }
 
     /**

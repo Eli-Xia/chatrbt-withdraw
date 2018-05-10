@@ -94,7 +94,6 @@
             e_chat_pet
         where
             second_ethnic_groups_id = #{secondEthnicGroupsId}
-        where
     </select>
 
     <select id="countByAppearceCode" parameterType="map" resultType="java.lang.Integer">
