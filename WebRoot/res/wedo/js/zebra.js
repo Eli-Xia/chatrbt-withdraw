@@ -35,8 +35,7 @@ if (isWeixin) {
                     chatPetExperinceRankItemList:[]
                 },
                 groupNum: "",
-                taskList: {},
-                test: ''
+                taskList: {}
             },
             created() {
                 this.queryList();
@@ -138,15 +137,10 @@ if (isWeixin) {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                _self.test = 'start';
-                                var i = $event.path[1];
-                                _self.test = 'start1';
+                                var i = $event.target.parentNode;
                                 i.style.width = '150px';
-                                _self.test = 'start2';
                                 i.querySelector('i').className = "active";
-                                _self.test = 'start3';
                                 setTimeout(function () {
-                                    _self.test = 'start4';
                                     _self.list = resp.result;
                                     _self.logs = resp.result.petLogs;
                                     _self.taskList = resp.result.todayMissions;

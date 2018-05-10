@@ -292,9 +292,11 @@ header {
   background: url("../images/token.svg") no-repeat;
   background-size: 100%;
   transition: all .5s linear;
+  -webkit-transition: all .5s linear;
 }
 #task li > div.active i.active {
   transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
   top: -0.2rem;
   opacity: 0;
 }
