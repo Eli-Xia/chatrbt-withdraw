@@ -5,14 +5,13 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="mission_code" property="missionCode" jdbcType="INTEGER" />
     <result column="ad_id" property="adId" jdbcType="INTEGER" />
-    <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
-    <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+    <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, mission_code, ad_id, wx_pub_origin_id, wx_fan_open_id, create_time,
+    id, mission_code, ad_id, chat_pet_id, create_time,
     state, finish_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -27,11 +26,11 @@
   </delete>
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     insert into e_chat_pet_personal_mission (id, mission_code,
-      ad_id, wx_pub_origin_id, wx_fan_open_id, 
+      ad_id, chat_pet_id,
       create_time, state, finish_time
       )
     values (#{id,jdbcType=INTEGER}, #{missionCode,jdbcType=INTEGER},
-      #{adId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
+      #{adId,jdbcType=INTEGER},#{chatPetId,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -47,11 +46,8 @@
       <if test="adId != null" >
         ad_id,
       </if>
-      <if test="wxPubOriginId != null" >
-        wx_pub_origin_id,
-      </if>
-      <if test="wxFanOpenId != null" >
-        wx_fan_open_id,
+      <if test="chatPetId != null" >
+        chat_pet_id,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -73,11 +69,8 @@
       <if test="adId != null" >
         #{adId,jdbcType=INTEGER},
       </if>
-      <if test="wxPubOriginId != null" >
-        #{wxPubOriginId,jdbcType=VARCHAR},
-      </if>
-      <if test="wxFanOpenId != null" >
-        #{wxFanOpenId,jdbcType=VARCHAR},
+      <if test="chatPetId != null" >
+        #{chatPetId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -99,11 +92,8 @@
       <if test="adId != null" >
         ad_id = #{adId,jdbcType=INTEGER},
       </if>
-      <if test="wxPubOriginId != null" >
-        wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
-      </if>
-      <if test="wxFanOpenId != null" >
-        wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      <if test="chatPetId != null" >
+        chat_pet_id = #{chatPetId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -121,8 +111,7 @@
     update e_chat_pet_personal_mission
     set mission_code = #{missionCode,jdbcType=INTEGER},
       ad_id = #{adId,jdbcType=INTEGER},
-      wx_pub_origin_id = #{wxPubOriginId,jdbcType=VARCHAR},
-      wx_fan_open_id = #{wxFanOpenId,jdbcType=VARCHAR},
+      chat_pet_id = #{chatPetId},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       state = #{state,jdbcType=INTEGER},
       finish_time = #{finishTime,jdbcType=TIMESTAMP}
@@ -135,11 +124,8 @@
     <include refid="Base_Column_List"/>
     from e_chat_pet_personal_mission
     <where>
-      <if test="wxPubOriginId != null">
-        and wx_pub_origin_id = #{wxPubOriginId}
-      </if>
-      <if test="wxFanOpenId != null">
-        and wx_fan_open_id = #{wxFanOpenId}
+      <if test="chatPetId != null">
+        and chat_pet_id = #{chatPetId}
       </if>
       <if test="missionCode != null">
         and mission_code = #{missionCode}
@@ -158,11 +144,8 @@
     <include refid="Base_Column_List"/>
     from e_chat_pet_personal_mission
     <where>
-      <if test="wxPubOriginId != null">
-        and wx_pub_origin_id = #{wxPubOriginId}
-      </if>
-      <if test="wxFanOpenId != null">
-        and wx_fan_open_id = #{wxFanOpenId}
+      <if test="chatPetId != null">
+        and chat_pet_id = #{chatPetId}
       </if>
       <if test="missionCode != null">
         and mission_code = #{missionCode}

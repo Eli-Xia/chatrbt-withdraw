@@ -49,13 +49,16 @@ public class ChatPetMissionPoolService {
      * 当日第一次进入宠物陪聊h5或者粉丝第一次聊天互动时创建当日任务
      */
     public void createMissionWhenFirstChatOrComeH5(String wxPubOriginId,String wxFanOpenId){
+
+        Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
+
         String createDailyMissionCountCacheKey = this.getCreateDailyMissionCountCacheKey(wxPubOriginId, wxFanOpenId);
 
         Long incr = redisCacheTemplate.incr(createDailyMissionCountCacheKey);
 
         if(incr == 1){
             //填充任务池
-            this.createDailyMission(wxPubOriginId,wxFanOpenId);
+            this.createDailyMission(chatPetId);
             //缓存时间为当日
             redisCacheTemplate.expire(createDailyMissionCountCacheKey, DateUtils.getCacheSeconds());
         }
@@ -65,10 +68,8 @@ public class ChatPetMissionPoolService {
 
     /**
      * 组装当日任务数据
-     * @param wxPubOriginId
-     * @param wxFanOpenId
      */
-    private void createDailyMission(String wxPubOriginId,String wxFanOpenId){
+    private void createDailyMission(Integer chatPetId){
         List<ChatPetMission> activeMissions = this.chatPetMissionService.getActiveMissions();
         if(ListUtil.isEmpty(activeMissions)){
             return;
@@ -77,8 +78,7 @@ public class ChatPetMissionPoolService {
         for(ChatPetMission cpm:activeMissions){
             ChatPetPersonalMission cppm = new ChatPetPersonalMission();
 
-            cppm.setWxFanOpenId(wxFanOpenId);
-            cppm.setWxPubOriginId(wxPubOriginId);
+            cppm.setChatPetId(chatPetId);
             cppm.setCreateTime(new Date());
             cppm.setState(MissionStateEnum.GOING_ON.getCode());
             cppm.setMissionCode(cpm.getMissionCode());
@@ -111,7 +111,9 @@ public class ChatPetMissionPoolService {
         String wxFanOpenId = wxfan.getWxFanOpenId();
         String wxPubOriginId = wxfan.getWxPubOriginId();
 
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
+        Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
+
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
 
         //update adId
         cppm.setAdId(adId);
@@ -123,8 +125,9 @@ public class ChatPetMissionPoolService {
     /**
      * 完成任务但是未领取奖励时更新任务池记录
      */
-    public void updateMissionWhenFinish(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, missionCode);
+    public void updateMissionWhenFinish(Integer chatPetId,Integer missionCode){
+
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
 
         cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
 
@@ -146,11 +149,11 @@ public class ChatPetMissionPoolService {
         }
 
         //任务是否已经完成
-        boolean isMissionDone = this.isDailyMissionDone(wxPubOriginId, wxFanOpenId,missionCode);
+        boolean isMissionDone = this.isDailyMissionDone(chatPet.getId(),missionCode);
 
         //未完成时:
         if(!isMissionDone){
-            this.updateMissionWhenFinish(wxPubOriginId,wxFanOpenId,missionCode);
+            this.updateMissionWhenFinish(chatPet.getId(),missionCode);
         }
     }
 
@@ -182,24 +185,24 @@ public class ChatPetMissionPoolService {
         }
 
         //此次点击阅读任务广告与今日任务广告应为同一条广告
-        boolean isEquals = checkMissionAdIsEqual(wxPubOriginId, wxFanOpenId, missionCode, adId);
+        boolean isEquals = checkMissionAdIsEqual(chatPet.getId(), missionCode, adId);
         if(!isEquals){
             return;
         }
 
         //判断今日阅读任务是否完成
-        boolean isDone = this.isDailyMissionDone(wxPubOriginId, wxFanOpenId, missionCode);
+        boolean isDone = this.isDailyMissionDone(chatPet.getId(), missionCode);
 
         if(isDone){
             return;
         }
 
-        this.updateMissionWhenFinish(wxPubOriginId,wxFanOpenId,missionCode);
+        this.updateMissionWhenFinish(chatPet.getId(),missionCode);
 
     }
 
-    private boolean  checkMissionAdIsEqual(String wxPubOriginId,String wxFanOpenId,Integer missionCode,Integer adId){
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, missionCode);
+    private boolean  checkMissionAdIsEqual(Integer chatPetId,Integer missionCode,Integer adId){
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
 
         Integer missionAdId = cppm.getAdId();
 
@@ -210,8 +213,8 @@ public class ChatPetMissionPoolService {
      * 今日任务是否完成
      * @return
      */
-    public boolean isDailyMissionDone(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(wxPubOriginId, wxFanOpenId, missionCode);
+    public boolean isDailyMissionDone(Integer chatPetId,Integer missionCode){
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
 
         Integer state = cppm.getState();
 
@@ -228,13 +231,12 @@ public class ChatPetMissionPoolService {
      * @param missionCode 任务编号
      * @return
      */
-    private ChatPetPersonalMission getDailyPersonalMission(String wxPubOriginId,String wxFanOpenId,Integer missionCode){
+    private ChatPetPersonalMission getDailyPersonalMission(Integer chatPetId,Integer missionCode){
         Date now = new Date();
         Date startTime = DateUtils.getBeginDate(now);
 
         ChatPetPersonalMission param = new ChatPetPersonalMission();
-        param.setWxPubOriginId(wxPubOriginId);
-        param.setWxFanOpenId(wxFanOpenId);
+        param.setChatPetId(chatPetId);
         param.setCreateTime(startTime);
         param.setMissionCode(missionCode);
 
@@ -266,14 +268,11 @@ public class ChatPetMissionPoolService {
 
     /**
      * 获取今日任务
-     * @param wxPubOriginId
-     * @param wxFanOpenId
      * @return
      */
-    public List<TodayMissionItem> getTodayMissionList(String wxPubOriginId,String wxFanOpenId){
+    public List<TodayMissionItem> getTodayMissionList(Integer chatPetId){
         ChatPetPersonalMission param = new ChatPetPersonalMission();
-        param.setWxFanOpenId(wxFanOpenId);
-        param.setWxPubOriginId(wxPubOriginId);
+        param.setChatPetId(chatPetId);
         param.setCreateTime(DateUtils.getBeginDate(new Date()));
 
         List<ChatPetPersonalMission> cppms = this.getPersonalMissionListByParam(param);

@@ -9,9 +9,7 @@ public class ChatPetPersonalMission {
 
     private Integer adId;
 
-    private String wxPubOriginId;
-
-    private String wxFanOpenId;
+    private Integer chatPetId;
 
     private Date createTime;
 
@@ -43,20 +41,12 @@ public class ChatPetPersonalMission {
         this.adId = adId;
     }
 
-    public String getWxPubOriginId() {
-        return wxPubOriginId;
+    public Integer getChatPetId() {
+        return chatPetId;
     }
 
-    public void setWxPubOriginId(String wxPubOriginId) {
-        this.wxPubOriginId = wxPubOriginId == null ? null : wxPubOriginId.trim();
-    }
-
-    public String getWxFanOpenId() {
-        return wxFanOpenId;
-    }
-
-    public void setWxFanOpenId(String wxFanOpenId) {
-        this.wxFanOpenId = wxFanOpenId == null ? null : wxFanOpenId.trim();
+    public void setChatPetId(Integer chatPetId) {
+        this.chatPetId = chatPetId;
     }
 
     public Date getCreateTime() {

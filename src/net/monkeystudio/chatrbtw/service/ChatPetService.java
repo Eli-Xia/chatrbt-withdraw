@@ -220,7 +220,7 @@ public class ChatPetService {
         chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
         //今日任务
-        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
+        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
 
         return chatPetBaseInfo;
@@ -359,7 +359,7 @@ public class ChatPetService {
         chatPetBaseInfo.setChatPetLevel(chatPetLevel);
 
         //今日任务
-        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
+        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
 
 
@@ -490,6 +490,15 @@ public class ChatPetService {
         param.setWxFanOpenId(wxFanOpenId);
 
         return chatPetMapper.selectByParam(param);
+    }
+
+    public Integer getChatPetIdByFans(String wxPubOriginId,String wxFanOpenId){
+        Integer ret = null;
+        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        if(chatPet != null){
+            ret = chatPet.getId();
+        }
+        return ret;
     }
 
     /**
@@ -824,4 +833,14 @@ public class ChatPetService {
         return posterUrl;
     }
 
+    //用户未授权跳转到授权页面
+    /*public String getNoAuthRedirectUrl(Integer wxFanId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
+        return null;
+    }*/
 }
