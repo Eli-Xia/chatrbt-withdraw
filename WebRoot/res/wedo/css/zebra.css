@@ -329,6 +329,7 @@ header {
   font-size: 0.48rem;
   height: 1.12rem;
   line-height: 1.12rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 #log li span {
   float: right;
@@ -353,9 +354,6 @@ header {
   color: #f9b721;
   padding-left: 0.84rem;
   background-size: 0.66rem 0.66rem;
-}
-#log li + li {
-  border-bottom: #ceced2;
 }
 #task li + li,
 #groups li + li {
