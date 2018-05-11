@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service.bean.chatpet;
 
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 
@@ -24,9 +25,13 @@ public class ChatPetInfo {
     private Integer experience;
     private Integer chatPetLevel;
 
+    private Appearance appearance;
+
     private ExperienceProgressRate experienceProgressRate;
 
     private Float fanTotalCoin = 0F;
+
+
 
     private List<PetLogResp> petLogs = new ArrayList<>();
 
@@ -135,5 +140,13 @@ public class ChatPetInfo {
 
     public void setChatPetLevel(Integer chatPetLevel) {
         this.chatPetLevel = chatPetLevel;
+    }
+
+    public Appearance getAppearance() {
+        return appearance;
+    }
+
+    public void setAppearance(Appearance appearance) {
+        this.appearance = appearance;
     }
 }
