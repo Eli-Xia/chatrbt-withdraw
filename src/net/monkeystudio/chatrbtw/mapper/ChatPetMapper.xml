@@ -12,10 +12,11 @@
         <result column="parent_id" property="parentId" jdbcType="INTEGER" />
         <result column="experience" property="experience" jdbcType="INTEGER" />
         <result column="coin" property="coin" jdbcType="REAL" />
+        <result column="appearance_code" property="appearanceCode" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin
+        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code
     </sql>
 
     <select id="select" parameterType="map">
