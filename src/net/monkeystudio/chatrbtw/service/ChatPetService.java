@@ -409,6 +409,46 @@ public class ChatPetService {
     }
 
     /**
+     *   TODO
+     * 加入奖励池后  修改
+     * 完成每日任务领取奖励
+     * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
+     */
+    @Transactional
+    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) {
+        //更新任务池记录
+        //chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
+
+        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成
+
+        //增加金币  金币是一定会增加的
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
+        Integer missionCode = cppm.getMissionCode();
+
+        Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
+        this.increaseCoin(chatPetId,incrCoin);
+
+
+        //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 每日可领取奖励
+        //增加经验
+        //increaseExperienceHandle(missionItemId,missionCode);
+        ChatPet chatPet = this.getById(chatPetId);
+        Integer oldExperience = chatPet.getExperience();
+
+        Integer addExperience = incrCoin.intValue();
+        this.increaseExperience(chatPetId,addExperience);
+
+        Integer newExprience = this.getChatPetExperience(chatPetId);
+
+        //插入日志
+        //需要问清楚一件事:悬浮的奖励是不是只标明金币数,不会说这个是什么金币???  如果需要的话就要搞一个金币枚举类了.
+        //填充奖励池,首先去missionPool里面看有没有已经完成了的任务,有可能第一次进H5的时候已经把当日聊天任务给完成了.
+        //传到前端需要数据: coinValue  rewardItemId  missionItemId  rewardEnumCode(当日聊天,阅读任务,...奖励 , missionCode)
+        chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
+    }
+
+
+    /**
      * 完成每日任务领取奖励
      * @param itemId
      */
@@ -438,6 +478,9 @@ public class ChatPetService {
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
     }
+
+
+
 
 
 
