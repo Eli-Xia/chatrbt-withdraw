@@ -7,156 +7,154 @@
     <title>KeenDo</title>
     <link rel="shortcut icon" type="image/ico" href="${base}/res/portal/images/favicon.ico">
     <link rel="stylesheet" href="${base}/res/portal/css/new_index.css"/>
-    <script src="${base}/res/vendor/jquery-3.1.1.min.js"></script>
+    <script src="${base}/res/vendor/jquery-3.1.1.min.js" async="async"></script>
+    <script src="${base}/res/vendor/vue.js" async="async"></script>
 </head>
 <body>
-<div class="container-wrap">
-    <header>
-        <div class="hd">
-            <a href="${base}/index.html" class="logo">
-                <img src="${base}/res/portal/images/logo.png" alt="KEENDO">
-            </a>
-            <div class="login-wrap">
-                <a href="${base}/login.html" id="login">登录</a>
-                <i>|</i>
-                <a href="${base}/register.html">注册</a>
-            </div>
-        </div>
-    </header>
-    <!-- banner -->
-    <section id="banner">
-        <div class="banner-content">
-            <img src="${base}/res/portal/images/index/banner_img.png" alt="factory" class="banner-img">
-            <img src="${base}/res/portal/images/index/banner_bg.png" alt="factory" class="banner-bg">
-            <h1>未来</h1>
-            <h3>有趣的互动打败无趣的互动</h3>
-            <p>金豆智能聊天机器人</p>
-            <button onclick="window.location='${base}/register.html'">立即接入<i></i></button>
-        </div>
-    </section>
-    <section id="chat">
-        <div>
-            <div class="demo_box">
-                <img src="${base}/res/portal/images/index/demo_1.png" alt="问问搜">
-            </div>
-            <div class="wenwensou-description">
-                <h3>一键定制机器人<br/>轻松拥有问问搜</h3>
-                <p>
-                    独创号内提问检索功能，用户可通过向公众号提问高效查找历史文章
-                </p>
-                <p>
-                    同类文章经过智能归纳，随目标文章一同推送
-                </p>
-                <p>
-                    即时激活长尾流量，
-                    数据优化看得见
-                </p>
-            </div>
-        </div>
-    </section>
-    <section id="ad">
-        <div>
-            <div class="wenwensou-description">
-                <h3>互动式广告推送<br/>广告收益轻松赚</h3>
-                <p>
-                    一改公众号群发式广告的沉闷现状，打破一天一次的推送限制，机器人跟用户产生有趣互动后进行触发式精准推送
-                </p>
-                <p>
-                    广告形式更多元，创意呈现更新鲜，转化数据的提高看得见，广告收益轻松赚
-                </p>
-            </div>
-            <div class="demo_box">
-                <img src="${base}/res/portal/images/index/demo_2.png" alt="问问搜">
-            </div>
-        </div>
-    </section>
-    <section id="content">
-        <div class="description">
-            <div class="card">
-                <img src="${base}/res/portal/images/index/description_1.png" alt="">
-                <h3>智能运营</h3>
-                <p>为流量主减轻内容与运营方面的压力</p>
-            </div>
-            <div class="card">
-                <img src="${base}/res/portal/images/index/description_2.png" alt="">
-                <h3>精准推送</h3>
-                <p>关键词触发机制让推送准确有效</p>
-            </div>
-            <div class="card">
-                <img src="${base}/res/portal/images/index/description_3.png" alt="">
-                <h3>即时互动 </h3>
-                <p>24小时在线互动提高体验 </p>
-            </div>
-        </div>
-        <div class="description">
-            <div class="card">
-                <img src="${base}/res/portal/images/index/description_4.png" alt="">
-                <h3>独家平台</h3>
-                <p>自主开发平台把控执行每一步 </p>
-            </div>
-            <div class="card">
-                <img src="${base}/res/portal/images/index/description_5.png" alt="">
-                <h3>渠道矩阵</h3>
-                <p>全领域独家合作流量主构造立体传播路径 </p>
-            </div>
-            <div class="card">
-                <img src="${base}/res/portal/images/index/description_6.png" alt="">
-                <h3>量身策划</h3>
-                <p>专业策划团队量身打造方案</p>
-            </div>
-        </div>
-    </section>
-    <section id="account">
-        <div>
-            <img src="${base}/res/portal/images/index/account_demo.png" alt="公众号">
-            <div class="account-content">
-                <h2>客户案例</h2>
-                <p>包含“传统节日祝福”</p>
-                <p>（新榜总榜排名第六）</p>
-            </div>
-        </div>
-    </section>
-    <section id="footer">
-        <div class="broadcast">
-            <h2>人工智能在新媒体传播领域的首次应用</h2>
-            <p>让传播&nbsp;&nbsp;&nbsp;更简单</p>
-            <div class="line"></div>
-            <div class="func-card">
-                <div class="card">
-                    <div class="img-container">
-                        <img src="${base}/res/portal/images/index/func_1.png" alt="">
-                    </div>
-                    <h3>一键接入</h3>
-                    <p>与公众号后台无缝衔接<br>极简操作只需一键</p>
-                </div>
-                <div class="card">
-                    <div class="img-container">
-                        <img src="${base}/res/portal/images/index/func_2.png" alt="">
-                    </div>
-                    <h3>智能后台</h3>
-                    <p>界面简洁一目了然<br>使用体验流畅自如</p>
-                </div>
-                <div class="card">
-                    <div class="img-container">
-                        <img src="${base}/res/portal/images/index/func_3.png" alt="">
-                    </div>
-                    <h3>实时监控</h3>
-                    <p>24小时的数据监控<br>确保万无一失</p>
-                </div>
-                <div class="card">
-                    <div class="img-container">
-                        <img src="${base}/res/portal/images/index/func_4.png" alt="">
-                    </div>
-                    <h3>数据分析</h3>
-                    <p>对传播效果的大数据分析<br>让传播越做越好</p>
-                </div>
-            </div>
-        </div>
-        <footer>
-            <a href="http://www.miibeian.gov.cn/">许可证号：粤ICP备17103036号&nbsp;&nbsp;&nbsp;&nbsp;Copyright © 2017 - 2018
-                Keendo&nbsp;&nbsp;&nbsp;&nbsp;All Rights Reserved</a>
-        </footer>
-    </section>
+<div class="logo">
+    <img src="${base}/res/portal/images/logo_bk.png">
 </div>
+<div class="login">
+    <button>注册</button>
+    <button>登录</button>
+</div>
+<div id="container">
+    <div id="join">
+        <canvas id="canvas"></canvas>
+        <div class="earth">
+            <img src="${base}/res/portal/images/earth.png">
+            <div class="future">
+                <img src="${base}/res/portal/images/future.png">
+            </div>
+            <div class="join-box">
+                <img src="${base}/res/portal/images/text.png">
+                <div id="login">
+                    <div class="err_msg">
+                        <img src="${base}/res/portal/images/err.png" alt="金豆传媒">
+                        账号或密码错误，请重新输入
+                    </div>
+                    <div class="input-text">
+                        <input type="text" placeholder="输入邮箱进行登录" id="username" v-model="email"/>
+                        <span></span>
+                    </div>
+                    <div class="input-ps">
+                        <input type="password" placeholder="密码" v-model="password"/>
+                        <span></span>
+                    </div>
+                    <div class="remember-box">
+                    <span :class="remember!=false?active:''">
+
+                    </span>
+                        <input type="checkbox" id="remember" v-model="remember"><label for="remember">记住密码</label>
+                        <a href="${base}/find_password.html">忘记密码</a>
+                    </div>
+                    <div>
+                        <button class="login" @click="loginClick">登&nbsp;&nbsp;录</button>
+                        <button class="register" @click="registerClick">注&nbsp;&nbsp;册</button>
+                    </div>
+                </div>
+                <div id="register">
+                    <div class="err_msg">
+                        <img src="${base}/res/portal/images/err.png" alt="金豆传媒">
+                        <span>{{msg}}</span>
+                    </div>
+                    <div class="input-text">
+                        <input type="text" placeholder="昵称" id="nickname" v-model="nickname"
+                               v-on:blur="blur('nickname',nickname,regNick)"/>
+                        <span></span>
+                        <div class="tip">
+                            <div>
+                                昵称不能包含特殊字符，建议使用公司名
+                            </div>
+                        </div>
+                        <b>
+
+                        </b>
+                    </div>
+                    <div class="input-text">
+                        <input type="text" placeholder="输入邮箱进行注册" id="user_email" v-model="email"
+                               v-on:blur="blur('user_email',email,regEmail)"/>
+                        <span></span>
+                        <div class="tip">
+                            <div>
+                                请输入正确的邮箱格式
+                            </div>
+                        </div>
+                        <b>
+
+                        </b>
+                    </div>
+                    <div class="input-ps">
+                        <input type="password" placeholder="设置密码" id="password" v-model="password"
+                               @blur="blur('password',password,regPassword)"/>
+                        <span></span>
+                        <div class="tip">
+                            <div>
+                                6~16位字符，必须包含英文字母、数字
+                            </div>
+                        </div>
+                        <b></b>
+                    </div>
+                    <div class="input-ps">
+                        <input type="password" placeholder="确认密码" id="password_clone" v-model="passwordCopy"
+                               @blur="copyReg('password_clone')"/>
+                        <span></span>
+                        <div class="tip">
+                            <div>
+                                请输入与上面相同的密码
+                            </div>
+                        </div>
+                        <b></b>
+                    </div>
+                    <div>
+                        <input type="text" placeholder="验证码" id="code" v-model="code">
+                        <div title="点击换验证码" @click="requireCode">
+                            <img id="codeImg">
+                        </div>
+                        <div class="tip">
+                            <div>
+                                请输入右边的验证码，若看不清楚请点击更换验证码
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="register" @click="registerClick">注&nbsp;&nbsp;册</button>
+                    </div>
+                    <div>
+                        <a @click="loginClick">
+                            已有账号？登录
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ask_search">
+        <div class="text">
+            <h2>问问搜</h2>
+            <p>独创号内提问检索功能，用户可通过向公众号</p>
+            <p>提问高效查找历史文章</p>
+            <p>同类文章经过智能归纳，随目标文章一同推送</p>
+            <p>即时激活长尾流量，数据优化看得见</p>
+        </div>
+        <div id="img_box">
+            <img src="${base}/res/portal/images/circle.svg" class="circle">
+            <img src="${base}/res/portal/images/phone.png" class="phone">
+            <img src="${base}/res/portal/images/err_ask.png" class="err">
+            <img src="${base}/res/portal/images/triangle.png" class="triangle">
+        </div>
+    </div>
+</div>
+<ul id="pages">
+    <li class="active">01</li>
+    <li>02</li>
+</ul>
+<div id="loading"></div>
+<footer>
+    <a href="http://www.miibeian.gov.cn/">许可证号：粤ICP备17103036号&nbsp;&nbsp;&nbsp;&nbsp;Copyright © 2017 - 2018 Keendo&nbsp;&nbsp;&nbsp;&nbsp;All
+        Rights Reserved</a>
+</footer>
+<script src="${base}/res/js/config.js" async="async"></script>
+<script src="${base}/res/portal/js/new_index.js"></script>
 </body>
 </html>
