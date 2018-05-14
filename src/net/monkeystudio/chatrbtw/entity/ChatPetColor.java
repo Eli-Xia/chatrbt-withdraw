@@ -5,8 +5,8 @@ package net.monkeystudio.chatrbtw.entity;
  */
 public class ChatPetColor {
     private Integer id;
-    private Integer RGBValue;
-    private Integer key;
+    private String RGBValue;
+    private String key;
 
     public Integer getId() {
         return id;
@@ -16,19 +16,19 @@ public class ChatPetColor {
         this.id = id;
     }
 
-    public Integer getRGBValue() {
+    public String getRGBValue() {
         return RGBValue;
     }
 
-    public void setRGBValue(Integer RGBValue) {
+    public void setRGBValue(String RGBValue) {
         this.RGBValue = RGBValue;
     }
 
-    public Integer getKey() {
+    public String getKey() {
         return key;
     }
 
-    public void setKey(Integer key) {
+    public void setKey(String key) {
         this.key = key;
     }
 }

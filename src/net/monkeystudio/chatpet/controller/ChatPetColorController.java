@@ -2,9 +2,8 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.ChatPetColor;
 import net.monkeystudio.chatrbtw.service.ChatPetColorService;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetColorItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,7 @@ import java.util.List;
 /**
  * Created by bint on 2018/5/8.
  */
+@RequestMapping(value = "/chat-pet/color")
 @Controller
 public class ChatPetColorController {
 
@@ -27,11 +27,11 @@ public class ChatPetColorController {
 
 
 
-    @RequestMapping(value = "/settings", method = RequestMethod.POST)
+    @RequestMapping(value = "/all", method = RequestMethod.POST)
     @ResponseBody
     public RespBase getChatPetAllColor(){
 
-        List<ChatPetColor> list = chatPetColorService.getAll();
+        List<ChatPetColorItem> list = chatPetColorService.getAllColor();
 
         return respHelper.ok(list);
     }
