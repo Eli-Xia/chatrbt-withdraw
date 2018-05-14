@@ -123,7 +123,7 @@ public class ChatPetController extends ChatPetBaseController{
         String wxFanIdStr = wxFanId.substring(i + 1);
         int id = Integer.parseInt(wxFanIdStr);
         this.saveSessionUserId(id);
-        ChatPetInfo info = chatPetService.getInfo(id);
+        ChatPetInfo info = chatPetService.getInfoByWxFanId(id);
         return respHelper.ok(info);
     }
 
