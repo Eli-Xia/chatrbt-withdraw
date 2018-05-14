@@ -4,7 +4,7 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
-import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
+import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
@@ -135,8 +135,8 @@ public class ChatPetController extends ChatPetBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
-    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
-        Log.d("=========itemdi = {?} =============",req.getItemId().toString());
+    public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
+        /*Log.d("=========itemdi = {?} =============",req.getItemId().toString());
         Integer userId = this.getUserId();
 
         if(userId == null){
@@ -145,7 +145,8 @@ public class ChatPetController extends ChatPetBaseController{
 
         ChatPetInfo info = chatPetService.rewardHandle(userId, req.getItemId());
 
-        return respHelper.ok(info);
+        return respHelper.ok(info);*/
+        return null;
     }
 
 

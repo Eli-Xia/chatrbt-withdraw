@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gold_value" property="goldValue" jdbcType="INTEGER" />
+    <result column="reward_state" property="rewardState" jdbcType="INTEGER" />
+    <result column="mission_item_id" property="missionItemId" jdbcType="INTEGER" />
+    <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, gold_value, reward_state, mission_item_id, chat_pet_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from e_chat_pet_reward_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from e_chat_pet_reward_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+    insert into e_chat_pet_reward_item (id, gold_value, reward_state, 
+      mission_item_id, chat_pet_id)
+    values (#{id,jdbcType=INTEGER}, #{goldValue,jdbcType=INTEGER}, #{rewardState,jdbcType=INTEGER}, 
+      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+    insert into e_chat_pet_reward_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="goldValue != null" >
+        gold_value,
+      </if>
+      <if test="rewardState != null" >
+        reward_state,
+      </if>
+      <if test="missionItemId != null" >
+        mission_item_id,
+      </if>
+      <if test="chatPetId != null" >
+        chat_pet_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="goldValue != null" >
+        #{goldValue,jdbcType=INTEGER},
+      </if>
+      <if test="rewardState != null" >
+        #{rewardState,jdbcType=INTEGER},
+      </if>
+      <if test="missionItemId != null" >
+        #{missionItemId,jdbcType=INTEGER},
+      </if>
+      <if test="chatPetId != null" >
+        #{chatPetId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+    update e_chat_pet_reward_item
+    <set >
+      <if test="goldValue != null" >
+        gold_value = #{goldValue,jdbcType=INTEGER},
+      </if>
+      <if test="rewardState != null" >
+        reward_state = #{rewardState,jdbcType=INTEGER},
+      </if>
+      <if test="missionItemId != null" >
+        mission_item_id = #{missionItemId,jdbcType=INTEGER},
+      </if>
+      <if test="chatPetId != null" >
+        chat_pet_id = #{chatPetId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+    update e_chat_pet_reward_item
+    set gold_value = #{goldValue,jdbcType=INTEGER},
+      reward_state = #{rewardState,jdbcType=INTEGER},
+      mission_item_id = #{missionItemId,jdbcType=INTEGER},
+      chat_pet_id = #{chatPetId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+    insert into e_chat_pet_reward_item (gold_value, reward_state, mission_item_id, chat_pet_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.goldValue}, #{item.rewardState},#{item.missionItemId},#{item.chatPetId})
+    </foreach>
+  </insert>
+
+  <select id="selectByParam" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from e_chat_pet_reward_item
+    <where>
+      <if test="chatPetId != null">
+        and chat_pet_id = #{chatPetId}
+      </if>
+      <if test="missionItemId != null">
+        and mission_item_id = #{missionItemId}
+      </if>
+      <if test="rewardState != null">
+        and reward_state = #{rewardState}
+      </if>
+    </where>
+  </select>
+</mapper>

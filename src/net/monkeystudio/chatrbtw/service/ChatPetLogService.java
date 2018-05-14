@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.enums.mission.RewardMethodEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
@@ -31,6 +32,9 @@ public class ChatPetLogService {
 
     @Autowired
     private ChatPetLevelService chatPetLevelService;
+
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
 
     /**
      * 获取每日宠物日志
@@ -112,12 +116,15 @@ public class ChatPetLogService {
      * 完成任务领取奖励后插入宠物日志
      */
     @Transactional
-    public void savePetLogWhenReward(Integer chatPetId,Integer missionCode,Integer oldExperience,Integer newExperience){
+    public void savePetLogWhenReward(Integer chatPetId,Integer missionItemId,Integer oldExperience,Integer newExperience){
         ChatPet chatPet = chatPetService.getById(chatPetId);
         String wxPubOriginId = chatPet.getWxPubOriginId();
         String wxFanOpenId = chatPet.getWxFanOpenId();
 
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
+        Integer missionCode = cppm.getMissionCode();
         ChatPetMission cpm = chatPetMissionService.getByMissionCode(missionCode);
+
         Float coin = cpm.getCoin();
         Integer experience = cpm.getExperience();
 

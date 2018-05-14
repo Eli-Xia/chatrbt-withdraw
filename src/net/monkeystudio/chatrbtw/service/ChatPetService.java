@@ -80,6 +80,8 @@ public class ChatPetService {
     @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
 
+    @Autowired
+    private ChatPetRewardItemService chatPetRewardItemService;
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -222,6 +224,13 @@ public class ChatPetService {
         //今日任务
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
+
+        //填充奖励池
+        chatPetRewardItemService.createInitRewardItems(chatPetId);
+
+        //奖励列表
+        List<ChatPetGoldItem> goldItems = chatPetRewardItemService.getChatPetGoldItems(chatPetId);
+        chatPetBaseInfo.setGoldItems(goldItems);
 
         return chatPetBaseInfo;
     }
@@ -408,6 +417,7 @@ public class ChatPetService {
         return shouldState.equals(nowState);
     }
 
+
     /**
      *   TODO
      * 加入奖励池后  修改
@@ -415,37 +425,71 @@ public class ChatPetService {
      * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
      */
     @Transactional
-    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) {
-        //更新任务池记录
-        //chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
+    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) throws BizException{
+        //是否为任务类型奖励
+        Boolean isMissionReward = false;
 
-        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成
+        //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 区分每日可领取奖励
+        if(missionItemId != null){
+            isMissionReward = true;
+        }
+
+        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);
+
+        //判断领取的是否为自己的奖励
+        Integer chatPetIdInDb = chatPetRewardItem.getChatPetId();
+        if(!chatPetId.equals(chatPetIdInDb)){
+            throw new BizException("无法领取");
+        }
+
+        if(chatPetRewardItemService.isGoldAwarded(rewardItemId)){
+            throw new BizException("您已经领取过奖励");
+        }
+
+        if(isMissionReward && !chatPetMissionPoolService.isFinishMission(missionItemId)){
+            throw new BizException("请完成任务后再领取奖励");
+        }
 
         //增加金币  金币是一定会增加的
-        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
-        Integer missionCode = cppm.getMissionCode();
-
-        Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
-        this.increaseCoin(chatPetId,incrCoin);
+        Integer incrCoin = chatPetRewardItem.getGoldValue();
+        this.increaseCoin(chatPetId,incrCoin.floatValue());
 
 
-        //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 每日可领取奖励
         //增加经验
-        //increaseExperienceHandle(missionItemId,missionCode);
-        ChatPet chatPet = this.getById(chatPetId);
-        Integer oldExperience = chatPet.getExperience();
+        Integer oldExperience = null;
+        Integer newExperience = null;
 
-        Integer addExperience = incrCoin.intValue();
-        this.increaseExperience(chatPetId,addExperience);
+        if(isMissionReward){
 
-        Integer newExprience = this.getChatPetExperience(chatPetId);
+            ChatPet chatPet = this.getById(chatPetId);
+            oldExperience = chatPet.getExperience();
+
+            Integer addExperience = incrCoin.intValue();
+            this.increaseExperience(chatPetId,addExperience);
+
+            newExperience = this.getChatPetExperience(chatPetId);
+
+        }
 
         //插入日志
+        if(isMissionReward){
+            chatPetLogService.savePetLogWhenReward(chatPetId,missionItemId,oldExperience,newExperience);
+        }
         //需要问清楚一件事:悬浮的奖励是不是只标明金币数,不会说这个是什么金币???  如果需要的话就要搞一个金币枚举类了.
         //填充奖励池,首先去missionPool里面看有没有已经完成了的任务,有可能第一次进H5的时候已经把当日聊天任务给完成了.
         //传到前端需要数据: coinValue  rewardItemId  missionItemId  rewardEnumCode(当日聊天,阅读任务,...奖励 , missionCode)
         //问:金币上需不需要展示是什么类型奖励,
-        chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
+    }
+
+    private void increaseExperienceHandle(Boolean isMissionReward, Integer missionItemId) {
+        if(!isMissionReward){
+            return ;
+        }
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
+        Integer chatPetId = cppm.getChatPetId();
+        Integer nowExperience = this.getChatPetExperience(chatPetId);
+
     }
 
 
@@ -847,6 +891,18 @@ public class ChatPetService {
         return chatPetExperinceRankItemList;
     }
 
+    /**
+     * 获取宠物等级
+     * @param chatPetId
+     * @return
+     */
+    public Integer getChatPetLevel(Integer chatPetId){
+        ChatPet chatPet = this.getById(chatPetId);
+        Integer experience = chatPet.getExperience();
+        Integer level = chatPetLevelService.calculateLevel(experience);
+        return level;
+    }
+
 
 
     /**
@@ -877,14 +933,5 @@ public class ChatPetService {
         return posterUrl;
     }
 
-    //用户未授权跳转到授权页面
-    /*public String getNoAuthRedirectUrl(Integer wxFanId){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
 
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
-        return null;
-    }*/
 }

@@ -6,8 +6,9 @@ package net.monkeystudio.chatrbtw.enums.mission;
  */
 public enum RewardTypeEnum {
 
-    private Integer missionCode;//奖励对应的任务,为null则不是任务奖励
-    private String  type;
 
+    /*private Integer missionCode;//奖励对应的任务,为null则不是任务奖励
+    private String  type;
+*/
 
 }
