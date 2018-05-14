@@ -40,7 +40,6 @@ public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
-
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
@@ -252,7 +251,6 @@ public class ChatPetService {
     }
 
 
-
     /**
      * 获取宠物的信息
      * @param chatPetId
@@ -333,7 +331,7 @@ public class ChatPetService {
      * @param nowState : 当前任务状态
      * @return
      */
-    public boolean isAble2Reward(Integer nowState){
+    private boolean isAble2Reward(Integer nowState){
 
         Integer shouldState = MissionStateEnum.FINISH_NOT_AWARD.getCode();//当前任务领取状态应为 已完成未领取
 
