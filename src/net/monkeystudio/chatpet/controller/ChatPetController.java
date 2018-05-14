@@ -42,10 +42,8 @@ public class ChatPetController extends ChatPetBaseController{
         Integer fanId = getUserId();
 
         if(fanId == null){
-            respHelper.nologin();
+            return respHelper.nologin();
         }
-
-        //Integer fanId = 104;
 
         ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
 

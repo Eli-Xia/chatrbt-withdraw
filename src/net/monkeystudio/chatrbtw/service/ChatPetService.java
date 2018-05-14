@@ -1,10 +1,8 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
-import net.monkeystudio.base.Constants;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
-import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -16,6 +14,8 @@ import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
@@ -105,8 +105,8 @@ public class ChatPetService {
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
 
-        String appearenceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
-        chatPet.setAppearenceCode(appearenceCode);
+        String appearanceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
+        chatPet.setAppearanceCode(appearanceCode);
 
 
         this.save(chatPet);
@@ -231,6 +231,13 @@ public class ChatPetService {
         //奖励列表
         List<ChatPetGoldItem> goldItems = chatPetRewardItemService.getChatPetGoldItems(chatPetId);
         chatPetBaseInfo.setGoldItems(goldItems);
+
+        String appearanceCode = chatPet.getAppearanceCode();
+        ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
+        Appearance appearance = new Appearance();
+        appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
+        appearance.setObject(zombiesCatAppearance);
+        chatPetBaseInfo.setAppearance(appearance);
 
         return chatPetBaseInfo;
     }

@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceMaterial;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceSite;
@@ -10,6 +11,7 @@ import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceMaterialMapper;
 import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceSiteMapper;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.mapper.RChatPetAppearenceSiteColorMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +72,7 @@ public class ChatPetAppearenceService {
     }
 
     private String getAppearenceCodePoolKey(){
-        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:appearence-code:pool";
+        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:zombies-cat-appearence-code:pool";
         return key;
     }
 
@@ -234,5 +236,26 @@ public class ChatPetAppearenceService {
         Long count = redisCacheTemplate.llen(key);
 
         return count;
+    }
+
+
+    public ZombiesCatAppearance getZombiesCatAppearence(String code){
+
+        ZombiesCatAppearance zombiesCatAppearence = new ZombiesCatAppearance();
+
+        Field[] fields = zombiesCatAppearence.getClass().getDeclaredFields();
+
+        for(int i=0;i<fields.length;i++){
+            Field field = fields[i];
+
+            net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearanceCodeSite chatPetAppearanceCodeSite = field.getAnnotation(net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearanceCodeSite.class);
+            Integer site = chatPetAppearanceCodeSite.value();
+
+            String key = code.substring(site - 1, site);
+
+            BeanUtils.setFieldValue(field ,zombiesCatAppearence ,key);
+        }
+        return zombiesCatAppearence;
+
     }
 }

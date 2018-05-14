@@ -1,0 +1,548 @@
+html {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+body {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 750px;
+  -webkit-user-select: none;
+  -webkit-text-size-adjust: 100%;
+  background: #310858 url("../images/body_bg.png") repeat-y;
+  background-size: 100% auto;
+  position: relative;
+}
+body * {
+  -webkit-user-select: none;
+  font-family: Helvetica;
+}
+[v-cloak] {
+  display: none;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+section {
+  background-color: #fff;
+  border-radius: 0.3rem;
+  width: 13.08rem;
+  margin: 14px auto;
+  overflow: hidden;
+}
+header {
+  width: 13.08rem;
+  margin: 0 auto;
+  padding: 0.8rem 0;
+  position: relative;
+}
+.share-target {
+  position: absolute;
+  top: 1.04rem;
+  right: -0.96rem;
+  background: #f53d4b url("../images/share_bg.png") no-repeat 0.44rem 0.28rem;
+  background-size: 0.72rem 0.68rem;
+  border-top-left-radius: 0.63rem;
+  border-bottom-left-radius: 0.63rem;
+  width: 4.68rem;
+  height: 1.26rem;
+  box-sizing: border-box;
+  padding-left: 1.44rem;
+  line-height: 1.26rem;
+  font-size: 0.6rem;
+  color: #fff;
+}
+.user-msg img {
+  width: 1.74rem;
+  height: 1.74rem;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background-color: #fff;
+  float: left;
+  font-size: .5rem;
+}
+.user-msg > div {
+  margin-left: 2.3rem;
+  padding-top: 0.28rem;
+}
+.user-msg .user-name {
+  font-size: 0.6rem;
+  color: #fefefe;
+}
+.user-msg .user-token {
+  height: 0.7rem;
+  line-height: 0.7rem;
+  padding-left: 0.96rem;
+  margin-top: 0.24rem;
+  background: url("../images/token.svg") no-repeat;
+  background-size: 0.66rem 0.66rem;
+  font-size: 0.48rem;
+  color: #f9b721;
+}
+#user_zebra {
+  position: relative;
+}
+#user_zebra .zebra-bg {
+  height: 9.5rem;
+}
+#user_zebra .pet-class {
+  position: relative;
+  padding-top: 0.52rem;
+  padding-left: 0.54rem;
+  height: 0.44rem;
+}
+#user_zebra .pet-class img {
+  position: absolute;
+  top: 0.26rem;
+  right: 0.36rem;
+  width: 1.4rem;
+}
+#user_zebra .class-scroll {
+  width: 10.4rem;
+  height: 0.4rem;
+  line-height: 0.4rem;
+  background-color: #efeff4;
+  border-radius: 0.2rem;
+  box-sizing: border-box;
+  padding-right: 0.28rem;
+  font-size: 0.28rem;
+  text-align: right;
+  position: relative;
+  color: #8e8e93;
+}
+#user_zebra .scroll-bg {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-image: linear-gradient(to right, #2196f9, #21e7f9);
+  background-image: -webkit-linear-gradient(to right, #2196f9, #21e7f9);
+  border-radius: 0.2rem;
+}
+#user_zebra .zebra-bg > img {
+  width: 100%;
+  margin-top: -1.77rem;
+}
+#user_zebra .user-code {
+  margin: 0 0.8rem;
+  padding: 0.36rem 0 0.44rem 0;
+  text-align: left;
+  font-size: 0.44rem;
+}
+#user_zebra .user-code span {
+  display: inline-block;
+  width: 49%;
+  text-align: right;
+  margin-right: 0.26rem;
+  color: #8e8e93;
+}
+#user_zebra i {
+  position: absolute;
+  right: 0.52rem;
+  top: 8.94rem;
+  width: 0.66rem;
+  height: 0.88rem;
+  background: url("../images/msg_bg.png") no-repeat;
+  background-size: 100%;
+}
+.show-rule {
+  border-radius: 0.4rem;
+}
+.show-rule > div {
+  position: relative;
+  background: url("../images/card.png") no-repeat;
+  background-size: 100% 100%;
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 0.44rem 0;
+  text-align: center;
+  font-weight: 600;
+}
+.show-rule > div div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.52rem;
+  font-size: 0.48rem;
+  font-weight: normal;
+}
+.tittle {
+  text-align: center;
+  font-size: 0.6rem;
+  padding: 0.26rem 0 0.54rem;
+  background: url("../images/tittle_bg.png") no-repeat 1.46rem 0;
+  background-size: 10.18rem;
+  color: #fff;
+  font-weight: 600;
+}
+#rule {
+  position: relative;
+}
+#rule .hide-rule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.52rem;
+  font-size: 0.48rem;
+  color: #6c2999;
+}
+#rule .tittle + div {
+  padding: 0 0.78rem 1.1rem 0.8rem;
+}
+#rule .tittle {
+  margin-bottom: 0.9rem;
+}
+#rule .text {
+  padding: 0 0.4rem 0.4rem 0.54rem;
+  font-size: 0.48rem;
+  line-height: 1.67;
+  text-align: justify;
+  border-bottom: 1px solid #ceced2;
+  margin: 0;
+}
+#rule .gold {
+  border-bottom: 1px solid #ceced2;
+  padding-bottom: 0.5rem;
+}
+#rule .gold > div {
+  padding: 0.5rem 0 0.28rem 0.54rem;
+  font-size: 0.48rem;
+}
+#rule .gold img {
+  width: 1.28rem;
+  vertical-align: bottom;
+  margin-right: 0.2rem;
+}
+#rule .cat > div {
+  padding: 0.58rem 0 0.28rem 0.54rem;
+  font-size: 0.48rem;
+}
+#rule .cat img {
+  width: 1.28rem;
+  height: 1.44rem;
+  vertical-align: bottom;
+  margin-right: 0.2rem;
+}
+#rule li {
+  line-height: 1.67;
+  font-size: 0.48rem;
+  color: #8e8e93;
+  padding-left: 0.54rem;
+  padding-right: 0.4rem;
+  background: url("../images/li_bg.png") no-repeat 0 0.2rem;
+  background-size: 0.26rem;
+}
+#task > div + div {
+  padding: 0.56rem 0.8rem 0.8rem;
+}
+#task .date {
+  font-size: 0.48rem;
+  color: #8e8e93;
+  padding: 0.22rem 0;
+}
+#task li {
+  position: relative;
+  padding: 0.32rem 0;
+  font-size: 0.48rem;
+}
+#task li.after {
+  color: #8e8e93;
+}
+#task li.after div {
+  background-color: #8e8e93;
+  color: #fff;
+}
+#task li > div {
+  position: absolute;
+  top: 0.16rem;
+  right: 0;
+  text-align: center;
+  font-size: 0.4rem;
+  width: 1.58rem;
+  padding: 0.18rem 0;
+  border-radius: 3px;
+  background-color: #efeff4;
+  color: #ceced2;
+  overflow: hidden;
+}
+#task li > div > div {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  padding: 0.18rem 0;
+  width: 1.58rem;
+  background-color: #f9b721;
+  color: #fff;
+}
+#task li > div.active {
+  text-align: right;
+  padding: 0;
+  background-color: #fff;
+  color: #fff;
+}
+#task li > div.active i {
+  position: absolute;
+  top: 0;
+  left: -1rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  background: url("../images/token.svg") no-repeat;
+  background-size: 100%;
+  transition: all .5s linear;
+  -webkit-transition: all .5s linear;
+}
+#task li > div.active i.active {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  top: -0.2rem;
+  opacity: 0;
+}
+#log .tittle + div {
+  padding: 0 0.8rem 0.9rem;
+}
+#log .tittle {
+  margin-bottom: 0.54rem;
+}
+#log .log-date {
+  font-size: 0.48rem;
+  padding: 0.24rem 0;
+  margin-top: 0.24rem;
+  color: #8e8e93;
+}
+.nodata {
+  text-align: center;
+  font-size: 0.48rem;
+  color: #8e8e93;
+}
+.nodata img {
+  width: 2.76rem;
+}
+.nodata p {
+  font-size: 0.48rem;
+  color: #8e8e93;
+  margin: 0;
+}
+#log li {
+  font-size: 0.48rem;
+  height: 1.12rem;
+  line-height: 1.12rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+#log li span {
+  float: right;
+  color: #8e8e93;
+}
+#log li em {
+  display: inline-block;
+  font-size: 0.48rem;
+  font-weight: 600;
+  font-style: normal;
+  height: 0.66rem;
+  line-height: 0.66rem;
+}
+#log li em.experience {
+  background: url("../images/lab.png") no-repeat;
+  color: #2196f9;
+  padding-left: 0.48rem;
+  background-size: 0.48rem 0.6rem;
+}
+#log li em.token {
+  background: url("../images/token.svg") no-repeat;
+  color: #f9b721;
+  padding-left: 0.84rem;
+  background-size: 0.66rem 0.66rem;
+}
+#log li + li {
+  border-bottom: #ceced2;
+}
+#task li + li,
+#groups li + li {
+  border-top: 1px solid #ceced2;
+}
+#groups {
+  padding-bottom: 0.58rem;
+}
+#groups .date {
+  padding: 0.68rem 0 0.56rem 0.8rem;
+  font-size: 0.48rem;
+  color: #8E8E93;
+}
+#groups ul {
+  padding-left: 0.84rem;
+  padding-right: 0.64rem;
+}
+#groups li {
+  box-sizing: border-box;
+  height: 1.66rem;
+  line-height: 1.66rem;
+  font-size: 0.48rem;
+  position: relative;
+}
+#groups li > img {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  margin-right: 0.46rem;
+  vertical-align: middle;
+}
+#groups .pet-class {
+  position: absolute;
+  top: 0.24rem;
+  right: 0;
+}
+#groups .pet-class img {
+  width: 1.04rem;
+}
+footer {
+  font-size: 0.48rem;
+  text-align: center;
+  color: #ecd8ff;
+  padding: 2.94rem 0;
+}
+footer p {
+  margin: 0;
+}
+#share {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 15rem;
+  box-sizing: border-box;
+  padding: 1.4rem 0.96rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  overflow: auto;
+}
+#share::-webkit-scrollbar {
+  display: none;
+}
+#share > p {
+  color: #fff;
+  text-align: center;
+  margin: 0.1rem 0;
+  font-size: 0.48rem;
+}
+#share > img {
+  width: 100%;
+}
+#share > div {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.4rem 0.96rem;
+  background: url("../images/share_sky.png") no-repeat;
+  background-size: 100% 100%;
+}
+#share > div > div {
+  background-color: #fff;
+  border-radius: 0.3rem;
+}
+#share > div > div > div {
+  text-align: center;
+  position: relative;
+}
+#share .zebra {
+  padding-top: 1.34rem;
+  font-size: 0.448rem;
+  background: url("../images/section_bg.png") no-repeat;
+  background-size: 100% 100%;
+  position: relative;
+}
+#share .zebra .bg {
+  position: absolute;
+  bottom: -0.2rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+}
+#share .zebra .bg-left {
+  left: -0.2rem;
+}
+#share .zebra .bg-right {
+  right: -0.2rem;
+}
+#share .wx-img {
+  position: absolute;
+  left: 50%;
+  top: -0.91466667rem;
+  margin-left: -0.91466667rem;
+  width: 1.64266667rem;
+  height: 1.64266667rem;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+  border: 5px solid #fff;
+  border-radius: 50%;
+  overflow: hidden;
+}
+#share .wx-img > img {
+  width: 100%;
+  height: 100%;
+}
+#share .zebra-msg {
+  text-align: left;
+  width: 6.96rem;
+  height: 6.96rem;
+  margin: auto;
+  /* margin-top: -1.5rem; */
+}
+#share .zebra-msg img {
+  width: 100%;
+}
+#share .code-box .hint {
+  font-size: 0.56rem;
+  padding: 0.42933333rem;
+}
+#share .code-box .code {
+  width: 4.032rem;
+  height: 3.99466667rem;
+  margin: 0.85866667rem auto 0;
+  position: relative;
+}
+#share .code-box .code .two {
+  width: 100%;
+}
+#share .code-box .code .two-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.19466667rem;
+  margin-top: -0.63466667rem;
+  margin-left: -0.63466667rem;
+}
+#share .code-box .tip {
+  padding: 0.4rem 0;
+  font-size: 0.392rem;
+  font-weight: 100;
+  color: #a9a9a9;
+}
+
+
+.zombiescat-img {
+  position: relative;
+  /* width: 8rem;
+  height: 8rem; */
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+.zombiescat-img .svg-icon {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.svg-icon {
+  /* width: 10em;
+  height: 10em; */
+  /* vertical-align: -0.15em; */
+  fill: currentColor;
+  /* fill: var(--custom-color); */
+  overflow: hidden;
+}
+.icon1-0 {
+  --cuntom-color: red;
+}
+.icon3-a {
+  color: #006aba;
+}
