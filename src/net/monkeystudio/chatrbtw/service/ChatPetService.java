@@ -14,6 +14,8 @@ import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
@@ -101,8 +103,8 @@ public class ChatPetService {
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
 
-        String appearenceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
-        chatPet.setAppearenceCode(appearenceCode);
+        String appearanceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
+        chatPet.setAppearanceCode(appearanceCode);
 
 
         this.save(chatPet);
@@ -220,6 +222,14 @@ public class ChatPetService {
         //今日任务
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
+
+
+        String appearanceCode = chatPet.getAppearanceCode();
+        ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
+        Appearance appearance = new Appearance();
+        appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
+        appearance.setObject(zombiesCatAppearance);
+        chatPetBaseInfo.setAppearance(appearance);
 
         return chatPetBaseInfo;
     }

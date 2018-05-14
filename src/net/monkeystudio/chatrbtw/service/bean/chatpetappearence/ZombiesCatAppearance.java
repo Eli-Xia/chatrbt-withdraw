@@ -1,39 +1,38 @@
 package net.monkeystudio.chatrbtw.service.bean.chatpetappearence;
 
-import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearenceSite;
-import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearenceSiteColor;
+import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearanceCodeSite;
 
 /**
  * Created by bint on 2018/5/9.
  */
-public class ZombiesCatAppearence {
+public class ZombiesCatAppearance {
 
     //外轮廓
-    @ChatPetAppearenceSite(1)
+    @ChatPetAppearanceCodeSite(1)
     private String outline;
 
     //内填充
-    @ChatPetAppearenceSite(2)
+    @ChatPetAppearanceCodeSite(3)
     private String infill;
 
     //纹理
-    @ChatPetAppearenceSite(3)
+    @ChatPetAppearanceCodeSite(5)
     private String texture;
 
     //纹理颜色
-    @ChatPetAppearenceSiteColor(3)
+    @ChatPetAppearanceCodeSite(6)
     private String textureColor;
 
     //纹理阴影
-    @ChatPetAppearenceSite(4)
+    @ChatPetAppearanceCodeSite(7)
     private String textureShadow;
 
     //眼睛
-    @ChatPetAppearenceSite(5)
+    @ChatPetAppearanceCodeSite(9)
     private String eye;
 
     //嘴巴
-    @ChatPetAppearenceSite(6)
+    @ChatPetAppearanceCodeSite(11)
     private String mouth;
 
     public String getOutline() {

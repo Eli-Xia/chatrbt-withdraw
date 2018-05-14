@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface ChatPetAppearenceSite {
+public @interface ChatPetAppearanceCodeSite {
     int value();
 }
