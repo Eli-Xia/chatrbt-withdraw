@@ -617,7 +617,7 @@ public class ChatPetService {
      */
     public String getZebraHtmlUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/res/wedo/zebra.html?id=" + wxPubId;
+        String url = "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
         return url;
     }
 
