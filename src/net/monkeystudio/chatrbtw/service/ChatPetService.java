@@ -40,7 +40,6 @@ public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
-
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
@@ -235,98 +234,6 @@ public class ChatPetService {
     }
 
 
-    /**
-     * 获取宠物的信息
-     * @param chatPetId
-     * @return
-
-    public ChatPetInfo getInfo(Integer chatPetId){
-        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
-
-        ChatPet chatPet = this.getById(chatPetId);
-
-        if(chatPet == null){
-            return null;
-        }
-
-        chatPetBaseInfo.setTempAppearance(chatPet.getTempAppearence());
-
-        String wxPubOriginId = chatPet.getWxPubOriginId();
-        String wxFanOpenId = chatPet.getWxFanOpenId();
-
-        OwnerInfo ownerInfo = new OwnerInfo();
-        WxFan owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-        ownerInfo.setNickname(owner.getNickname());
-
-        String headImgUrl = owner.getHeadImgUrl();
-        if(headImgUrl == null){
-            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
-        }
-
-        owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-        ownerInfo.setHeadImg(owner.getHeadImgUrl());
-
-        chatPetBaseInfo.setOwnerInfo(ownerInfo);
-
-        String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
-        chatPetBaseInfo.setOwnerId(owerId);
-
-        //宠物基因
-        String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
-        chatPetBaseInfo.setGeneticCode(geneticCode);
-
-        //今日宠物日志
-        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
-        chatPetBaseInfo.setPetLogs(resps);
-
-        //粉丝拥有代币
-        Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
-        chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
-
-        //宠物的url
-        CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        String appearanceUrl = cryptoKitties.getUrl();
-        chatPetBaseInfo.setAppearanceUrl(appearanceUrl);
-
-        //公众号的头像
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-        String wxPubHeadImgUrl = wxPub.getHeadImgUrl();
-        chatPetBaseInfo.setwPubHeadImgUrl(wxPubHeadImgUrl);
-
-        //公众号二维码base64
-        try {
-            String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
-            chatPetBaseInfo.setInvitationQrCode(base64);
-        } catch (BizException e) {
-            Log.e(e);
-        } catch (IOException e) {
-            Log.e(e);
-        } catch (WriterException e) {
-            Log.e(e);
-        }
-
-        //宠物的经验
-        Integer experience = chatPet.getExperience();
-        chatPetBaseInfo.setExperience(experience);
-
-        //经验条进度
-        ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
-        chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
-
-        //宠物等级
-        Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
-        chatPetBaseInfo.setChatPetLevel(chatPetLevel);
-
-        //第一进入H5填充任务池任务
-        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
-
-        //今日任务
-        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(wxPubOriginId, wxFanOpenId);
-        chatPetBaseInfo.setTodayMissions(todayMissionList);
-
-        return chatPetBaseInfo;
-    }
-     */
 
 
     /**
@@ -409,7 +316,7 @@ public class ChatPetService {
      * @param nowState : 当前任务状态
      * @return
      */
-    public boolean isAble2Reward(Integer nowState){
+    private boolean isAble2Reward(Integer nowState){
 
         Integer shouldState = MissionStateEnum.FINISH_NOT_AWARD.getCode();//当前任务领取状态应为 已完成未领取
 
