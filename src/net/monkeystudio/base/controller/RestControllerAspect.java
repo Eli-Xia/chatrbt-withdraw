@@ -24,11 +24,10 @@ public class RestControllerAspect {
         try {
             resp = (RespBase) pjp.proceed();
         } catch (BizException e){
-            Log.e("未知异常,原因："+e.getMessage()+",业务原因："+e.getBizExceptionMsg());
+            Log.e(e);
             resp = respHelper.failed(e.getBizExceptionMsg());
         }catch (Throwable t){
-        	t.printStackTrace();
-            Log.e("未知异常,原因："+t.getMessage());
+            Log.e(t);
             resp = respHelper.failed(Msg.text("common.sys.unknown.exception"));
         }
         return resp;
