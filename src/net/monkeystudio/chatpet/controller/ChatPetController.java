@@ -45,7 +45,7 @@ public class ChatPetController extends ChatPetBaseController{
             return respHelper.nologin();
         }
 
-        ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
+        ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
         return respHelper.ok(chatPetInfo);
     }
