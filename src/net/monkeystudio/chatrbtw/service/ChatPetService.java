@@ -232,9 +232,6 @@ public class ChatPetService {
         Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
         chatPetBaseInfo.setChatPetLevel(chatPetLevel);
 
-        //第一进入H5填充任务池任务
-        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
-
         //今日任务
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
@@ -250,6 +247,20 @@ public class ChatPetService {
         return chatPetBaseInfo;
     }
 
+    /**
+     * 首次登录数据准备  任务池
+     * @param wxFanId
+     * @param wxPubId
+     */
+    public void dataPrepared(Integer wxFanId,Integer wxPubId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        String originId = wxPub.getOriginId();
+        //第一次登录需要准备任务池数据
+        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxFanOpenId,originId);
+    }
 
     /**
      * 获取宠物的信息
@@ -530,6 +541,16 @@ public class ChatPetService {
 
     }
 
+    public boolean isAble2Access(Integer fansId,Integer wxPubId){
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        String wxPubAppId = wxPub.getAppId();
+
+        WxFan wxFan = wxFanService.getById(fansId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+
+        return  isUserFollowWxPub(wxPubAppId,wxFanOpenId) && isFanOwnChatPet(wxPubAppId,wxFanOpenId);
+    }
     /**
      * 获取存入chatPet session的fanId 以及跳转宠物日志页面所需参数wxPubId
      * @param wxPubAppId
@@ -800,21 +821,10 @@ public class ChatPetService {
      * @return
      */
     public String getChatPetPosterUrl(){
-        //"https://test.keendo.com.cn/res/wedo/poster.html"
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String posterUrl = "http://" + domain + "/res/wedo/poster.html";
 
         return posterUrl;
     }
 
-    //用户未授权跳转到授权页面
-    /*public String getNoAuthRedirectUrl(Integer wxFanId){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
-        return null;
-    }*/
 }

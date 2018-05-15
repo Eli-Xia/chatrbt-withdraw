@@ -38,7 +38,6 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
-        //Integer fanId = 55;
         Integer fanId = getUserId();
 
 
@@ -84,18 +83,14 @@ public class ChatPetController extends ChatPetBaseController{
         //fanId存入session
         this.saveSessionUserId(vo.getWxFanId());
 
-        String zebraHtml = chatPetService.getZebraHtmlUrl(vo.getWxPubId());
+        String homePageUrl = chatPetService.getHomePageUrl(vo.getWxPubId());
 
-        response.sendRedirect(zebraHtml);
+        response.sendRedirect(homePageUrl);
 
         return null;
     }
 
 
-    /**
-     * @param
-     * @return
-     */
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
         Integer userId = getUserId();
@@ -104,7 +99,15 @@ public class ChatPetController extends ChatPetBaseController{
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
             //request.getRequestDispatcher(HOME_PAGE).forward(request, response);
-            response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+            if(chatPetService.isAble2Access(userId,wxPubId)){
+
+                chatPetService.dataPrepared(userId,wxPubId);
+
+                response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+            }else{
+
+                response.sendRedirect(chatPetService.getChatPetPosterUrl());
+            }
 
         }
         return null;
