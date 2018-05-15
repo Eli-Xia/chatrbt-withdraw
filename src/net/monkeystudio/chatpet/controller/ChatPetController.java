@@ -74,18 +74,10 @@ public class ChatPetController extends ChatPetBaseController{
             return null;
         }
 
-        //未关注或未领取跳到海报页面
-        /*if(vo.isRedirectPoster()){
-            response.sendRedirect(chatPetService.getChatPetPosterUrl());
-            return null;
-        }*/
-
         //fanId存入session
         this.saveSessionUserId(vo.getWxFanId());
 
         String homePageUrl = chatPetService.getHomePageUrl(vo.getWxPubId());
-
-        Log.d("============step 2 :授权完,跳到home-page 进行登录判断 ==============");
 
         response.sendRedirect(homePageUrl);
 
@@ -98,12 +90,11 @@ public class ChatPetController extends ChatPetBaseController{
         Integer userId = getUserId();
         if(userId == null){
             //授权
-            Log.d("============== step 1 : 进行wx Oauth 授权 =============");
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
             //request.getRequestDispatcher(HOME_PAGE).forward(request, response);
             if(chatPetService.isAble2Access(userId,wxPubId)){
-                Log.d(" ============ 经判断, 关注且有宠物 ==============");
+
                 chatPetService.dataPrepared(userId,wxPubId);
 
                 response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
