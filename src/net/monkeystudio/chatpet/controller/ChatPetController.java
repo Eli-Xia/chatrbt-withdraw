@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetRewardChangeInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,6 @@ public class ChatPetController extends ChatPetBaseController{
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
         Integer fanId = getUserId();
-
 
         if(fanId == null){
             return respHelper.nologin();
@@ -138,14 +138,13 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
-        Log.d("=========itemdi = {?} =============",req.getItemId().toString());
         Integer userId = this.getUserId();
 
         if(userId == null){
             respHelper.nologin();
         }
 
-        ChatPetInfo info = chatPetService.rewardHandle(userId, req.getItemId());
+        ChatPetRewardChangeInfo info = chatPetService.rewardHandle(userId, req.getItemId());
 
         return respHelper.ok(info);
     }

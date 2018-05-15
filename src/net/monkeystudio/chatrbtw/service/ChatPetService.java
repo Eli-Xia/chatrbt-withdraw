@@ -267,8 +267,7 @@ public class ChatPetService {
      * @param chatPetId
      * @return
      */
-    public ChatPetInfo getInfoAfterReward(Integer chatPetId){
-        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
+    public ChatPetRewardChangeInfo getInfoAfterReward(Integer chatPetId){
 
         ChatPet chatPet = this.getById(chatPetId);
 
@@ -276,10 +275,21 @@ public class ChatPetService {
             return null;
         }
 
-        String wxPubOriginId = chatPet.getWxPubOriginId();
-        String wxFanOpenId = chatPet.getWxFanOpenId();
+        ChatPetInfo info = this.getInfo(chatPetId);
 
-        //今日宠物日志
+        ChatPetRewardChangeInfo changeInfo = new ChatPetRewardChangeInfo();
+        changeInfo.setChatPetLevel(info.getChatPetLevel());
+        changeInfo.setExperience(info.getExperience());
+        changeInfo.setExperienceProgressRate(info.getExperienceProgressRate());
+        changeInfo.setFanTotalCoin(info.getFanTotalCoin());
+        changeInfo.setPetLogs(info.getPetLogs());
+        changeInfo.setTodayMissions(info.getTodayMissions());
+
+        return changeInfo;
+
+
+
+        /*//今日宠物日志
         List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
         chatPetBaseInfo.setPetLogs(resps);
 
@@ -301,14 +311,13 @@ public class ChatPetService {
 
         //今日任务
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
-        chatPetBaseInfo.setTodayMissions(todayMissionList);
+        chatPetBaseInfo.setTodayMissions(todayMissionList);*/
 
 
 
-        return chatPetBaseInfo;
     }
 
-    public ChatPetInfo rewardHandle(Integer wxFanId,Integer itemId) throws BizException{
+    public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer itemId) throws BizException{
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
 
         if(chatPet == null){
@@ -332,7 +341,7 @@ public class ChatPetService {
             this.missionReward(chatPetId,itemId);
         }
 
-        ChatPetInfo info = this.getInfoAfterReward(chatPetId);
+        ChatPetRewardChangeInfo info = this.getInfoAfterReward(chatPetId);
 
         return info;
     }
@@ -350,13 +359,11 @@ public class ChatPetService {
     }
 
     /**
-<<<<<<< Updated upstream
-=======
      *   TODO
      * 加入奖励池后  修改
      * 完成每日任务领取奖励
      * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
-     */
+
     @Transactional
     public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) {
         //更新任务池记录
@@ -383,17 +390,12 @@ public class ChatPetService {
 
         Integer newExprience = this.getChatPetExperience(chatPetId);
 
-        //插入日志
-        //需要问清楚一件事:悬浮的奖励是不是只标明金币数,不会说这个是什么金币???  如果需要的话就要搞一个金币枚举类了.
-        //填充奖励池,首先去missionPool里面看有没有已经完成了的任务,有可能第一次进H5的时候已经把当日聊天任务给完成了.
-        //传到前端需要数据: coinValue  rewardItemId  missionItemId  RewardTypeEnum.type(当日聊天,阅读任务,...奖励 , missionCode)
-        //问:金币上需不需要展示是什么类型奖励,
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
     }
+     */
 
 
     /**
->>>>>>> Stashed changes
      * 完成每日任务领取奖励
      * @param itemId
      */
