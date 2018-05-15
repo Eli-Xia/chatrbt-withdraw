@@ -145,7 +145,7 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             var resp = JSON.parse(xhr.response);
                             if (resp.retCode == 0) {
-                                var i = $event.path[1];
+                                var i = $event.target.parentNode;
                                 i.style.width = '150px';
                                 i.querySelector('i').className = "active";
                                 setTimeout(function () {
