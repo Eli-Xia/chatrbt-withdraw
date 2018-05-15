@@ -43,19 +43,18 @@
                 </div>
                 <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
             </div>
-            <div class="zebra-bg">
-                <!-- <canvas id="canvasbbb" style="border:2px solid black;" width="400" height="400"></canvas> -->
-                <img :src="petBase" class="zombiescat-img">
-                <!-- <div class="zombiescat-img">
-                  <img class="svg-icon icon1-0" src="images/zombiescat/icon1-0.svg" alt="">
-                  <img class="svg-icon icon2-8" src="images/zombiescat/icon2-8.svg" alt="">
-                  <svg class="svg-icon icon3-a">
-                    <use xlink:href="images/zombiescat/icon3-a.svg#图层_1"></use>
+            <div class="zebra-bg" v-cloak>
+                <!-- <img :src="petBase" class="zombiescat-img"> -->
+                <div class="zombiescat-img">
+                  <img class="svg-icon icon1" :src="'images/zombiescat/icon1-' + list.appearance.object.outline + '.svg'" alt="">
+                  <img class="svg-icon icon2" :src="'images/zombiescat/icon2-' + list.appearance.object.infill + '.svg'" alt="">
+                  <svg class="svg-icon icon3" :style="textureColor">
+                    <use :xlink:href="'images/zombiescat/icon3-' + list.appearance.object.texture + '.svg#图层_1'"></use>
                   </svg>
-                  <img class="svg-icon icon4-0" src="images/zombiescat/icon4-0.svg" alt="">
-                  <img class="svg-icon icon5-4" src="images/zombiescat/icon5-4.svg" alt="">
-                  <img class="svg-icon icon6-6" src="images/zombiescat/icon6-6.svg" alt="">
-                </div> -->
+                  <img class="svg-icon icon4" :src="'images/zombiescat/icon4-' + list.appearance.object.textureShadow + '.svg'" alt="">
+                  <img class="svg-icon icon5" :src="'images/zombiescat/icon5-' + list.appearance.object.eye + '.svg'" alt="">
+                  <img class="svg-icon icon6" :src="'images/zombiescat/icon6-' + list.appearance.object.mouth + '.svg'" alt="">
+                </div>
             </div>
             <div class="user-code" v-if="userCodeShow">
                 <div>
@@ -68,15 +67,15 @@
             <i @click="userCodeShow = !userCodeShow"></i>
         </div>
     </section>
-    <section v-if="!ruleShow" class="show-rule">
-        <div>
+    <section :class="{'show-rule':ruleShow === false}">
+        <div v-if="!ruleShow">
             星球规则
-            <div @click="ruleShow=true">展开</div>
+            <div @click="ruleShowToggle">展开</div>
         </div>
     </section>
     <section v-if="ruleShow">
         <div id="rule">
-            <div class="hide-rule" @click="ruleShow=false">收起</div>
+            <div class="hide-rule" @click="ruleShowToggle">收起</div>
             <div class="tittle">星球规则</div>
             <div>
                 <p class="text">
@@ -181,7 +180,6 @@
     <div v-cloak id="share" v-show="share" @click="shareShow($event)">
         <div :style="{'background-color': '#' + bgColor}" id="canvas_img">
             <div id="revert">
-                <!-- <canvas id="canvasaaa" style="border:2px solid black;" width="400" height="400"></canvas> -->
                 <div class="zebra">
                     <div class="wx-img">
                         <img :src="userInfo.headImg" alt="avatar">
@@ -190,18 +188,17 @@
                         {{userInfo.nickname}}的魔鬼猫
                         </span>
                     <div class="zebra-msg" id="zebra-msg">
-                        <img :src="petBase" id="cat-img" alt="cat">
-                        <!-- <div class="zombiescat-img" id="zombiescat-img">
-                          <img class="svg-icon icon1-0" src="images/zombiescat/icon1-0.svg" alt="">
-                          <img class="svg-icon icon2-8" src="images/zombiescat/icon2-8.svg" alt="">
-                          <svg class="svg-icon icon3-a">
-                            <use xlink:href="images/zombiescat/icon3-a.svg#图层_1" href="images/zombiescat/icon3-a.svg#图层_1"></use>
+                        <!-- <img :src="petBase" id="cat-img" alt="cat"> -->
+                        <div class="zombiescat-img" id="zombiescat-img">
+                          <img class="svg-icon icon1" :src="'images/zombiescat/icon1-' + list.appearance.object.outline + '.svg'" alt="">
+                          <img class="svg-icon icon2" :src="'images/zombiescat/icon2-' + list.appearance.object.infill + '.svg'" alt="">
+                          <svg class="svg-icon icon3" :style="textureColor">
+                            <use :xlink:href="'images/zombiescat/icon3-' + list.appearance.object.texture + '.svg#图层_1'"></use>
                           </svg>
-                          <img class="svg-icon icon4-0" src="images/zombiescat/icon4-0.svg" alt="">
-                          <img class="svg-icon icon5-4" src="images/zombiescat/icon5-4.svg" alt="">
-                          <img class="svg-icon icon6-6" src="images/zombiescat/icon6-6.svg" alt="">
-                          <img :src="testSvg" alt="">
-                        </div> -->
+                          <img class="svg-icon icon4" :src="'images/zombiescat/icon4-' + list.appearance.object.textureShadow + '.svg'" alt="">
+                          <img class="svg-icon icon5" :src="'images/zombiescat/icon5-' + list.appearance.object.eye + '.svg'" alt="">
+                          <img class="svg-icon icon6" :src="'images/zombiescat/icon6-' + list.appearance.object.mouth + '.svg'" alt="">
+                        </div>
                     </div>
                     <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
                     <div class="bg-left bg" :style="{'background-color': '#' + bgColor}"></div>
@@ -227,6 +224,7 @@
     </div>
 </div>
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js" async></script>
+<!-- <script src="../vendor/vue.js" async></script> -->
 <script src="js/html2canvas.min.js" async></script>
 <script src="js/zombiescat.js" async></script>
 </body>

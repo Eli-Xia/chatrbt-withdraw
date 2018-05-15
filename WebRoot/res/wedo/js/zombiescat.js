@@ -19,10 +19,13 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                   geneticCode: null,
                   fanTotalCoin: 0.0,
                   appearanceUrl: '',
+                  appearance: [],
                   wPubHeadImgUrl: '',
                   experienceProgressRate: {}
                 },
                 logs: [],
+                colorList: [],
+                textureColor: {},
                 invitationQrCode: '',
                 petBase: '',
                 wPubImg: '',
@@ -39,11 +42,28 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
             },
             created() {
               var _self = this;
+              this.list.appearance = {
+                chatPetType: 1,
+                object: {
+                  eye: '0',
+                  infill: '0',
+                  mouth: '0',
+                  outline: '0',
+                  texture: '0',
+                  textureColor: '0',
+                  textureShadow: '0'
+                }
+              }
+              const sign = localStorage.getItem('ruleShow')
+              if (sign !== null) {
+                sign === 'true' ? this.ruleShow = true : this.ruleShow = false
+              }
               this.queryList();
+              this.queryAllColor();
               this.queryGroup();
-              this.convertImgToBase64({width: null}, './cat.svg', function (base64Img) {
-                _self.petBase = base64Img;
-              });
+              // this.convertImgToBase64({width: null}, './cat.svg', function (base64Img) {
+              //   _self.petBase = base64Img;
+              // });
             },
             mounted() {
               var _self = this;
@@ -51,7 +71,6 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
               // this.convertImgToBase64({width: null}, './images/zombiescat/icon3-a.svg', function (base64Img) {
               //   _self.testSvg = base64Img;
               // });
-              this.canvasSvg();
             },
             methods: {
                 shareShow($event) {
@@ -74,6 +93,9 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                 },
                 queryList() {
                     var _self = this;
+                    // 获取到数据前先隐藏形象
+                    var zombiescat = document.querySelector('.zombiescat-img');
+                    zombiescat.style.display = 'none';
                     var xhr = new XMLHttpRequest();
                     xhr.open('post', '/api/chat-pet/pet/info', true);
                     // xhr.open('get', '/api/chat-pet/pet/login?id=keendo.43', true);
@@ -108,6 +130,23 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                                 _self.taskList = resp.result.todayMissions;
                                 _self.invitationQrCode = 'data:image/png;base64,' + resp.result.invitationQrCode;
                                 _self.list = resp.result;
+                                // 获取数据后重新显示形象
+                                document.querySelector('.zombiescat-img').style.display = 'block';
+                                var colorIdx = _self.list.appearance.object.textureColor;
+                                var textureColor = `icon3-${colorIdx}`
+                                // 改变纹理颜色
+                                setTimeout(function() {
+                                  var keys = Object.keys(_self.colorList).map(function(c) {
+                                    if (_self.colorList[c].key === colorIdx) {
+                                      // document.querySelector(`.${textureColor}`).style.color = `#${_self.colorList[c].rgbValue}`;
+                                      _self.textureColor = {
+                                        color: `#${_self.colorList[c].rgbValue}`
+                                      }
+                                      console.log(_self.textureColor)
+                                    }
+                                  })
+                                }, 100)
+                                _self.canvasSvg();
                             } else {
                                 alert(resp.retMsg)
                             }
@@ -134,6 +173,29 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                         }
                     }
                 },
+                queryAllColor() {
+                  var _this = this;
+                  var xhr = new XMLHttpRequest();
+                  xhr.open('post', '/api/chat-pet/color/all', true);
+                  xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+                  xhr.send(null);
+                  xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var resp = JSON.parse(xhr.response);
+                        if (resp.retCode == 0) {
+                          console.log('allColor')
+                          _this.colorList = resp.result;
+                        } else {
+                          alert(resp.retMsg)
+                        }
+                    } else {
+                    }
+                  }
+                },
+                ruleShowToggle() {
+                  this.ruleShow = !this.ruleShow
+                  localStorage.setItem('ruleShow', this.ruleShow)
+                },
                 sureReward($event, id) {
                     var _self = this;
                     var xhr = new XMLHttpRequest();
@@ -149,7 +211,9 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                                 i.style.width = '150px';
                                 i.querySelector('i').className = "active";
                                 setTimeout(function () {
-                                    _self.list = resp.result;
+                                    _self.list.fanTotalCoin = resp.result.fanTotalCoin;
+                                    _self.list.experienceProgressRate = resp.result.experienceProgressRate;
+                                    _self.list.chatPetLevel = resp.result.chatPetLevel;
                                     _self.logs = resp.result.petLogs;
                                     _self.taskList = resp.result.todayMissions;
                                 }, 500);
@@ -173,12 +237,13 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
                     });
                 },
                 canvasSvg() {
+                  var zombiescat = this.list.appearance.object;
                   var canvas = document.createElement('CANVAS'),
                   // var canvas = document.getElementById("canvasaaa"),
-                      ctx = canvas.getContext('2d'),
-                      img = new Image();
+                      ctx = canvas.getContext('2d');
+                      // img = new Image();
                   // var DOMURL = window.URL || window.webkitURL || window;
-                  img.setAttribute("crossOrigin","anonymous");
+                  // img.setAttribute("crossOrigin","anonymous");
                   // img.src ='./images/zombiescat/icon2-8.svg';
                   // img.onload = function () {
                   //   canvas.height = img.height;
@@ -195,22 +260,32 @@ var isWeixin = ua.indexOf('micromessenger') != -1 || ua.indexOf('webbrowser') !=
 
                   // draw(ctx, './images/zombiescat/icon2-8.svg');
                   // draw(ctx, './images/zombiescat/icon3-a.svg');
-                  // setTimeout(function() {
-                  //   console.log('overRide')
-                  //   var finalImg = new Image();
-                  //   finalImg.src = canvas.toDataURL();
-                  //   document.getElementById('zebra-msg').replaceChild(finalImg, document.getElementById('zombiescat-img'));
-                  // }, 100)
-                  function draw(img, src) {
-                    console.log(src)
-                    img = new Image();
-                    img.setAttribute("crossOrigin","anonymous");
-                    img.src =src;
-                    img.onload = function () {
-                      canvas.height = img.height;
-                      canvas.width = img.width;
-                      ctx.drawImage(img, 0, 0);
-                    }
+                  console.log(zombiescat)
+                  var sourceArr = [`icon1-${zombiescat.outline}`, `icon2-${zombiescat.infill}`, `icon3-${zombiescat.texture}`, `icon4-${zombiescat.textureShadow}`, `icon5-${zombiescat.eye}`, `icon6-${zombiescat.mouth}`];
+                  console.log(sourceArr)
+                  // canvas.height = 400;
+                  // canvas.width = 400;
+                  draw(ctx, sourceArr);
+                  setTimeout(function() {
+                    console.log('overRide')
+                    var finalImg = new Image();
+                    finalImg.src = canvas.toDataURL();
+                    document.getElementById('zebra-msg').replaceChild(finalImg, document.getElementById('zombiescat-img'));
+                  }, 100)
+                  function draw(ctx, sourceArr) {
+                    var originImg = new Image();
+                    originImg.src = './images/zombiescat/icon2-0.svg'
+                    canvas.height = originImg.height;
+                    canvas.width = originImg.width;
+                    sourceArr.forEach((source, i) => {
+                      var newImg = new Image();
+                      newImg.setAttribute('crossOrigin', 'anonymous');
+                      newImg.src = `./images/zombiescat/${source}.svg`;
+                      console.log(newImg.src);
+                      newImg.onload = function () {
+                        ctx.drawImage(newImg, 0, 0);
+                      }
+                    });
                   }
                   // var img2 = new Image();
                   // img2.src ='./images/zombiescat/icon3-a.svg';
