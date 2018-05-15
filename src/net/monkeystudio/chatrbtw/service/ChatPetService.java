@@ -259,7 +259,7 @@ public class ChatPetService {
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
         String originId = wxPub.getOriginId();
         //第一次登录需要准备任务池数据
-        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxFanOpenId,originId);
+        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(originId,wxFanOpenId);
     }
 
     /**
