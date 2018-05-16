@@ -127,14 +127,14 @@ public class ChatPetAppearenceService {
             stringBuilder.append(siteKey);
 
             //颜色的处理
-            List<RChatPetAppearenceSiteColor> siteColorList = this.getSiteColorBySite(chatPetType,site);
+            /*List<RChatPetAppearenceSiteColor> siteColorList = this.getSiteColorBySite(chatPetType,site);
             if(siteColorList == null || siteColorList.size() == 0){
                 stringBuilder.append(ChatPetColorService.NONE_COLOR_KEY);
             }else {
                 RChatPetAppearenceSiteColor rChatPetAppearenceSiteColor = RandomUtil.randomPick(siteColorList);
 
                 stringBuilder.append(rChatPetAppearenceSiteColor.getColorKey());
-            }
+            }*/
         }
         return stringBuilder.toString();
     }
@@ -249,9 +249,13 @@ public class ChatPetAppearenceService {
             Field field = fields[i];
 
             net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearanceCodeSite chatPetAppearanceCodeSite = field.getAnnotation(net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearanceCodeSite.class);
-            Integer site = chatPetAppearanceCodeSite.value();
+            int[] siteArray = chatPetAppearanceCodeSite.value();
 
-            String key = code.substring(site - 1, site);
+            String key = "";
+            for(int j=0;j<siteArray.length;j++){
+                Integer site = siteArray[j];
+                key = key + code.substring(site - 1, site);
+            }
 
             BeanUtils.setFieldValue(field ,zombiesCatAppearence ,key);
         }

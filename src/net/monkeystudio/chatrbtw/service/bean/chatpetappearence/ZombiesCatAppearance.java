@@ -16,12 +16,12 @@ public class ZombiesCatAppearance {
     private String infill;
 
     //纹理
-    @ChatPetAppearanceCodeSite(5)
+    @ChatPetAppearanceCodeSite({5,6})
     private String texture;
 
     //纹理颜色
-    @ChatPetAppearanceCodeSite(6)
-    private String textureColor;
+    //@ChatPetAppearanceCodeSite(6)
+    //private String textureColor;
 
     //纹理阴影
     @ChatPetAppearanceCodeSite(7)
@@ -83,11 +83,4 @@ public class ZombiesCatAppearance {
         this.mouth = mouth;
     }
 
-    public String getTextureColor() {
-        return textureColor;
-    }
-
-    public void setTextureColor(String textureColor) {
-        this.textureColor = textureColor;
-    }
 }
