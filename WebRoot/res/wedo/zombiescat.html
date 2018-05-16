@@ -46,7 +46,7 @@
             <div class="zebra-bg" v-cloak>
                 <!-- <img :src="petBase" class="zombiescat-img"> -->
                 <div class="zombiescat-img">
-                  <img class="svg-icon icon1" :src="'images/zombiescat/icon1-' + list.appearance.object.outline + '.svg'" alt="">
+                  <img class="svg-icon icon1" :src=`images/zombiescat/outline/${list.appearance.object.outline}.svg` alt="">
                   <img class="svg-icon icon2" :src="'images/zombiescat/icon2-' + list.appearance.object.infill + '.svg'" alt="">
                   <svg class="svg-icon icon3" :style="textureColor">
                     <use :xlink:href="'images/zombiescat/icon3-' + list.appearance.object.texture + '.svg#图层_1'"></use>
