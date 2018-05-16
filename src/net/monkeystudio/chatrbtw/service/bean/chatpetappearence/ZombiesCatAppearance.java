@@ -12,11 +12,11 @@ public class ZombiesCatAppearance {
     private String outline;
 
     //内填充
-    @ChatPetAppearanceCodeSite(3)
+    @ChatPetAppearanceCodeSite(2)
     private String infill;
 
     //纹理
-    @ChatPetAppearanceCodeSite({5,6})
+    @ChatPetAppearanceCodeSite({3,4})
     private String texture;
 
     //纹理颜色
@@ -24,15 +24,15 @@ public class ZombiesCatAppearance {
     //private String textureColor;
 
     //纹理阴影
-    @ChatPetAppearanceCodeSite(7)
+    @ChatPetAppearanceCodeSite(5)
     private String textureShadow;
 
     //眼睛
-    @ChatPetAppearanceCodeSite(9)
+    @ChatPetAppearanceCodeSite(6)
     private String eye;
 
     //嘴巴
-    @ChatPetAppearanceCodeSite(11)
+    @ChatPetAppearanceCodeSite(7)
     private String mouth;
 
     public String getOutline() {

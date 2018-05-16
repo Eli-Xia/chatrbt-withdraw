@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.BeanUtils;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceMaterial;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceSite;
@@ -238,12 +239,27 @@ public class ChatPetAppearenceService {
         return count;
     }
 
-
+    /**
+     * 生成魔鬼猫外观
+     * @param code
+     * @return
+     */
     public ZombiesCatAppearance getZombiesCatAppearence(String code){
+        ZombiesCatAppearance zombiesCatAppearance = this.getAppearance(code, ZombiesCatAppearance.class);
+        return zombiesCatAppearance;
+    }
 
-        ZombiesCatAppearance zombiesCatAppearence = new ZombiesCatAppearance();
+    private <T> T getAppearance(String code ,Class<T> clazz){
+        T newInstance = null;
+        try {
+            newInstance = (T)clazz.newInstance();
+        } catch (InstantiationException e) {
+            Log.e(e);
+        } catch (IllegalAccessException e) {
+            Log.e(e);
+        }
 
-        Field[] fields = zombiesCatAppearence.getClass().getDeclaredFields();
+        Field[] fields = clazz.getDeclaredFields();
 
         for(int i=0;i<fields.length;i++){
             Field field = fields[i];
@@ -257,9 +273,9 @@ public class ChatPetAppearenceService {
                 key = key + code.substring(site - 1, site);
             }
 
-            BeanUtils.setFieldValue(field ,zombiesCatAppearence ,key);
+            BeanUtils.setFieldValue(field ,newInstance ,key);
         }
-        return zombiesCatAppearence;
 
+        return newInstance;
     }
 }
