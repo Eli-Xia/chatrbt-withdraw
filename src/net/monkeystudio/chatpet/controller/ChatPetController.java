@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetRewardChangeInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +39,13 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
-
         Integer fanId = getUserId();
 
         if(fanId == null){
             return respHelper.nologin();
         }
 
-        ChatPetInfo chatPetInfo = chatPetService.getInfo(fanId);
+        ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
         return respHelper.ok(chatPetInfo);
     }
@@ -74,27 +74,17 @@ public class ChatPetController extends ChatPetBaseController{
             return null;
         }
 
-        //未关注或未领取跳到海报页面
-        if(vo.isRedirectPoster()){
-            response.sendRedirect(chatPetService.getChatPetPosterUrl());
-            return null;
-        }
-
         //fanId存入session
         this.saveSessionUserId(vo.getWxFanId());
 
-        String zebraHtml = chatPetService.getZebraHtmlUrl(vo.getWxPubId());
+        String homePageUrl = chatPetService.getHomePageUrl(vo.getWxPubId());
 
-        response.sendRedirect(zebraHtml);
+        response.sendRedirect(homePageUrl);
 
         return null;
     }
 
 
-    /**
-     * @param
-     * @return
-     */
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
         Integer userId = getUserId();
@@ -103,7 +93,15 @@ public class ChatPetController extends ChatPetBaseController{
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
             //request.getRequestDispatcher(HOME_PAGE).forward(request, response);
-            response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+            if(chatPetService.isAble2Access(userId,wxPubId)){
+
+                chatPetService.dataPrepared(userId,wxPubId);
+
+                response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+            }else{
+
+                response.sendRedirect(chatPetService.getChatPetPosterUrl());
+            }
 
         }
         return null;
@@ -122,7 +120,7 @@ public class ChatPetController extends ChatPetBaseController{
         String wxFanIdStr = wxFanId.substring(i + 1);
         int id = Integer.parseInt(wxFanIdStr);
         this.saveSessionUserId(id);
-        ChatPetInfo info = chatPetService.getInfo(id);
+        ChatPetInfo info = chatPetService.getInfoByWxFanId(id);
         return respHelper.ok(info);
     }
 
@@ -134,14 +132,13 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
-        Log.d("=========itemdi = {?} =============",req.getItemId().toString());
         Integer userId = this.getUserId();
 
         if(userId == null){
             respHelper.nologin();
         }
 
-        ChatPetInfo info = chatPetService.rewardHandle(userId, req.getItemId());
+        ChatPetRewardChangeInfo info = chatPetService.rewardHandle(userId, req.getItemId());
 
         return respHelper.ok(info);
     }

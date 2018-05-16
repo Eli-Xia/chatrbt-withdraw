@@ -198,6 +198,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
         return null;
     }
 
+
+
     /**
      * 微信h5授权url参数拼接  ?wxPubId = ?
      * @param wxPubOriginId

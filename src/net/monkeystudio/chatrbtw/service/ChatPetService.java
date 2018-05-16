@@ -136,8 +136,7 @@ public class ChatPetService {
      * @param wxFanId
      * @return
      */
-    public ChatPetInfo getInfo(Integer wxFanId){
-        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
+    public ChatPetInfo getInfoByWxFanId(Integer wxFanId){
 
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
 
@@ -146,6 +145,24 @@ public class ChatPetService {
         }
 
         Integer chatPetId = chatPet.getId();
+
+        return this.getInfo(chatPetId);
+    }
+
+
+    /**
+     * 获取宠物的信息
+     * @param chatPetId
+     * @return
+     */
+    public ChatPetInfo getInfo(Integer chatPetId){
+        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        if(chatPet == null){
+            return null;
+        }
 
         chatPetBaseInfo.setTempAppearance(chatPet.getTempAppearence());
 
@@ -158,7 +175,7 @@ public class ChatPetService {
 
         String headImgUrl = owner.getHeadImgUrl();
         if(headImgUrl == null){
-            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+        wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
         }
 
         owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
@@ -193,14 +210,14 @@ public class ChatPetService {
 
         //公众号二维码base64
         try {
-            String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
-            chatPetBaseInfo.setInvitationQrCode(base64);
+        String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
+        chatPetBaseInfo.setInvitationQrCode(base64);
         } catch (BizException e) {
-            Log.e(e);
+        Log.e(e);
         } catch (IOException e) {
-            Log.e(e);
+        Log.e(e);
         } catch (WriterException e) {
-            Log.e(e);
+        Log.e(e);
         }
 
         //宠物的经验
@@ -214,9 +231,6 @@ public class ChatPetService {
         //宠物等级
         Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
         chatPetBaseInfo.setChatPetLevel(chatPetLevel);
-
-        //第一进入H5填充任务池任务
-        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
         //今日任务
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
@@ -233,16 +247,27 @@ public class ChatPetService {
         return chatPetBaseInfo;
     }
 
+    /**
+     * 首次登录数据准备  任务池
+     * @param wxFanId
+     * @param wxPubId
+     */
+    public void dataPrepared(Integer wxFanId,Integer wxPubId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
 
-
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        String originId = wxPub.getOriginId();
+        //第一次登录需要准备任务池数据
+        chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(originId,wxFanOpenId);
+    }
 
     /**
      * 获取宠物的信息
      * @param chatPetId
      * @return
      */
-    public ChatPetInfo getInfoAfterReward(Integer chatPetId){
-        ChatPetInfo chatPetBaseInfo = new ChatPetInfo();
+    public ChatPetRewardChangeInfo getInfoAfterReward(Integer chatPetId){
 
         ChatPet chatPet = this.getById(chatPetId);
 
@@ -250,10 +275,21 @@ public class ChatPetService {
             return null;
         }
 
-        String wxPubOriginId = chatPet.getWxPubOriginId();
-        String wxFanOpenId = chatPet.getWxFanOpenId();
+        ChatPetInfo info = this.getInfo(chatPetId);
 
-        //今日宠物日志
+        ChatPetRewardChangeInfo changeInfo = new ChatPetRewardChangeInfo();
+        changeInfo.setChatPetLevel(info.getChatPetLevel());
+        changeInfo.setExperience(info.getExperience());
+        changeInfo.setExperienceProgressRate(info.getExperienceProgressRate());
+        changeInfo.setFanTotalCoin(info.getFanTotalCoin());
+        changeInfo.setPetLogs(info.getPetLogs());
+        changeInfo.setTodayMissions(info.getTodayMissions());
+
+        return changeInfo;
+
+
+
+        /*//今日宠物日志
         List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
         chatPetBaseInfo.setPetLogs(resps);
 
@@ -275,14 +311,13 @@ public class ChatPetService {
 
         //今日任务
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
-        chatPetBaseInfo.setTodayMissions(todayMissionList);
+        chatPetBaseInfo.setTodayMissions(todayMissionList);*/
 
 
 
-        return chatPetBaseInfo;
     }
 
-    public ChatPetInfo rewardHandle(Integer wxFanId,Integer itemId) throws BizException{
+    public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer itemId) throws BizException{
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
 
         if(chatPet == null){
@@ -306,7 +341,7 @@ public class ChatPetService {
             this.missionReward(chatPetId,itemId);
         }
 
-        ChatPetInfo info = this.getInfoAfterReward(chatPetId);
+        ChatPetRewardChangeInfo info = this.getInfoAfterReward(chatPetId);
 
         return info;
     }
@@ -322,6 +357,43 @@ public class ChatPetService {
 
         return shouldState.equals(nowState);
     }
+
+    /**
+     *   TODO
+     * 加入奖励池后  修改
+     * 完成每日任务领取奖励
+     * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
+
+    @Transactional
+    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) {
+        //更新任务池记录
+        //chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
+
+        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成
+
+        //增加金币  金币是一定会增加的
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
+        Integer missionCode = cppm.getMissionCode();
+
+        Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
+        this.increaseCoin(chatPetId,incrCoin);
+
+
+        //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 每日可领取奖励
+        //增加经验
+        //increaseExperienceHandle(missionItemId,missionCode);
+        ChatPet chatPet = this.getById(chatPetId);
+        Integer oldExperience = chatPet.getExperience();
+
+        Integer addExperience = incrCoin.intValue();
+        this.increaseExperience(chatPetId,addExperience);
+
+        Integer newExprience = this.getChatPetExperience(chatPetId);
+
+        chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
+    }
+     */
+
 
     /**
      * 完成每日任务领取奖励
@@ -471,6 +543,16 @@ public class ChatPetService {
 
     }
 
+    public boolean isAble2Access(Integer fansId,Integer wxPubId){
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        String wxPubAppId = wxPub.getAppId();
+
+        WxFan wxFan = wxFanService.getById(fansId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+
+        return  isUserFollowWxPub(wxPubAppId,wxFanOpenId) && isFanOwnChatPet(wxPubAppId,wxFanOpenId);
+    }
     /**
      * 获取存入chatPet session的fanId 以及跳转宠物日志页面所需参数wxPubId
      * @param wxPubAppId
@@ -558,7 +640,7 @@ public class ChatPetService {
      */
     public String getZebraHtmlUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/res/wedo/zebra.html?id=" + wxPubId;
+        String url = "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
         return url;
     }
 
@@ -741,21 +823,10 @@ public class ChatPetService {
      * @return
      */
     public String getChatPetPosterUrl(){
-        //"https://test.keendo.com.cn/res/wedo/poster.html"
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String posterUrl = "http://" + domain + "/res/wedo/poster.html";
 
         return posterUrl;
     }
 
-    //用户未授权跳转到授权页面
-    /*public String getNoAuthRedirectUrl(Integer wxFanId){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/api/wx/oauth/redirect/?id="+5;
-        return null;
-    }*/
 }
