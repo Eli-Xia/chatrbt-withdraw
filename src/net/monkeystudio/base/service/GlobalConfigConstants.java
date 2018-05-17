@@ -11,6 +11,8 @@ public class GlobalConfigConstants {
 
     public final static String WEB_DOMAIN_KEY = "WEB_DOMAIN";
 
+    public final static String CHAT_PET_WEB_DOMAIN_KEY = "CHAT_PET_WEB_DOMAIN";
+
     //公众号消息加解密Key
     public final static String VAIDATED_TOKEN_KEY_KEY = "VAIDATED_TOKEN_KEY";
 

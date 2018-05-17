@@ -74,9 +74,6 @@ public class ChatPetService {
     private RWxPubProductService rWxPubProductService;
 
     @Autowired
-    private RedisCacheTemplate redisCacheTemplate;
-
-    @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
 
     @Autowired
@@ -298,13 +295,14 @@ public class ChatPetService {
         ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
 
-        //changeInfo.setGoldItems();
+        List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardItemService.getChatPetGoldItems(chatPetId);
+        changeInfo.setGoldItems(chatPetGoldItems);
 
         return changeInfo;
 
     }
 
-    public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer itemId) throws BizException{
+    public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer rewardItemId,Integer missionItemId) throws BizException{
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
 
         if(chatPet == null){
@@ -314,7 +312,7 @@ public class ChatPetService {
         Integer chatPetId = chatPet.getId();
 
         //获取当前任务领取状态
-        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
+        /*ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
         Integer nowState = cppm.getState();
 
         if(Integer.valueOf(MissionStateEnum.GOING_ON.getCode()).equals(nowState)){
@@ -325,9 +323,9 @@ public class ChatPetService {
         }
 
         if(isAble2Reward(nowState)){
-            this.missionReward(chatPetId,itemId);
-        }
-
+            this.missionReward(rewardItemId,chatPetId,missionItemId);
+        }*/
+        this.missionReward(rewardItemId,chatPetId,missionItemId);
 
         ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
@@ -407,52 +405,6 @@ public class ChatPetService {
         }
     }
 
-    private void increaseExperienceHandle(Boolean isMissionReward, Integer missionItemId) {
-        if(!isMissionReward){
-            return ;
-        }
-        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
-        Integer chatPetId = cppm.getChatPetId();
-        Integer nowExperience = this.getChatPetExperience(chatPetId);
-
-    }
-
-
-    /**
-     *   TODO
-     * 加入奖励池后  修改
-     * 完成每日任务领取奖励
-     * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
-
-    @Transactional
-    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) {
-        //更新任务池记录
-        //chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
-
-        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成
-
-        //增加金币  金币是一定会增加的
-        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
-        Integer missionCode = cppm.getMissionCode();
-
-        Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
-        this.increaseCoin(chatPetId,incrCoin);
-
-
-        //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 每日可领取奖励
-        //增加经验
-        //increaseExperienceHandle(missionItemId,missionCode);
-        ChatPet chatPet = this.getById(chatPetId);
-        Integer oldExperience = chatPet.getExperience();
-
-        Integer addExperience = incrCoin.intValue();
-        this.increaseExperience(chatPetId,addExperience);
-
-        Integer newExprience = this.getChatPetExperience(chatPetId);
-
-        chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
-    }
-     */
 
 
     /**
@@ -713,19 +665,19 @@ public class ChatPetService {
      * @return
      */
     public String getZebraHtmlUrl(Integer wxPubId){
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String url = "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
         return url;
     }
 
     public String getHomePageUrl(Integer wxPubId){
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String url = "http://" + domain + "/api/chat-pet/pet/home-page?id=" + wxPubId;
         return url;
     }
 
     public String getWxOauthUrl(Integer wxPubId){
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String url = "http://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
         return url;
     }
@@ -894,7 +846,7 @@ public class ChatPetService {
      */
     public String getNewsMessageCoverUrl(){
 
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String picUrl = "http://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
 
         return picUrl;
@@ -909,7 +861,7 @@ public class ChatPetService {
      * @return
      */
     public String getChatPetPosterUrl(){
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String posterUrl = "http://" + domain + "/res/wedo/poster.html";
 
         return posterUrl;

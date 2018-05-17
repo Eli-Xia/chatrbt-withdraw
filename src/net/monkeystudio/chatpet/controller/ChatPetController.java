@@ -149,7 +149,10 @@ public class ChatPetController extends ChatPetBaseController{
         if(userId == null){
             respHelper.nologin();
         }
-        return null;
+
+        ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId(), req.getMissionItemId());
+
+        return respHelper.ok(changeInfo);
     }
 
 

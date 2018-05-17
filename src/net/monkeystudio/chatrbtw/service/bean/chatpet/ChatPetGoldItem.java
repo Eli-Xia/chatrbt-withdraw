@@ -9,7 +9,6 @@ public class ChatPetGoldItem {
     private Integer rewardItemId;
     private Integer goldValue;
     private Integer missionItemId;
-    private String rewardName;
 
     public Integer getRewardItemId() {
         return rewardItemId;
@@ -35,11 +34,4 @@ public class ChatPetGoldItem {
         this.missionItemId = missionItemId;
     }
 
-    public String getRewardName() {
-        return rewardName;
-    }
-
-    public void setRewardName(String rewardName) {
-        this.rewardName = rewardName;
-    }
 }

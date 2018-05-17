@@ -72,7 +72,7 @@ public class ChatPetRewardItemService {
         }
 
         //创建宠物奖励池
-        List<ChatPetRewardItem> items = new ArrayList<>();
+        //List<ChatPetRewardItem> items = new ArrayList<>();
 
         //每日可领取奖励
         ChatPetRewardItem fixedItem = new ChatPetRewardItem();
@@ -131,7 +131,9 @@ public class ChatPetRewardItemService {
 
             ChatPetGoldItem goldItem = new ChatPetGoldItem();
 
-            BeanUtils.copyProperties(item,goldItem);
+            goldItem.setGoldValue(item.getGoldValue());
+            goldItem.setMissionItemId(item.getMissionItemId());
+            goldItem.setRewardItemId(item.getId());
 
             goldItems.add(goldItem);
 
