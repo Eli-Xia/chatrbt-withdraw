@@ -62,9 +62,6 @@ window.onload = function () {
             this.queryAllColor();
             this.queryGroup();
         },
-        mounted() {
-            var _self = this;
-        },
         methods: {
             shareShow($event) {
                 var _this = this;
@@ -98,7 +95,7 @@ window.onload = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var resp = JSON.parse(xhr.response);
                         if (resp.retCode == 0) {
-                            _self.convertImgToBase64({ width: null }, resp.result.ownerInfo.headImg+'?1', function (base64Img) {
+                            _self.convertImgToBase64({width: null}, resp.result.ownerInfo.headImg + '?1', function (base64Img) {
                                 _self.userInfo.headImg = base64Img;
                             });
                             //替换链接
@@ -122,8 +119,8 @@ window.onload = function () {
                             var colorIdx = _self.list.appearance.object.textureColor;
                             var textureColor = `icon3-${colorIdx}`
                             // 改变纹理颜色
-                            setTimeout(function() {
-                                var keys = Object.keys(_self.colorList).map(function(c) {
+                            setTimeout(function () {
+                                var keys = Object.keys(_self.colorList).map(function (c) {
                                     if (_self.colorList[c].key === colorIdx) {
                                         _self.textureColor = {
                                             color: `#${_self.colorList[c].rgbValue}`
@@ -143,7 +140,7 @@ window.onload = function () {
             queryGroup() {
                 var _self = this;
                 var xhr = new XMLHttpRequest();
-                var data = JSON.stringify({ "pageSize": 5 });
+                var data = JSON.stringify({"pageSize": 5});
                 xhr.open('post', '/api/chat-pet/ethnic-groups/rank', true);
                 xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                 xhr.send(data);
@@ -200,7 +197,6 @@ window.onload = function () {
                             setTimeout(function () {
                                 var xhr = new XMLHttpRequest();
                                 xhr.open('post', '/api/chat-pet/pet/info', true);
-                                // xhr.open('get', '/api/chat-pet/pet/login?id=keendo.43', true);
                                 xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                                 xhr.send(null);
                                 xhr.onreadystatechange = function () {
@@ -239,32 +235,32 @@ window.onload = function () {
             canvasSvg() {
                 var zombiescat = this.list.appearance.object;
                 var canvas = document.createElement('CANVAS'),
-                    ctx = canvas.getContext('2d')
-                loads = 0;
+                    ctx = canvas.getContext('2d'),
+                    loads = 0;
+                var originImg = new Image();
+                originImg.src = './images/zombiescat/infill/0.svg'
+                canvas.height = originImg.height;
+                canvas.width = originImg.width;
                 var sourceArr = [`images/zombiescat/outline/${zombiescat.outline}.svg`, `images/zombiescat/infill/${zombiescat.infill}.svg`,
                     `images/zombiescat/texture/${zombiescat.texture}.svg#图层_1`, `images/zombiescat/textureShadow/${zombiescat.textureShadow}.svg`, `images/zombiescat/eye/${zombiescat.eye}.svg`, `images/zombiescat/mouth/${zombiescat.mouth}.svg`];
                 var len = sourceArr.length;
-                draw(ctx, sourceArr);
-                function draw(ctx, sourceArr) {
-                    var originImg = new Image();
-                    originImg.src = './images/zombiescat/infill/0.svg'
-                    canvas.height = originImg.height;
-                    canvas.width = originImg.width;
-                    sourceArr.forEach((source, i) => {
-                        var newImg = new Image();
-                        newImg.setAttribute('crossOrigin', 'anonymous');
-                        newImg.src = source;
-                        newImg.onload = function () {
-                            ctx.drawImage(newImg, 0, 0);
-                            loads++
-                            if (loads == len) {
-                                var finalImg = new Image();
-                                finalImg.src = canvas.toDataURL();
-                                document.getElementById('zebra-msg').replaceChild(finalImg, document.getElementById('zombiescat-img'));
-                            }
+                function draw() {
+                    var newImg = new Image();
+                    newImg.setAttribute('crossOrigin', 'anonymous');
+                    newImg.src = sourceArr[loads];
+                    newImg.onload = function () {
+                        ctx.drawImage(newImg, 0, 0);
+                        loads++
+                        if (loads == len) {
+                            var finalImg = new Image();
+                            finalImg.src = canvas.toDataURL();
+                            document.getElementById('zebra-msg').replaceChild(finalImg, document.getElementById('zombiescat-img'));
+                        } else {
+                            draw()
                         }
-                    });
+                    }
                 }
+                draw()
             },
 
             convertImgToBase64(param, url, callback, outputFormat) {
