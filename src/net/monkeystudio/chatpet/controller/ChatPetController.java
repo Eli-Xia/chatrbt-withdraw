@@ -39,12 +39,12 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
-        /*Integer fanId = getUserId();
+        Integer fanId = getUserId();
 
         if(fanId == null){
             return respHelper.nologin();
-        }*/
-        Integer fanId = 42;
+        }
+        //Integer fanId = 42;
 
         ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
