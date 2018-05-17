@@ -263,11 +263,11 @@ public class ChatPetService {
     }
 
     /**
-     * 获取宠物的信息
+     * 领取奖励后获取宠物修改的信息
      * @param chatPetId
      * @return
      */
-    public ChatPetRewardChangeInfo getInfoAfterReward(Integer chatPetId){
+    public ChatPetRewardChangeInfo getInfoAfterReward(Integer wxFanId,Integer chatPetId){
 
         ChatPet chatPet = this.getById(chatPetId);
 
@@ -284,36 +284,11 @@ public class ChatPetService {
         changeInfo.setFanTotalCoin(info.getFanTotalCoin());
         changeInfo.setPetLogs(info.getPetLogs());
         changeInfo.setTodayMissions(info.getTodayMissions());
+        //族群排名
+        ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
+        changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
 
         return changeInfo;
-
-
-
-        /*//今日宠物日志
-        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
-        chatPetBaseInfo.setPetLogs(resps);
-
-        //粉丝拥有代币
-        Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
-        chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
-
-        //宠物的经验
-        Integer experience = chatPet.getExperience();
-        chatPetBaseInfo.setExperience(experience);
-
-        //经验条进度
-        ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
-        chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);
-
-        //宠物等级
-        Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
-        chatPetBaseInfo.setChatPetLevel(chatPetLevel);
-
-        //今日任务
-        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
-        chatPetBaseInfo.setTodayMissions(todayMissionList);*/
-
-
 
     }
 
@@ -341,7 +316,8 @@ public class ChatPetService {
             this.missionReward(chatPetId,itemId);
         }
 
-        ChatPetRewardChangeInfo info = this.getInfoAfterReward(chatPetId);
+
+        ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
         return info;
     }
@@ -427,7 +403,6 @@ public class ChatPetService {
     }
 
 
-
     /**
      * 粉丝是否拥有宠物
      * @param wxFanOpenId
@@ -488,18 +463,6 @@ public class ChatPetService {
         return ret;
     }
 
-    /**
-     * 得到宠物主页的URL
-     * @param chatPetId
-     * @return
-     */
-    public String getChatPetHomeUrl(Integer chatPetId){
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
-        String uri = "/res/wedo/zebra.html?id=" + chatPetId;
-        String url = domain + uri;
-        return url;
-    }
-
 
     /**
      * 根据wxFanId获取宠物对象
@@ -543,15 +506,24 @@ public class ChatPetService {
 
     }
 
+    /**
+     * 粉丝是否能进入到宠物页面,判断是否关注,是否领取宠物
+     * @param fansId
+     * @param wxPubId
+     * @return
+     */
     public boolean isAble2Access(Integer fansId,Integer wxPubId){
 
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
         String wxPubAppId = wxPub.getAppId();
 
         WxFan wxFan = wxFanService.getById(fansId);
+
         String wxFanOpenId = wxFan.getWxFanOpenId();
 
-        return  isUserFollowWxPub(wxPubAppId,wxFanOpenId) && isFanOwnChatPet(wxPubAppId,wxFanOpenId);
+        Boolean ret =   isUserFollowWxPub(wxPubAppId,wxFanOpenId) && isFanOwnChatPet(wxPubAppId,wxFanOpenId);
+
+        return ret;
     }
     /**
      * 获取存入chatPet session的fanId 以及跳转宠物日志页面所需参数wxPubId
@@ -610,9 +582,28 @@ public class ChatPetService {
     private boolean isUserFollowWxPub(String wxPubAppId,String wxFanOpenId){
         String wxPubOriginId = wxPubService.getWxPubOriginIdByAppId(wxPubAppId);
 
-        boolean isFans = wxFanService.isFans(wxPubOriginId, wxFanOpenId);
+        Boolean isFans = wxFanService.isFans(wxPubOriginId, wxFanOpenId);
 
         return isFans;
+    }
+
+    /**
+     * 登录时判断当前访问WxPubId与session中fanId是否匹配
+     * 若不匹配需要置空
+     * @param userId    粉丝Id
+     * @param wxPubId   公众号Id
+     * @return
+     */
+    public boolean isNeed2EmptyUser4Session(Integer userId,Integer wxPubId){
+        WxFan wxFan = wxFanService.getById(userId);
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);//session中的fanId对应的WxPub
+
+        Integer wxPubIdInSession = wxPub.getId();
+
+        return wxPubId.equals(wxPubIdInSession);
     }
 
     /**

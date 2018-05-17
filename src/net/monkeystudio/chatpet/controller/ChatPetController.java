@@ -88,18 +88,29 @@ public class ChatPetController extends ChatPetBaseController{
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
         Integer userId = getUserId();
+
         if(userId == null){
-            //授权
+            //网页授权
             response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
         }else{
-            //request.getRequestDispatcher(HOME_PAGE).forward(request, response);
+            //判断是否为跨公众号同session
+            if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
+                Log.d(" ====== notSame ====");
+
+                saveSessionUserId(null);
+
+                response.sendRedirect(chatPetService.getHomePageUrl(wxPubId));
+
+                return null;
+            }
+
             if(chatPetService.isAble2Access(userId,wxPubId)){
 
                 chatPetService.dataPrepared(userId,wxPubId);
 
                 response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
-            }else{
 
+            }else{
                 response.sendRedirect(chatPetService.getChatPetPosterUrl());
             }
 

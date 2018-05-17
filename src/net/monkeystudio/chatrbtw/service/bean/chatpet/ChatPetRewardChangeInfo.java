@@ -22,6 +22,16 @@ public class ChatPetRewardChangeInfo {
 
     private List<TodayMissionItem> todayMissions = new ArrayList<>();
 
+    private ChatPetExperinceRank groupRank;
+
+    public ChatPetExperinceRank getGroupRank() {
+        return groupRank;
+    }
+
+    public void setGroupRank(ChatPetExperinceRank groupRank) {
+        this.groupRank = groupRank;
+    }
+
     public List<PetLogResp> getPetLogs() {
         return petLogs;
     }
