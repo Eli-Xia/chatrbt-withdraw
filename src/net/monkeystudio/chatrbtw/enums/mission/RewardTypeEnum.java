@@ -1,32 +1,14 @@
 package net.monkeystudio.chatrbtw.enums.mission;
 
 /**
+ * 奖励类型枚举
  * @author xiaxin
  */
 public enum RewardTypeEnum {
-    NULL_REWARD(0,"没有奖励"),GOLD_REWARD(1,"金币奖励"),EXPERIENCE_REWARD(2,"经验奖励");
 
-    private int type;
-    private String name;
 
-    RewardTypeEnum(int type,String name){
-        this.type = type;
-        this.name = name;
-    }
+    /*private Integer missionCode;//奖励对应的任务,为null则不是任务奖励
+    private String  type;
+*/
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

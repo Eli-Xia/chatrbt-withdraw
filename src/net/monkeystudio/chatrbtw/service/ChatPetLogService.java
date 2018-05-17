@@ -3,8 +3,9 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.PetLog;
-import net.monkeystudio.chatrbtw.enums.mission.RewardTypeEnum;
+import net.monkeystudio.chatrbtw.enums.mission.RewardMethodEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class ChatPetLogService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
 
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
+
     /**
      * 获取每日宠物日志
      * @param date
@@ -55,16 +59,16 @@ public class ChatPetLogService {
 
             if(taskCode == null){
                 //不是奖励类型的日志
-                resp.setRewardType(RewardTypeEnum.NULL_REWARD.getType());
+                resp.setRewardType(RewardMethodEnum.NULL_REWARD.getType());
             }
 
             Integer rewardType = pl.getRewardType();
 
             if(rewardType != null){
-                if(RewardTypeEnum.GOLD_REWARD.getType() == rewardType){
+                if(RewardMethodEnum.GOLD_REWARD.getType() == rewardType){
                     resp.setCoin(cpm.getCoin().intValue());
                 }
-                if(RewardTypeEnum.EXPERIENCE_REWARD.getType() == rewardType){
+                if(RewardMethodEnum.EXPERIENCE_REWARD.getType() == rewardType){
                     resp.setCoin(cpm.getExperience());
                 }
             }
@@ -112,12 +116,15 @@ public class ChatPetLogService {
      * 完成任务领取奖励后插入宠物日志
      */
     @Transactional
-    public void savePetLogWhenReward(Integer chatPetId,Integer missionCode,Integer oldExperience,Integer newExperience){
+    public void savePetLogWhenReward(Integer chatPetId,Integer missionItemId,Integer oldExperience,Integer newExperience){
         ChatPet chatPet = chatPetService.getById(chatPetId);
         String wxPubOriginId = chatPet.getWxPubOriginId();
         String wxFanOpenId = chatPet.getWxFanOpenId();
 
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
+        Integer missionCode = cppm.getMissionCode();
         ChatPetMission cpm = chatPetMissionService.getByMissionCode(missionCode);
+
         Float coin = cpm.getCoin();
         Integer experience = cpm.getExperience();
 
@@ -131,7 +138,7 @@ public class ChatPetLogService {
             pl1.setContent("完成"+cpm.getMissionName());
             pl1.setCreateTime(new Date());
             pl1.setChatPetId(chatPetId);
-            pl1.setRewardType(RewardTypeEnum.GOLD_REWARD.getType());
+            pl1.setRewardType(RewardMethodEnum.GOLD_REWARD.getType());
             pl1.setTaskCode(missionCode);
 
             pls.add(pl1);
@@ -144,7 +151,7 @@ public class ChatPetLogService {
                 pl2.setContent("经验值");
                 pl2.setCreateTime(new Date());
                 pl2.setChatPetId(chatPetId);
-                pl2.setRewardType(RewardTypeEnum.EXPERIENCE_REWARD.getType());
+                pl2.setRewardType(RewardMethodEnum.EXPERIENCE_REWARD.getType());
                 pl2.setTaskCode(missionCode);
 
                 pls.add(pl2);

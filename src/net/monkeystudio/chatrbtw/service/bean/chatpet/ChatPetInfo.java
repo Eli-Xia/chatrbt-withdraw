@@ -37,6 +37,16 @@ public class ChatPetInfo {
 
     private List<TodayMissionItem> todayMissions = new ArrayList<>();
 
+    private List<ChatPetGoldItem> goldItems = new ArrayList<>();
+
+    public List<ChatPetGoldItem> getGoldItems() {
+        return goldItems;
+    }
+
+    public void setGoldItems(List<ChatPetGoldItem> goldItems) {
+        this.goldItems = goldItems;
+    }
+
     public List<TodayMissionItem> getTodayMissions() {
         return todayMissions;
     }

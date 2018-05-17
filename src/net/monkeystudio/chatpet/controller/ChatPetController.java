@@ -4,7 +4,7 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
-import net.monkeystudio.chatpet.controller.req.chatpetmission.CompleteMissionRewardReq;
+import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetRewardChangeInfo;
@@ -39,11 +39,12 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
-        Integer fanId = getUserId();
+        /*Integer fanId = getUserId();
 
         if(fanId == null){
             return respHelper.nologin();
-        }
+        }*/
+        Integer fanId = 42;
 
         ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
@@ -142,16 +143,13 @@ public class ChatPetController extends ChatPetBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
-    public RespBase rewardAfterCompleteMission(@RequestBody CompleteMissionRewardReq req) throws BizException {
+    public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
         Integer userId = this.getUserId();
 
         if(userId == null){
             respHelper.nologin();
         }
-
-        ChatPetRewardChangeInfo info = chatPetService.rewardHandle(userId, req.getItemId());
-
-        return respHelper.ok(info);
+        return null;
     }
 
 

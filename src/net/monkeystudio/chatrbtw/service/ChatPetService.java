@@ -79,6 +79,8 @@ public class ChatPetService {
     @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
 
+    @Autowired
+    private ChatPetRewardItemService chatPetRewardItemService;
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -236,6 +238,10 @@ public class ChatPetService {
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
 
+        //奖励
+        List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardItemService.getChatPetGoldItems(chatPetId);
+        chatPetBaseInfo.setGoldItems(chatPetGoldItems);
+
 
         String appearanceCode = chatPet.getAppearanceCode();
         ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
@@ -260,6 +266,10 @@ public class ChatPetService {
         String originId = wxPub.getOriginId();
         //第一次登录需要准备任务池数据
         chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(originId,wxFanOpenId);
+
+        ChatPet chatPet = this.getChatPetByFans(originId, wxFanOpenId);
+        //奖励池数据
+        chatPetRewardItemService.createInitRewardItems(chatPet.getId());
     }
 
     /**
@@ -287,6 +297,8 @@ public class ChatPetService {
         //族群排名
         ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
+
+        //changeInfo.setGoldItems();
 
         return changeInfo;
 
@@ -333,6 +345,78 @@ public class ChatPetService {
 
         return shouldState.equals(nowState);
     }
+
+
+    /**
+     *   TODO
+     * 加入奖励池后  修改
+     * 完成每日任务领取奖励
+     * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
+     */
+    @Transactional
+    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) throws BizException{
+        //是否为任务类型奖励
+        Boolean isMissionReward = false;
+
+        //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 区分每日可领取奖励
+        if(missionItemId != null){
+            isMissionReward = true;
+        }
+
+        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);
+
+        //判断领取的是否为自己的奖励
+        Integer chatPetIdInDb = chatPetRewardItem.getChatPetId();
+        if(!chatPetId.equals(chatPetIdInDb)){
+            throw new BizException("无法领取");
+        }
+
+        if(chatPetRewardItemService.isGoldAwarded(rewardItemId)){
+            throw new BizException("您已经领取过奖励");
+        }
+
+        if(isMissionReward && !chatPetMissionPoolService.isFinishMission(missionItemId)){
+            throw new BizException("请完成任务后再领取奖励");
+        }
+
+        //增加金币
+        Integer incrCoin = chatPetRewardItem.getGoldValue();
+        this.increaseCoin(chatPetId,incrCoin.floatValue());
+
+
+        //增加经验
+        Integer oldExperience = null;
+        Integer newExperience = null;
+
+        if(isMissionReward){
+
+            ChatPet chatPet = this.getById(chatPetId);
+            oldExperience = chatPet.getExperience();
+
+            Integer addExperience = incrCoin.intValue();
+            this.increaseExperience(chatPetId,addExperience);
+
+            newExperience = this.getChatPetExperience(chatPetId);
+
+        }
+
+        //插入日志
+        if(isMissionReward){
+            chatPetLogService.savePetLogWhenReward(chatPetId,missionItemId,oldExperience,newExperience);
+        }
+    }
+
+    private void increaseExperienceHandle(Boolean isMissionReward, Integer missionItemId) {
+        if(!isMissionReward){
+            return ;
+        }
+        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
+        Integer chatPetId = cppm.getChatPetId();
+        Integer nowExperience = this.getChatPetExperience(chatPetId);
+
+    }
+
 
     /**
      *   TODO
@@ -401,7 +485,6 @@ public class ChatPetService {
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
     }
-
 
     /**
      * 粉丝是否拥有宠物
@@ -789,6 +872,18 @@ public class ChatPetService {
         }
 
         return chatPetExperinceRankItemList;
+    }
+
+    /**
+     * 获取宠物等级
+     * @param chatPetId
+     * @return
+     */
+    public Integer getChatPetLevel(Integer chatPetId){
+        ChatPet chatPet = this.getById(chatPetId);
+        Integer experience = chatPet.getExperience();
+        Integer level = chatPetLevelService.calculateLevel(experience);
+        return level;
     }
 
 

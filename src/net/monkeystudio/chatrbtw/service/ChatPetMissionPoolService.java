@@ -44,6 +44,9 @@ public class ChatPetMissionPoolService {
     @Autowired
     private RWxPubProductService rWxPubProductService;
 
+    @Autowired
+    private ChatPetRewardItemService chatPetRewardItemService;
+
 
 
     /**
@@ -155,6 +158,10 @@ public class ChatPetMissionPoolService {
         if(!isMissionDone){
             this.updateMissionWhenFinish(chatPet.getId(),missionCode);
         }
+
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
+
+        chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
     }
 
     /**
@@ -197,9 +204,14 @@ public class ChatPetMissionPoolService {
             return;
         }
 
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
+
+        chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
+
         this.updateMissionWhenFinish(chatPet.getId(),missionCode);
 
     }
+
 
     private boolean  checkMissionAdIsEqual(Integer chatPetId,Integer missionCode,Integer adId){
         ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
@@ -301,6 +313,31 @@ public class ChatPetMissionPoolService {
         cppm.setFinishTime(new Date());
 
         this.update(cppm);
+    }
+
+    /**
+     * 获取当前为已完成状态的missionItem
+     * @param chatPetId
+     * @return
+     */
+    public List<ChatPetPersonalMission> getFinishedMissionItem(Integer chatPetId){
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+
+        param.setCreateTime(new Date());
+        param.setChatPetId(chatPetId);
+        param.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+
+        return this.getPersonalMissionListByParam(param);
+    }
+
+    public boolean isFinishMission(Integer missionItemId){
+        boolean ret = false;
+        ChatPetPersonalMission cppm = this.getById(missionItemId);
+        Integer state = cppm.getState();
+        if(MissionStateEnum.FINISH_NOT_AWARD.getCode().equals(state)){
+            ret = true;
+        }
+        return ret;
     }
 
 

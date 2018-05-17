@@ -6,7 +6,7 @@ package net.monkeystudio.chatrbtw.enums.chatpet;
 public enum ChatPetTaskEnum {
     DAILY_READ_NEWS(1,"每日阅读文章任务",3f),DAILY_CHAT(2,"每日聊天互动签到任务",1f);
 
-    private int code;
+    private Integer code;
     private String name;
     private Float coinValue;
 
@@ -25,11 +25,11 @@ public enum ChatPetTaskEnum {
         throw new RuntimeException("没有找到对应的枚举");
     }
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 
