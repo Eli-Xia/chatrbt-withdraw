@@ -79,6 +79,9 @@ public class ChatPetService {
     @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
 
+    @Autowired
+    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -818,6 +821,32 @@ public class ChatPetService {
         String posterUrl = "http://" + domain + "/res/wedo/poster.html";
 
         return posterUrl;
+    }
+
+
+    public CreationPost getCreationPost(Integer wxFanId){
+        CreationPost creationPost = new CreationPost();
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+
+        try {
+            String base64 = ethnicGroupsService.getCreateFounderQrCodeImageBase64(wxPubOriginId);
+            creationPost.setWxPubQrCode(base64);
+        } catch (BizException e) {
+            Log.e(e);
+        } catch (IOException e) {
+            Log.e(e);
+        } catch (WriterException e) {
+            Log.e(e);
+        }
+
+        RWxPubChatPetType rWxPubChatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+        Integer type = rWxPubChatPetType.getChatPetType();
+        creationPost.setChatPetType(type);
+
+        return creationPost;
     }
 
 }

@@ -112,6 +112,31 @@ public class EthnicGroupsService {
     }
 
 
+    /**
+     * 获得公众号的创始二维码
+     * @param wxPubOriginId
+     * @return
+     * @throws BizException
+     * @throws IOException
+     * @throws WriterException
+     */
+    public String getCreateFounderQrCodeImageBase64(String wxPubOriginId) throws BizException, IOException, WriterException{
+        String result = qrCodeHelper.createQrCodeByWxPubOriginId(wxPubOriginId, 2592000, QrCodeHelper.QrCodeType.TEMP, EVENT_SPECIAL_STR + FOUNDER_EVENT_KEY);
+        QrCodeTicker qrCodeTicker = JsonUtil.readValue(result, QrCodeTicker.class);
+
+        BufferedImage bufferedImage = QRCodeUtil.toBufferedImage(qrCodeTicker.getUrl(), 100, 100);
+
+        return ImageUtils.encodeImgageToBase64(bufferedImage,"png");
+    }
+
+    /**
+     * 创建粉丝邀请码
+     * @param chatPetId
+     * @return
+     * @throws BizException
+     * @throws IOException
+     * @throws WriterException
+     */
     public String createInvitationQrCode(Integer chatPetId) throws BizException, IOException, WriterException {
 
         ChatPet chatPet = chatPetService.getById(chatPetId);
