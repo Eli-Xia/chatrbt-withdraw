@@ -44,13 +44,19 @@
                 <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
             </div>
             <div class="zebra-bg" v-cloak>
+                <div v-for="item in list.goldItems" @click="sureReward($event,item.rewardItemId,item.missionItemId)" class="token-reward"></div>
                 <div class="zombiescat-img">
-                    <img class="svg-icon icon1" :src=`images/zombiescat/outline/${list.appearance.object.outline}.svg` alt="">
-                    <img class="svg-icon icon2" :src=`images/zombiescat/infill/${list.appearance.object.infill}.svg` alt="">
-                    <img class="svg-icon icon3" :src=`images/zombiescat/texture/${list.appearance.object.texture}.svg#图层_1` alt="">
-                    <img class="svg-icon icon4" :src=`images/zombiescat/textureShadow/${list.appearance.object.textureShadow}.svg` alt="">
+                    <img class="svg-icon icon1" :src=`images/zombiescat/outline/${list.appearance.object.outline}.svg`
+                         alt="">
+                    <img class="svg-icon icon2" :src=`images/zombiescat/infill/${list.appearance.object.infill}.svg`
+                         alt="">
+                    <img class="svg-icon icon3"
+                         :src=`images/zombiescat/texture/${list.appearance.object.texture}.svg#图层_1` alt="">
+                    <img class="svg-icon icon4"
+                         :src=`images/zombiescat/textureShadow/${list.appearance.object.textureShadow}.svg` alt="">
                     <img class="svg-icon icon5" :src=`images/zombiescat/eye/${list.appearance.object.eye}.svg` alt="">
-                    <img class="svg-icon icon6" :src=`images/zombiescat/mouth/${list.appearance.object.mouth}.svg` alt="">
+                    <img class="svg-icon icon6" :src=`images/zombiescat/mouth/${list.appearance.object.mouth}.svg`
+                         alt="">
                 </div>
             </div>
             <div class="user-code" v-if="userCodeShow">
@@ -110,28 +116,28 @@
             <div class="tittle">今日任务</div>
             <div>
                 <div class="date">
-                    {{nowDate | formatDate}}
+                    请前往互动对话界面，通过聊天触发随机任务。任务完成后，记得返回本页面中领取哟~
                 </div>
                 <ul>
                     <li v-for="item in taskList" :class="{'after':item.state==3}">
                         {{item.missionName}}
-                        <div v-if="item.state==1">领取</div>
-                        <div class="active" v-if="item.state==2" @click="sureReward($event,item.itemId)">
-                            <div><i></i>领取</div>
-                        </div>
-                        <div v-if="item.state==3">已领取</div>
+                        <div v-if="item.state==2"></div>
                     </li>
                 </ul>
             </div>
         </div>
     </section>
-    <section>
+    <section :class="{'show-rule':logShow === false}">
+        <div v-if="!logShow">
+            宠物日志
+            <div @click="logShowToggle">展开</div>
+        </div>
+    </section>
+    <section v-if="logShow">
         <div id="log">
+            <div class="hide-rule" @click="logShowToggle">收起</div>
             <div class="tittle">宠物日志</div>
             <div>
-                <div class="log-date">
-                    {{nowDate | formatDate}}
-                </div>
                 <div class="nodata" v-if="logs.length == 0">
                     <img src="images/nodata.png" alt="no-data">
                     <p>今天还没有日志哦～</p>
@@ -141,7 +147,6 @@
                         {{item.content}}
                         <em v-if="item.coin && item.rewardType == 1" class="token">＋{{item.coin}}</em>
                         <em v-if="item.coin && item.rewardType == 2" class="experience">＋{{item.coin}}</em>
-                        <span>{{item.createTime | formatTime}}</span>
                     </li>
                 </ul>
             </div>
@@ -150,6 +155,7 @@
     <section>
         <div id="groups">
             <div class="tittle">族群</div>
+            <div class="groups-text">生成属于自己的邀请卡，壮大你的族群吧～</div>
             <div>
                 <div class="date">
                     已有{{groupList.total}}人加入该族群
@@ -187,12 +193,19 @@
                     <div class="zebra-msg" id="zebra-msg">
                         <!-- <img :src="petBase" id="cat-img" alt="cat"> -->
                         <div class="zombiescat-img" id="zombiescat-img">
-                            <img class="svg-icon icon1" :src=`images/zombiescat/outline/${list.appearance.object.outline}.svg` alt="">
-                            <img class="svg-icon icon2" :src=`images/zombiescat/infill/${list.appearance.object.infill}.svg` alt="">
-                            <img class="svg-icon icon3" :src=`images/zombiescat/texture/${list.appearance.object.texture}.svg#图层_1` alt="">
-                            <img class="svg-icon icon4" :src=`images/zombiescat/textureShadow/${list.appearance.object.textureShadow}.svg` alt="">
-                            <img class="svg-icon icon5" :src=`images/zombiescat/eye/${list.appearance.object.eye}.svg` alt="">
-                            <img class="svg-icon icon6" :src=`images/zombiescat/mouth/${list.appearance.object.mouth}.svg` alt="">
+                            <img class="svg-icon icon1"
+                                 :src=`images/zombiescat/outline/${list.appearance.object.outline}.svg` alt="">
+                            <img class="svg-icon icon2"
+                                 :src=`images/zombiescat/infill/${list.appearance.object.infill}.svg` alt="">
+                            <img class="svg-icon icon3"
+                                 :src=`images/zombiescat/texture/${list.appearance.object.texture}.svg#图层_1` alt="">
+                            <img class="svg-icon icon4"
+                                 :src=`images/zombiescat/textureShadow/${list.appearance.object.textureShadow}.svg`
+                                 alt="">
+                            <img class="svg-icon icon5" :src=`images/zombiescat/eye/${list.appearance.object.eye}.svg`
+                                 alt="">
+                            <img class="svg-icon icon6"
+                                 :src=`images/zombiescat/mouth/${list.appearance.object.mouth}.svg` alt="">
                         </div>
                     </div>
                     <div class="bg-right bg" :style="{'background-color': '#' + bgColor}"></div>
