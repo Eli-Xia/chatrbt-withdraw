@@ -1,7 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.service.CfgService;
-import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
@@ -38,18 +36,12 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     @Autowired
     private ChatPetService chatPetService;
 
-
     @Autowired
     private WxFanService wxFanService;
 
     @Autowired
-    private ChatPetLogService chatPetLogService;
-
-    @Autowired
     private WxPubService wxPubService;
 
-    @Autowired
-    private CfgService cfgService;
 
 
 
@@ -197,6 +189,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
         return null;
     }
+
+
 
     /**
      * 微信h5授权url参数拼接  ?wxPubId = ?

@@ -83,9 +83,12 @@ header {
 }
 #user_zebra {
   position: relative;
+  min-height: 10.34rem;
 }
 #user_zebra .zebra-bg {
-  height: 9.5rem;
+  height: 8rem;
+  margin-top: 0.72rem;
+  text-align: center;
 }
 #user_zebra .pet-class {
   position: relative;
@@ -123,8 +126,9 @@ header {
   border-radius: 0.2rem;
 }
 #user_zebra .zebra-bg > img {
-  width: 100%;
-  margin-top: -1.77rem;
+  /* width: 100%; */
+  /* margin-top: -1.77rem; */
+  width: 8rem;
 }
 #user_zebra .user-code {
   margin: 0 0.8rem;
@@ -543,6 +547,6 @@ footer p {
 .icon1-0 {
   --cuntom-color: red;
 }
-.icon3-a {
+/* .icon3-a {
   color: #006aba;
-}
+} */

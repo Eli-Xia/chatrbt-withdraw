@@ -184,6 +184,19 @@ public class EthnicGroupsService {
         return this.allowToAdopt(ethnicGroupsId);
     }
 
+    public void clearCache(){
+        String key = getEthnicGroupsExistingNumberKey();
+
+        redisCacheTemplate.hset(key,String.valueOf(23),"0");
+
+        String string = redisCacheTemplate.hget(key, String.valueOf(23));
+
+        System.out.println(string);
+
+        System.out.println(1);
+
+    }
+
     /**
      * 是否允许领养
      * @param ethnicGroupsId

@@ -164,6 +164,24 @@ public class Log {
         return traceId;
     }
 
+    public static String e(Throwable throwable){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(throwable.getClass().getName() + ": " + throwable.getMessage() + "\n");
+
+        for (StackTraceElement ele : throwable.getStackTrace()) {
+            sb.append(MessageFormat.format("\tat {0}.{1}({2}:{3})\n",
+                    ele.getClassName(), ele.getMethodName(), ele.getFileName(), ele.getLineNumber()));
+            ;
+        }
+
+        throwable.printStackTrace();
+        String traceId = getTraceId();
+        log.error(getCaller() + " " + sb.toString() + "[TraceID:" + traceId + "]");
+
+        return traceId;
+    }
+
     /**
      * 把指定的位置的字符替换为指定字符串
      * @param source 原字符串

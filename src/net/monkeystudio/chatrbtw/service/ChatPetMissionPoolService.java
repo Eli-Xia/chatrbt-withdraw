@@ -4,6 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
@@ -55,7 +56,7 @@ public class ChatPetMissionPoolService {
 
         Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
 
-        String createDailyMissionCountCacheKey = this.getCreateDailyMissionCountCacheKey(wxPubOriginId, wxFanOpenId);
+        String createDailyMissionCountCacheKey = this.getCreateDailyMissionCountCacheKey(chatPetId);
 
         Long incr = redisCacheTemplate.incr(createDailyMissionCountCacheKey);
 
@@ -66,7 +67,6 @@ public class ChatPetMissionPoolService {
             redisCacheTemplate.expire(createDailyMissionCountCacheKey, DateUtils.getCacheSeconds());
         }
     }
-
 
 
     /**
@@ -353,8 +353,8 @@ public class ChatPetMissionPoolService {
     }
 
 
-    public String getCreateDailyMissionCountCacheKey(String wxPubOriginid,String wxFanOpenId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "createDailyMission:" +wxPubOriginid +":"+ wxFanOpenId;
+    public String getCreateDailyMissionCountCacheKey(Integer chatPetId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatPetDailyMission:" +chatPetId;
     }
 
 
