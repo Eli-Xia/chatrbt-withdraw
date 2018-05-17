@@ -70,8 +70,8 @@
             <i @click="userCodeShow = !userCodeShow"></i>
         </div>
     </section>
-    <section :class="{'show-rule':ruleShow === false}">
-        <div v-if="!ruleShow">
+    <section :class="{'show-rule':ruleShow === false}" v-if="!ruleShow">
+        <div>
             星球规则
             <div @click="ruleShowToggle">展开</div>
         </div>
@@ -127,10 +127,10 @@
             </div>
         </div>
     </section>
-    <section :class="{'show-rule':logShow === false}">
-        <div v-if="!logShow">
+    <section :class="{'show-rule':logShow === false}" v-if="!logShow">
+        <div>
             宠物日志
-            <div @click="logShowToggle">展开</div>
+            <div @click="logShowToggle">展开</div>s
         </div>
     </section>
     <section v-if="logShow">
