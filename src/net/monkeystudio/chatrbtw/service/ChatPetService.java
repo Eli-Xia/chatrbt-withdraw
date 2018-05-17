@@ -238,6 +238,10 @@ public class ChatPetService {
         List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
         chatPetBaseInfo.setTodayMissions(todayMissionList);
 
+        //奖励
+        List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardItemService.getChatPetGoldItems(chatPetId);
+        chatPetBaseInfo.setGoldItems(chatPetGoldItems);
+
 
         String appearanceCode = chatPet.getAppearanceCode();
         ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
@@ -262,6 +266,10 @@ public class ChatPetService {
         String originId = wxPub.getOriginId();
         //第一次登录需要准备任务池数据
         chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(originId,wxFanOpenId);
+
+        ChatPet chatPet = this.getChatPetByFans(originId, wxFanOpenId);
+        //奖励池数据
+        chatPetRewardItemService.createInitRewardItems(chatPet.getId());
     }
 
     /**
@@ -289,6 +297,8 @@ public class ChatPetService {
         //族群排名
         ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
+
+        //changeInfo.setGoldItems();
 
         return changeInfo;
 
@@ -370,7 +380,7 @@ public class ChatPetService {
             throw new BizException("请完成任务后再领取奖励");
         }
 
-        //增加金币  金币是一定会增加的
+        //增加金币
         Integer incrCoin = chatPetRewardItem.getGoldValue();
         this.increaseCoin(chatPetId,incrCoin.floatValue());
 
@@ -395,10 +405,6 @@ public class ChatPetService {
         if(isMissionReward){
             chatPetLogService.savePetLogWhenReward(chatPetId,missionItemId,oldExperience,newExperience);
         }
-        //需要问清楚一件事:悬浮的奖励是不是只标明金币数,不会说这个是什么金币???  如果需要的话就要搞一个金币枚举类了.
-        //填充奖励池,首先去missionPool里面看有没有已经完成了的任务,有可能第一次进H5的时候已经把当日聊天任务给完成了.
-        //传到前端需要数据: coinValue  rewardItemId  missionItemId  rewardEnumCode(当日聊天,阅读任务,...奖励 , missionCode)
-        //问:金币上需不需要展示是什么类型奖励,
     }
 
     private void increaseExperienceHandle(Boolean isMissionReward, Integer missionItemId) {

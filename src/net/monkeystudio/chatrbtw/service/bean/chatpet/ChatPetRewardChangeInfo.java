@@ -24,6 +24,16 @@ public class ChatPetRewardChangeInfo {
 
     private ChatPetExperinceRank groupRank;
 
+    private List<ChatPetGoldItem> goldItems = new ArrayList<>();
+
+    public List<ChatPetGoldItem> getGoldItems() {
+        return goldItems;
+    }
+
+    public void setGoldItems(List<ChatPetGoldItem> goldItems) {
+        this.goldItems = goldItems;
+    }
+
     public ChatPetExperinceRank getGroupRank() {
         return groupRank;
     }
