@@ -96,7 +96,7 @@
     insert into e_chat_pet_reward_item (gold_value, reward_state, mission_item_id, chat_pet_id)
     values
     <foreach collection="list" item="item" index="index" separator=",">
-      (#{item.goldValue}, #{item.rewardState},#{item.missionItemId},#{item.chatPetId})
+      (#{item.goldValue},#{item.rewardState},#{item.missionItemId},#{item.chatPetId})
     </foreach>
   </insert>
 

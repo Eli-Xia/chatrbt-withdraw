@@ -58,7 +58,6 @@ public class ChatPetRewardItemService {
     }
 
     /**
-     * 用redis incr控制一天执行一次.
      * 给宠物填充奖励池
      * @param chatPetId
      */
@@ -84,8 +83,9 @@ public class ChatPetRewardItemService {
         fixedItem.setGoldValue(chatPetLevel + 1);
 
         fixedItem.setRewardState(NOT_AWARD);
-        fixedItem.setMissionItemId(null);
         fixedItem.setChatPetId(chatPetId);
+
+        this.save(fixedItem);
 
         //获取当前已完成任务,并创建奖励insert
         List<ChatPetPersonalMission> finishedItems = chatPetMissionPoolService.getFinishedMissionItem(chatPetId);
@@ -99,11 +99,12 @@ public class ChatPetRewardItemService {
                 item.setMissionItemId(cppm.getId());
                 item.setRewardState(NOT_AWARD);
 
-                items.add(item);
+                this.save(item);
+                //items.add(item);
             }
         }
 
-        this.chatPetRewardItemMapper.batchInsert(items);
+        //this.chatPetRewardItemMapper.batchInsert(items);
 
     }
 
