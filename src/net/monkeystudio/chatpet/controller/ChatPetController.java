@@ -109,7 +109,7 @@ public class ChatPetController extends ChatPetBaseController{
 
                 chatPetService.dataPrepared(userId,wxPubId);
 
-                response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+                response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
 
             }else{
                 response.sendRedirect(chatPetService.getChatPetPosterUrl());

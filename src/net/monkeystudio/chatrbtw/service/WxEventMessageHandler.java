@@ -167,7 +167,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         customerNewsItem.setTitle(replyContent);*/
 
                         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
-                        CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetType, parentWxFanNickname, wxFan.getNickname());
+                        CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetType, parentWxFanNickname, wxFan.getNickname() ,wxPubOriginId);
 
 
                         return this.replySingleNewsStr(wxPubOriginId, wxFanOpenId, customerNewsItem);

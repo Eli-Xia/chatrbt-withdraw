@@ -8,7 +8,6 @@ public class ChatPetTypeConfig {
     private String newsTitle;
     private String newsDescription;
     private String founderName;
-    private String newUrl;
 
     public Integer getId() {
         return id;
@@ -58,11 +57,4 @@ public class ChatPetTypeConfig {
         this.founderName = founderName;
     }
 
-    public String getNewUrl() {
-        return newUrl;
-    }
-
-    public void setNewUrl(String newUrl) {
-        this.newUrl = newUrl;
-    }
 }

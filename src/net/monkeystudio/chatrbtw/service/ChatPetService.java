@@ -648,6 +648,24 @@ public class ChatPetService {
         return url;
     }
 
+    /**
+     * 获取宠物对应的html的url
+     * @param wxPubId
+     * @return
+     */
+    public String getChatPetPageUrl(Integer wxPubId){
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
+
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+        }
+
+        return null;
+    }
+
     public String getWxOauthUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String url = "http://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
@@ -857,7 +875,7 @@ public class ChatPetService {
     }
 
 
-    public CustomerNewsItem getChatNewsItem(Integer chatPetType ,String parentWxFanNickname ,String wxFanNickname ,String wxPubId){
+    public CustomerNewsItem getChatNewsItem(Integer chatPetType ,String parentWxFanNickname ,String wxFanNickname ,String wxPubOriginId){
         ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
 
         CustomerNewsItem customerNewsItem = new CustomerNewsItem();
@@ -887,10 +905,12 @@ public class ChatPetService {
         customerNewsItem.setTitle(title);
 
         //图文封面
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String coverUrl = chatPetTypeConfig.getNewsCoverUrl();
-        customerNewsItem.setPicUrl(coverUrl);
+        customerNewsItem.setPicUrl("http://" + domain + coverUrl);
 
-        String url = chatPetTypeConfig.getNewUrl();
+        Integer wxPubId = wxPubService.getByOrginId(wxPubOriginId).getId();
+        String url = this.getHomePageUrl(wxPubId);
         customerNewsItem.setUrl(url);
 
         return customerNewsItem;
