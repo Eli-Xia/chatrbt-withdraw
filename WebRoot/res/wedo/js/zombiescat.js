@@ -10,6 +10,7 @@ window.onload = function () {
             bgColor: '1b0035',
             canvasSign: true,
             ruleShow: true,
+            logShow: true,
             userInfo: {
                 headImg: '',
                 nickname: ''
@@ -21,7 +22,8 @@ window.onload = function () {
                 appearanceUrl: '',
                 appearance: [],
                 wPubHeadImgUrl: '',
-                experienceProgressRate: {}
+                experienceProgressRate: {},
+                goldItems:[]
             },
             logs: [],
             colorList: [],
@@ -38,7 +40,8 @@ window.onload = function () {
             },
             groupNum: '',
             taskList: {},
-            testSvg: ''
+            testSvg: '',
+            stop: false
         },
         created() {
             var _self = this;
@@ -57,6 +60,10 @@ window.onload = function () {
             const sign = localStorage.getItem('ruleShow')
             if (sign !== null) {
                 sign === 'true' ? this.ruleShow = true : this.ruleShow = false
+            }
+            const logShow = localStorage.getItem('logShow')
+            if (logShow !== null) {
+                logShow === 'true' ? this.logShow = true : this.logShow = false
             }
             this.queryList();
             this.queryAllColor();
@@ -114,6 +121,9 @@ window.onload = function () {
                             _self.taskList = resp.result.todayMissions;
                             _self.invitationQrCode = 'data:image/png;base64,' + resp.result.invitationQrCode;
                             _self.list = resp.result;
+                            setTimeout(function() {
+                                _self.randomLocation()
+                            },300)
                             // 获取数据后重新显示形象
                             document.querySelector('.zombiescat-img').style.display = 'block';
                             var colorIdx = _self.list.appearance.object.textureColor;
@@ -128,12 +138,11 @@ window.onload = function () {
                                         console.log(_self.textureColor)
                                     }
                                 })
-                            }, 100)
+                            }, 100);
                             _self.canvasSvg();
                         } else {
                             alert(resp.retMsg)
                         }
-                    } else {
                     }
                 }
             },
@@ -152,7 +161,6 @@ window.onload = function () {
                         } else {
                             alert(resp.retMsg)
                         }
-                    } else {
                     }
                 }
             },
@@ -166,12 +174,10 @@ window.onload = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var resp = JSON.parse(xhr.response);
                         if (resp.retCode == 0) {
-                            console.log('allColor')
                             _this.colorList = resp.result;
                         } else {
                             alert(resp.retMsg)
                         }
-                    } else {
                     }
                 }
             },
@@ -179,10 +185,43 @@ window.onload = function () {
                 this.ruleShow = !this.ruleShow
                 localStorage.setItem('ruleShow', this.ruleShow)
             },
-            sureReward($event, id) {
+            logShowToggle() {
+                this.logShow = !this.logShow
+                localStorage.setItem('logShow', this.logShow)
+            },
+            randomLocation() {
+                var tokens = document.querySelectorAll('.token-reward');
+                var token = document.querySelector('.token-reward');
+                var zebraBg = document.querySelector('.zebra-bg');
+                function randomTop() {
+                    return Math.floor(Math.random() * (zebraBg.clientHeight - 20)) + 'px'
+                }
+                var diff = (zebraBg.clientWidth - (zebraBg.clientWidth * 0.6)) / 2;
+                function randomLeft() {
+                    if (Math.random()>0.5){
+                        return Math.floor((Math.random() * (diff- (2 * token.clientWidth))) + token.clientWidth) + 'px';
+                    } else {
+                        return Math.floor(Math.random() * (zebraBg.clientWidth-(zebraBg.clientWidth-diff))+(zebraBg.clientWidth-diff-token.clientWidth)) + 'px'
+                    }
+                }
+                tokens.forEach(function(i){
+                    i.style.top = randomTop();
+                    i.style.left = randomLeft();
+                })
+            },
+            sureReward($event, rewardItemId, missionItemId) {
                 var _self = this;
+                if ($event.target.getAttribute('data-sign')){
+                    return;
+                }else{
+                    $event.target.setAttribute('data-sign', true)
+                }
                 var xhr = new XMLHttpRequest();
-                var data = JSON.stringify({"itemId": id});
+                var data = {
+                    rewardItemId: rewardItemId,
+                    missionItemId: missionItemId
+                };
+                data = JSON.stringify(data);
                 xhr.open('post', '/api/chat-pet/pet/mission/reward', true);
                 xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                 xhr.send(data);
@@ -190,33 +229,23 @@ window.onload = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var resp = JSON.parse(xhr.response);
                         if (resp.retCode == 0) {
-                            _self.queryGroup();
-                            var i = $event.target.parentNode;
-                            i.style.width = '150px';
-                            i.querySelector('i').className = "active";
+                            $event.target.className = 'token-reward active';
                             setTimeout(function () {
-                                var xhr = new XMLHttpRequest();
-                                xhr.open('post', '/api/chat-pet/pet/info', true);
-                                xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-                                xhr.send(null);
-                                xhr.onreadystatechange = function () {
-                                    if (xhr.readyState == 4 && xhr.status == 200) {
-                                        var resp = JSON.parse(xhr.response);
-                                        if (resp.retCode == 0) {
-                                            _self.logs = resp.result.petLogs;
-                                            _self.taskList = resp.result.todayMissions;
-                                            _self.list = resp.result;
-                                        } else {
-                                            alert(resp.retMsg)
-                                        }
-                                    } else {
-                                    }
-                                }
+                                $event.target.className = 'token-reward hide';
+                                _self.list.goldItems = resp.result.goldItems;
+                            }, 5000);
+                            setTimeout(function () {
+                                _self.logs = resp.result.petLogs;
+                                _self.taskList = resp.result.todayMissions;
+                                _self.groupList = resp.result.groupRank;
+                                _self.list.fanTotalCoin = resp.result.fanTotalCoin;
+                                _self.list.goldItems = resp.result.goldItems;
+                                _self.list.chatPetLevel = resp.result.chatPetLevel;
+                                _self.list.experienceProgressRate = resp.result.experienceProgressRate;
                             }, 500);
                         } else {
-                            alert(resp.retMsg)
+                            alert(resp.retMsg);
                         }
-                    } else {
                     }
                 }
             },
@@ -238,12 +267,13 @@ window.onload = function () {
                     ctx = canvas.getContext('2d'),
                     loads = 0;
                 var originImg = new Image();
-                originImg.src = './images/zombiescat/infill/0.svg'
+                originImg.src = './images/zombiescat/infill/0.svg';
                 canvas.height = originImg.height;
                 canvas.width = originImg.width;
                 var sourceArr = [`images/zombiescat/outline/${zombiescat.outline}.svg`, `images/zombiescat/infill/${zombiescat.infill}.svg`,
                     `images/zombiescat/texture/${zombiescat.texture}.svg#图层_1`, `images/zombiescat/textureShadow/${zombiescat.textureShadow}.svg`, `images/zombiescat/eye/${zombiescat.eye}.svg`, `images/zombiescat/mouth/${zombiescat.mouth}.svg`];
                 var len = sourceArr.length;
+
                 function draw() {
                     var newImg = new Image();
                     newImg.setAttribute('crossOrigin', 'anonymous');
@@ -260,6 +290,7 @@ window.onload = function () {
                         }
                     }
                 }
+
                 draw()
             },
 
