@@ -251,6 +251,7 @@ window.onload = function () {
                                 _self.list.experienceProgressRate = resp.result.experienceProgressRate;
                             }, 1000);
                         } else {
+                            e.setAttribute('data-sign', '');
                             alert(resp.retMsg);
                         }
                     }
