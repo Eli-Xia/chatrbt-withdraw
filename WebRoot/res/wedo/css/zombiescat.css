@@ -292,7 +292,7 @@ header {
   padding-bottom: 0.5rem;
 }
 #rule .gold > div {
-  padding: 0.52rem 0 0.44rem 0.54rem;
+  padding: 0.52rem 0 0.32rem 0.54rem;
   font-size: 0.48rem;
 }
 #rule .gold img {
@@ -301,7 +301,7 @@ header {
   margin-right: 0.2rem;
 }
 #rule .cat > div {
-  padding: 0.38rem 0 0.48rem 0.54rem;
+  padding: 0.38rem 0 0.36rem 0.54rem;
   font-size: 0.48rem;
 }
 #rule .cat img {
