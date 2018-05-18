@@ -23,7 +23,7 @@ window.onload = function () {
                 appearance: [],
                 wPubHeadImgUrl: '',
                 experienceProgressRate: {},
-                goldItems:[]
+                goldItems: []
             },
             logs: [],
             colorList: [],
@@ -121,9 +121,9 @@ window.onload = function () {
                             _self.taskList = resp.result.todayMissions;
                             _self.invitationQrCode = 'data:image/png;base64,' + resp.result.invitationQrCode;
                             _self.list = resp.result;
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 _self.randomLocation()
-                            },300)
+                            }, 300);
                             // 获取数据后重新显示形象
                             document.querySelector('.zombiescat-img').style.display = 'block';
                             var colorIdx = _self.list.appearance.object.textureColor;
@@ -193,28 +193,37 @@ window.onload = function () {
                 var tokens = document.querySelectorAll('.token-reward');
                 var token = document.querySelector('.token-reward');
                 var zebraBg = document.querySelector('.zebra-bg');
+
                 function randomTop() {
-                    return Math.floor(Math.random() * (zebraBg.clientHeight - 20)) + 'px'
+                    return Math.floor(Math.random() * (zebraBg.clientHeight - (2 * token.clientHeight)) + token.clientHeight) + 'px'
                 }
+
                 var diff = (zebraBg.clientWidth - (zebraBg.clientWidth * 0.6)) / 2;
+
                 function randomLeft() {
-                    if (Math.random()>0.5){
-                        return Math.floor((Math.random() * (diff- (2 * token.clientWidth))) + token.clientWidth) + 'px';
+                    if (Math.random() > 0.5) {
+                        return Math.floor((Math.random() * (diff - (2 * token.clientWidth))) + token.clientWidth) + 'px';
                     } else {
-                        return Math.floor(Math.random() * (zebraBg.clientWidth-(zebraBg.clientWidth-diff))+(zebraBg.clientWidth-diff-token.clientWidth)) + 'px'
+                        return Math.floor(Math.random() * (zebraBg.clientWidth - (zebraBg.clientWidth - diff)) + (zebraBg.clientWidth - diff - token.clientWidth)) + 'px'
                     }
                 }
-                tokens.forEach(function(i){
+
+                tokens.forEach(function (i) {
                     i.style.top = randomTop();
                     i.style.left = randomLeft();
                 })
             },
             sureReward($event, rewardItemId, missionItemId) {
+                $event.preventDefault();
                 var _self = this;
-                if ($event.target.getAttribute('data-sign')){
+                var e = $event.target;
+                if (e.nodeName == 'IMG') {
+                    e = e.parentNode;
+                }
+                if (e.getAttribute('data-sign')) {
                     return;
-                }else{
-                    $event.target.setAttribute('data-sign', true)
+                } else {
+                    e.setAttribute('data-sign', true)
                 }
                 var xhr = new XMLHttpRequest();
                 var data = {
@@ -229,12 +238,10 @@ window.onload = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var resp = JSON.parse(xhr.response);
                         if (resp.retCode == 0) {
-                            $event.target.className = 'token-reward active';
+                            e.className = 'token-reward tran';
                             setTimeout(function () {
-                                $event.target.className = 'token-reward hide';
+                                e.className = 'token-reward hide';
                                 _self.list.goldItems = resp.result.goldItems;
-                            }, 5000);
-                            setTimeout(function () {
                                 _self.logs = resp.result.petLogs;
                                 _self.taskList = resp.result.todayMissions;
                                 _self.groupList = resp.result.groupRank;
@@ -242,7 +249,7 @@ window.onload = function () {
                                 _self.list.goldItems = resp.result.goldItems;
                                 _self.list.chatPetLevel = resp.result.chatPetLevel;
                                 _self.list.experienceProgressRate = resp.result.experienceProgressRate;
-                            }, 500);
+                            }, 1000);
                         } else {
                             alert(resp.retMsg);
                         }

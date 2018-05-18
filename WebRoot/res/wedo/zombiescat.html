@@ -44,7 +44,10 @@
                 <img :src="'images/class_'+list.chatPetLevel+'.png'" v-if="list.experienceProgressRate.own!=undefined">
             </div>
             <div class="zebra-bg" v-cloak>
-                <div v-for="item in list.goldItems" @click="sureReward($event,item.rewardItemId,item.missionItemId)" class="token-reward"></div>
+                <div v-for="item in list.goldItems" @click="sureReward($event,item.rewardItemId,item.missionItemId)"
+                     class="token-reward active">
+                    <img src="images/token.svg">{{item.goldValue}}
+                </div>
                 <div class="zombiescat-img">
                     <img class="svg-icon icon1" :src=`images/zombiescat/outline/${list.appearance.object.outline}.svg`
                          alt="">
