@@ -15,12 +15,16 @@ public class RWxPubChatPetTypeService {
     RWxPubChatPetTypeMapper rWxPubChatPetTypeMapper;
 
 
-    public RWxPubChatPetType getChatPetType(String wxPubOriginId){
+    private RWxPubChatPetType getRWxPubChatPetType(String wxPubOriginId){
 
         RWxPubChatPetType rWxPubChatPetType = rWxPubChatPetTypeMapper.selectByWxPubOriginId(wxPubOriginId);
 
         return rWxPubChatPetType;
     }
 
+    public Integer getChatPetType(String wxPubOriginId){
+        RWxPubChatPetType rWxPubChatPetType = this.getRWxPubChatPetType(wxPubOriginId);
+        return rWxPubChatPetType.getChatPetType();
+    }
 
 }

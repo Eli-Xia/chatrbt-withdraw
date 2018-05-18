@@ -20,6 +20,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRat
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
+import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import net.monkeystudio.wx.vo.oauth.WxOauthAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +82,9 @@ public class ChatPetService {
 
     @Autowired
     private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+
+    @Autowired
+    private ChatPetTypeConfigService chatPetTypeConfigService;
 
     /**
      * 生成宠物
@@ -823,7 +827,11 @@ public class ChatPetService {
         return posterUrl;
     }
 
-
+    /**
+     * 获取创始海报的信息
+     * @param wxFanId
+     * @return
+     */
     public CreationPost getCreationPost(Integer wxFanId){
         CreationPost creationPost = new CreationPost();
 
@@ -842,11 +850,50 @@ public class ChatPetService {
             Log.e(e);
         }
 
-        RWxPubChatPetType rWxPubChatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
-        Integer type = rWxPubChatPetType.getChatPetType();
+        Integer type = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
         creationPost.setChatPetType(type);
 
         return creationPost;
+    }
+
+
+    public CustomerNewsItem getChatNewsItem(Integer chatPetType ,String parentWxFanNickname ,String wxFanNickname ,String wxPubId){
+        ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
+
+        CustomerNewsItem customerNewsItem = new CustomerNewsItem();
+
+        String description = chatPetTypeConfig.getNewsDescription();
+
+        //替换邀请人
+        if(parentWxFanNickname == null){
+            String founderName = chatPetTypeConfig.getFounderName();
+            description = description.replace("#{parentName}", founderName);
+        }else {
+            description = description.replace("#{parentName}", parentWxFanNickname);
+        }
+
+        //替换粉丝名称
+        description = description.replace("#{wxFanNickname}", wxFanNickname);
+
+        //替换出生日期
+        Calendar calendar = Calendar.getInstance();
+        String date = (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分";
+        description = description.replace("#{date}", date);
+
+        customerNewsItem.setDescription(description);
+
+        //标题
+        String title = chatPetTypeConfig.getNewsTitle();
+        customerNewsItem.setTitle(title);
+
+        //图文封面
+        String coverUrl = chatPetTypeConfig.getNewsCoverUrl();
+        customerNewsItem.setPicUrl(coverUrl);
+
+        String url = chatPetTypeConfig.getNewUrl();
+        customerNewsItem.setUrl(url);
+
+        return customerNewsItem;
     }
 
 }

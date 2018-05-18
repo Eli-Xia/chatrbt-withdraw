@@ -42,6 +42,10 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     @Autowired
     private WxPubService wxPubService;
 
+    @Autowired
+    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+
+
 
 
 
@@ -92,8 +96,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             }
                         }
 
-
-
                         Integer chatPetId = null;
                         ChatPet parentChatPet = null;
                         //如果父亲是族群创始宠物
@@ -130,7 +132,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             parentWxFanNickname = "喵小咪";
                         }
 
-                        CustomerNewsItem customerNewsItem = new CustomerNewsItem();
+                        //CustomerNewsItem customerNewsItem = new CustomerNewsItem();
                         /*String description = wxFan.getNickname() + "的斑马，出生于2018年4月12日8点30分您已经成功接受# " + parentWxFanNickname + "#的邀请，创造了一只独一无二的斑马，\n" +
                                 "加入了斑马星球。\n" +
                                 "\n" +
@@ -143,7 +145,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         Calendar calendar = Calendar.getInstance();
 
                         ChatPet myChatPet = chatPetService.getById(chatPetId);
-                        Date date = myChatPet.getCreateTime();
+                       /* Date date = myChatPet.getCreateTime();
                         calendar.setTime(date);
                         String description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
                                 "自此历史浓重的记录了一笔：#" + wxFan.getNickname() + "#的喵小咪，出生于" + (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH)+ "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分。\n" +
@@ -162,7 +164,11 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         customerNewsItem.setPicUrl(chatPetService.getNewsMessageCoverUrl());
 
                         String replyContent = "喵！World!";
-                        customerNewsItem.setTitle(replyContent);
+                        customerNewsItem.setTitle(replyContent);*/
+
+                        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+                        CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetType, parentWxFanNickname, wxFan.getNickname());
+
 
                         return this.replySingleNewsStr(wxPubOriginId, wxFanOpenId, customerNewsItem);
 
@@ -189,6 +195,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
         return null;
     }
+
 
 
 
