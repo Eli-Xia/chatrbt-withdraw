@@ -235,24 +235,30 @@ window.onload = function () {
                 xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
                 xhr.send(data);
                 xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        var resp = JSON.parse(xhr.response);
-                        if (resp.retCode == 0) {
-                            e.className = 'token-reward tran';
-                            setTimeout(function () {
-                                e.className = 'token-reward hide';
-                                _self.list.goldItems = resp.result.goldItems;
-                                _self.logs = resp.result.petLogs;
-                                _self.taskList = resp.result.todayMissions;
-                                _self.groupList = resp.result.groupRank;
-                                _self.list.fanTotalCoin = resp.result.fanTotalCoin;
-                                _self.list.goldItems = resp.result.goldItems;
-                                _self.list.chatPetLevel = resp.result.chatPetLevel;
-                                _self.list.experienceProgressRate = resp.result.experienceProgressRate;
-                            }, 1000);
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            var resp = JSON.parse(xhr.response);
+                            if (resp.retCode == 0) {
+                                e.className = 'token-reward tran';
+                                setTimeout(function () {
+                                    e.className = 'token-reward hide';
+                                    e.setAttribute('data-sign', '');
+                                    _self.list.goldItems = resp.result.goldItems;
+                                    _self.logs = resp.result.petLogs;
+                                    _self.taskList = resp.result.todayMissions;
+                                    _self.groupList = resp.result.groupRank;
+                                    _self.list.fanTotalCoin = resp.result.fanTotalCoin;
+                                    _self.list.goldItems = resp.result.goldItems;
+                                    _self.list.chatPetLevel = resp.result.chatPetLevel;
+                                    _self.list.experienceProgressRate = resp.result.experienceProgressRate;
+                                }, 1000);
+                            } else {
+                                e.setAttribute('data-sign', '');
+                                alert(resp.retMsg);
+                            }
                         } else {
                             e.setAttribute('data-sign', '');
-                            alert(resp.retMsg);
+                            alert("网络出错,请重试!");
                         }
                     }
                 }
