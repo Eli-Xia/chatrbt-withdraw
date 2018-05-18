@@ -211,6 +211,7 @@ public class AdService {
         ad.setClickAmount(req.getClickAmount());
         ad.setPushTime(CommonUtils.dateStartTime(req.getPushTime()));
         ad.setPrePushTime(CommonUtils.dateOffset(ad.getPushTime(),-1));
+        ad.setPushStrategyType(req.getPushStrategyType());
         //全局广告投放按钮关闭后无法再开启
         if( AD_PUSH_OPEN.equals(oldAd.getIsOpen())){
             ad.setIsOpen(req.getIsOpen());

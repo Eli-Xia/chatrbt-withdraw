@@ -29,5 +29,13 @@
       wx_pub_origin_id = #{wxPubOriginId} and wx_fan_open_id = #{wxFanOpenId}
   </select>
 
+    <select id="selectAllUrl" resultType="java.lang.String">
+        select url  from e_crypto_kitties limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="selectAll" resultType="java.lang.String">
+        select url from  e_crypto_kitties
+    </select>
+
 
 </mapper>

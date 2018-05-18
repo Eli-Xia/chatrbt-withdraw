@@ -29,6 +29,15 @@ public class Ad implements Serializable{
     private Integer clickAmount;
     private String portalTitle;
     private String portalContent;
+    private Integer pushStrategyType;
+
+    public Integer getPushStrategyType() {
+        return pushStrategyType;
+    }
+
+    public void setPushStrategyType(Integer pushStrategyType) {
+        this.pushStrategyType = pushStrategyType;
+    }
 
     public Integer getId() {
         return id;

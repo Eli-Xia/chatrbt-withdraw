@@ -2,7 +2,6 @@ package net.monkeystudio.chatrbtw.service;
 
 import com.google.zxing.WriterException;
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -25,7 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -40,6 +44,8 @@ public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
+    @Autowired
+    private COSService cosService;
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
@@ -866,5 +872,15 @@ public class ChatPetService {
 
         return posterUrl;
     }
+
+
+
+
+
+
+
+
+
+
 
 }

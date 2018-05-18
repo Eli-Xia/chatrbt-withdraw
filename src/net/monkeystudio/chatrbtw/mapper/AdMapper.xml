@@ -22,10 +22,11 @@
         <result column="click_amount" property="clickAmount" jdbcType="INTEGER" />
         <result column="portal_title" property="portalTitle" jdbcType="VARCHAR" />
         <result column="portal_content" property="portalContent" jdbcType="VARCHAR" />
+        <result column="push_strategy_type" property="pushStrategyType" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, ad_type, title, description, text_content, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content
+        id, ad_type, title, description, text_content, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content,push_strategy_type
     </sql>
 
     <select id="selectById" resultMap="baseResultMap">
@@ -89,7 +90,8 @@
                 cover_pic = #{coverPic},
                 click_amount = #{clickAmount},
                 portal_title = #{portalTitle},
-                portal_content = #{portalContent}
+                portal_content = #{portalContent},
+                push_strategy_type = #{pushStrategyType}
         where
             id = #{id,jdbcType=VARCHAR}
     </update>
@@ -154,13 +156,17 @@
             <if test="portalContent != null">
                 portal_content = #{portalContent},
             </if>
+            <if test="pushStrategyType != null">
+                push_strategy_type = #{pushStrategyType},
+            </if>
+
 
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
 
     <update id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Ad">
-        insert e_ad( ad_type, title, description, text_content, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content)
+        insert e_ad( ad_type, title, description, text_content, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content,push_strategy_type)
         values(
           #{adType,jdbcType=VARCHAR},
           #{title,jdbcType=VARCHAR},
@@ -180,7 +186,8 @@
           #{coverPic},
           #{clickAmount},
           #{portalTitle},
-          #{portalContent}
+          #{portalContent},
+          #{pushStrategyType}
           )
     </update>
 
