@@ -9,21 +9,58 @@
         body {
             width: 100%;
             height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: #fff;
             font-family: Helvetica;
         }
-        body{
-            max-width: 750px;
-            margin: 0 auto;
+        #center>img{
+            width: 100%;
         }
         img{
+            margin: 0;
+        }
+        .poster {
             width: 100%;
+        }
+        #canvas_img{
+            position: relative;
+        }
+        #base_code{
+            position: absolute;
+            bottom: 19%;
+            right: 35.7%;
+            width: 28.6%;
         }
     </style>
 </head>
 <body>
 <div id="center">
-    <img src="images/poster.jpg" alt="海报">
+    <div id="canvas_img">
+        <img src="images/poster.jpg" alt="海报" class="poster">
+        <img id="base_code">
+    </div>
 </div>
+<script src="js/html2canvas.min.js"></script>
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', '/api/chat-pet/pet/creation-post', true);
+    xhr.send(null);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var res = JSON.parse(xhr.response);
+            if (res.retCode == 0) {
+                base_code.src= "data:image/png;base64," + res.result.wxPubQrCode;
+                html2canvas(document.getElementById('canvas_img')).then(function (canvas) {
+                    var img = new Image();
+                    img.src = canvas.toDataURL();
+                    document.getElementById('center').replaceChild(img, document.getElementById('canvas_img'));
+                });
+            } else {
+                alert(res.retMsg)
+            }
+        }
+    }
+</script>
 </body>
 </html>
