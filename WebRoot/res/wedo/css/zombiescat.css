@@ -105,11 +105,12 @@ header {
 }
 #user_zebra .class-scroll {
   width: 10.4rem;
-  padding: 0.06rem 0.28rem;
+  line-height: 0.56rem;
   background-color: #efeff4;
-  border-radius: 0.4rem;
+  border-radius: 0.28rem;
   box-sizing: border-box;
-  font-size: 0.28rem;
+  padding-right: 0.28rem;
+  font-size: 0.44rem;
   text-align: right;
   position: relative;
   color: #8e8e93;
@@ -122,7 +123,7 @@ header {
   bottom: 0;
   background-image: linear-gradient(to right, #2196f9, #21e7f9);
   background-image: -webkit-linear-gradient(to right, #2196f9, #21e7f9);
-  border-radius: 0.4rem;
+  border-radius: 0.28rem;
 }
 .zebra-bg .token-reward {
   position: absolute;
