@@ -122,13 +122,12 @@ header {
 
 #user_zebra .class-scroll {
   width: 10.4rem;
-  height: 0.4rem;
-  line-height: 0.4rem;
+  line-height: 28/@r;
   background-color: #efeff4;
-  border-radius: 0.2rem;
+  border-radius: 14/@r;
   box-sizing: border-box;
   padding-right: 0.28rem;
-  font-size: 0.28rem;
+  font-size: 22/@r;
   text-align: right;
   position: relative;
   color: #8e8e93;
@@ -142,100 +141,74 @@ header {
   bottom: 0;
   background-image: linear-gradient(to right, #2196f9, #21e7f9);
   background-image: -webkit-linear-gradient(to right, #2196f9, #21e7f9);
-  border-radius: 0.2rem;
+  border-radius: 14/@r;
 }
 
-.zebra-bg .token-reward{
+.zebra-bg .token-reward {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 1.2rem;
-  height: 1.2rem;
-  background: url("../images/token.svg") no-repeat;
-  background-size: 100%;
+  left: -2rem;
+  width: 55/@r;
+  height: 86/@r;
   opacity: 1;
   z-index: 800;
+  font-size: 24/@r;
+  color: #f9b721;
+  img {
+    width: 100%;
+    margin-bottom: -3/@r;
+  }
 }
 
 .zebra-bg .token-reward.active {
-  animation: ts 5s linear;
+  animation: ts 4s linear infinite;
+  -webkit-animation: ts 4s linear infinite;
 }
+
+.zebra-bg .token-reward.tran {
+  margin-top: -10px;
+  transition: all 1s linear;
+  -webkit-transition: all 1s linear;
+  opacity: 0;
+  transform: rotateY(180deg);
+}
+
 .zebra-bg .token-reward.hide {
   display: none;
 }
+
 @keyframes ts {
   0% {
     margin-top: 0;
-    transform: rotateY(0);
-    opacity: 1;
   }
-  18% {
+  25% {
     margin-top: -10px;
-    transform: rotateY(0);
-    opacity: 1;
   }
-  36% {
+  50% {
     margin-top: 0;
-    transform: rotateY(0);
-    opacity: 1;
   }
-  54% {
+  75% {
     margin-top: -10px;
-    transform: rotateY(0);
-    opacity: 1;
-  }
-  72% {
-    margin-top: 0;
-    transform: rotateY(0);
-    opacity: 1;
-  }
-  90% {
-    margin-top: -10px;
-    transform: rotateY(0);
-    opacity: 1;
   }
   100% {
-    margin-top: -18px;
-    transform: rotateY(180deg);
-    opacity: 0;
+    margin-top: 0;
   }
 }
 
 @-webkit-keyframes ts {
   0% {
     margin-top: 0;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
-  18% {
+  25% {
     margin-top: -10px;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
-  36% {
+  50% {
     margin-top: 0;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
-  54% {
+  75% {
     margin-top: -10px;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
-  }
-  72% {
-    margin-top: 0;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
-  }
-  90% {
-    margin-top: -10px;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
   100% {
-    margin-top: -18px;
-    -webkit-transform: rotateY(180deg);
-    opacity: 0;
+    margin-top: 0;
   }
 }
 
@@ -306,7 +279,7 @@ header {
   position: relative;
 }
 
-#rule .hide-rule,#log .hide-rule {
+#rule .hide-rule, #log .hide-rule {
   position: absolute;
   top: 0;
   right: 0;
@@ -338,24 +311,24 @@ header {
 }
 
 #rule .gold > div {
-  padding: 0.5rem 0 0.28rem 0.54rem;
+  padding: 26/@r 0 16/@r 0.54rem;
   font-size: 0.48rem;
 }
 
 #rule .gold img {
   width: 1.28rem;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-right: 0.2rem;
 }
 
 #rule .cat > div {
-  padding: 0.58rem 0 0.28rem 0.54rem;
+  padding: 19/@r 0 18/@r 0.54rem;
   font-size: 0.48rem;
 }
 
 #rule .cat img {
   width: 64/@r;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-right: 0.2rem;
 }
 
@@ -387,7 +360,6 @@ header {
   font-size: 28/@r;
 }
 
-
 #task li > div {
   position: absolute;
   top: 19/@r;
@@ -397,9 +369,11 @@ header {
   background: url("../images/done.svg") no-repeat;
   background-size: 100% auto;
 }
-#log{
+
+#log {
   position: relative;
 }
+
 #log .tittle + div {
   padding: 0 0.8rem 31/@r;
 }
@@ -408,8 +382,9 @@ header {
   margin-bottom: 26/@r;
 }
 
-
 .nodata {
+  padding-top: 48/@r;
+  padding-bottom: 33/@r;
   text-align: center;
   font-size: 0.48rem;
   color: #8e8e93;
@@ -423,6 +398,7 @@ header {
   font-size: 0.48rem;
   color: #8e8e93;
   margin: 0;
+  margin-top: 21/@r;
 }
 
 #log li {
@@ -468,7 +444,8 @@ header {
   padding-left: 0.84rem;
   padding-right: 0.64rem;
 }
-#groups .groups-text{
+
+#groups .groups-text {
   margin-top: 32/@r;
   height: 53/@r;
   line-height: 53/@r;
@@ -477,6 +454,7 @@ header {
   background-color: #efeff4;
   color: #8e8e93;
 }
+
 #groups li {
   box-sizing: border-box;
   height: 1.66rem;
