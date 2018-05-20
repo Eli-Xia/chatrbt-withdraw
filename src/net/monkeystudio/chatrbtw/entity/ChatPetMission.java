@@ -13,6 +13,16 @@ public class ChatPetMission {
 
     private Integer experience;
 
+    private Integer missionType;
+
+    public Integer getMissionType() {
+        return missionType;
+    }
+
+    public void setMissionType(Integer missionType) {
+        this.missionType = missionType;
+    }
+
     public Integer getExperience() {
         return experience;
     }

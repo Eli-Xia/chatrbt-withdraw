@@ -6,6 +6,7 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatrbtw.entity.Ad;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.entity.WxPubNews;
 import net.monkeystudio.chatrbtw.service.bean.asksearch.AskSearchVo;
@@ -41,6 +42,9 @@ public class AskSearchService {
 
     @Autowired
     private WxMaterialMgrService wxMaterialMgrService;
+
+    @Autowired
+    private WxFanService wxFanService;
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
@@ -167,8 +171,9 @@ public class AskSearchService {
         }
 
         //获取问问搜广告
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-        Ad ad = adService.getAskSearchPushAd(wxPub);
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxfanOpenId);
+
+        Ad ad = adService.getAskSearchPushAd(wxPubOriginId,wxFan.getId());
 
         List<AskSearchVo> result = new ArrayList<>();
         //当前页数为1且为空

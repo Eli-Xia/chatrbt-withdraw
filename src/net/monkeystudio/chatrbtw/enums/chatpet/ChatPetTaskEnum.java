@@ -4,7 +4,7 @@ package net.monkeystudio.chatrbtw.enums.chatpet;
  * @author xiaxin
  */
 public enum ChatPetTaskEnum {
-    DAILY_READ_NEWS(1,"每日阅读文章任务",3f),DAILY_CHAT(2,"每日聊天互动签到任务",1f);
+    DAILY_READ_NEWS(1,"每日阅读文章任务",3f),DAILY_CHAT(2,"每日聊天互动签到任务",1f),RANDOM_MISSION(3,"资讯获取任务",1f);
 
     private Integer code;
     private String name;

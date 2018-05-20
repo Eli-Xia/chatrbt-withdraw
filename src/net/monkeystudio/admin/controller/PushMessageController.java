@@ -6,6 +6,7 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.PushMessageConfigService;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdConfigReq;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdConfigResp;
+import net.monkeystudio.chatrbtw.service.bean.ad.AdProbabilityStrategyConfigReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +43,25 @@ public class PushMessageController extends BaseController {
 
     @RequestMapping(value = "/ad/update", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase updateAdConfig(@RequestBody AdConfigReq adConfigReq){
+    public RespBase updateAdConfig1(@RequestBody AdConfigReq adConfigReq){
 
         pushMessageConfigService.updateAdConfig(adConfigReq);
 
         return respHelper.ok();
     }
+
+    /**
+     * 概率触发更新
+     * @param adConfigReq
+     * @return
+     */
+    @RequestMapping(value = "/ad/probability-strategy/update", method = RequestMethod.POST)
+    @ResponseBody
+    public RespBase updateAdConfig2(@RequestBody AdProbabilityStrategyConfigReq adConfigReq){
+
+        pushMessageConfigService.updateAdProbabilityStrategyConfig(adConfigReq);
+
+        return respHelper.ok();
+    }
+
 }

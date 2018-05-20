@@ -6,6 +6,7 @@ import net.monkeystudio.chatrbtw.entity.PushMessageConfig;
 import net.monkeystudio.chatrbtw.mapper.PushMessageConfigMapper;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdConfigReq;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdConfigResp;
+import net.monkeystudio.chatrbtw.service.bean.ad.AdProbabilityStrategyConfigReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,12 @@ public class PushMessageConfigService {
     public final static String PUSH_AD_SWITCH_KEY = "PUSH_AD_SWITCH";
     //聊天过程到达的次数
     public final static String CHAT_PUSH_AD_COUNT_KEY = "CHAT_PUSH_AD_COUNT";
+
+    //概率触发:每次聊天触发广告的概率
+    public final static String PROBABILITY_STRATEGY_PUSH_AD_RATIO_KEY = "PROBABILITY_STRATEGY_PUSH_AD_RATIO";
+
+    //概率触发:推送聊天广告的开关
+    public final static String PROBABILITY_STRATEGY_PUSH_AD_SWITCH_KEY = "PROBABILITY_STRATEGY_PUSH_AD_SWITCH";
 
     private final static String PUSH_MESSAGE_CONFIG_KEY = RedisTypeConstants.KEY_HASH_TYPE_PREFIX + "pushMessageConfig";
 
@@ -101,6 +108,14 @@ public class PushMessageConfigService {
             if(CHAT_PUSH_AD_COUNT_KEY.equals(pushMessageConfig.getKey())){
                 adConfigResp.setChatPushAdCount(Integer.valueOf(pushMessageConfig.getValue()));
             }
+
+            if(PROBABILITY_STRATEGY_PUSH_AD_RATIO_KEY.equals(pushMessageConfig.getKey())){
+                adConfigResp.setProbabilityStrategyPushAdRatio(Float.valueOf(pushMessageConfig.getValue()));
+            }
+
+            if(PROBABILITY_STRATEGY_PUSH_AD_SWITCH_KEY.equals(pushMessageConfig.getKey())){
+                adConfigResp.setProbabilityStrategyPushAdSwitch(Integer.valueOf(pushMessageConfig.getValue()));
+            }
         }
 
         return adConfigResp;
@@ -127,6 +142,21 @@ public class PushMessageConfigService {
 
         this.init();
     }
+
+    /**
+     * 更新广告配置-概率触发
+     * @param adProbabilityStrategyConfigReq
+     */
+    public void updateAdProbabilityStrategyConfig(AdProbabilityStrategyConfigReq adProbabilityStrategyConfigReq){
+        Integer probabilityStrategyPushAdSwitch = adProbabilityStrategyConfigReq.getProbabilityStrategyPushAdSwitch();
+        this.updateItem(PROBABILITY_STRATEGY_PUSH_AD_SWITCH_KEY,probabilityStrategyPushAdSwitch);
+
+        Float probabilityStrategyPushAdRatio = adProbabilityStrategyConfigReq.getProbabilityStrategyPushAdRatio();
+        this.updateItem(PROBABILITY_STRATEGY_PUSH_AD_RATIO_KEY,probabilityStrategyPushAdRatio);
+
+        this.init();
+    }
+
 
 
     private Integer updateItem(String key ,Float value){

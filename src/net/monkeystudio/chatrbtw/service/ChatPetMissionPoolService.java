@@ -69,6 +69,9 @@ public class ChatPetMissionPoolService {
     }
 
 
+
+
+
     /**
      * 组装当日任务数据
      */
@@ -101,6 +104,24 @@ public class ChatPetMissionPoolService {
         BeanUtils.copyProperties(chatPetPersonalMission,cppm);
 
         chatPetPersonalMissionMapper.insert(cppm);
+    }
+
+    public void saveMissionRecordWhenPushChatPetAd(Integer adId,Integer wxfanId){
+        //获取fanopenid
+        WxFan wxfan = wxFanService.getById(wxfanId);
+        String wxFanOpenId = wxfan.getWxFanOpenId();
+        String wxPubOriginId = wxfan.getWxPubOriginId();
+
+        Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
+
+        ChatPetPersonalMission cppm = new ChatPetPersonalMission();
+        cppm.setState(MissionStateEnum.GOING_ON.getCode());
+        cppm.setChatPetId(chatPetId);
+        cppm.setCreateTime(new Date());
+        cppm.setMissionCode(ChatPetTaskEnum.RANDOM_MISSION.getCode());
+        cppm.setAdId(adId);
+
+        this.save(cppm);
     }
 
     /**
