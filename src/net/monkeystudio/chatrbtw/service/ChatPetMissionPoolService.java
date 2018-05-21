@@ -97,7 +97,7 @@ public class ChatPetMissionPoolService {
      * @param missionCode
      * @param chatPetId
      */
-    private void dispatchMission(Integer missionCode ,Integer chatPetId){
+    public void dispatchMission(Integer missionCode ,Integer chatPetId){
 
         ChatPetPersonalMission cppm = new ChatPetPersonalMission();
         if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
@@ -183,9 +183,9 @@ public class ChatPetMissionPoolService {
 
         this.update(cppm);
 
-        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        /*if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
             this.dispatchMission(MissionEnumService.INVITE_FRIENDS_MISSION_CODE ,chatPetId);
-        }
+        }*/
     }
 
 
@@ -362,6 +362,15 @@ public class ChatPetMissionPoolService {
             TodayMissionItem item = new TodayMissionItem();
 
             String missionName = missionEnumService.getMissionByCode(cppm.getMissionCode()).getMissionName();
+
+            Integer missionCode = cppm.getMissionCode();
+            if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || MissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+
+                Long time = cppm.getCreateTime().getTime();
+                String no = String.valueOf(time/1000 % 10000 );
+                missionName = "NO." + no + " " + missionName;
+            }
+
             item.setMissionName(missionName);
 
             item.setState(cppm.getState());
@@ -372,6 +381,7 @@ public class ChatPetMissionPoolService {
 
         return items;
     }
+
 
     /**
      * 领取奖励后更新任务池记录
