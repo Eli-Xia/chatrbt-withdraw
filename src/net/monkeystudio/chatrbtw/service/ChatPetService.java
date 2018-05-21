@@ -318,20 +318,6 @@ public class ChatPetService {
 
         Integer chatPetId = chatPet.getId();
 
-        //获取当前任务领取状态
-        /*ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
-        Integer nowState = cppm.getState();
-
-        if(Integer.valueOf(MissionStateEnum.GOING_ON.getCode()).equals(nowState)){
-            throw new BizException("请完成任务后再领取奖励");
-        }
-        if(Integer.valueOf(MissionStateEnum.FINISH_AND_AWARD.getCode()).equals(nowState)){
-            throw new BizException("您已领取过奖励");
-        }
-
-        if(isAble2Reward(nowState)){
-            this.missionReward(rewardItemId,chatPetId,missionItemId);
-        }*/
         this.missionReward(rewardItemId);
 
         ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
@@ -375,12 +361,6 @@ public class ChatPetService {
         }
 
         Integer chatPetId = chatPetRewardItem.getChatPetId();
-
-        //判断领取的是否为自己的奖励
-        Integer chatPetIdInDb = chatPetRewardItem.getChatPetId();
-        if(!chatPetId.equals(chatPetIdInDb)){
-            throw new BizException("无法领取");
-        }
 
         if(chatPetRewardItemService.isGoldAwarded(chatPetRewardItemId)){
             throw new BizException("您已经领取过奖励");

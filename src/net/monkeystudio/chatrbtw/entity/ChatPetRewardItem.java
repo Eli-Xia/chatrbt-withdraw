@@ -5,11 +5,21 @@ public class ChatPetRewardItem {
 
     private Float goldValue;
 
+    private Float experience;
+
     private Integer rewardState;
 
     private Integer missionItemId;
 
     private Integer chatPetId;
+
+    public Float getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Float experience) {
+        this.experience = experience;
+    }
 
     public Integer getId() {
         return id;

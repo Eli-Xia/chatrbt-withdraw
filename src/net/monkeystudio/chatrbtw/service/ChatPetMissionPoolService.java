@@ -232,7 +232,7 @@ public class ChatPetMissionPoolService {
     }
 
     /**
-     * 完成每日阅读任务
+     * 完成每日资讯任务
      * @param wxfanId
      * @param adId
      */
@@ -245,7 +245,7 @@ public class ChatPetMissionPoolService {
     }
 
     /**
-     * 完成每日阅读任务
+     * 完成每日资讯任务
      */
     private void completeDailyReadMission(String wxPubOriginId,String wxFanOpenId,Integer missionCode,Integer adId){
         //公众号未开通陪聊宠

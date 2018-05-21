@@ -4,6 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 陪聊宠奖励
@@ -93,17 +95,15 @@ public class ChatPetRewardItemService {
 
                 ChatPetRewardItem item = new ChatPetRewardItem();
 
-                item.setGoldValue(missionEnumService.getMissionByCode(cppm.getMissionCode()).getCoin());
+                item.setGoldValue(item.getGoldValue());
+                item.setExperience(item.getExperience());
                 item.setChatPetId(chatPetId);
                 item.setMissionItemId(cppm.getId());
                 item.setRewardState(NOT_AWARD);
 
                 this.save(item);
-                //items.add(item);
             }
         }
-
-        //this.chatPetRewardItemMapper.batchInsert(items);
 
     }
 
@@ -150,17 +150,46 @@ public class ChatPetRewardItemService {
     public void saveRewardItemWhenMissionDone(Integer chatPetId,Integer missionItemId){
         ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(missionItemId);
         Integer missionCode = cppm.getMissionCode();
-        ChatPetMission cpm = chatPetMissionService.getByMissionCode(missionCode);
 
-        ChatPetRewardItem item = new ChatPetRewardItem();
-
-        item.setChatPetId(chatPetId);
-        item.setRewardState(NOT_AWARD);
-        item.setGoldValue(cpm.getCoin());
-        item.setMissionItemId(missionItemId);
-
-        this.save(item);
+        this.saveRewardItemByMission(missionCode,chatPetId,missionItemId);
     }
+
+
+    /**
+     * 根据任务类型插入奖励池
+     * @param missionCode
+     */
+    private void saveRewardItemByMission(Integer missionCode,Integer chatPetId,Integer chatPetPersonalMissionId){
+        if(MissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            ChatPetRewardItem item = new ChatPetRewardItem();
+
+            item.setChatPetId(chatPetId);
+            item.setRewardState(NOT_AWARD);
+            item.setMissionItemId(chatPetPersonalMissionId);
+
+            Float random = createRandomGold4SearchNewsMission();
+            item.setExperience(random);
+            item.setGoldValue(random);
+        }else{
+            ChatPetRewardItem item = new ChatPetRewardItem();
+
+            item.setChatPetId(chatPetId);
+            item.setRewardState(NOT_AWARD);
+            item.setGoldValue(missionEnumService.getMissionByCode(missionCode).getCoin());
+            item.setExperience(missionEnumService.getMissionByCode(missionCode).getExperience());
+            item.setMissionItemId(chatPetPersonalMissionId);
+        }
+
+    }
+
+    //资讯任务奖励值计算  1.5 ~ 2.5 的随机数
+    private Float createRandomGold4SearchNewsMission(){
+        Random random = new Random();
+        int i = random.nextInt(10);
+        Float f = (float)(i + 15) / 10F ;
+        return f;
+    }
+
 
     /**
      * 判断奖励是否被领取
