@@ -135,4 +135,8 @@
                     GROUP BY wx_fan_id ) m
 
     </select>
+
+    <select id="countByWxFanAndAd"  resultType="java.lang.Integer">
+        SELECT count(id) FROM e_ad_click_log WHERE wx_fan_id = #{wxFanId} AND ad_id = #{adId}
+    </select>
 </mapper>

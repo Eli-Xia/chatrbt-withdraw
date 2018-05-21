@@ -47,6 +47,11 @@ public class AdService {
     //广告推送类型-智能聊
     public final static Integer AD_PUSH_TYPE_SMART_CHAT = 0;
 
+    //广告推送策略-概率触发
+    public final static Integer AD_PUSH_STRATEGY_CHANCE = 0;
+    //广告推送策略-聊天次数触发
+    public final static Integer AD_PUSH_STRATEGY_CHAT_COUNT = 1;
+
     //缓存时间30分钟
     private final static Integer AD_CACHE_PERIOD = 60 * 30;
 
@@ -211,6 +216,7 @@ public class AdService {
         ad.setClickAmount(req.getClickAmount());
         ad.setPushTime(CommonUtils.dateStartTime(req.getPushTime()));
         ad.setPrePushTime(CommonUtils.dateOffset(ad.getPushTime(),-1));
+        ad.setPushStrategyType(req.getPushStrategyType());
         //全局广告投放按钮关闭后无法再开启
         if( AD_PUSH_OPEN.equals(oldAd.getIsOpen())){
             ad.setIsOpen(req.getIsOpen());
@@ -444,24 +450,22 @@ public class AdService {
     }
 
     private interface Hook{
+
         boolean callback(Ad ad);
     }
 
-
-
     /**
-     * 随机获取一条接入指定公众号的问问搜广告
-     * @param wxPub
+     * 随机获取一条指定公众号下的陪聊宠广告
+     * @param wxPubOriginId
      * @return
      */
-    public Ad getSmartChatPushAd(WxPub wxPub){
-
-        Ad ad = this.getPushAdTemplate(wxPub, new Hook() {
+    public Ad getChatPetPushAd(String wxPubOriginId,Integer wxFanId) {
+        Ad ad = this.getPushAdTemplate(wxPubOriginId,wxFanId, new Hook() {
 
             @Override
             public boolean callback(Ad ad) {
 
-                return isAskSearchAd(ad);
+                return !AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType());
             }
         });
 
@@ -470,17 +474,36 @@ public class AdService {
 
     /**
      * 随机获取一条接入指定公众号的智能聊广告
-     * 图文广告
-     * @param wxPub
+     * @param wxPubOriginId
      * @return
      */
-    public Ad getAskSearchPushAd(WxPub wxPub){
-        Ad ad = this.getPushAdTemplate(wxPub, new Hook() {
+    public Ad getSmartChatPushAd(String wxPubOriginId,Integer wxFanId){
+
+        Ad ad = this.getPushAdTemplate(wxPubOriginId,wxFanId ,new Hook() {
 
             @Override
             public boolean callback(Ad ad) {
 
-                return !isAskSearchAd(ad) || !AD_NEWS_TYPE.equals(ad.getAdType());
+                return !AD_PUSH_TYPE_SMART_CHAT.equals(ad.getPushType());
+            }
+        });
+
+        return ad;
+    }
+
+    /**
+     * 随机获取一条接入指定公众号的问问搜广告
+     * 图文广告
+     * @param wxPubOriginId
+     * @return
+     */
+    public Ad getAskSearchPushAd(String wxPubOriginId, Integer wxFanId){
+        Ad ad = this.getPushAdTemplate(wxPubOriginId,wxFanId, new Hook() {
+
+            @Override
+            public boolean callback(Ad ad) {
+
+                return !AD_PUSH_TYPE_ASK_SEARCH.equals(ad.getPushType()) || !AD_NEWS_TYPE.equals(ad.getAdType());
             }
         });
 
@@ -489,11 +512,13 @@ public class AdService {
 
     /**
      * 随机获取指定公众号下的一条广告 模板方法
-     * @param wxPub :公众号
+     * @param wxPubOriginId :公众号
      * @param judgePushTypeHook:callback
      * @return
      */
-    private Ad getPushAdTemplate(WxPub wxPub,Hook judgePushTypeHook){
+    private Ad getPushAdTemplate(String wxPubOriginId,Integer wxFanId,Hook judgePushTypeHook){
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+
         //未认证及未授权公众号不推送广告
         if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY.intValue()  == wxPub.getVerifyTypeInfo().intValue()
                 || !wxPubAuthorizerRefreshTokenService.checkRefreshToken(wxPub.getAppId())){
@@ -529,11 +554,39 @@ public class AdService {
 
             ads.add(ad);
         }
-        if(ListUtil.isEmpty(ads)){
+        if(ListUtil.isNotEmpty(ads)){
+            //从当前的广告集中剔除粉丝已经点击过的广告... AdClickLog表中去判断的.
+        }
+
+        //剔除粉丝已经点击过的广告
+        List<Ad> shotAds = this.excludeClickedAdFromList(ads, wxFanId);
+
+        if(ListUtil.isEmpty(shotAds)){
             return null;
         }
+
         //从集合中随机获取一条广告
-        return ads.get(RandomUtil.randomIndex(ads.size()));
+        return shotAds.get(RandomUtil.randomIndex(shotAds.size()));
+    }
+
+    /**
+     * 从当前可投放的广告集中剔除粉丝已经点击过的广告并返回剔除后的广告集
+     * @param ads : 当前可投放的广告集
+     * @param wxFanId : 粉丝Id
+     * @return
+     */
+    private List<Ad> excludeClickedAdFromList(List<Ad> ads,Integer wxFanId){
+        List<Ad> shotAds = new ArrayList<>();
+
+        for(Ad ad : ads){
+            boolean isClicked = adClickLogService.isWxFanHasClickedAd(ad.getId(), wxFanId);
+
+            if(!isClicked){
+                shotAds.add(ad);
+            }
+        }
+
+        return shotAds;
     }
 
     /**

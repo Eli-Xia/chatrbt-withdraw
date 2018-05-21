@@ -12,11 +12,14 @@ import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.service.bean.cos.COSUploadSuccessResp;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bint on 2017/12/12.
@@ -82,6 +85,10 @@ public class COSService {
 
     }
 
+    public String upLoadCatPic(String filename,InputStream is) throws Exception{
+        return this.uploadFile("/crypto-kitty/"+filename, IOUtils.toByteArray(is));
+    }
+
     public String uploadSensitiveFile(String path , byte[] contentBufer){
         return this.upload(path,contentBufer,SENSITIVE_BUCKET_NAME);
     }
@@ -104,6 +111,25 @@ public class COSService {
         return fileInputStream;
     }
 
+
+    public InputStream isExist(String filename){
+
+        GetFileInputStreamRequest request = new GetFileInputStreamRequest(ORDINARY_BUCKET_NAME,"/crypto-kitty/"+filename);
+
+        request.setUseCDN(false);
+
+        InputStream fileInputStream = null;
+
+        try {
+            fileInputStream = cosClient.getFileInputStream(request);
+        } catch (Exception e) {
+            System.out.println("null,go");
+        }
+
+        return fileInputStream;
+
+
+    }
 
 
 

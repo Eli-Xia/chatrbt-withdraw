@@ -60,6 +60,34 @@ public class AdClickLogService {
 
     }
 
+    /**
+     * 根据广告,粉丝Id查询记录数
+     * @param adId
+     * @param wxFanId
+     * @return
+     */
+    private Integer countByFanIdAndAdId(Integer adId,Integer wxFanId){
+        return this.countByFanIdAndAdId(adId,wxFanId);
+    }
+
+    /**
+     * 判断指定广告粉丝是否已经点击过
+     * @param adId
+     * @param wxFanId
+     * @return
+     */
+    public boolean isWxFanHasClickedAd(Integer adId,Integer wxFanId){
+        boolean ret = false;
+
+        Integer count = this.countByFanIdAndAdId(adId, wxFanId);
+
+        if(count > 0){
+            ret = true;
+        }
+
+        return ret;
+    }
+
 
     /**
      * 根据用户id获取统计

@@ -5,9 +5,7 @@ import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMissionMapper;
-import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +17,7 @@ import java.util.List;
  */
 @Service
 public class ChatPetMissionService {
+
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 

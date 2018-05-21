@@ -8,7 +8,7 @@ import java.util.Date;
 public class PetLogResp {
     private Date createTime;
 
-    private Integer coin;
+    private Float coin;
 
     private String content;
 
@@ -30,11 +30,11 @@ public class PetLogResp {
         this.createTime = createTime;
     }
 
-    public Integer getCoin() {
+    public Float getCoin() {
         return coin;
     }
 
-    public void setCoin(Integer coin) {
+    public void setCoin(Float coin) {
         this.coin = coin;
     }
 

@@ -5,6 +5,8 @@ import net.monkeystudio.chatrbtw.mapper.CryptoKittiesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by bint on 2018/4/21.
  */
@@ -24,4 +26,11 @@ public class CryptoKittiesService {
         return cryptoKittiesMapper.selectByWxFan(wxPubOriginId,wxFanOpenId);
     }
 
+    public List<String> getAllUrl(Integer startIndex,Integer pageSize){
+        return this.cryptoKittiesMapper.selectAllUrl(startIndex,pageSize);
+    }
+
+    public List<String> getAll(){
+        return this.cryptoKittiesMapper.selectAll();
+    }
 }

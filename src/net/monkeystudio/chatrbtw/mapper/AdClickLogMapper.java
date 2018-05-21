@@ -27,4 +27,6 @@ public interface AdClickLogMapper {
     List<Integer> selectAdIdByUserId(@Param("userId") Integer userId ,@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     Integer countTotalAdClick(@Param("userId") Integer userId, @Param("adId")Integer adId);
+
+    Integer countByWxFanAndAd(@Param("wxFanId")Integer wxFanId,@Param("adId")Integer adId);
 }

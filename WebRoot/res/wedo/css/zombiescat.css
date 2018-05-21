@@ -105,13 +105,12 @@ header {
 }
 #user_zebra .class-scroll {
   width: 10.4rem;
-  height: 0.4rem;
-  line-height: 0.4rem;
+  line-height: 0.56rem;
   background-color: #efeff4;
-  border-radius: 0.2rem;
+  border-radius: 0.28rem;
   box-sizing: border-box;
   padding-right: 0.28rem;
-  font-size: 0.28rem;
+  font-size: 0.44rem;
   text-align: right;
   position: relative;
   color: #8e8e93;
@@ -124,21 +123,32 @@ header {
   bottom: 0;
   background-image: linear-gradient(to right, #2196f9, #21e7f9);
   background-image: -webkit-linear-gradient(to right, #2196f9, #21e7f9);
-  border-radius: 0.2rem;
+  border-radius: 0.28rem;
 }
 .zebra-bg .token-reward {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 1.2rem;
-  height: 1.2rem;
-  background: url("../images/token.svg") no-repeat;
-  background-size: 100%;
+  left: -2rem;
+  width: 1.1rem;
+  height: 1.72rem;
   opacity: 1;
   z-index: 800;
+  font-size: 0.48rem;
+  color: #f9b721;
+}
+.zebra-bg .token-reward img {
+  width: 100%;
+  margin-bottom: -0.06rem;
 }
 .zebra-bg .token-reward.active {
-  animation: ts 5s linear;
+  animation: ts 4s linear infinite;
+  -webkit-animation: ts 4s linear infinite;
+}
+.zebra-bg .token-reward.tran {
+  margin-top: -10px;
+  transition: all 1s linear;
+  -webkit-transition: all 1s linear;
+  opacity: 0;
+  transform: rotateY(180deg);
 }
 .zebra-bg .token-reward.hide {
   display: none;
@@ -146,75 +156,35 @@ header {
 @keyframes ts {
   0% {
     margin-top: 0;
-    transform: rotateY(0);
-    opacity: 1;
   }
-  18% {
+  25% {
     margin-top: -10px;
-    transform: rotateY(0);
-    opacity: 1;
   }
-  36% {
+  50% {
     margin-top: 0;
-    transform: rotateY(0);
-    opacity: 1;
   }
-  54% {
+  75% {
     margin-top: -10px;
-    transform: rotateY(0);
-    opacity: 1;
-  }
-  72% {
-    margin-top: 0;
-    transform: rotateY(0);
-    opacity: 1;
-  }
-  90% {
-    margin-top: -10px;
-    transform: rotateY(0);
-    opacity: 1;
   }
   100% {
-    margin-top: -18px;
-    transform: rotateY(180deg);
-    opacity: 0;
+    margin-top: 0;
   }
 }
 @-webkit-keyframes ts {
   0% {
     margin-top: 0;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
-  18% {
+  25% {
     margin-top: -10px;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
-  36% {
+  50% {
     margin-top: 0;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
-  54% {
+  75% {
     margin-top: -10px;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
-  }
-  72% {
-    margin-top: 0;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
-  }
-  90% {
-    margin-top: -10px;
-    -webkit-transform: rotateY(0);
-    opacity: 1;
   }
   100% {
-    margin-top: -18px;
-    -webkit-transform: rotateY(180deg);
-    opacity: 0;
+    margin-top: 0;
   }
 }
 #user_zebra .zebra-bg > img {
@@ -303,21 +273,21 @@ header {
   padding-bottom: 0.5rem;
 }
 #rule .gold > div {
-  padding: 0.5rem 0 0.28rem 0.54rem;
+  padding: 0.52rem 0 0.32rem 0.54rem;
   font-size: 0.48rem;
 }
 #rule .gold img {
   width: 1.28rem;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-right: 0.2rem;
 }
 #rule .cat > div {
-  padding: 0.58rem 0 0.28rem 0.54rem;
+  padding: 0.38rem 0 0.36rem 0.54rem;
   font-size: 0.48rem;
 }
 #rule .cat img {
   width: 1.28rem;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-right: 0.2rem;
 }
 #rule li {
@@ -363,6 +333,8 @@ header {
   margin-bottom: 0.52rem;
 }
 .nodata {
+  padding-top: 0.96rem;
+  padding-bottom: 0.66rem;
   text-align: center;
   font-size: 0.48rem;
   color: #8e8e93;
@@ -374,6 +346,7 @@ header {
   font-size: 0.48rem;
   color: #8e8e93;
   margin: 0;
+  margin-top: 0.42rem;
 }
 #log li {
   font-size: 0.48rem;

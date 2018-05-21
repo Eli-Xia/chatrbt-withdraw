@@ -5,22 +5,22 @@ package net.monkeystudio.chatrbtw.service.bean.chatpetlevel;
  */
 public class ExperienceProgressRate {
 
-    private Integer own;
-    private Integer need;
+    private Float own;
+    private Float need;
 
-    public Integer getOwn() {
+    public Float getOwn() {
         return own;
     }
 
-    public void setOwn(Integer own) {
+    public void setOwn(Float own) {
         this.own = own;
     }
 
-    public Integer getNeed() {
+    public Float getNeed() {
         return need;
     }
 
-    public void setNeed(Integer need) {
+    public void setNeed(Float need) {
         this.need = need;
     }
 }

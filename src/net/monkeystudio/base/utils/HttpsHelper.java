@@ -34,6 +34,7 @@ import org.apache.http.params.CoreConnectionPNames;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
@@ -261,6 +262,8 @@ public class HttpsHelper {
         return responseBody;
 
     }
+
+
 
     //TODO 暂未使用
     private static CloseableHttpClient getHttpClient() {

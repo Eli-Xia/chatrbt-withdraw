@@ -6,9 +6,11 @@ import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.PetLog;
 import net.monkeystudio.chatrbtw.enums.mission.RewardMethodEnum;
+import net.monkeystudio.chatrbtw.enums.mission.RewardTypeEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,7 +68,7 @@ public class ChatPetLogService {
 
             if(rewardType != null){
                 if(RewardMethodEnum.GOLD_REWARD.getType() == rewardType){
-                    resp.setCoin(cpm.getCoin().intValue());
+                    resp.setCoin(cpm.getCoin());
                 }
                 if(RewardMethodEnum.EXPERIENCE_REWARD.getType() == rewardType){
                     resp.setCoin(cpm.getExperience());
@@ -86,18 +88,24 @@ public class ChatPetLogService {
      * @param petLog
      */
     public void savePetLog(PetLog petLog){
-        PetLog pl = new PetLog();
-
-        pl.setCreateTime(petLog.getCreateTime());
-        pl.setContent(petLog.getContent());
-        pl.setChatPetId(petLog.getChatPetId());
-        pl.setWxPubOriginId(petLog.getWxPubOriginId());
-        pl.setWxFanOpenId(petLog.getWxFanOpenId());
-        pl.setTaskCode(petLog.getTaskCode());
-
-        petLogMapper.insert(pl);
+        petLogMapper.insert(petLog);
     }
 
+    //每日可领取奖励日志
+    public void saveDailyFixedCoinLog(Integer chatPetId,Integer rewardId){
+        PetLog pl = new PetLog();
+
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+
+        pl.setRewardType(RewardMethodEnum.GOLD_REWARD.getType());
+        pl.setChatPetId(chatPetId);
+        pl.setCreateTime(new Date());
+        pl.setContent("领取每日奖励");
+        pl.setWxFanOpenId(chatPet.getWxFanOpenId());
+        pl.setWxPubOriginId(chatPet.getWxPubOriginId());
+
+        this.savePetLog(pl);
+    }
 
     public void savePetBornLog(String wxPubOpenId,String wxFanOpenId,Integer chatPetId){
         PetLog pl = new PetLog();
@@ -116,7 +124,7 @@ public class ChatPetLogService {
      * 完成任务领取奖励后插入宠物日志
      */
     @Transactional
-    public void savePetLogWhenReward(Integer chatPetId,Integer missionItemId,Integer oldExperience,Integer newExperience){
+    public void savePetLogWhenReward(Integer chatPetId,Integer missionItemId,Float oldExperience,Float newExperience){
         ChatPet chatPet = chatPetService.getById(chatPetId);
         String wxPubOriginId = chatPet.getWxPubOriginId();
         String wxFanOpenId = chatPet.getWxFanOpenId();
@@ -126,7 +134,7 @@ public class ChatPetLogService {
         ChatPetMission cpm = chatPetMissionService.getByMissionCode(missionCode);
 
         Float coin = cpm.getCoin();
-        Integer experience = cpm.getExperience();
+        Float experience = cpm.getExperience();
 
         List<PetLog> pls = new ArrayList<>();
 
@@ -143,7 +151,7 @@ public class ChatPetLogService {
 
             pls.add(pl1);
 
-            if(experience != 0){
+            if(experience != 0F){
                 PetLog pl2 = new PetLog();
 
                 pl2.setWxPubOriginId(wxPubOriginId);

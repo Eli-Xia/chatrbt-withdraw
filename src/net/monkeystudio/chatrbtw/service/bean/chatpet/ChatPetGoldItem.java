@@ -7,7 +7,7 @@ package net.monkeystudio.chatrbtw.service.bean.chatpet;
 public class ChatPetGoldItem {
 
     private Integer rewardItemId;
-    private Integer goldValue;
+    private Float goldValue;
     private Integer missionItemId;
 
     public Integer getRewardItemId() {
@@ -18,11 +18,11 @@ public class ChatPetGoldItem {
         this.rewardItemId = rewardItemId;
     }
 
-    public Integer getGoldValue() {
+    public Float getGoldValue() {
         return goldValue;
     }
 
-    public void setGoldValue(Integer goldValue) {
+    public void setGoldValue(Float goldValue) {
         this.goldValue = goldValue;
     }
 

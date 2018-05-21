@@ -8,7 +8,6 @@ import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
@@ -26,9 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -175,7 +172,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
                 //完成陪聊宠每日签到任务
-                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());
+                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, MissionEnumService.DAILY_CHAT_MISSION_CODE);
 
                 this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
             }
@@ -367,16 +364,41 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 redisCacheTemplate.expire(pushTaskAdChatCountKey, DateUtils.getCacheSeconds());
             }
 
-            if(PUSH_TASK_AD_CHAT_COUNT.equals(count.intValue())){
+            if(wxPubVerifyTypeInfo.intValue() == wxPubService.WX_PUB_VERIFY_TYPE_WX_VERIFY){
                 WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
                 if(wxFan != null){
                     Log.d("============= smart chat ad has been pushed !! ============");
-                    this.sendAd(wxFan.getId(), wxPubOriginId);
+                    this.sendAd(wxFan.getId(), wxPubOriginId,adService.AD_PUSH_TYPE_CHAT_PET);
                 }
             }
 
+            /*if(PUSH_TASK_AD_CHAT_COUNT.equals(count.intValue())){
+                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+                if(wxFan != null){
+                    Log.d("============= smart chat ad has been pushed !! ============");
+                    this.sendAd(wxFan.getId(), wxPubOriginId,adService.AD_PUSH_TYPE_CHAT_PET);
+                }
+            }*/
+
         }
     }
+
+    /**
+     * 陪聊宠:获取当日指定公众号下指定粉丝的聊天次数
+     * @param wxPubOriginId
+     * @param wxFanId
+     * @return
+     */
+    public Integer getChatCount4ChatPetAd(String wxPubOriginId,Integer wxFanId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        String pushTaskAdChatCountKey = this.pushTaskAdChatCountKey(wxPubOriginId,wxFan.getWxFanOpenId());
+
+        String count = redisCacheTemplate.getString(pushTaskAdChatCountKey);
+
+        return Integer.valueOf(count);
+    }
+
 
     /**
      * 智能聊广告处理
@@ -407,7 +429,15 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 redisCacheTemplate.expire(countCacheKey, COUNT_CACHE_PERIOD);
             }
 
-            String chatAdPushCountStr = pushMessageConfigService.getByKey(PushMessageConfigService.CHAT_PUSH_AD_COUNT_KEY);
+            if(wxPubVerifyTypeInfo.intValue() == wxPubService.WX_PUB_VERIFY_TYPE_WX_VERIFY){
+                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+                if(wxFan != null){
+                    Log.d("============= smart chat ad has been pushed !! ============");
+                    this.sendAd(wxFan.getId(), wxPubOriginId,adService.AD_PUSH_TYPE_SMART_CHAT);
+                }
+            }
+
+            /*String chatAdPushCountStr = pushMessageConfigService.getByKey(PushMessageConfigService.CHAT_PUSH_AD_COUNT_KEY);
             if (chatAdPushCountStr != null) {
                 Long chatAdPushCount = Long.valueOf(chatAdPushCountStr);
                 //如果刚好到达次数，则触发推送广告机制
@@ -416,13 +446,28 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
                         if(wxFan != null){
                             Log.d("============= smart chat ad has been pushed !! ============");
-                            this.sendAd(wxFan.getId(), wxPubOriginId);
+                            this.sendAd(wxFan.getId(), wxPubOriginId,adService.AD_PUSH_TYPE_SMART_CHAT);
                         }
                     }
                 }
-            }
+            }*/
         }
     }
+
+    /**
+     * 智能聊:获取粉丝聊天次数
+     * @param wxPubOriginId
+     * @param wxFanId
+     * @return
+     */
+    public Integer getChatCount4SmartChatAd(String wxPubOriginId,Integer wxFanId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String countCacheKey = this.getChatLogCountCacheKey(wxPubOriginId, wxFan.getWxFanOpenId());
+        String count = redisCacheTemplate.getString(countCacheKey);
+        return Integer.valueOf(count);
+    }
+
+
 
     private Integer getRespType(TextMsgRec textMsgRec) throws BizException {
 
@@ -515,8 +560,8 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         wxPubService.update(wxPub);
     }
 
-    private void sendAd(Integer wxFanId , String wxPubOriginId){
-        String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);
+
+    private void sendAd(Integer wxFanId , String wxPubOriginId,Integer pushType){
 
         //到达触发广告机制次数的人数+1
         wxChatCountService.incrArrivalCount();
@@ -524,17 +569,22 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             @Override
             public void run() {
 
-                if (adPushService.getPushAdhSwith()) {
+                Log.i("ad time : wxPubOriginId [?] ,WxFanId [?] ", wxPubOriginId, String.valueOf(wxFanId));
+
+                try {
+                    adPushService.randomPush(wxPubOriginId, wxFanId,pushType);
+                } catch (BizException e) {
+                    Log.e(e);
+                }
+                /*if (adPushService.getPushAdhSwith()) {
                     Log.i("ad time : wxPubOriginId [?] ,WxFanId [?] ", wxPubOriginId, String.valueOf(wxFanId));
 
                     try {
-                        adPushService.randomPush(wxPubAppId, wxFanId);
+                        adPushService.randomPush(wxPubAppId, wxFanId,pushType);
                     } catch (BizException e) {
                         Log.e(e);
                     }
-                }
-
-                Log.d("ad push swicth : " + adPushService.getPushAdhSwith());
+                }*/
             }
         });
     }

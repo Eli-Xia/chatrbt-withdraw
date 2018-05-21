@@ -3,7 +3,7 @@ package net.monkeystudio.chatrbtw.entity;
 public class ChatPetRewardItem {
     private Integer id;
 
-    private Integer goldValue;
+    private Float goldValue;
 
     private Integer rewardState;
 
@@ -19,11 +19,11 @@ public class ChatPetRewardItem {
         this.id = id;
     }
 
-    public Integer getGoldValue() {
+    public Float getGoldValue() {
         return goldValue;
     }
 
-    public void setGoldValue(Integer goldValue) {
+    public void setGoldValue(Float goldValue) {
         this.goldValue = goldValue;
     }
 

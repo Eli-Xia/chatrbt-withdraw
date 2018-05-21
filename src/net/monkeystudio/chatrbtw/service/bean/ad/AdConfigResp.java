@@ -9,6 +9,25 @@ public class AdConfigResp {
     private Integer pushAdSwitch;
     private Integer chatPushAdCount;
 
+    private Float probabilityStrategyPushAdRatio;
+    private Integer probabilityStrategyPushAdSwitch;
+
+    public Float getProbabilityStrategyPushAdRatio() {
+        return probabilityStrategyPushAdRatio;
+    }
+
+    public void setProbabilityStrategyPushAdRatio(Float probabilityStrategyPushAdRatio) {
+        this.probabilityStrategyPushAdRatio = probabilityStrategyPushAdRatio;
+    }
+
+    public Integer getProbabilityStrategyPushAdSwitch() {
+        return probabilityStrategyPushAdSwitch;
+    }
+
+    public void setProbabilityStrategyPushAdSwitch(Integer probabilityStrategyPushAdSwitch) {
+        this.probabilityStrategyPushAdSwitch = probabilityStrategyPushAdSwitch;
+    }
+
     public Float getPushAdRatio() {
         return pushAdRatio;
     }
