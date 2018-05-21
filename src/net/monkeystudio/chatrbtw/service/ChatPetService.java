@@ -174,7 +174,7 @@ public class ChatPetService {
 
         String headImgUrl = owner.getHeadImgUrl();
         if(headImgUrl == null){
-        wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
         }
 
         owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
@@ -703,14 +703,6 @@ public class ChatPetService {
         return chatPet.getCoin();
     }
 
-    /**
-     * TODO
-     * 获取一个微信用户在多个公众号中的总金币 unionId
-     * @return
-     */
-    public Float getFansTotalCoin(){
-        return null;
-    }
 
     /**
      * 增加经验
@@ -720,7 +712,6 @@ public class ChatPetService {
     public void increaseExperience(Integer chatPetId ,Integer experience){
         chatPetMapper.increaseExperience(chatPetId,experience);
     }
-
 
 
 

@@ -157,7 +157,21 @@ public class ChatPetMissionPoolService {
         cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
 
         this.update(cppm);
-}
+    }
+
+    /**
+     * 完成任务但是未领取奖励时更新任务池记录
+     * @param missionId
+     */
+    public void updateMissionWhenFinishByMissionId(Integer missionId){
+
+        ChatPetPersonalMission cppm = this.getById(missionId);
+
+        cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+
+        this.update(cppm);
+    }
+
 
     /**
      * 完成每日聊天签到任务

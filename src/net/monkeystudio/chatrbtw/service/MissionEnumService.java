@@ -21,6 +21,7 @@ public class MissionEnumService {
 
     public final static Integer DAILY_CHAT_MISSION_CODE = 2;//每日签到互动任务code
     public final static Integer SEARCH_NEWS_MISSION_CODE = 1;//咨询获取任务code
+    public final static Integer INVITE_FRIENDS_MISSION_CODE = 3;//邀请好友code
 
     private static Map<Integer,ChatPetMission> missionEnumCache = new HashMap<>();
 
