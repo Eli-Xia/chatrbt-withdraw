@@ -11,7 +11,7 @@ public class ChatPetMission {
 
     private Float coin;
 
-    private Integer experience;
+    private Float experience;
 
     private Integer missionType;
 
@@ -23,11 +23,11 @@ public class ChatPetMission {
         this.missionType = missionType;
     }
 
-    public Integer getExperience() {
+    public Float getExperience() {
         return experience;
     }
 
-    public void setExperience(Integer experience) {
+    public void setExperience(Float experience) {
         this.experience = experience;
     }
 

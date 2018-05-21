@@ -6,11 +6,12 @@
     <result column="mission_name" property="missionName" jdbcType="VARCHAR" />
     <result column="mission_code" property="missionCode" jdbcType="INTEGER" />
     <result column="is_active" property="isActive" jdbcType="INTEGER" />
-    <result column="experience" property="experience" jdbcType="INTEGER" />
+    <result column="experience" property="experience" jdbcType="REAL" />
     <result column="coin" property="coin" jdbcType="REAL" />
+    <result column="mission_type" property="missionType" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, mission_name, mission_code, is_active, coin,experience
+    id, mission_name, mission_code, is_active, coin,experience,mission_type
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -24,9 +25,9 @@
   </delete>
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
     insert into e_chat_pet_mission (id, mission_name, mission_code, 
-      is_active, coin,experience)
+      is_active, coin,experience,mission_type)
     values (#{id,jdbcType=INTEGER}, #{missionName,jdbcType=VARCHAR}, #{missionCode,jdbcType=INTEGER}, 
-      #{isActive,jdbcType=INTEGER}, #{coin,jdbcType=REAL} , #{experience})
+      #{isActive,jdbcType=INTEGER}, #{coin,jdbcType=REAL} , #{experience} ,#{missionType})
   </insert>
   <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetMission" >
     insert into e_chat_pet_mission
@@ -49,6 +50,9 @@
       <if test="experience != null" >
         experience,
       </if>
+      <if test="missionType != null" >
+        mission_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -67,7 +71,10 @@
         #{coin,jdbcType=REAL},
       </if>
       <if test="experience != null" >
-        #{experience,jdbcType=INTEGER},
+        #{experience,jdbcType=REAL},
+      </if>
+      <if test="missionType != null" >
+        #{missionType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -87,7 +94,10 @@
         coin = #{coin,jdbcType=REAL},
       </if>
       <if test="experience != null" >
-        experience = #{experience,jdbcType=INTEGER},
+        experience = #{experience,jdbcType=REAL},
+      </if>
+      <if test="missionType != null" >
+        mission_type = #{missionType,jdbcType=REAL},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -98,7 +108,8 @@
       mission_code = #{missionCode,jdbcType=INTEGER},
       is_active = #{isActive,jdbcType=INTEGER},
       coin = #{coin,jdbcType=REAL},
-      experience = #{experience}
+      experience = #{experience},
+      mission_type = #{missionType}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

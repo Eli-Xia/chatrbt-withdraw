@@ -22,7 +22,8 @@ public class ChatPetInfo {
     private String invitationQrCode;
     private String wPubHeadImgUrl;
 
-    private Integer experience;
+    private Float experience = 0F;
+
     private Integer chatPetLevel;
 
     private Appearance appearance;
@@ -128,11 +129,11 @@ public class ChatPetInfo {
         this.appearanceUrl = appearanceUrl;
     }
 
-    public Integer getExperience() {
+    public Float getExperience() {
         return experience;
     }
 
-    public void setExperience(Integer experience) {
+    public void setExperience(Float experience) {
         this.experience = experience;
     }
 

@@ -226,7 +226,7 @@ public class ChatPetService {
         }
 
         //宠物的经验
-        Integer experience = chatPet.getExperience();
+        Float experience = chatPet.getExperience();
         chatPetBaseInfo.setExperience(experience);
 
         //经验条进度
@@ -385,13 +385,13 @@ public class ChatPetService {
         }
 
         //增加金币
-        Integer incrCoin = chatPetRewardItem.getGoldValue();
-        this.increaseCoin(chatPetId,incrCoin.floatValue());
+        Float incrCoin = chatPetRewardItem.getGoldValue();
+        this.increaseCoin(chatPetId,incrCoin);
 
 
         //增加经验
-        Integer oldExperience = null;
-        Integer newExperience = null;
+        Float oldExperience = null;
+        Float newExperience = null;
 
         if(isMissionReward){
 
@@ -408,6 +408,8 @@ public class ChatPetService {
         //插入日志
         if(isMissionReward){
             chatPetLogService.savePetLogWhenReward(chatPetId,missionItemId,oldExperience,newExperience);
+        }else{
+            chatPetLogService.saveDailyFixedCoinLog(chatPetId,rewardItemId);
         }
     }
 
@@ -433,12 +435,12 @@ public class ChatPetService {
 
         //增加经验
         ChatPet chatPet = this.getById(chatPetId);
-        Integer oldExperience = chatPet.getExperience();
+        Float oldExperience = chatPet.getExperience();
 
         Integer addExperience = incrCoin.intValue();
         this.increaseExperience(chatPetId,addExperience);
 
-        Integer newExprience = this.getChatPetExperience(chatPetId);
+        Float newExprience = this.getChatPetExperience(chatPetId);
 
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
@@ -733,7 +735,7 @@ public class ChatPetService {
      * @param chatPetid
      * @return
      */
-    public Integer getChatPetExperience(Integer chatPetid ){
+    public Float getChatPetExperience(Integer chatPetid ){
         ChatPet chatPet = this.getById(chatPetid);
 
         return chatPet.getExperience();
@@ -811,7 +813,7 @@ public class ChatPetService {
             ChatPetExperinceRankItem chatPetExperinceRankItem = new ChatPetExperinceRankItem();
 
             //宠物的等级
-            Integer experience = chatPet.getExperience();
+            Float experience = chatPet.getExperience();
             Integer level = chatPetLevelService.calculateLevel(experience);
             chatPetExperinceRankItem.setLevel(level);
 
@@ -839,7 +841,7 @@ public class ChatPetService {
      */
     public Integer getChatPetLevel(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
-        Integer experience = chatPet.getExperience();
+        Float experience = chatPet.getExperience();
         Integer level = chatPetLevelService.calculateLevel(experience);
         return level;
     }

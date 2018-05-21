@@ -27,12 +27,12 @@ public class ChatPetLevelService {
      * @param experience
      * @return
      */
-    public Integer calculateLevel(Integer experience){
+    public Integer calculateLevel(Float experience){
         List<ChatPetLevel> allLevel = this.getAscAllLevel();
 
         int level = 0;
 
-        int remaining = experience;
+        Float remaining = experience;
 
         for(ChatPetLevel chatPetLevel : allLevel){
 
@@ -82,7 +82,7 @@ public class ChatPetLevelService {
         return experienceProgressRate;
     }*/
 
-    public ExperienceProgressRate getProgressRate(Integer experience){
+    public ExperienceProgressRate getProgressRate(Float experience){
         //当前等级
         Integer nowLevel = this.calculateLevel(experience);
 
@@ -90,13 +90,14 @@ public class ChatPetLevelService {
         Integer nowLevelExperience = this.lowestExperienceOfLevel(nowLevel);
 
         //当前分数超出最低分几分
-        Integer overExperience = experience - nowLevelExperience;
+        Float overExperience = experience - nowLevelExperience;
 
         //下一级
         Integer nextLevel = nowLevel + 1;
 
         //下一级所需经验值
-        Integer updateNeedExperience = this.upgradeNeedExperience(nextLevel);
+        Float updateNeedExperience = null;
+        Float.parseFloat(this.upgradeNeedExperience(nextLevel).toString());
 
         ExperienceProgressRate experienceProgressRate = new ExperienceProgressRate();
 
@@ -146,11 +147,12 @@ public class ChatPetLevelService {
      * 判断完成任务增加经验后是否会升级
      * @return
      */
-    public boolean isUpgrade(Integer oldExperience,Integer newExperience){
+    public boolean isUpgrade(Float oldExperience,Float newExperience){
         Integer oldLevel = this.calculateLevel(oldExperience);
 
         Integer newLevel = this.calculateLevel(newExperience);
 
         return oldLevel.intValue() == newLevel.intValue() - 1;
     }
+
 }

@@ -80,7 +80,7 @@ public class ChatPetRewardItemService {
         //根据宠物等级获取每日可领取奖励值
         Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
         //每日可领取奖励 = (宠物等级 + 1) * 1
-        fixedItem.setGoldValue(chatPetLevel + 1);
+        fixedItem.setGoldValue( (chatPetLevel + 1) * 0.5F );
 
         fixedItem.setRewardState(NOT_AWARD);
         fixedItem.setChatPetId(chatPetId);
@@ -94,7 +94,7 @@ public class ChatPetRewardItemService {
 
                 ChatPetRewardItem item = new ChatPetRewardItem();
 
-                item.setGoldValue(ChatPetTaskEnum.codeOf(cppm.getMissionCode()).getCoinValue().intValue());
+                item.setGoldValue(ChatPetTaskEnum.codeOf(cppm.getMissionCode()).getCoinValue());
                 item.setChatPetId(chatPetId);
                 item.setMissionItemId(cppm.getId());
                 item.setRewardState(NOT_AWARD);
@@ -157,7 +157,7 @@ public class ChatPetRewardItemService {
 
         item.setChatPetId(chatPetId);
         item.setRewardState(NOT_AWARD);
-        item.setGoldValue(cpm.getCoin().intValue());
+        item.setGoldValue(cpm.getCoin());
         item.setMissionItemId(missionItemId);
 
         this.save(item);

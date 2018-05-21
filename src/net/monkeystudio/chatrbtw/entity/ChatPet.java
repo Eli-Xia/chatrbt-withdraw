@@ -14,7 +14,7 @@ public class ChatPet {
     private Integer secondEthnicGroupsId;
     private Date createTime;
     private Integer parentId;
-    private Integer experience;
+    private Float experience;
     private Float coin;
     private String appearanceCode;
 
@@ -90,11 +90,11 @@ public class ChatPet {
         this.parentId = parentId;
     }
 
-    public Integer getExperience() {
+    public Float getExperience() {
         return experience;
     }
 
-    public void setExperience(Integer experience) {
+    public void setExperience(Float experience) {
         this.experience = experience;
     }
 

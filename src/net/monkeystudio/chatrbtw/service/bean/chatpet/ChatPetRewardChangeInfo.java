@@ -14,7 +14,7 @@ public class ChatPetRewardChangeInfo {
 
     private Float fanTotalCoin = 0F;
 
-    private Integer Experience = 0;
+    private Float Experience = 0F;
 
     private ExperienceProgressRate experienceProgressRate;
 
@@ -58,11 +58,11 @@ public class ChatPetRewardChangeInfo {
         this.fanTotalCoin = fanTotalCoin;
     }
 
-    public Integer getExperience() {
+    public Float getExperience() {
         return Experience;
     }
 
-    public void setExperience(Integer experience) {
+    public void setExperience(Float experience) {
         Experience = experience;
     }
 
