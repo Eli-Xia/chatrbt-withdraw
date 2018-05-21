@@ -1,6 +1,11 @@
 package net.monkeystudio.chatrbtw.entity;
 
-public class ChatPetMission {
+import java.io.Serializable;
+
+public class ChatPetMission implements Serializable{
+
+    private static final long serialVersionUID = -1499582129817318914L;
+
     private Integer id;
 
     private String missionName;

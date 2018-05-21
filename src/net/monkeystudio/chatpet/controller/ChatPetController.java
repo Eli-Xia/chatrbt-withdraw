@@ -88,7 +88,8 @@ public class ChatPetController extends ChatPetBaseController{
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
-        Integer userId = getUserId();
+        //Integer userId = getUserId();
+        Integer userId = 55;
 
         if(userId == null){
             //网页授权
@@ -144,7 +145,8 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
-        Integer userId = this.getUserId();
+        //Integer userId = this.getUserId();
+        Integer userId = 55;
 
         if(userId == null){
             return respHelper.nologin();
