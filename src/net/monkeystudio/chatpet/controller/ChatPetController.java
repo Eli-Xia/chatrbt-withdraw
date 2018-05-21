@@ -9,6 +9,7 @@ import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetRewardChangeInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.CreationPost;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -109,7 +110,7 @@ public class ChatPetController extends ChatPetBaseController{
 
                 chatPetService.dataPrepared(userId,wxPubId);
 
-                response.sendRedirect(chatPetService.getZebraHtmlUrl(wxPubId));
+                response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
 
             }else{
                 response.sendRedirect(chatPetService.getChatPetPosterUrl());
@@ -156,5 +157,17 @@ public class ChatPetController extends ChatPetBaseController{
     }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/creation-post", method = RequestMethod.POST)
+    public RespBase getcreationPost() throws BizException {
+        Integer wxFanId = this.getUserId();
 
+        if(wxFanId == null){
+            return respHelper.nologin();
+        }
+
+        CreationPost creationPost = chatPetService.getCreationPost(wxFanId);
+
+        return respHelper.ok(creationPost);
+    }
 }

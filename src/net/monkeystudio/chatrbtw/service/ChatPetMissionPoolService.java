@@ -69,9 +69,6 @@ public class ChatPetMissionPoolService {
     }
 
 
-
-
-
     /**
      * 组装当日任务数据
      */
@@ -91,6 +88,28 @@ public class ChatPetMissionPoolService {
 
             this.save(cppm);
         }
+    }
+
+    /**
+     * TODO 支持阅读任务和互动任务
+     * 派发任务,目前仅仅支持邀请好友类型任务
+     * @param missionCode
+     * @param chatPetId
+     */
+    private void dispatchMission(Integer missionCode ,Integer chatPetId){
+
+        ChatPetPersonalMission cppm = new ChatPetPersonalMission();
+        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+
+            cppm.setChatPetId(chatPetId);
+            cppm.setCreateTime(new Date());
+            cppm.setState(MissionStateEnum.GOING_ON.getCode());
+            cppm.setMissionCode(missionCode);
+
+            this.save(cppm);
+        }
+
+
     }
 
 
@@ -157,7 +176,13 @@ public class ChatPetMissionPoolService {
         cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
 
         this.update(cppm);
+
+        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+            this.dispatchMission(MissionEnumService.INVITE_FRIENDS_MISSION_CODE ,chatPetId);
+        }
     }
+
+
 
     /**
      * 完成任务但是未领取奖励时更新任务池记录

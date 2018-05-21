@@ -18,6 +18,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRat
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
+import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import net.monkeystudio.wx.vo.oauth.WxOauthAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,7 +78,15 @@ public class ChatPetService {
     private ChatPetAppearenceService chatPetAppearenceService;
 
     @Autowired
+<<<<<<< HEAD
     private ChatPetRewardItemService chatPetRewardItemService;
+=======
+    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+
+    @Autowired
+    private ChatPetTypeConfigService chatPetTypeConfigService;
+
+>>>>>>> r-pub-pet
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -678,6 +687,24 @@ public class ChatPetService {
         return url;
     }
 
+    /**
+     * 获取宠物对应的html的url
+     * @param wxPubId
+     * @return
+     */
+    public String getChatPetPageUrl(Integer wxPubId){
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
+
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+        }
+
+        return null;
+    }
+
     public String getWxOauthUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String url = "http://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
@@ -860,6 +887,7 @@ public class ChatPetService {
         return posterUrl;
     }
 
+<<<<<<< HEAD
 
 
 
@@ -869,5 +897,77 @@ public class ChatPetService {
 
 
 
+=======
+    /**
+     * 获取创始海报的信息
+     * @param wxFanId
+     * @return
+     */
+    public CreationPost getCreationPost(Integer wxFanId){
+        CreationPost creationPost = new CreationPost();
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+
+        try {
+            String base64 = ethnicGroupsService.getCreateFounderQrCodeImageBase64(wxPubOriginId);
+            creationPost.setWxPubQrCode(base64);
+        } catch (BizException e) {
+            Log.e(e);
+        } catch (IOException e) {
+            Log.e(e);
+        } catch (WriterException e) {
+            Log.e(e);
+        }
+
+        Integer type = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+        creationPost.setChatPetType(type);
+
+        return creationPost;
+    }
+
+    //应该改为传宠物id即可生成
+    public CustomerNewsItem getChatNewsItem(Integer chatPetType ,String parentWxFanNickname ,String wxFanNickname ,String wxPubOriginId){
+        ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
+
+        CustomerNewsItem customerNewsItem = new CustomerNewsItem();
+
+        String description = chatPetTypeConfig.getNewsDescription();
+
+        //替换邀请人
+        if(parentWxFanNickname == null){
+            String founderName = chatPetTypeConfig.getFounderName();
+            description = description.replace("#{parentName}", founderName);
+        }else {
+            description = description.replace("#{parentName}", parentWxFanNickname);
+        }
+
+        //替换粉丝名称
+        description = description.replace("#{wxFanNickname}", wxFanNickname);
+
+        //替换出生日期
+        Calendar calendar = Calendar.getInstance();
+        String date = (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分";
+        description = description.replace("#{date}", date);
+
+        customerNewsItem.setDescription(description);
+
+        //标题
+        String title = chatPetTypeConfig.getNewsTitle();
+        customerNewsItem.setTitle(title);
+
+        //图文封面
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String coverUrl = chatPetTypeConfig.getNewsCoverUrl();
+        customerNewsItem.setPicUrl("http://" + domain + coverUrl);
+
+        Integer wxPubId = wxPubService.getByOrginId(wxPubOriginId).getId();
+        String url = this.getHomePageUrl(wxPubId);
+        customerNewsItem.setUrl(url);
+
+        return customerNewsItem;
+    }
+>>>>>>> r-pub-pet
 
 }
