@@ -3,10 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.EthnicGroups;
-import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.entity.WxPub;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
@@ -48,6 +45,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
+    @Autowired
+    private ChatPetRewardItemService chatPetRewardItemService;
 
 
 
@@ -125,7 +124,11 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
 
-                            chatPetMissionPoolService.updateMissionWhenFinish();
+                            chatPetMissionPoolService.updateMissionWhenFinish(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+
+                            chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPetId,chatPetPersonalMission.getId());
+
                         }
 
                         String parentWxFanNickname = null;

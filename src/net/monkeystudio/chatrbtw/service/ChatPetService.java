@@ -78,15 +78,13 @@ public class ChatPetService {
     private ChatPetAppearenceService chatPetAppearenceService;
 
     @Autowired
-<<<<<<< HEAD
     private ChatPetRewardItemService chatPetRewardItemService;
-=======
+    @Autowired
     private RWxPubChatPetTypeService rWxPubChatPetTypeService;
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
 
->>>>>>> r-pub-pet
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -334,7 +332,7 @@ public class ChatPetService {
         if(isAble2Reward(nowState)){
             this.missionReward(rewardItemId,chatPetId,missionItemId);
         }*/
-        this.missionReward(rewardItemId,chatPetId,missionItemId);
+        this.missionReward(rewardItemId);
 
         ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
@@ -355,13 +353,19 @@ public class ChatPetService {
 
 
     /**
-     *   TODO
      * 加入奖励池后  修改
      * 完成每日任务领取奖励
-     * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
+     * @param chatPetRewardItemId 奖励池表主键
+     * @throws BizException
      */
     @Transactional
-    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) throws BizException{
+    public void missionReward(Integer chatPetRewardItemId) throws BizException{
+
+        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+
+        Integer missionItemId = chatPetRewardItem.getMissionItemId();
+
         //是否为任务类型奖励
         Boolean isMissionReward = false;
 
@@ -370,8 +374,7 @@ public class ChatPetService {
             isMissionReward = true;
         }
 
-        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
-        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
 
         //判断领取的是否为自己的奖励
         Integer chatPetIdInDb = chatPetRewardItem.getChatPetId();
@@ -379,7 +382,7 @@ public class ChatPetService {
             throw new BizException("无法领取");
         }
 
-        if(chatPetRewardItemService.isGoldAwarded(rewardItemId)){
+        if(chatPetRewardItemService.isGoldAwarded(chatPetRewardItemId)){
             throw new BizException("您已经领取过奖励");
         }
 
@@ -396,6 +399,8 @@ public class ChatPetService {
         Float oldExperience = null;
         Float newExperience = null;
 
+        Boolean isUpgrade = false;
+        //如果是从任务来的奖励
         if(isMissionReward){
 
             ChatPet chatPet = this.getById(chatPetId);
@@ -406,13 +411,15 @@ public class ChatPetService {
 
             newExperience = this.getChatPetExperience(chatPetId);
 
+            isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
+
         }
 
         //插入日志
         if(isMissionReward){
-            chatPetLogService.savePetLogWhenReward(chatPetId,missionItemId,oldExperience,newExperience);
+            chatPetLogService.savePetLogWhenReward(missionItemId,isUpgrade);
         }else{
-            chatPetLogService.saveDailyFixedCoinLog(chatPetId,rewardItemId);
+            chatPetLogService.saveDailyFixedCoinLog(chatPetId,chatPetRewardItemId);
         }
     }
 
@@ -444,6 +451,7 @@ public class ChatPetService {
         this.increaseExperience(chatPetId,addExperience);
 
         Float newExprience = this.getChatPetExperience(chatPetId);
+
 
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
@@ -887,17 +895,12 @@ public class ChatPetService {
         return posterUrl;
     }
 
-<<<<<<< HEAD
 
 
 
 
 
 
-
-
-
-=======
     /**
      * 获取创始海报的信息
      * @param wxFanId
@@ -968,6 +971,5 @@ public class ChatPetService {
 
         return customerNewsItem;
     }
->>>>>>> r-pub-pet
 
 }

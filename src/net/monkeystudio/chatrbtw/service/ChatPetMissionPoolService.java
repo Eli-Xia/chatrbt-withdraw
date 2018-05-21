@@ -26,6 +26,7 @@ import java.util.List;
 public class ChatPetMissionPoolService {
     @Autowired
     private MissionEnumService missionEnumService;
+
     @Autowired
     private ChatPetPersonalMissionMapper chatPetPersonalMissionMapper;
 
@@ -125,6 +126,11 @@ public class ChatPetMissionPoolService {
         chatPetPersonalMissionMapper.insert(cppm);
     }
 
+    /**
+     * 派发资讯任务
+     * @param adId
+     * @param wxfanId
+     */
     public void saveMissionRecordWhenPushChatPetAd(Integer adId,Integer wxfanId){
         //获取fanopenid
         WxFan wxfan = wxFanService.getById(wxfanId);
@@ -304,7 +310,7 @@ public class ChatPetMissionPoolService {
      * @param missionCode 任务编号
      * @return
      */
-    private ChatPetPersonalMission getDailyPersonalMission(Integer chatPetId,Integer missionCode){
+    public ChatPetPersonalMission getDailyPersonalMission(Integer chatPetId,Integer missionCode){
         Date now = new Date();
         Date startTime = DateUtils.getBeginDate(now);
 
