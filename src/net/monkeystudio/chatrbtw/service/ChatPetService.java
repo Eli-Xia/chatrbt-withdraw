@@ -18,6 +18,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRat
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
+import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import net.monkeystudio.wx.vo.oauth.WxOauthAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,12 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetRewardItemService chatPetRewardItemService;
+    @Autowired
+    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+
+    @Autowired
+    private ChatPetTypeConfigService chatPetTypeConfigService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -174,7 +181,7 @@ public class ChatPetService {
 
         String headImgUrl = owner.getHeadImgUrl();
         if(headImgUrl == null){
-        wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
         }
 
         owner = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
@@ -325,7 +332,7 @@ public class ChatPetService {
         if(isAble2Reward(nowState)){
             this.missionReward(rewardItemId,chatPetId,missionItemId);
         }*/
-        this.missionReward(rewardItemId,chatPetId,missionItemId);
+        this.missionReward(rewardItemId);
 
         ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
@@ -346,13 +353,19 @@ public class ChatPetService {
 
 
     /**
-     *   TODO
      * 加入奖励池后  修改
      * 完成每日任务领取奖励
-     * @param rewardItemId:奖励池表主键  missionItemId:任务池表主键
+     * @param chatPetRewardItemId 奖励池表主键
+     * @throws BizException
      */
     @Transactional
-    public void missionReward(Integer rewardItemId,Integer chatPetId,Integer missionItemId) throws BizException{
+    public void missionReward(Integer chatPetRewardItemId) throws BizException{
+
+        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+
+        Integer missionItemId = chatPetRewardItem.getMissionItemId();
+
         //是否为任务类型奖励
         Boolean isMissionReward = false;
 
@@ -361,8 +374,7 @@ public class ChatPetService {
             isMissionReward = true;
         }
 
-        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
-        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
 
         //判断领取的是否为自己的奖励
         Integer chatPetIdInDb = chatPetRewardItem.getChatPetId();
@@ -370,7 +382,7 @@ public class ChatPetService {
             throw new BizException("无法领取");
         }
 
-        if(chatPetRewardItemService.isGoldAwarded(rewardItemId)){
+        if(chatPetRewardItemService.isGoldAwarded(chatPetRewardItemId)){
             throw new BizException("您已经领取过奖励");
         }
 
@@ -387,6 +399,8 @@ public class ChatPetService {
         Float oldExperience = null;
         Float newExperience = null;
 
+        Boolean isUpgrade = false;
+        //如果是从任务来的奖励
         if(isMissionReward){
 
             ChatPet chatPet = this.getById(chatPetId);
@@ -397,13 +411,15 @@ public class ChatPetService {
 
             newExperience = this.getChatPetExperience(chatPetId);
 
+            isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
+
         }
 
         //插入日志
         if(isMissionReward){
-            chatPetLogService.savePetLogWhenReward(chatPetId,missionItemId,oldExperience,newExperience);
+            chatPetLogService.savePetLogWhenReward(missionItemId,isUpgrade);
         }else{
-            chatPetLogService.saveDailyFixedCoinLog(chatPetId,rewardItemId);
+            chatPetLogService.saveDailyFixedCoinLog(chatPetId,chatPetRewardItemId);
         }
     }
 
@@ -435,6 +451,7 @@ public class ChatPetService {
         this.increaseExperience(chatPetId,addExperience);
 
         Float newExprience = this.getChatPetExperience(chatPetId);
+
 
         //插入日志
         chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
@@ -678,6 +695,24 @@ public class ChatPetService {
         return url;
     }
 
+    /**
+     * 获取宠物对应的html的url
+     * @param wxPubId
+     * @return
+     */
+    public String getChatPetPageUrl(Integer wxPubId){
+
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
+
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+        }
+
+        return null;
+    }
+
     public String getWxOauthUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String url = "http://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
@@ -703,14 +738,6 @@ public class ChatPetService {
         return chatPet.getCoin();
     }
 
-    /**
-     * TODO
-     * 获取一个微信用户在多个公众号中的总金币 unionId
-     * @return
-     */
-    public Float getFansTotalCoin(){
-        return null;
-    }
 
     /**
      * 增加经验
@@ -720,7 +747,6 @@ public class ChatPetService {
     public void increaseExperience(Integer chatPetId ,Integer experience){
         chatPetMapper.increaseExperience(chatPetId,experience);
     }
-
 
 
 
@@ -875,8 +901,75 @@ public class ChatPetService {
 
 
 
+    /**
+     * 获取创始海报的信息
+     * @param wxFanId
+     * @return
+     */
+    public CreationPost getCreationPost(Integer wxFanId){
+        CreationPost creationPost = new CreationPost();
 
+        WxFan wxFan = wxFanService.getById(wxFanId);
 
+        String wxPubOriginId = wxFan.getWxPubOriginId();
 
+        try {
+            String base64 = ethnicGroupsService.getCreateFounderQrCodeImageBase64(wxPubOriginId);
+            creationPost.setWxPubQrCode(base64);
+        } catch (BizException e) {
+            Log.e(e);
+        } catch (IOException e) {
+            Log.e(e);
+        } catch (WriterException e) {
+            Log.e(e);
+        }
+
+        Integer type = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+        creationPost.setChatPetType(type);
+
+        return creationPost;
+    }
+
+    //应该改为传宠物id即可生成
+    public CustomerNewsItem getChatNewsItem(Integer chatPetType ,String parentWxFanNickname ,String wxFanNickname ,String wxPubOriginId){
+        ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
+
+        CustomerNewsItem customerNewsItem = new CustomerNewsItem();
+
+        String description = chatPetTypeConfig.getNewsDescription();
+
+        //替换邀请人
+        if(parentWxFanNickname == null){
+            String founderName = chatPetTypeConfig.getFounderName();
+            description = description.replace("#{parentName}", founderName);
+        }else {
+            description = description.replace("#{parentName}", parentWxFanNickname);
+        }
+
+        //替换粉丝名称
+        description = description.replace("#{wxFanNickname}", wxFanNickname);
+
+        //替换出生日期
+        Calendar calendar = Calendar.getInstance();
+        String date = (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分";
+        description = description.replace("#{date}", date);
+
+        customerNewsItem.setDescription(description);
+
+        //标题
+        String title = chatPetTypeConfig.getNewsTitle();
+        customerNewsItem.setTitle(title);
+
+        //图文封面
+        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String coverUrl = chatPetTypeConfig.getNewsCoverUrl();
+        customerNewsItem.setPicUrl("http://" + domain + coverUrl);
+
+        Integer wxPubId = wxPubService.getByOrginId(wxPubOriginId).getId();
+        String url = this.getHomePageUrl(wxPubId);
+        customerNewsItem.setUrl(url);
+
+        return customerNewsItem;
+    }
 
 }

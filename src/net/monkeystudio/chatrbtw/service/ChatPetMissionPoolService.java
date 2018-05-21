@@ -26,6 +26,7 @@ import java.util.List;
 public class ChatPetMissionPoolService {
     @Autowired
     private MissionEnumService missionEnumService;
+
     @Autowired
     private ChatPetPersonalMissionMapper chatPetPersonalMissionMapper;
 
@@ -69,9 +70,6 @@ public class ChatPetMissionPoolService {
     }
 
 
-
-
-
     /**
      * 组装当日任务数据
      */
@@ -93,6 +91,28 @@ public class ChatPetMissionPoolService {
         }
     }
 
+    /**
+     * TODO 支持阅读任务和互动任务
+     * 派发任务,目前仅仅支持邀请好友类型任务
+     * @param missionCode
+     * @param chatPetId
+     */
+    private void dispatchMission(Integer missionCode ,Integer chatPetId){
+
+        ChatPetPersonalMission cppm = new ChatPetPersonalMission();
+        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+
+            cppm.setChatPetId(chatPetId);
+            cppm.setCreateTime(new Date());
+            cppm.setState(MissionStateEnum.GOING_ON.getCode());
+            cppm.setMissionCode(missionCode);
+
+            this.save(cppm);
+        }
+
+
+    }
+
 
     /**
      * 任务池新增记录
@@ -106,6 +126,11 @@ public class ChatPetMissionPoolService {
         chatPetPersonalMissionMapper.insert(cppm);
     }
 
+    /**
+     * 派发资讯任务
+     * @param adId
+     * @param wxfanId
+     */
     public void saveMissionRecordWhenPushChatPetAd(Integer adId,Integer wxfanId){
         //获取fanopenid
         WxFan wxfan = wxFanService.getById(wxfanId);
@@ -157,7 +182,27 @@ public class ChatPetMissionPoolService {
         cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
 
         this.update(cppm);
-}
+
+        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+            this.dispatchMission(MissionEnumService.INVITE_FRIENDS_MISSION_CODE ,chatPetId);
+        }
+    }
+
+
+
+    /**
+     * 完成任务但是未领取奖励时更新任务池记录
+     * @param missionId
+     */
+    public void updateMissionWhenFinishByMissionId(Integer missionId){
+
+        ChatPetPersonalMission cppm = this.getById(missionId);
+
+        cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+
+        this.update(cppm);
+    }
+
 
     /**
      * 完成每日聊天签到任务
@@ -265,7 +310,7 @@ public class ChatPetMissionPoolService {
      * @param missionCode 任务编号
      * @return
      */
-    private ChatPetPersonalMission getDailyPersonalMission(Integer chatPetId,Integer missionCode){
+    public ChatPetPersonalMission getDailyPersonalMission(Integer chatPetId,Integer missionCode){
         Date now = new Date();
         Date startTime = DateUtils.getBeginDate(now);
 

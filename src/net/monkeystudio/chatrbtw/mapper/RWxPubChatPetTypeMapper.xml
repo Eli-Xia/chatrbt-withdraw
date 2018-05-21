@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RWxPubChatPetTypeMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RWxPubChatPetType">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
+        <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, wx_pub_origin_id, chat_pet_type
+    </sql>
+
+
+    <select id="selectByWxPubOriginId" resultMap="baseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List" />
+        from
+            r_wx_pub_chat_pet_type
+        where
+            wx_pub_origin_id = #{wxPubOriginId}
+    </select>
+    
+</mapper>

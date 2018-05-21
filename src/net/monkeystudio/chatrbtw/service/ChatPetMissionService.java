@@ -47,32 +47,6 @@ public class ChatPetMissionService {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                /*JedisPubSub jedisPubSub = new JedisPubSub() {
-                    @Override
-                    public void onMessage(String channel, String message) {
-
-                        Log.d("receive channel[?] , the message [?]",channel,message);
-                        String str[] = message.split(":");
-                        Integer wxFanId = Integer.valueOf(str[0]);
-                        String wxFanOpenId = str[1];
-                        Integer adId = Integer.valueOf(str[2]);
-
-                        if(str.length != 3){
-                            Log.d("chatpet mission message errror." + str);
-                            return ;
-                        }
-
-                        if(validatedWxFan(wxFanId,wxFanOpenId)){
-                            WxFan wxFan = wxFanService.getById(wxFanId);
-
-                            chatPetLogService.completeChatPetDailyTask(wxFan.getWxPubOriginId(),wxFanOpenId, ChatPetTaskEnum.DAILY_READ_NEWS);
-                        }
-                    }
-                };
-
-                redisCacheTemplate.subscribe(jedisPubSub,SUBSCRIBE_CHANNEL);*/
-
-
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
                     String string = list.get(1);

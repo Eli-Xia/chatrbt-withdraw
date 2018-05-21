@@ -141,7 +141,7 @@
 
   <select id="selectByParam" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
+      <include refid="Base_Column_List"/>
     from e_chat_pet_personal_mission
     <where>
       <if test="chatPetId != null">

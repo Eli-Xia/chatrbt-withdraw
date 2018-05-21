@@ -3,10 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.EthnicGroups;
-import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.entity.WxPub;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
@@ -41,6 +38,15 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
     @Autowired
     private WxPubService wxPubService;
+
+    @Autowired
+    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
+
+    @Autowired
+    private ChatPetRewardItemService chatPetRewardItemService;
 
 
 
@@ -92,8 +98,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             }
                         }
 
-
-
                         Integer chatPetId = null;
                         ChatPet parentChatPet = null;
                         //如果父亲是族群创始宠物
@@ -119,6 +123,12 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer secondEthnicGroupsId = parentChatPet.getSecondEthnicGroupsId();
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
+
+                            chatPetMissionPoolService.updateMissionWhenFinish(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+
+                            chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPetId,chatPetPersonalMission.getId());
+
                         }
 
                         String parentWxFanNickname = null;
@@ -130,39 +140,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             parentWxFanNickname = "喵小咪";
                         }
 
-                        CustomerNewsItem customerNewsItem = new CustomerNewsItem();
-                        /*String description = wxFan.getNickname() + "的斑马，出生于2018年4月12日8点30分您已经成功接受# " + parentWxFanNickname + "#的邀请，创造了一只独一无二的斑马，\n" +
-                                "加入了斑马星球。\n" +
-                                "\n" +
-                                "斑马星球的基本规律：多爱心互动，多真诚聊天\n" +
-                                "等到长大，虚拟宠物带回现实Money，报效宠爸宠妈\n" +
-                                "\n" +
-                                "聊天中会随机触发事件\n" +
-                                "每一次点击链接，完成每日任务，即获得成长经验值";*/
-
-                        Calendar calendar = Calendar.getInstance();
-
-                        ChatPet myChatPet = chatPetService.getById(chatPetId);
-                        Date date = myChatPet.getCreateTime();
-                        calendar.setTime(date);
-                        String description = "尊贵的" + wxFan.getNickname() + "铲屎官，您已经成功接受 " + parentWxFanNickname  + " 的邀请，加入了喵小咪星球。\n" +
-                                "自此历史浓重的记录了一笔：#" + wxFan.getNickname() + "#的喵小咪，出生于" + (calendar.get(Calendar.YEAR)) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH)+ "日" + calendar.get(Calendar.HOUR_OF_DAY) + "点" + calendar.get(Calendar.MINUTE) + "分。\n" +
-                                " \n" +
-                                "现在，可以在下面聊天栏里跟我说第一句话。\n" +
-                                "喵~期待~";
-                        customerNewsItem.setDescription(description);
-
-                        //微信网页授权url参数拼接
-                        Integer wxPubId = this.createChatPetH5Param(wxPubOriginId);
-
-                        //url = www.keendo.com.cn/res/wedo/zebra.html?id=wxPubId
-                        String url = chatPetService.getHomePageUrl(wxPubId);
-
-                        customerNewsItem.setUrl(url);
-                        customerNewsItem.setPicUrl(chatPetService.getNewsMessageCoverUrl());
-
-                        String replyContent = "喵！World!";
-                        customerNewsItem.setTitle(replyContent);
+                        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+                        CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetType, parentWxFanNickname, wxFan.getNickname() ,wxPubOriginId);
 
                         return this.replySingleNewsStr(wxPubOriginId, wxFanOpenId, customerNewsItem);
 
@@ -189,6 +168,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
         return null;
     }
+
 
 
 
