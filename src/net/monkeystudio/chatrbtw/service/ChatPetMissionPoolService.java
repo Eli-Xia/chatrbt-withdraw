@@ -97,7 +97,7 @@ public class ChatPetMissionPoolService {
      * @param missionCode
      * @param chatPetId
      */
-    private void dispatchMission(Integer missionCode ,Integer chatPetId){
+    public void dispatchMission(Integer missionCode ,Integer chatPetId){
 
         ChatPetPersonalMission cppm = new ChatPetPersonalMission();
         if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
@@ -183,9 +183,9 @@ public class ChatPetMissionPoolService {
 
         this.update(cppm);
 
-        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        /*if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
             this.dispatchMission(MissionEnumService.INVITE_FRIENDS_MISSION_CODE ,chatPetId);
-        }
+        }*/
     }
 
 

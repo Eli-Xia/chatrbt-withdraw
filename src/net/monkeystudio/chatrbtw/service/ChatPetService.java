@@ -413,6 +413,10 @@ public class ChatPetService {
 
             isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
 
+            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
+            if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+                chatPetMissionPoolService.dispatchMission(MissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
+            }
         }
 
         //插入日志
