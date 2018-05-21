@@ -689,13 +689,13 @@ public class ChatPetService {
      */
     public String getZebraHtmlUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+        String url = "https://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
         return url;
     }
 
     public String getHomePageUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/api/chat-pet/pet/home-page?id=" + wxPubId;
+        String url = "https://" + domain + "/api/chat-pet/pet/home-page?id=" + wxPubId;
         return url;
     }
 
@@ -711,7 +711,8 @@ public class ChatPetService {
 
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
-            return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+            //return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+            return "https://" + domain + "/static/chat-pet/#/?id=" + wxPubId;
         }
 
         return null;
@@ -719,7 +720,7 @@ public class ChatPetService {
 
     public String getWxOauthUrl(Integer wxPubId){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String url = "http://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
+        String url = "https://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
         return url;
     }
 
@@ -879,7 +880,7 @@ public class ChatPetService {
     public String getNewsMessageCoverUrl(){
 
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String picUrl = "http://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
+        String picUrl = "https://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
 
         return picUrl;
     }
@@ -894,7 +895,7 @@ public class ChatPetService {
      */
     public String getChatPetPosterUrl(){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String posterUrl = "http://" + domain + "/res/wedo/poster.html";
+        String posterUrl = "https://" + domain + "/res/wedo/poster.html";
 
         return posterUrl;
     }
@@ -967,7 +968,7 @@ public class ChatPetService {
         //图文封面
         String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
         String coverUrl = chatPetTypeConfig.getNewsCoverUrl();
-        customerNewsItem.setPicUrl("http://" + domain + coverUrl);
+        customerNewsItem.setPicUrl("https://" + domain + coverUrl);
 
         Integer wxPubId = wxPubService.getByOrginId(wxPubOriginId).getId();
         String url = this.getHomePageUrl(wxPubId);
