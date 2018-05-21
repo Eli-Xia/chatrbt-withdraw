@@ -7,10 +7,8 @@ import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
-import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +22,8 @@ import java.util.List;
  */
 @Service
 public class ChatPetRewardItemService {
-
+    @Autowired
+    private MissionEnumService missionEnumService;
     @Autowired
     private ChatPetRewardItemMapper chatPetRewardItemMapper;
 
@@ -94,7 +93,7 @@ public class ChatPetRewardItemService {
 
                 ChatPetRewardItem item = new ChatPetRewardItem();
 
-                item.setGoldValue(ChatPetTaskEnum.codeOf(cppm.getMissionCode()).getCoinValue());
+                item.setGoldValue(missionEnumService.getMissionByCode(cppm.getMissionCode()).getCoin());
                 item.setChatPetId(chatPetId);
                 item.setMissionItemId(cppm.getId());
                 item.setRewardState(NOT_AWARD);

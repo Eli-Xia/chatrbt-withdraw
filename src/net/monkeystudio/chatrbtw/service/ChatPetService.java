@@ -9,7 +9,6 @@ import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
@@ -24,12 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,9 +37,9 @@ import java.util.List;
 public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
-
     @Autowired
-    private COSService cosService;
+    private MissionEnumService missionEnumService;
+
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
@@ -429,7 +423,7 @@ public class ChatPetService {
         ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
         Integer missionCode = cppm.getMissionCode();
 
-        Float incrCoin = ChatPetTaskEnum.codeOf(missionCode).getCoinValue();
+        Float incrCoin = missionEnumService.getMissionByCode(missionCode).getCoin();
         this.increaseCoin(chatPetId,incrCoin);
 
 

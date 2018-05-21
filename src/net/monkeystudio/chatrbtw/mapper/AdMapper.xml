@@ -165,7 +165,7 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
-    <update id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Ad">
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Ad">
         insert e_ad( ad_type, title, description, text_content, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content,push_strategy_type)
         values(
           #{adType,jdbcType=VARCHAR},
@@ -189,7 +189,7 @@
           #{portalContent},
           #{pushStrategyType}
           )
-    </update>
+    </insert>
 
 
     <delete id="detete" parameterType="map">

@@ -8,7 +8,6 @@ import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
@@ -26,9 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -175,7 +172,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
                 //完成陪聊宠每日签到任务
-                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetTaskEnum.DAILY_CHAT.getCode());
+                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, MissionEnumService.DAILY_CHAT_MISSION_CODE);
 
                 this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
             }

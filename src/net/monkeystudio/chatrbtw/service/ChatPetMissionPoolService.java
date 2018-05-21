@@ -4,12 +4,10 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.enums.chatpet.ChatPetTaskEnum;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
@@ -26,6 +24,8 @@ import java.util.List;
  */
 @Service
 public class ChatPetMissionPoolService {
+    @Autowired
+    private MissionEnumService missionEnumService;
     @Autowired
     private ChatPetPersonalMissionMapper chatPetPersonalMissionMapper;
 
@@ -118,7 +118,8 @@ public class ChatPetMissionPoolService {
         cppm.setState(MissionStateEnum.GOING_ON.getCode());
         cppm.setChatPetId(chatPetId);
         cppm.setCreateTime(new Date());
-        cppm.setMissionCode(ChatPetTaskEnum.RANDOM_MISSION.getCode());
+
+        cppm.setMissionCode(MissionEnumService.SEARCH_NEWS_MISSION_CODE);
         cppm.setAdId(adId);
 
         this.save(cppm);
@@ -137,7 +138,7 @@ public class ChatPetMissionPoolService {
 
         Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
 
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, ChatPetTaskEnum.DAILY_READ_NEWS.getCode());
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, MissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
         //update adId
         cppm.setAdId(adId);
@@ -195,7 +196,7 @@ public class ChatPetMissionPoolService {
         String wxPubOriginId = wxfan.getWxPubOriginId();
         String wxFanOpenId = wxfan.getWxFanOpenId();
 
-        this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,ChatPetTaskEnum.DAILY_READ_NEWS.getCode(),adId);
+        this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,MissionEnumService.SEARCH_NEWS_MISSION_CODE,adId);
     }
 
     /**
@@ -314,7 +315,10 @@ public class ChatPetMissionPoolService {
 
         for (ChatPetPersonalMission cppm : cppms){
             TodayMissionItem item = new TodayMissionItem();
-            item.setMissionName(ChatPetTaskEnum.codeOf(cppm.getMissionCode()).getName());
+
+            String missionName = missionEnumService.getMissionByCode(cppm.getMissionCode()).getMissionName();
+            item.setMissionName(missionName);
+
             item.setState(cppm.getState());
             item.setItemId(cppm.getId());
 
