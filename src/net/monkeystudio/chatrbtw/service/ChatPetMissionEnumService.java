@@ -44,6 +44,6 @@ public class ChatPetMissionEnumService {
     }
 
     private String getChatPetMissionEnumCacheKey(Integer missionCode){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + " chatpetmission "+ missionCode.toString();
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "ChatPetMission:"+ missionCode.toString();
     }
 }
