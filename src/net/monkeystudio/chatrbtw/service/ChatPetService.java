@@ -314,12 +314,16 @@ public class ChatPetService {
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
         ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);//奖励对象
         /**
-         * 需要做什么校验???
+         * 需要做什么校验???  rewardItem-state是什么    领取奖励的宠物需要是自己的宠物     missionItemId 是已完成的状态
          */
 
         if(chatPet == null){
             throw new BizException("尚未领取宠物");
         }
+
+        chatPet.getId();
+
+
 
         Integer chatPetId = chatPet.getId();
 
