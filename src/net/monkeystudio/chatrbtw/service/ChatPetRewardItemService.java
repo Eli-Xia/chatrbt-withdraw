@@ -35,8 +35,8 @@ public class ChatPetRewardItemService {
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
-    private static final Integer NOT_AWARD = 0;
-    private static final Integer HAVE_AWARD = 1;
+    public static final Integer NOT_AWARD = 0;
+    public static final Integer HAVE_AWARD = 1;
 
 
 
@@ -186,6 +186,9 @@ public class ChatPetRewardItemService {
         Float f = (float)(i + 15) / 10F ;
         return f;
     }
+
+
+
 
 
     /**

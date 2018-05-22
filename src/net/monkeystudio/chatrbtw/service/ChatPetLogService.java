@@ -191,7 +191,7 @@ public class ChatPetLogService {
     }
 
     //每日可领取奖励日志
-    public void saveDailyFixedCoinLog(Integer chatPetRewardItemId){
+    public void saveLevelRewardLog(Integer chatPetRewardItemId){
         ChatPetRewardItem item = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
 

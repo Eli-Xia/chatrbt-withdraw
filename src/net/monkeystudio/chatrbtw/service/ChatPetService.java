@@ -322,8 +322,8 @@ public class ChatPetService {
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
         ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);//奖励对象
 
-        if(chatPet == null){
-            throw new BizException("尚未领取宠物");
+        if(chatPet == null || chatPetRewardItem == null){
+            throw new BizException("无法领取");
         }
 
         //判断领取的奖励是否为该粉丝的奖励,通过对比宠物id
@@ -331,6 +331,10 @@ public class ChatPetService {
         Integer rewardChatPetId = chatPetRewardItem.getChatPetId();
         if(!fansChatPetId.equals(rewardChatPetId)){
             throw new BizException("无法领取");
+        }
+
+        if(ChatPetRewardItemService.HAVE_AWARD.equals(chatPetRewardItem.getRewardState())){
+            throw new BizException("您已领取过奖励");
         }
 
         Integer chatPetPersonalMissionId = chatPetRewardItem.getMissionItemId();
@@ -416,8 +420,26 @@ public class ChatPetService {
         if(isMissionReward){
             chatPetLogService.savePetLog4MissionReward(missionItemId,isUpgrade);
         }else{
-            chatPetLogService.saveDailyFixedCoinLog(chatPetRewardItemId);
+            //chatPetLogService.saveDailyFixedCoinLog(chatPetRewardItemId);
         }
+    }
+
+    /**
+     * 每日可领取奖励(等级奖励)处理
+     * @param chatPetRewardItemId 领取奖励对象id
+     */
+    private void levelRewardHandle(Integer chatPetRewardItemId){
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
+
+        //修改奖励对象的领取状态为已领取
+
+
+        //加金币
+        this.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
+
+        //宠物日志
+        chatPetLogService.saveLevelRewardLog(chatPetRewardItemId);
     }
 
     /**
