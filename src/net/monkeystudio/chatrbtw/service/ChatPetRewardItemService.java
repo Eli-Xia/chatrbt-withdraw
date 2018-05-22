@@ -33,9 +33,6 @@ public class ChatPetRewardItemService {
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
-    private ChatPetMissionService chatPetMissionService;
-
-    @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
     private static final Integer NOT_AWARD = 0;

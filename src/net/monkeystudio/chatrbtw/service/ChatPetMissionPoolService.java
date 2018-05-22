@@ -62,7 +62,7 @@ public class ChatPetMissionPoolService {
 
         Long incr = redisCacheTemplate.incr(createDailyMissionCountCacheKey);
 
-        if(incr == 1){
+        if(incr.intValue() == 1){
             //填充任务池
             this.createDailyMission(chatPetId);
             //缓存时间为当日
