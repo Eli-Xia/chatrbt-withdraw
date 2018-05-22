@@ -884,14 +884,28 @@ public class ChatPetService {
         return creationPost;
     }
 
-    //应该改为传宠物id即可生成
-    public CustomerNewsItem getChatNewsItem(Integer chatPetType ,String parentWxFanNickname ,String wxFanNickname ,String wxPubOriginId){
+
+    /**
+     * 获取宠物的图文卡片
+     * @param chatPetId
+     * @return
+     */
+    public CustomerNewsItem getChatNewsItem(Integer chatPetId){
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
         ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
 
         CustomerNewsItem customerNewsItem = new CustomerNewsItem();
 
         String description = chatPetTypeConfig.getNewsDescription();
 
+        Integer wxFanParentId = chatPet.getParentId();
+        WxFan wxFanParent = wxFanService.getById(wxFanParentId);
+        String parentWxFanNickname = wxFanParent.getNickname();
         //替换邀请人
         if(parentWxFanNickname == null){
             String founderName = chatPetTypeConfig.getFounderName();
@@ -901,6 +915,9 @@ public class ChatPetService {
         }
 
         //替换粉丝名称
+        String wxFanOpenId = chatPet.getWxFanOpenId();
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        String wxFanNickname = wxFan.getNickname();
         description = description.replace("#{wxFanNickname}", wxFanNickname);
 
         //替换出生日期
