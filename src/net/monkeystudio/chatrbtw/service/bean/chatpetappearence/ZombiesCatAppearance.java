@@ -1,10 +1,12 @@
 package net.monkeystudio.chatrbtw.service.bean.chatpetappearence;
 
 import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetAppearanceCodeSite;
+import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 
 /**
  * Created by bint on 2018/5/9.
  */
+@ChatPetType(1)
 public class ZombiesCatAppearance {
 
     //外轮廓

@@ -218,17 +218,18 @@ public class ChatPetService {
         //公众号二维码base64
         try {
         String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
-        chatPetBaseInfo.setInvitationQrCode(base64);
+            chatPetBaseInfo.setInvitationQrCode(base64);
         } catch (BizException e) {
-        Log.e(e);
+            Log.e(e);
         } catch (IOException e) {
-        Log.e(e);
+            Log.e(e);
         } catch (WriterException e) {
-        Log.e(e);
+            Log.e(e);
         }
 
         //宠物的经验
         Float experience = chatPet.getExperience();
+
         chatPetBaseInfo.setExperience(experience);
 
         //经验条进度

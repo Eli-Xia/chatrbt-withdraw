@@ -96,8 +96,7 @@ public class ChatPetLevelService {
         Integer nextLevel = nowLevel + 1;
 
         //下一级所需经验值
-        Float updateNeedExperience = null;
-        Float.parseFloat(this.upgradeNeedExperience(nextLevel).toString());
+        Float updateNeedExperience = Float.parseFloat(this.upgradeNeedExperience(nextLevel).toString());
 
         ExperienceProgressRate experienceProgressRate = new ExperienceProgressRate();
 
