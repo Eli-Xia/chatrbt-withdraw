@@ -39,7 +39,7 @@ public class ChatPetLogService {
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
-    private MissionEnumService missionEnumService;
+    private ChatPetMissionEnumService chatPetMissionEnumService;
 
 
     /**
@@ -154,17 +154,17 @@ public class ChatPetLogService {
         String content = "";
 
         //咨询获取任务
-        if(MissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            content = "完成NO." + getRandomNum(createTime) + missionEnumService.getMissionByCode(missionCode).getMissionName();
+        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            content = "完成NO." + getRandomNum(createTime) + chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName();
         }
 
         //每日打招呼任务
-        if(MissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
-            content = "完成" + missionEnumService.getMissionByCode(missionCode).getMissionName();
+        if(chatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            content = "完成" + chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName();
         }
 
         //邀请人任务
-        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
             content = "成功邀请好友加入族群";
         }
 

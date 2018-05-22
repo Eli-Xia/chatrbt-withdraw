@@ -59,4 +59,11 @@
     </where>
   </select>
 
+    <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+        update e_chat_pet_reward_item
+        set gold_value = #{goldValue},reward_state = #{rewardState},mission_item_id = #{missionItemId} ,
+        chat_pet_id = #{chatPetId} , experience = #{experience} , create_time = #{createTime}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
 </mapper>

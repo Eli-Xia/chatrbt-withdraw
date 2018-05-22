@@ -10,7 +10,7 @@
         <result column="second_ethnic_groups_id" property="secondEthnicGroupsId" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="VARCHAR" />
         <result column="parent_id" property="parentId" jdbcType="INTEGER" />
-        <result column="experience" property="experience" jdbcType="INTEGER" />
+        <result column="experience" property="experience" jdbcType="REAL" />
         <result column="coin" property="coin" jdbcType="REAL" />
         <result column="appearance_code" property="appearanceCode" jdbcType="VARCHAR" />
     </resultMap>

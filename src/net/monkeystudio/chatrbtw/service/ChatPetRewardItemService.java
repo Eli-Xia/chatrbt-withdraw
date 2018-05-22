@@ -8,6 +8,7 @@ import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
+import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.*;
 @Service
 public class ChatPetRewardItemService {
     @Autowired
-    private MissionEnumService missionEnumService;
+    private ChatPetMissionEnumService chatPetMissionEnumService;
     @Autowired
     private ChatPetRewardItemMapper chatPetRewardItemMapper;
 
@@ -157,7 +158,7 @@ public class ChatPetRewardItemService {
      * @param missionCode
      */
     private void saveRewardItemByMission(Integer missionCode,Integer chatPetId,Integer chatPetPersonalMissionId){
-        if(MissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
             ChatPetRewardItem item = new ChatPetRewardItem();
 
             item.setChatPetId(chatPetId);
@@ -172,8 +173,8 @@ public class ChatPetRewardItemService {
 
             item.setChatPetId(chatPetId);
             item.setRewardState(NOT_AWARD);
-            item.setGoldValue(missionEnumService.getMissionByCode(missionCode).getCoin());
-            item.setExperience(missionEnumService.getMissionByCode(missionCode).getExperience());
+            item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
+            item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
             item.setMissionItemId(chatPetPersonalMissionId);
         }
 
@@ -187,8 +188,19 @@ public class ChatPetRewardItemService {
         return f;
     }
 
+    /**
+     * 领取奖励后修改奖励为已领取
+     * @param chatPetRewardItemId
+     */
+    public void updateRewardState(Integer chatPetRewardItemId){
 
+        ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
 
+        chatPetRewardItem.setRewardState(HAVE_AWARD);
+
+        this.chatPetRewardItemMapper.updateByPrimaryKey(chatPetRewardItem);
+
+    }
 
 
     /**

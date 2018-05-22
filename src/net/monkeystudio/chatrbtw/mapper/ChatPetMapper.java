@@ -16,7 +16,7 @@ public interface ChatPetMapper {
 
     ChatPet selectByParam(ChatPet chatPet);
 
-    Integer increaseExperience(@Param("id") Integer chatPetId ,@Param("augend") Integer augend);
+    Integer increaseExperience(@Param("id") Integer chatPetId ,@Param("augend") Float augend);
 
     Integer increaseCoin(@Param("id") Integer chatPetId ,@Param("rewardCoin") Float rewardCoin);
 

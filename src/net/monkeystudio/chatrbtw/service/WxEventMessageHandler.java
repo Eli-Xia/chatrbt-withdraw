@@ -120,8 +120,8 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
 
-                            chatPetMissionPoolService.updateMissionWhenFinish(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            chatPetMissionPoolService.updateMissionWhenFinish(chatPetId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
                             chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPetId,chatPetPersonalMission.getId());
                         }
