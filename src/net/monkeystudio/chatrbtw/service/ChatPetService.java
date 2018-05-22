@@ -537,7 +537,7 @@ public class ChatPetService {
 
         String wxFanOpenId = wxFan.getWxFanOpenId();
 
-        Boolean ret =   isUserFollowWxPub(wxPubAppId,wxFanOpenId) && isFanOwnChatPet(wxPubAppId,wxFanOpenId);
+        Boolean ret = isUserFollowWxPub(wxPubAppId,wxFanOpenId) && isFanOwnChatPet(wxPubAppId,wxFanOpenId);
 
         return ret;
     }

@@ -95,7 +95,6 @@ public class ChatPetController extends ChatPetBaseController{
         }else{
             //判断是否为跨公众号同session
             if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
-                Log.d(" ====== notSame ====");
 
                 saveSessionUserId(null);
 
