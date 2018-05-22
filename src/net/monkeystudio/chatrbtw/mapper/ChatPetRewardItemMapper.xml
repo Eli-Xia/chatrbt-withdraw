@@ -127,4 +127,9 @@
       </if>
     </where>
   </select>
+
+  <select id= "" resultMap="java.lang.Float">
+    select gold_value FROM  e_chat_pet_reward_item
+    WHERE chat_pet_id = #{chatPetId} AND mission_item_id IS  null ORDER BY id DESC limit 1
+  </select>
 </mapper>

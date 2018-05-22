@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.mapper;
 
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface ChatPetRewardItemMapper {
     int batchInsert(List<ChatPetRewardItem> items);
 
     List<ChatPetRewardItem> selectByParam(ChatPetRewardItem param);
+
+    ChatPetRewardItem selectLevelRewardItem(@Param("chatPetId")Integer chatPetId);
 }

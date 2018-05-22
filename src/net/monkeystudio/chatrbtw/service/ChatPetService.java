@@ -339,7 +339,6 @@ public class ChatPetService {
 
 
     /**
-     * 加入奖励池后  修改
      * 完成每日任务领取奖励
      * @param chatPetRewardItemId 奖励池表主键
      * @throws BizException
@@ -401,45 +400,12 @@ public class ChatPetService {
 
         //插入日志
         if(isMissionReward){
-            chatPetLogService.savePetLogWhenReward(missionItemId,isUpgrade);
+            chatPetLogService.savePetLog4MissionReward(missionItemId,isUpgrade);
         }else{
-            chatPetLogService.saveDailyFixedCoinLog(chatPetId,chatPetRewardItemId);
+            chatPetLogService.saveDailyFixedCoinLog(chatPetRewardItemId);
         }
     }
 
-
-
-    /**
-     * 完成每日任务领取奖励
-     * @param itemId
-     */
-    @Transactional
-    public void missionReward(Integer chatPetId,Integer itemId) {
-        //更新任务池记录
-        chatPetMissionPoolService.updateMissionWhenReward(itemId);
-
-
-        //增加金币
-        ChatPetPersonalMission cppm = chatPetMissionPoolService.getById(itemId);
-        Integer missionCode = cppm.getMissionCode();
-
-        Float incrCoin = missionEnumService.getMissionByCode(missionCode).getCoin();
-        this.increaseCoin(chatPetId,incrCoin);
-
-
-        //增加经验
-        ChatPet chatPet = this.getById(chatPetId);
-        Float oldExperience = chatPet.getExperience();
-
-        Integer addExperience = incrCoin.intValue();
-        this.increaseExperience(chatPetId,addExperience);
-
-        Float newExprience = this.getChatPetExperience(chatPetId);
-
-
-        //插入日志
-        chatPetLogService.savePetLogWhenReward(chatPetId,missionCode,oldExperience, newExprience);
-    }
 
     /**
      * 粉丝是否拥有宠物

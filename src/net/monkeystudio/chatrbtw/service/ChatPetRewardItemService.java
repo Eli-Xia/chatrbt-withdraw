@@ -206,6 +206,16 @@ public class ChatPetRewardItemService {
         return ret;
     }
 
+    /**
+     *  获取当前宠物等级奖励的奖励值
+     * @param chatPetId
+     * @return
+     */
+    public Float getChatPetLevelCoinReward(Integer chatPetId){
+        ChatPetRewardItem chatPetRewardItem = this.chatPetRewardItemMapper.selectLevelRewardItem(chatPetId);
+        return chatPetRewardItem.getGoldValue();
+    }
+
     //初始化奖励池count cache
     private String getInitRewardItemCountKey(Integer chatPetId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "initRewardItem:" + chatPetId;

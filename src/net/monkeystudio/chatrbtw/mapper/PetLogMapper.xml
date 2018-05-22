@@ -9,12 +9,13 @@
     <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
     <result column="task_code" property="taskCode" jdbcType="INTEGER" />
     <result column="reward_type" property="rewardType" jdbcType="INTEGER" />
+    <result column="reward_item_id" property="rewardItemId" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.PetLog" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type
+    id, create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type,reward_item_id
   </sql>
   <sql id="Blob_Column_List" >
     content
@@ -31,10 +32,10 @@
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
     insert into e_pet_log (id, create_time,
       chat_pet_id, wx_pub_origin_id, wx_fan_open_id, 
-      content,task_code,reward_type)
+      content,task_code,reward_type,reward_item_id)
     values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
       #{chatPetId,jdbcType=INTEGER}, #{wxPubOriginId,jdbcType=VARCHAR}, #{wxFanOpenId,jdbcType=VARCHAR}, 
-      #{content,jdbcType=LONGVARCHAR}, #{taskCode},#{rewardType})
+      #{content,jdbcType=LONGVARCHAR}, #{taskCode},#{rewardType} ,#{rewardItemId})
   </insert>
   <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.PetLog" >
     insert into e_pet_log
@@ -63,6 +64,9 @@
       <if test="reward_type != null" >
         reward_type,
       </if>
+      <if test="reward_item_id != null" >
+        reward_item_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -89,6 +93,9 @@
       <if test="rewardType != null" >
         #{rewardType,jdbcType=INTEGER},
       </if>
+      <if test="rewardItemId != null" >
+        #{rewardItemId,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
 
@@ -101,10 +108,10 @@
 
   <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
 
-    insert into e_pet_log (create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type,content)
+    insert into e_pet_log (create_time, chat_pet_id, wx_pub_origin_id, wx_fan_open_id,task_code,reward_type,content,reward_item_id)
     values
     <foreach collection="list" item="item" index="index" separator=",">
-      (#{item.createTime}, #{item.chatPetId},#{item.wxPubOriginId},#{item.wxFanOpenId},#{item.taskCode},#{item.rewardType},#{item.content})
+      (#{item.createTime}, #{item.chatPetId},#{item.wxPubOriginId},#{item.wxFanOpenId},#{item.taskCode},#{item.rewardType},#{item.content},#{item.rewardItemId})
     </foreach>
   </insert>
 

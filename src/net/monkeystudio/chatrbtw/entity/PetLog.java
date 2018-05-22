@@ -19,6 +19,16 @@ public class PetLog {
 
     private Integer rewardType;
 
+    private Integer rewardItemId;
+
+    public Integer getRewardItemId() {
+        return rewardItemId;
+    }
+
+    public void setRewardItemId(Integer rewardItemId) {
+        this.rewardItemId = rewardItemId;
+    }
+
     public Integer getRewardType() {
         return rewardType;
     }
