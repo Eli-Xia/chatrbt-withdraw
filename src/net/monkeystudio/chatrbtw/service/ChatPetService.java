@@ -374,7 +374,6 @@ public class ChatPetService {
         Float incrCoin = chatPetRewardItem.getGoldValue();
         this.increaseCoin(chatPetId,incrCoin);
 
-
         //增加经验
         Float oldExperience = null;
         Float newExperience = null;
@@ -392,6 +391,9 @@ public class ChatPetService {
             newExperience = this.getChatPetExperience(chatPetId);
 
             isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
+
+            //更新状态
+            chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
 
             ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
             if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
