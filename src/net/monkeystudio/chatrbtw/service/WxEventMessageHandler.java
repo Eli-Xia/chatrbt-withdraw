@@ -128,20 +128,9 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,MissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
                             chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPetId,chatPetPersonalMission.getId());
-
                         }
 
-                        String parentWxFanNickname = null;
-                        if(parentChatPet != null){
-                            String parentWxFanOpenId = parentChatPet.getWxFanOpenId();
-                            WxFan parentWxFan = wxFanService.getWxFan(wxPubOriginId, parentWxFanOpenId);
-                            parentWxFanNickname = parentWxFan.getNickname();
-                        }else {
-                            parentWxFanNickname = "喵小咪";
-                        }
-
-                        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
-                        CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetType, parentWxFanNickname, wxFan.getNickname() ,wxPubOriginId);
+                        CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetId);
 
                         return this.replySingleNewsStr(wxPubOriginId, wxFanOpenId, customerNewsItem);
 
@@ -151,17 +140,13 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
             //如果有开启问问搜
             if (rWxPubProductService.isEnable(ProductService.ASK_SEARCH, wxPubOriginId)) {
-
                 String replyContent = "欢迎关注我们公众号，回复关键字，即可获取我们公众号的过往历史文章！";
-
                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
             }
 
             //如果有开启智能聊
             if (rWxPubProductService.isEnable(ProductService.SMART_CHAT, wxPubOriginId)) {
-
                 String replyContent = "欢迎关注我们公众号，我可以陪你聊天哟！！！么么哒～～";
-
                 return this.replyTextStr(wxPubOriginId, wxFanOpenId, replyContent);
             }
         }
