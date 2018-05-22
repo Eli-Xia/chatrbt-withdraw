@@ -172,7 +172,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
                 //完成陪聊宠每日签到任务
-                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, MissionEnumService.DAILY_CHAT_MISSION_CODE);
+                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE);
 
                 this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
             }

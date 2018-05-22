@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class ChatPetMissionPoolService {
     @Autowired
-    private MissionEnumService missionEnumService;
+    private ChatPetMissionEnumService chatPetMissionEnumService;
 
     @Autowired
     private ChatPetPersonalMissionMapper chatPetPersonalMissionMapper;
@@ -105,7 +105,7 @@ public class ChatPetMissionPoolService {
     public void dispatchMission(Integer missionCode ,Integer chatPetId){
 
         ChatPetPersonalMission cppm = new ChatPetPersonalMission();
-        if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
 
             cppm.setChatPetId(chatPetId);
             cppm.setCreateTime(new Date());
@@ -149,7 +149,7 @@ public class ChatPetMissionPoolService {
         cppm.setChatPetId(chatPetId);
         cppm.setCreateTime(new Date());
 
-        cppm.setMissionCode(MissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        cppm.setMissionCode(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
         cppm.setAdId(adId);
 
         this.save(cppm);
@@ -168,7 +168,7 @@ public class ChatPetMissionPoolService {
 
         Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
 
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, MissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
         //update adId
         cppm.setAdId(adId);
@@ -246,7 +246,7 @@ public class ChatPetMissionPoolService {
         String wxPubOriginId = wxfan.getWxPubOriginId();
         String wxFanOpenId = wxfan.getWxFanOpenId();
 
-        this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,MissionEnumService.SEARCH_NEWS_MISSION_CODE,adId);
+        this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE,adId);
     }
 
     /**
@@ -367,10 +367,10 @@ public class ChatPetMissionPoolService {
         for (ChatPetPersonalMission cppm : cppms){
             TodayMissionItem item = new TodayMissionItem();
 
-            String missionName = missionEnumService.getMissionByCode(cppm.getMissionCode()).getMissionName();
+            String missionName = chatPetMissionEnumService.getMissionByCode(cppm.getMissionCode()).getMissionName();
 
             Integer missionCode = cppm.getMissionCode();
-            if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || MissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
                 Long time = cppm.getCreateTime().getTime();
                 String no = String.valueOf(time/1000 % 10000 );
@@ -382,7 +382,7 @@ public class ChatPetMissionPoolService {
             item.setState(cppm.getState());
             item.setItemId(cppm.getId());
 
-            Integer missionType = missionEnumService.getMissionByCode(missionCode).getMissionType();
+            Integer missionType = chatPetMissionEnumService.getMissionByCode(missionCode).getMissionType();
             if(ChatPetMissionService.CHAT_PET_MISSION_TYPE_FIXED.equals(missionType)){
                 fixedMissionList.add(item);
             }else if(ChatPetMissionService.CHAT_PET_MISSION_TYPE_RANDOM.equals(missionType)){

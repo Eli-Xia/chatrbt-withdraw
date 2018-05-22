@@ -13,7 +13,7 @@ import java.util.List;
  * @author xiaxin
  */
 @Service
-public class MissionEnumService {
+public class ChatPetMissionEnumService {
     @Autowired
     private ChatPetMissionService chatPetMissionService;
 
