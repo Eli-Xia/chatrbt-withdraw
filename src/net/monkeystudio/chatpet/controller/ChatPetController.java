@@ -45,7 +45,7 @@ public class ChatPetController extends ChatPetBaseController{
         if(fanId == null){
             return respHelper.nologin();
         }
-        //Integer fanId = 42;
+        //Integer fanId = 104;
 
         ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
@@ -89,8 +89,7 @@ public class ChatPetController extends ChatPetBaseController{
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
-        //Integer userId = getUserId();
-        Integer userId = 55;
+        Integer userId = getUserId();
 
         if(userId == null){
             //网页授权
