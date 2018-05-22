@@ -132,15 +132,6 @@ public class ChatPetLogService {
 
     }
 
-    private void savePetLog(Date createTime,Integer chatPetId,Integer missionCode,Integer rewardType,String content){
-        PetLog petLog = new PetLog();
-        petLog.setCreateTime(new Date());
-        petLog.setChatPetId(chatPetId);
-        petLog.setTaskCode(missionCode);
-        petLog.setRewardType(rewardType);
-        petLog.setContent(content);
-        this.savePetLog(petLog);
-    }
 
     /**
      * 根据宠物任务派发记录id获取宠物日志内容

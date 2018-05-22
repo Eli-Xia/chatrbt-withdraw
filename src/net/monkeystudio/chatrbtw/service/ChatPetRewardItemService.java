@@ -168,6 +168,8 @@ public class ChatPetRewardItemService {
             Float random = createRandomGold4SearchNewsMission();
             item.setExperience(random);
             item.setGoldValue(random);
+
+            this.save(item);
         }else{
             ChatPetRewardItem item = new ChatPetRewardItem();
 
@@ -176,6 +178,8 @@ public class ChatPetRewardItemService {
             item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
             item.setMissionItemId(chatPetPersonalMissionId);
+
+            this.save(item);
         }
 
     }
