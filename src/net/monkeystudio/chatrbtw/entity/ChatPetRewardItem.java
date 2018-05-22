@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.entity;
 
+import java.util.Date;
+
 public class ChatPetRewardItem {
     private Integer id;
 
@@ -12,6 +14,16 @@ public class ChatPetRewardItem {
     private Integer missionItemId;
 
     private Integer chatPetId;
+
+    private Date createTime;
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public Float getExperience() {
         return experience;

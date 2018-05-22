@@ -15,6 +15,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
@@ -239,8 +240,8 @@ public class ChatPetService {
         chatPetBaseInfo.setChatPetLevel(chatPetLevel);
 
         //今日任务
-        List<TodayMissionItem> todayMissionList = chatPetMissionPoolService.getTodayMissionList(chatPetId);
-        chatPetBaseInfo.setTodayMissions(todayMissionList);
+        TodayMission todayMission = chatPetMissionPoolService.getTodayMissionWall(chatPetId);
+        chatPetBaseInfo.setTodayMission(todayMission);
 
         //奖励
         List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardItemService.getChatPetGoldItems(chatPetId);
@@ -297,7 +298,7 @@ public class ChatPetService {
         changeInfo.setExperienceProgressRate(info.getExperienceProgressRate());
         changeInfo.setFanTotalCoin(info.getFanTotalCoin());
         changeInfo.setPetLogs(info.getPetLogs());
-        changeInfo.setTodayMissions(info.getTodayMissions());
+        changeInfo.setTodayMission(info.getTodayMission());
         //族群排名
         ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);

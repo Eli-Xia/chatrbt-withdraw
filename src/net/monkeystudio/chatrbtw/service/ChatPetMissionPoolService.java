@@ -10,6 +10,7 @@ import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,10 @@ public class ChatPetMissionPoolService {
         }
 
         for(ChatPetMission cpm:activeMissions){
+            //仅初始固定任务数据
+            if(!ChatPetMissionService.CHAT_PET_MISSION_TYPE_FIXED.equals(cpm.getMissionType())){
+                continue;
+            }
             ChatPetPersonalMission cppm = new ChatPetPersonalMission();
 
             cppm.setChatPetId(chatPetId);
@@ -346,17 +351,18 @@ public class ChatPetMissionPoolService {
 
 
     /**
-     * 获取今日任务
+     * 任务墙
      * @return
      */
-    public List<TodayMissionItem> getTodayMissionList(Integer chatPetId){
+    public TodayMission getTodayMissionWall(Integer chatPetId){
         ChatPetPersonalMission param = new ChatPetPersonalMission();
         param.setChatPetId(chatPetId);
         param.setCreateTime(DateUtils.getBeginDate(new Date()));
 
         List<ChatPetPersonalMission> cppms = this.getPersonalMissionListByParam(param);
 
-        List<TodayMissionItem> items = new ArrayList<>();
+        List<TodayMissionItem> fixedMissionList = new ArrayList<>();
+        List<TodayMissionItem> randomMissionList = new ArrayList<>();
 
         for (ChatPetPersonalMission cppm : cppms){
             TodayMissionItem item = new TodayMissionItem();
@@ -376,11 +382,21 @@ public class ChatPetMissionPoolService {
             item.setState(cppm.getState());
             item.setItemId(cppm.getId());
 
-            items.add(item);
+            Integer missionType = missionEnumService.getMissionByCode(missionCode).getMissionType();
+            if(ChatPetMissionService.CHAT_PET_MISSION_TYPE_FIXED.equals(missionType)){
+                fixedMissionList.add(item);
+            }else if(ChatPetMissionService.CHAT_PET_MISSION_TYPE_RANDOM.equals(missionType)){
+                randomMissionList.add(item);
+            }
         }
 
-        return items;
+        TodayMission todayMission = new TodayMission();
+        todayMission.setFixedMissionList(fixedMissionList);
+        todayMission.setRandomMissionList(randomMissionList);
+
+        return todayMission;
     }
+
 
 
     /**

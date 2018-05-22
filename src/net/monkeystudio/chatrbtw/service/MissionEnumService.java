@@ -1,17 +1,13 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xiaxin

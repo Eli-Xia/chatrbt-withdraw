@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service.bean.chatpet;
 
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class ChatPetInfo {
 
     private List<PetLogResp> petLogs = new ArrayList<>();
 
-    private List<TodayMissionItem> todayMissions = new ArrayList<>();
+    private TodayMission todayMission;
 
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
 
@@ -48,12 +49,12 @@ public class ChatPetInfo {
         this.goldItems = goldItems;
     }
 
-    public List<TodayMissionItem> getTodayMissions() {
-        return todayMissions;
+    public TodayMission getTodayMission() {
+        return todayMission;
     }
 
-    public void setTodayMissions(List<TodayMissionItem> todayMissions) {
-        this.todayMissions = todayMissions;
+    public void setTodayMission(TodayMission todayMission) {
+        this.todayMission = todayMission;
     }
 
     public String getwPubHeadImgUrl() {

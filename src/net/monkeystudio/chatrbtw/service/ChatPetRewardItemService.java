@@ -13,10 +13,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * 陪聊宠奖励
@@ -85,6 +82,7 @@ public class ChatPetRewardItemService {
 
         fixedItem.setRewardState(NOT_AWARD);
         fixedItem.setChatPetId(chatPetId);
+        fixedItem.setCreateTime(new Date());
 
         this.save(fixedItem);
 
@@ -100,6 +98,7 @@ public class ChatPetRewardItemService {
                 item.setChatPetId(chatPetId);
                 item.setMissionItemId(cppm.getId());
                 item.setRewardState(NOT_AWARD);
+                item.setCreateTime(new Date());
 
                 this.save(item);
             }
@@ -117,6 +116,7 @@ public class ChatPetRewardItemService {
         ChatPetRewardItem param =new ChatPetRewardItem();
         param.setRewardState(NOT_AWARD);
         param.setChatPetId(chatPetId);
+        param.setCreateTime(DateUtils.getBeginDate(new Date()));
 
         List<ChatPetRewardItem> items = this.chatPetRewardItemMapper.selectByParam(param);
 

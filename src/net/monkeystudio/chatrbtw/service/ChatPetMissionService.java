@@ -18,6 +18,10 @@ import java.util.List;
 @Service
 public class ChatPetMissionService {
 
+    public final static Integer CHAT_PET_MISSION_TYPE_FIXED = 0;
+
+    public final static Integer CHAT_PET_MISSION_TYPE_RANDOM = 1;
+
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
@@ -26,9 +30,6 @@ public class ChatPetMissionService {
 
     @Autowired
     private TaskExecutor taskExecutor;
-
-    @Autowired
-    private ChatPetLogService chatPetLogService;
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;

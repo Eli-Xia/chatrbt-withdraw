@@ -40,6 +40,8 @@ public class ChatPetLogService {
 
     @Autowired
     private MissionEnumService missionEnumService;
+
+
     /**
      * 获取每日宠物日志
      * @param date
@@ -153,13 +155,12 @@ public class ChatPetLogService {
 
         //每日打招呼任务
         if(MissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
-            //完成每日打招呼任务
             content = "完成" + missionEnumService.getMissionByCode(missionCode).getMissionName();
         }
 
         //邀请人任务
         if(MissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
-
+            content = "成功邀请好友加入族群";
         }
 
         return content;
