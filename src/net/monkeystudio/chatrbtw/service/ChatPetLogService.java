@@ -84,6 +84,11 @@ public class ChatPetLogService {
         return resps;
     }
 
+    /**
+     * 保存任务类型奖励日志
+     * @param chatPetRewardItemId 领取奖励对象id
+     * @param isUpgrade             是否升级
+     */
     public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
         ChatPetRewardItem item = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
@@ -108,7 +113,7 @@ public class ChatPetLogService {
         experiencePetLog.setRewardType(RewardMethodEnum.EXPERIENCE_REWARD.getType());
         experiencePetLog.setRewardItemId(chatPetRewardItemId);
         experiencePetLog.setContent("增加经验值");
-        this.savePetLog(goldPetLog);
+        this.savePetLog(experiencePetLog);
 
         if(isUpgrade){
             ChatPet chatPet = chatPetService.getById(chatPetId);

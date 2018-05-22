@@ -67,7 +67,8 @@ public class AdClickLogService {
      * @return
      */
     private Integer countByFanIdAndAdId(Integer adId,Integer wxFanId){
-        return this.countByFanIdAndAdId(adId,wxFanId);
+
+        return this.adClickLogMapper.countByWxFanAndAd(adId,wxFanId);
     }
 
     /**
