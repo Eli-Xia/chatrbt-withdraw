@@ -364,12 +364,88 @@ public class ChatPetService {
         return info;
     }
 
+    public void reward(Integer chatPetRewardItemId){
+
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+
+        Integer missionItemId = chatPetRewardItem.getMissionItemId();
+
+        //是否为任务类型奖励
+        Boolean isMissionReward = missionItemId != null;
+
+        if(isMissionReward){
+
+            this.missionRewardHandle(chatPetRewardItemId);
+
+        }else{
+
+            this.levelRewardHandle(chatPetRewardItemId);
+
+        }
+    }
+
+
+
+
+    /**
+     * 每日可领取奖励(等级奖励)处理
+     * @param chatPetRewardItemId 领取奖励对象id
+     */
+    private void levelRewardHandle(Integer chatPetRewardItemId){
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
+
+        //修改奖励对象的领取状态为已领取
+        chatPetRewardItemService.updateRewardState(chatPetRewardItemId);
+
+        //加金币
+        this.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
+
+        //宠物日志
+        chatPetLogService.saveLevelRewardLog(chatPetRewardItemId);
+    }
+
+    /**
+     * 任务类型奖励处理
+     * @param chatPetRewardItemId   领取奖励对象id
+     */
+    private void missionRewardHandle(Integer chatPetRewardItemId){
+        //修改金币状态
+        chatPetRewardItemService.updateRewardState(chatPetRewardItemId);
+
+        //修改任务记录状态
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer missionItemId = chatPetRewardItem.getMissionItemId();
+        chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
+
+        //加金币
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
+        this.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
+
+        //加经验
+        ChatPet chatPet = this.getById(chatPetId);
+        Float oldExperience = chatPet.getExperience();
+        this.increaseExperience(chatPetId,chatPetRewardItem.getExperience());
+
+        //是否升级
+        Float newExperience = chatPet.getExperience();
+        boolean isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
+
+        //宠物日志
+        chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
+
+        //邀请人
+        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+            chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
+        }
+    }
 
     /**
      * 领取奖励后相关操作
      * @param chatPetRewardItemId 领取奖励对象id
      * @throws BizException
-     */
+     *//*
     @Transactional
     public void reward(Integer chatPetRewardItemId) throws BizException{
 
@@ -422,48 +498,7 @@ public class ChatPetService {
         }else{
             //chatPetLogService.saveDailyFixedCoinLog(chatPetRewardItemId);
         }
-    }
-
-    /**
-     * 每日可领取奖励(等级奖励)处理
-     * @param chatPetRewardItemId 领取奖励对象id
-     */
-    private void levelRewardHandle(Integer chatPetRewardItemId){
-        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
-        Integer chatPetId = chatPetRewardItem.getChatPetId();
-
-        //修改奖励对象的领取状态为已领取
-        chatPetRewardItemService.updateRewardState(chatPetRewardItemId);
-
-        //加金币
-        this.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
-
-        //宠物日志
-        chatPetLogService.saveLevelRewardLog(chatPetRewardItemId);
-    }
-
-    /**
-     * 任务类型奖励处理
-     * @param chatPetRewardItemId   领取奖励对象id
-     */
-    private void missionRewardHandle(Integer chatPetRewardItemId){
-        //修改金币状态
-        chatPetRewardItemService.updateRewardState(chatPetRewardItemId);
-
-        //修改任务记录状态
-        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
-        Integer missionItemId = chatPetRewardItem.getMissionItemId();
-        chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
-
-        //加金币
-        Integer chatPetId = chatPetRewardItem.getChatPetId();
-        this.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
-
-        //加经验
-        this.increaseExperience(chatPetId,chatPetRewardItem.getExperience());
-
-        //宠物日志
-    }
+    }*/
 
     /**
      * 点击"领取"时判断当前是否能够领取
