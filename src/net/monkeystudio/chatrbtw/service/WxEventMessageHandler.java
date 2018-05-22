@@ -40,14 +40,10 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     private WxPubService wxPubService;
 
     @Autowired
-    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
-
-    @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
     private ChatPetRewardItemService chatPetRewardItemService;
-
 
 
 
