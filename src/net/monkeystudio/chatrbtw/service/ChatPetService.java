@@ -310,8 +310,12 @@ public class ChatPetService {
 
     }
 
-    public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer rewardItemId,Integer missionItemId) throws BizException{
-        ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
+    public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer rewardItemId) throws BizException{
+        ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
+        ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);//奖励对象
+        /**
+         * 需要做什么校验???
+         */
 
         if(chatPet == null){
             throw new BizException("尚未领取宠物");
@@ -324,18 +328,6 @@ public class ChatPetService {
         ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
         return info;
-    }
-
-    /**
-     * 点击"领取"时判断当前是否能够领取
-     * @param nowState : 当前任务状态
-     * @return
-     */
-    private boolean isAble2Reward(Integer nowState){
-
-        Integer shouldState = MissionStateEnum.FINISH_NOT_AWARD.getCode();//当前任务领取状态应为 已完成未领取
-
-        return shouldState.equals(nowState);
     }
 
 
@@ -375,20 +367,20 @@ public class ChatPetService {
         this.increaseCoin(chatPetId,incrCoin);
 
         //增加经验
-        Float oldExperience = null;
-        Float newExperience = null;
+        //Float oldExperience = null;
+        //Float newExperience = null;
 
         Boolean isUpgrade = false;
         //如果是从任务来的奖励
         if(isMissionReward){
 
             ChatPet chatPet = this.getById(chatPetId);
-            oldExperience = chatPet.getExperience();
+            Float oldExperience = chatPet.getExperience();
 
             Integer addExperience = incrCoin.intValue();
             this.increaseExperience(chatPetId,addExperience);
 
-            newExperience = this.getChatPetExperience(chatPetId);
+            Float newExperience = this.getChatPetExperience(chatPetId);
 
             isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
 
@@ -408,6 +400,19 @@ public class ChatPetService {
             chatPetLogService.saveDailyFixedCoinLog(chatPetRewardItemId);
         }
     }
+
+    /**
+     * 点击"领取"时判断当前是否能够领取
+     * @param nowState : 当前任务状态
+     * @return
+     */
+    private boolean isAble2Reward(Integer nowState){
+
+        Integer shouldState = MissionStateEnum.FINISH_NOT_AWARD.getCode();//当前任务领取状态应为 已完成未领取
+
+        return shouldState.equals(nowState);
+    }
+
 
 
     /**

@@ -27,8 +27,6 @@ import java.io.IOException;
 @RequestMapping(value = "/chat-pet/pet")
 public class ChatPetController extends ChatPetBaseController{
 
-    private final static String HOME_PAGE = "/res/wedo/zebra.html";
-
     @Autowired
     private ChatPetService chatPetService;
 
@@ -40,12 +38,12 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
-        Integer fanId = getUserId();
+        /*Integer fanId = getUserId();
 
         if(fanId == null){
             return respHelper.nologin();
-        }
-        //Integer fanId = 104;
+        }*/
+        Integer fanId = 104;
 
         ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
@@ -150,7 +148,7 @@ public class ChatPetController extends ChatPetBaseController{
             return respHelper.nologin();
         }
 
-        ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId(), req.getMissionItemId());
+        ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId());
 
         return respHelper.ok(changeInfo);
     }
