@@ -310,25 +310,50 @@ public class ChatPetService {
 
     }
 
+    /**
+     * 领取奖励处理
+     * @param wxFanId        粉丝id
+     * @param rewardItemId  领取奖励记录id
+     * @return
+     * @throws BizException
+     */
     public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer rewardItemId) throws BizException{
+
         ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
         ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(rewardItemId);//奖励对象
-        /**
-         * 需要做什么校验???  rewardItem-state是什么    领取奖励的宠物需要是自己的宠物     missionItemId 是已完成的状态
-         */
 
         if(chatPet == null){
             throw new BizException("尚未领取宠物");
         }
 
-        chatPet.getId();
+        //判断领取的奖励是否为该粉丝的奖励,通过对比宠物id
+        Integer fansChatPetId = chatPet.getId();
+        Integer rewardChatPetId = chatPetRewardItem.getChatPetId();
+        if(!fansChatPetId.equals(rewardChatPetId)){
+            throw new BizException("无法领取");
+        }
 
+        Integer chatPetPersonalMissionId = chatPetRewardItem.getMissionItemId();
 
+        //任务类型奖励判断
+        if(chatPetPersonalMissionId != null){
+            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+            //任务状态,判断任务状态是否为完成可领取奖励状态
+            Integer state = chatPetPersonalMission.getState();
+
+            if(MissionStateEnum.GOING_ON.equals(state)){
+                throw new BizException("请完成任务后再来领取");
+            }
+
+            if(MissionStateEnum.FINISH_AND_AWARD.equals(state)){
+                throw new BizException("您已领取过奖励");
+            }
+        }
+
+        //领取奖励
+        this.reward(rewardItemId);
 
         Integer chatPetId = chatPet.getId();
-
-        this.missionReward(rewardItemId);
-
         ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
         return info;
@@ -336,14 +361,13 @@ public class ChatPetService {
 
 
     /**
-     * 完成每日任务领取奖励
-     * @param chatPetRewardItemId 奖励池表主键
+     * 领取奖励后相关操作
+     * @param chatPetRewardItemId 领取奖励对象id
      * @throws BizException
      */
     @Transactional
-    public void missionReward(Integer chatPetRewardItemId) throws BizException{
+    public void reward(Integer chatPetRewardItemId) throws BizException{
 
-        //判断rewardItem的state是否为未领奖  &&  missionItemId判断该任务已经完成  还没完成任务不能领奖
         ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
 
         Integer missionItemId = chatPetRewardItem.getMissionItemId();
@@ -356,17 +380,8 @@ public class ChatPetService {
             isMissionReward = true;
         }
 
-        Integer chatPetId = chatPetRewardItem.getChatPetId();
-
-        if(chatPetRewardItemService.isGoldAwarded(chatPetRewardItemId)){
-            throw new BizException("您已经领取过奖励");
-        }
-
-        if(isMissionReward && !chatPetMissionPoolService.isFinishMission(missionItemId)){
-            throw new BizException("请完成任务后再领取奖励");
-        }
-
         //增加金币
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
         Float incrCoin = chatPetRewardItem.getGoldValue();
         this.increaseCoin(chatPetId,incrCoin);
 
