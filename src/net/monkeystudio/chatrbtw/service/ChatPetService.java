@@ -217,7 +217,7 @@ public class ChatPetService {
 
         //公众号二维码base64
         try {
-        String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
+            String base64 = ethnicGroupsService.createInvitationQrCode(chatPetId);
             chatPetBaseInfo.setInvitationQrCode(base64);
         } catch (BizException e) {
             Log.e(e);
