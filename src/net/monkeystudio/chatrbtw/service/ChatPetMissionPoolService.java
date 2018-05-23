@@ -229,11 +229,11 @@ public class ChatPetMissionPoolService {
         //未完成时:
         if(!isMissionDone){
             this.updateMissionWhenFinish(chatPet.getId(),missionCode);
+            ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
+            chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
         }
 
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
 
-        chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
     }
 
     /**

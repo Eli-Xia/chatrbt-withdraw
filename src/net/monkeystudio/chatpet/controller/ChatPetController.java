@@ -141,6 +141,7 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
+
         Integer userId = this.getUserId();
 
         if(userId == null){
