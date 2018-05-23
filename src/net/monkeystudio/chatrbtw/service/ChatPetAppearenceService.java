@@ -59,7 +59,7 @@ public class ChatPetAppearenceService {
      * 从外观池取出
      * @return
      */
-    public String getChatPetAppearenceCodeFromPool(){
+    public String getZombiesCatAppearanceCodeFromPool(){
         String key = this.getAppearenceCodePoolKey();
 
         String appearenceCode = redisCacheTemplate.lpop(key);
