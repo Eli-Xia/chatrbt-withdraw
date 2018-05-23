@@ -120,7 +120,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
 
 
-                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(parentId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
                             if(chatPetPersonalMission != null){
                                 //生成任务奖励
