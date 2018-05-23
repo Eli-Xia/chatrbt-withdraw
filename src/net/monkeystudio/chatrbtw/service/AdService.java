@@ -580,7 +580,7 @@ public class AdService {
         List<Ad> shotAds = new ArrayList<>();
 
         for(Ad ad : ads){
-            boolean isClicked = adClickLogService.isWxFanHasClickedAd(ad.getId(), wxFanId);
+            boolean isClicked = adClickLogService.isWxFanHasClickedAd(wxFanId,ad.getId());
 
             if(!isClicked){
                 shotAds.add(ad);
