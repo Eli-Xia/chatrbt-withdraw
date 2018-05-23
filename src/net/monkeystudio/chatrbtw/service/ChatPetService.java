@@ -931,13 +931,14 @@ public class ChatPetService {
         String description = chatPetTypeConfig.getNewsDescription();
 
         Integer wxFanParentId = chatPet.getParentId();
-        WxFan wxFanParent = wxFanService.getById(wxFanParentId);
-        String parentWxFanNickname = wxFanParent.getNickname();
+
         //替换邀请人
-        if(parentWxFanNickname == null){
+        if(wxFanParentId == null){
             String founderName = chatPetTypeConfig.getFounderName();
             description = description.replace("#{parentName}", founderName);
         }else {
+            WxFan wxFanParent = wxFanService.getById(wxFanParentId);
+            String parentWxFanNickname = wxFanParent.getNickname();
             description = description.replace("#{parentName}", parentWxFanNickname);
         }
 
