@@ -66,9 +66,9 @@ public class AdClickLogService {
      * @param wxFanId
      * @return
      */
-    private Integer countByFanIdAndAdId(Integer adId,Integer wxFanId){
+    private Integer countByFanIdAndAdId(Integer wxFanId,Integer adId){
 
-        return this.adClickLogMapper.countByWxFanAndAd(adId,wxFanId);
+        return this.adClickLogMapper.countByWxFanAndAd(wxFanId,adId);
     }
 
     /**
@@ -77,10 +77,10 @@ public class AdClickLogService {
      * @param wxFanId
      * @return
      */
-    public boolean isWxFanHasClickedAd(Integer adId,Integer wxFanId){
+    public boolean isWxFanHasClickedAd(Integer wxFanId,Integer adId){
         boolean ret = false;
 
-        Integer count = this.countByFanIdAndAdId(adId, wxFanId);
+        Integer count = this.countByFanIdAndAdId(wxFanId, adId);
 
         if(count > 0){
             ret = true;

@@ -124,7 +124,7 @@ public class AdPushService {
      * @param pushType          :  投放类型(陪聊宠,智能聊) -> 二者统计聊天次数的缓存策略不同(一天之内,24小时内)
      * @return
      */
-    private boolean judgeIfAdNeed2PushByStrategyType(Integer pushStrategyType,String wxPubOriginId,Integer wxFanId,Integer pushType){
+    public boolean judgeIfAdNeed2PushByStrategyType(Integer pushStrategyType,String wxPubOriginId,Integer wxFanId,Integer pushType){
         boolean needToPush = false;
 
         if(adService.AD_PUSH_STRATEGY_CHANCE.equals(pushStrategyType)){
