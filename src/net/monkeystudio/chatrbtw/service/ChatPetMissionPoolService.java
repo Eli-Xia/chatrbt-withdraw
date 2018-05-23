@@ -47,7 +47,7 @@ public class ChatPetMissionPoolService {
     private RWxPubProductService rWxPubProductService;
 
     @Autowired
-    private ChatPetRewardItemService chatPetRewardItemService;
+    private ChatPetRewardService chatPetRewardService;
 
 
 
@@ -180,7 +180,7 @@ public class ChatPetMissionPoolService {
     /**
      * 完成任务但是未领取奖励时更新任务池记录
      */
-    public void updateMissionWhenFinish(Integer chatPetId,Integer missionCode){
+    private void updateMissionWhenFinish(Integer chatPetId,Integer missionCode){
 
         ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
 
@@ -192,6 +192,20 @@ public class ChatPetMissionPoolService {
             this.dispatchMission(MissionEnumService.INVITE_FRIENDS_MISSION_CODE ,chatPetId);
         }*/
     }
+
+    /**
+     * 完成任务后更新任务记录
+     * 供邀请人类型任务使用
+     * @param chatPetPersonalMissionId
+     */
+   public void updateMissionWhenInvited(Integer chatPetPersonalMissionId,Integer inviteeWxFanId){
+       ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
+
+       chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+       chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
+
+       this.update(chatPetPersonalMission);
+   }
 
 
 
@@ -230,7 +244,7 @@ public class ChatPetMissionPoolService {
         if(!isMissionDone){
             this.updateMissionWhenFinish(chatPet.getId(),missionCode);
             ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
-            chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
+            chatPetRewardService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
         }
 
 
@@ -278,14 +292,14 @@ public class ChatPetMissionPoolService {
 
         ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
 
-        chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
+        chatPetRewardService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
 
         this.updateMissionWhenFinish(chatPet.getId(),missionCode);
 
     }
 
 
-    private boolean  checkMissionAdIsEqual(Integer chatPetId,Integer missionCode,Integer adId){
+    private boolean checkMissionAdIsEqual(Integer chatPetId,Integer missionCode,Integer adId){
         ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
 
         Integer missionAdId = cppm.getAdId();

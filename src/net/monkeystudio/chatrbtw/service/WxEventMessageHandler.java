@@ -3,19 +3,19 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
-import net.monkeystudio.chatrbtw.entity.*;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
+import net.monkeystudio.chatrbtw.entity.EthnicGroups;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
-
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +43,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
-    private ChatPetRewardItemService chatPetRewardItemService;
+    private ChatPetRewardService chatPetRewardService;
 
 
 
@@ -78,7 +78,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         if(chatPet != null){
                             return null;
                         }
-                        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
 
                         if(!ethnicGroupsService.allowToAdopt(wxPubOriginId)){
                             String replyContent = "今日宠物已经领完了，明天早点来哟！";
@@ -120,10 +119,15 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
 
-                            chatPetMissionPoolService.updateMissionWhenFinish(chatPetId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
-                            chatPetRewardItemService.saveRewardItemWhenMissionDone(chatPetId,chatPetPersonalMission.getId());
+                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(chatPetId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            //生成任务奖励
+                            chatPetRewardService.saveRewardItemWhenMissionDone(parentId,chatPetPersonalMission.getId());
+
+                            WxFan wxFan = wxFanService.getWxFan(wxPubOriginId,wxFanOpenId);
+                            //更新任务完成状态,设置被邀请人
+                            chatPetMissionPoolService.updateMissionWhenInvited(chatPetPersonalMission.getId(),wxFan.getId());
+
                         }
 
                         CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetId);
@@ -151,17 +155,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     }
 
 
-
-
-    /**
-     * 微信h5授权url参数拼接  ?wxPubId = ?
-     * @param wxPubOriginId
-     * @return
-     */
-    private Integer createChatPetH5Param(String wxPubOriginId){
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-        return wxPub.getId();
-    }
 
     public String testEventHandle(String content) {
         String eventType = this.judgeEventType(content);

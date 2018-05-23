@@ -9,8 +9,6 @@ public interface ChatPetPersonalMissionMapper {
 
     int insert(ChatPetPersonalMission record);
 
-    int insertSelective(ChatPetPersonalMission record);
-
     ChatPetPersonalMission selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(ChatPetPersonalMission record);
@@ -20,5 +18,4 @@ public interface ChatPetPersonalMissionMapper {
     List<ChatPetPersonalMission> selectListByParam(ChatPetPersonalMission param);
 
     ChatPetPersonalMission selectByParam(ChatPetPersonalMission param);
-
 }

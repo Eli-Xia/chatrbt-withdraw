@@ -3,13 +3,10 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.RewardMethodEnum;
-import net.monkeystudio.chatrbtw.enums.mission.RewardTypeEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,7 +21,7 @@ public class ChatPetLogService {
     private PetLogMapper petLogMapper;
 
     @Autowired
-    private ChatPetRewardItemService chatPetRewardItemService;
+    private ChatPetRewardService chatPetRewardService;
 
     @Autowired
     private ChatPetService chatPetService;
@@ -40,6 +37,9 @@ public class ChatPetLogService {
 
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
+
+    @Autowired
+    private WxFanService wxFanService;
 
 
     /**
@@ -58,7 +58,7 @@ public class ChatPetLogService {
         for(PetLog petLog : pls){
             Integer rewardType = petLog.getRewardType();
             Integer chatPetRewardItemId = petLog.getRewardItemId();
-            ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+            ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
 
             PetLogResp petLogResp = new PetLogResp();
 
@@ -90,7 +90,7 @@ public class ChatPetLogService {
      * @param isUpgrade             是否升级
      */
     public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
-        ChatPetRewardItem item = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+        ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         Integer chatPetPersonalMissionId = item.getMissionItemId();
 
@@ -156,7 +156,10 @@ public class ChatPetLogService {
 
         //邀请人任务
         if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
-            content = "成功邀请好友加入族群";
+            Integer wxFanId = chatPetPersonalMission.getInviteeWxFanId();
+            WxFan wxFan = wxFanService.getById(wxFanId);
+
+            content = "成功邀请" + wxFan.getNickname() + "加入族群";
         }
 
         return content;
@@ -183,7 +186,7 @@ public class ChatPetLogService {
 
     //每日可领取奖励日志
     public void saveLevelRewardLog(Integer chatPetRewardItemId){
-        ChatPetRewardItem item = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
+        ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
 
         PetLog pl = new PetLog();

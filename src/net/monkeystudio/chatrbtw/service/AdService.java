@@ -543,10 +543,11 @@ public class AdService {
             //满足广告投放的条件:1,智能聊广告(排除问问搜) 2,投放开关开启 3,正在投放 4,公众号主开启投放且公众号未被剔除
             Ad ad = this.getAdById(obj.getAdId());
 
-            if(AD_PUSH_CLOSE.equals(ad.getIsOpen()) ||  judgePushTypeHook.callback(ad)
-                    ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)
-                    ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())
-                    ||  WX_PUB_AD_PUSH_EXCLUDE.equals(obj.getIsExclude())
+            if(AD_PUSH_CLOSE.equals(ad.getIsOpen()) //广告开发
+                    ||  judgePushTypeHook.callback(ad)//宠物类型
+                    ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)//广告投放状态
+                    ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())//公众号主设置广告投放状态
+                    ||  WX_PUB_AD_PUSH_EXCLUDE.equals(obj.getIsExclude())//公众号是否被剔除
                     ){
 
                 continue;
@@ -554,11 +555,11 @@ public class AdService {
 
             ads.add(ad);
         }
-        if(ListUtil.isNotEmpty(ads)){
-            //从当前的广告集中剔除粉丝已经点击过的广告... AdClickLog表中去判断的.
+
+        if(ListUtil.isEmpty(ads)){
+            return null;
         }
 
-        //剔除粉丝已经点击过的广告
         List<Ad> shotAds = this.excludeClickedAdFromList(ads, wxFanId);
 
         if(ListUtil.isEmpty(shotAds)){

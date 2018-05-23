@@ -4,16 +4,15 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.base.utils.RandomUtil;
-import net.monkeystudio.chatrbtw.entity.ChatPetMission;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
-import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -21,7 +20,7 @@ import java.util.*;
  * @author xiaxin
  */
 @Service
-public class ChatPetRewardItemService {
+public class ChatPetRewardService {
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
     @Autowired
@@ -35,6 +34,12 @@ public class ChatPetRewardItemService {
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
+
+    @Autowired
+    private ChatPetLogService chatPetLogService;
+
+    @Autowired
+    private ChatPetLevelService chatPetLevelService;
 
     public static final Integer NOT_AWARD = 0;
     public static final Integer HAVE_AWARD = 1;
@@ -67,16 +72,13 @@ public class ChatPetRewardItemService {
             return ;
         }
 
-        //创建宠物奖励池
-        //List<ChatPetRewardItem> items = new ArrayList<>();
-
         //每日可领取奖励
         ChatPetRewardItem fixedItem = new ChatPetRewardItem();
 
         //根据宠物等级获取每日可领取奖励值
         Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
-        //每日可领取奖励 = (宠物等级 + 1) * 1
-        fixedItem.setGoldValue( (chatPetLevel + 1) * 0.5F );
+        //每日可领取奖励 = (宠物等级 + 1) * 2
+        fixedItem.setGoldValue( (chatPetLevel + 1) * 2F );
 
         fixedItem.setRewardState(NOT_AWARD);
         fixedItem.setChatPetId(chatPetId);
@@ -103,6 +105,7 @@ public class ChatPetRewardItemService {
         }
 
     }
+
 
     /**
      * 获取宠物奖励展示
@@ -141,6 +144,88 @@ public class ChatPetRewardItemService {
     }
 
     /**
+     * 宠物领取奖励
+     * @param chatPetRewardItemId   领取奖励对象id
+     */
+    public void reward(Integer chatPetRewardItemId){
+
+        ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
+
+        Integer missionItemId = chatPetRewardItem.getMissionItemId();
+
+        //是否为任务类型奖励
+        Boolean isMissionReward = missionItemId != null;
+
+        if(isMissionReward){
+
+            this.missionRewardHandle(chatPetRewardItemId);
+
+        }else{
+
+            this.levelRewardHandle(chatPetRewardItemId);
+
+        }
+    }
+
+
+
+
+    /**
+     * 每日可领取奖励(等级奖励)处理
+     * @param chatPetRewardItemId 领取奖励对象id
+     */
+    private void levelRewardHandle(Integer chatPetRewardItemId){
+
+        ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
+
+        //修改奖励对象的领取状态为已领取
+        this.updateRewardState(chatPetRewardItemId);
+
+        //加金币
+        chatPetService.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
+
+        //宠物日志
+        chatPetLogService.saveLevelRewardLog(chatPetRewardItemId);
+    }
+
+    /**
+     * 任务类型奖励处理
+     * @param chatPetRewardItemId   领取奖励对象id
+     */
+    private void missionRewardHandle(Integer chatPetRewardItemId){
+        //修改金币状态
+        this.updateRewardState(chatPetRewardItemId);
+
+        //修改任务记录状态
+        ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer missionItemId = chatPetRewardItem.getMissionItemId();
+        chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
+
+        //加金币
+        Integer chatPetId = chatPetRewardItem.getChatPetId();
+        chatPetService.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
+
+        //加经验
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+        Float oldExperience = chatPet.getExperience();
+        chatPetService.increaseExperience(chatPetId,chatPetRewardItem.getExperience());
+
+        //是否升级
+        Float newExperience = chatPet.getExperience();
+        boolean isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
+
+        //宠物日志
+        chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
+
+        //邀请人
+        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+            chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
+        }
+    }
+
+    /**
      * 完成宠物任务后奖励池中插入数据
      * @param chatPetId
      * @param missionItemId
@@ -166,12 +251,13 @@ public class ChatPetRewardItemService {
             item.setMissionItemId(chatPetPersonalMissionId);
             item.setCreateTime(new Date());
 
-            Float random = createRandomGold4SearchNewsMission();
+            Float random = getSearchNewMissionRandomGold();
             item.setExperience(random);
             item.setGoldValue(random);
 
             this.save(item);
-        }else{
+        }
+        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
             ChatPetRewardItem item = new ChatPetRewardItem();
 
             item.setChatPetId(chatPetId);
@@ -184,14 +270,19 @@ public class ChatPetRewardItemService {
             this.save(item);
         }
 
+        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+
+        }
+
     }
 
-    //资讯任务奖励值计算  1.5 ~ 2.5 的随机数
-    private Float createRandomGold4SearchNewsMission(){
+    //获取资讯任务随机奖励值  6.0 ~ 10.0 的随机数
+    private Float getSearchNewMissionRandomGold(){
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
         Random random = new Random();
-        int i = random.nextInt(10);
-        Float f = (float)(i + 15) / 10F ;
-        return f;
+        Float f = random.nextFloat() * 4 + 6;
+        String ret = decimalFormat.format(f);
+        return Float.parseFloat(ret);
     }
 
     /**
