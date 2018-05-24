@@ -77,8 +77,8 @@ public class ChatPetRewardService {
 
         //根据宠物等级获取每日可领取奖励值
         Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
-        //每日可领取奖励 = (宠物等级 + 1) * 2
-        fixedItem.setGoldValue( (chatPetLevel + 1) * 2F );
+        //每日可领取奖励 = (宠物等级 + 1) * 0.12F
+        fixedItem.setGoldValue( (chatPetLevel + 1) * 0.12F );
 
         fixedItem.setRewardState(NOT_AWARD);
         fixedItem.setChatPetId(chatPetId);
@@ -251,10 +251,8 @@ public class ChatPetRewardService {
             item.setMissionItemId(chatPetPersonalMissionId);
             item.setCreateTime(new Date());
 
-            Float experience = getSearchNewMissionRandomExperience();
-            Float coin = experience * 4;
-            item.setExperience(experience);
-            item.setGoldValue(coin);
+            item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
+            item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
 
             this.save(item);
         }
@@ -286,21 +284,22 @@ public class ChatPetRewardService {
 
     }
 
-    //获取资讯任务随机奖励值  6.0 ~ 10.0 的随机数
-    private Float getSearchNewMissionRandomGold(){
-        DecimalFormat decimalFormat = new DecimalFormat("0.0");
-        Random random = new Random();
-        Float f = random.nextFloat() * 4 + 6;
-        String ret = decimalFormat.format(f);
-        return Float.parseFloat(ret);
-    }
-
-    //获取资讯任务随机奖励值  1.5 ~ 2.5 的随机数
+    //获取资讯任务随机奖励经验值  1.5 ~ 2.5
     private Float getSearchNewMissionRandomExperience(){
         Random random = new Random();
         Float f = ( random.nextInt(10) + 15 ) / 10F;
         return f;
     }
+
+    //获取资讯任务随机奖励金币值  0.38 ~ 0.63
+    private Float getSearchNewMissionRandomCoin(){
+        // ( 0 ~ 25 + 38 ) / 100
+        Random random = new Random();
+        int i = random.nextInt(25) + 38;
+        Float f = i / 100F;
+        return f;
+    }
+
 
 
     /**
