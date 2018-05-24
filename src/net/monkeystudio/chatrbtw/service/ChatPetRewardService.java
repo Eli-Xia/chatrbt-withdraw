@@ -251,9 +251,10 @@ public class ChatPetRewardService {
             item.setMissionItemId(chatPetPersonalMissionId);
             item.setCreateTime(new Date());
 
-            Float random = getSearchNewMissionRandomGold();
-            item.setExperience(random);
-            item.setGoldValue(random);
+            Float experience = getSearchNewMissionRandomExperience();
+            Float coin = experience * 4;
+            item.setExperience(experience);
+            item.setGoldValue(coin);
 
             this.save(item);
         }
@@ -271,7 +272,16 @@ public class ChatPetRewardService {
         }
 
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+            ChatPetRewardItem item = new ChatPetRewardItem();
 
+            item.setChatPetId(chatPetId);
+            item.setRewardState(NOT_AWARD);
+            item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
+            item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
+            item.setMissionItemId(chatPetPersonalMissionId);
+            item.setCreateTime(new Date());
+
+            this.save(item);
         }
 
     }
@@ -284,6 +294,14 @@ public class ChatPetRewardService {
         String ret = decimalFormat.format(f);
         return Float.parseFloat(ret);
     }
+
+    //获取资讯任务随机奖励值  1.5 ~ 2.5 的随机数
+    private Float getSearchNewMissionRandomExperience(){
+        Random random = new Random();
+        Float f = ( random.nextInt(10) + 15 ) / 10F;
+        return f;
+    }
+
 
     /**
      * 领取奖励后修改奖励为已领取
