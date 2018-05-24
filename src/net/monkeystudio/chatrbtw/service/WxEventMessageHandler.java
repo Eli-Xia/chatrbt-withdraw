@@ -92,6 +92,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                                 parentIdStr = qrSceneStr.replace(EthnicGroupsService.EVENT_SPECIAL_STR, "");
                             }
                         }
+                        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId,wxFanOpenId);
 
                         Integer chatPetId = null;
                         ChatPet parentChatPet = null;
@@ -124,7 +125,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             //生成任务奖励
                             chatPetRewardService.saveRewardItemWhenMissionDone(parentId,chatPetPersonalMission.getId());
 
-                            WxFan wxFan = wxFanService.getWxFan(wxPubOriginId,wxFanOpenId);
                             //更新任务完成状态,设置被邀请人
                             chatPetMissionPoolService.updateMissionWhenInvited(chatPetPersonalMission.getId(),wxFan.getId());
 
