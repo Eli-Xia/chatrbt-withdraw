@@ -37,6 +37,10 @@ import java.util.List;
 public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
+
+    @Autowired
+    private ChatPetBackgroundService chatPetBackgroundService;
+
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
 
@@ -190,6 +194,10 @@ public class ChatPetService {
 
         String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
         chatPetBaseInfo.setOwnerId(owerId);
+
+        //宠物背景图信息
+        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfo(chatPetId);
+        chatPetBaseInfo.setChatPetBackgroundInfo(chatPetBackgroundInfo);
 
         //宠物基因
         String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
