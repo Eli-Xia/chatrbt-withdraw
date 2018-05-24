@@ -26,8 +26,9 @@
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
     insert into e_chat_pet_reward_item (id, gold_value, reward_state, 
       mission_item_id, chat_pet_id,experience,create_time)
-    values (#{id,jdbcType=INTEGER}, #{goldValue,jdbcType=INTEGER}, #{rewardState,jdbcType=INTEGER}, 
-      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,#{experience} ,#{createTime})
+    values (#{id,jdbcType=INTEGER}, IFNULL(#{goldValue},0) , #{rewardState,jdbcType=INTEGER},
+      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime})
+
   </insert>
 
   <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
