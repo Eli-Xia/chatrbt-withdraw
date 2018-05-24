@@ -930,14 +930,18 @@ public class ChatPetService {
 
         String description = chatPetTypeConfig.getNewsDescription();
 
-        Integer wxFanParentId = chatPet.getParentId();
-        WxFan wxFanParent = wxFanService.getById(wxFanParentId);
-        String parentWxFanNickname = wxFanParent.getNickname();
+        Integer chatPetParentId = chatPet.getParentId();
+
         //替换邀请人
-        if(parentWxFanNickname == null){
+        if(chatPetParentId == null){
             String founderName = chatPetTypeConfig.getFounderName();
             description = description.replace("#{parentName}", founderName);
         }else {
+            ChatPet parentChatPet = this.getById(chatPetParentId);
+            String parentOpenId = parentChatPet.getWxFanOpenId();
+            WxFan parentOwner = wxFanService.getWxFan(wxPubOriginId, parentOpenId);
+
+            String parentWxFanNickname = parentOwner.getNickname();
             description = description.replace("#{parentName}", parentWxFanNickname);
         }
 

@@ -78,4 +78,15 @@ public class AdPushLogService {
         return adPushLogMapper.countDaily(startTime,endTime,adId);
     }
 
+    /**
+     * 统计指定广告推送给粉丝的次数
+     * @param wxPubAppId
+     * @param wxFanOpenId
+     * @param adId
+     * @return
+     */
+    public Integer countAdPushAmount4WxFan(String wxPubAppId,String wxFanOpenId,Integer adId){
+        return this.adPushLogMapper.countAdPushCount4WxFan(wxPubAppId, wxFanOpenId, adId);
+    }
+
 }

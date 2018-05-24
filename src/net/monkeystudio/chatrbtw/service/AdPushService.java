@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -220,6 +221,32 @@ public class AdPushService {
 
         adPushLogService.save(adPushLog);
     }
+
+    /**
+     * 判断广告是否已经推送过给粉丝
+     * @param wxFanId   粉丝id
+     * @param adId       广告id
+     * @return
+     */
+    public Boolean isAdHasPushedWxFanId(Integer wxFanId,Integer adId){
+        Boolean isPush = false;
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+        String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);
+
+        //获取该广告推送给该粉丝的次数
+        Integer count = adPushLogService.countAdPushAmount4WxFan(wxPubAppId, wxFanOpenId, adId);
+
+        if(count.intValue() > 0){
+            isPush = true;
+        }
+
+        return isPush;
+    }
+
 
     /**
      * 得到广告开关是否开启

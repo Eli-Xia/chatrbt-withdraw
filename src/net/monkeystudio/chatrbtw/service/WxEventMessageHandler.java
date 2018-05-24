@@ -127,13 +127,12 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
 
                             ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(parentId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
-                            Log.d("================任务记录对象id chatpetpersonal mission id = {?} ============",chatPetPersonalMission.getId().toString());
-
-                            //生成任务奖励
-                            chatPetRewardService.saveRewardItemWhenMissionDone(parentId,chatPetPersonalMission.getId());
-
-                            //更新任务完成状态,设置被邀请人
-                            chatPetMissionPoolService.updateMissionWhenInvited(chatPetPersonalMission.getId(),wxFan.getId());
+                            if(chatPetPersonalMission != null){
+                                //生成任务奖励
+                                chatPetRewardService.saveRewardItemWhenMissionDone(parentId,chatPetPersonalMission.getId());
+                                //更新任务完成状态,设置被邀请人
+                                chatPetMissionPoolService.updateMissionWhenInvited(chatPetPersonalMission.getId(),wxFan.getId());
+                            }
 
                         }
 

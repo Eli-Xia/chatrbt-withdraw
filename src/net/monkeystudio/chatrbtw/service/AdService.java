@@ -78,6 +78,9 @@ public class AdService {
     private AdMapper adMapper;
 
     @Autowired
+    private AdPushService adPushService;
+
+    @Autowired
     private WxPubTagService wxPubTagService;
 
     @Autowired
@@ -560,7 +563,7 @@ public class AdService {
             return null;
         }
 
-        List<Ad> shotAds = this.excludeClickedAdFromList(ads, wxFanId);
+        List<Ad> shotAds = this.excludePushedAdFromList(ads, wxFanId);
 
         if(ListUtil.isEmpty(shotAds)){
             return null;
@@ -576,13 +579,13 @@ public class AdService {
      * @param wxFanId : 粉丝Id
      * @return
      */
-    private List<Ad> excludeClickedAdFromList(List<Ad> ads,Integer wxFanId){
+    private List<Ad> excludePushedAdFromList(List<Ad> ads,Integer wxFanId){
         List<Ad> shotAds = new ArrayList<>();
 
         for(Ad ad : ads){
-            boolean isClicked = adClickLogService.isWxFanHasClickedAd(wxFanId,ad.getId());
+            Boolean isPush = adPushService.isAdHasPushedWxFanId(wxFanId, ad.getId());
 
-            if(!isClicked){
+            if(!isPush){
                 shotAds.add(ad);
             }
         }
@@ -739,13 +742,6 @@ public class AdService {
         return null;
     }
 
-
-    public void clearCache(){
-        List<Ad> ads = adMapper.selectAll();
-        List<Integer> ids = ads.stream().map(Ad::getId).collect(Collectors.toList());
-        for(Integer id:ids)
-        redisCacheTemplate.del(this.getCacheKeyById(id));
-    }
 
 
 }
