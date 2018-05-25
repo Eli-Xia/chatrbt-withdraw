@@ -125,7 +125,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Log.d("================== 孩子宠物的id = {?} ===============",chatPetId.toString());
 
 
-                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getDailyPersonalMission(parentId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getShouldDoInviteMission(parentId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
                             if(chatPetPersonalMission != null){
                                 //生成任务奖励
