@@ -55,7 +55,7 @@ public class ChatPetLogService {
 
         List<PetLogResp> resps = new ArrayList<>();
 
-        for(PetLog petLog : pls){
+        for(PetLog petLog: pls){
             Integer rewardType = petLog.getRewardType();
             Integer chatPetRewardItemId = petLog.getRewardItemId();
             ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
