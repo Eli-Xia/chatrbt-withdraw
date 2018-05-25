@@ -2,6 +2,7 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.service.ChatPetBackgroundService;
 import net.monkeystudio.chatrbtw.service.ChatPetColorService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetColorItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +18,25 @@ import java.util.List;
  */
 @RequestMapping(value = "/chat-pet/background")
 @Controller
-public class ChatPetBackgroundController {
+public class ChatPetBackgroundController extends ChatPetBaseController{
 
     @Autowired
-    private ChatPetColorService chatPetColorService;
+    private ChatPetBackgroundService chatPetBackgroundService;
 
     @Autowired
     private RespHelper respHelper;
 
 
 
-    @RequestMapping(value = "/all", method = RequestMethod.POST)
+    @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase getChatPetAllColor(){
-
-        List<ChatPetColorItem> list = chatPetColorService.getAllColor();
-
-        return respHelper.ok(list);
+    public RespBase getChatPetBackground(){
+        Integer wxFanId = this.getUserId();
+        if(wxFanId == null){
+            return respHelper.nologin();
+        }
+        chatPetBackgroundService.getChatPetBackgroundInfo(wxFanId);
+        return respHelper.ok();
     }
 
 }

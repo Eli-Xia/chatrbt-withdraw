@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetBackground;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetBackgroundMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetBackgroundInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,25 @@ public class ChatPetBackgroundService {
 
     @Autowired
     private ChatPetService chatPetService;
+
+    @Autowired
+    private WxFanService wxFanService;
+
+    /**
+     * 根据粉丝获取
+     * @param wxFanId
+     * @return
+     */
+    public ChatPetBackgroundInfo getChatPetBackgroundInfoByFanId(Integer wxFanId){
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
+
+        Integer chatPetId = chatPet.getId();
+
+        return this.getChatPetBackgroundInfo(chatPetId);
+    }
 
     /**
      * 根据宠物id获取宠物背景信息
