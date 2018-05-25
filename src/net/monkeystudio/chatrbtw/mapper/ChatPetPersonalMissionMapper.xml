@@ -90,6 +90,9 @@
       <if test="createTime != null">
         and create_time &gt;= #{createTime}
       </if>
+      <if test="adId != null">
+        AND ad_id = #{adId}
+      </if>
     </where>
   </select>
 
@@ -109,6 +112,9 @@
       </if>
       <if test="createTime != null">
         and create_time &gt;= #{createTime}
+      </if>
+      <if test="adId != null">
+        ad_id = #{adId}
       </if>
     </where>
   </select>

@@ -873,11 +873,12 @@ public class ChatPetService {
 
     /**
      * 获取创世海报url
+     * https://test.keendo.com.cn/static/chat-pet/#/poster
      * @return
      */
     public String getChatPetPosterUrl(){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String posterUrl = "https://" + domain + "/res/wedo/poster.html";
+        String posterUrl = "https://" + domain + "/static/chat-pet/#/poster";
 
         return posterUrl;
     }

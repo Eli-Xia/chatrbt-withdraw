@@ -4,6 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
@@ -277,11 +278,11 @@ public class ChatPetMissionPoolService {
             return;
         }
 
-        //此次点击阅读任务广告与今日任务广告应为同一条广告      missionCode  adId  chatpetid      把今天没完成的任务给他找出来.
+        //此次点击阅读任务广告与今日任务广告应为同一条广告      missionCode  adId  chatpetid
         ChatPetPersonalMission param = new ChatPetPersonalMission();
         param.setState(MissionStateEnum.GOING_ON.getCode());
         param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
-        param.setCreateTime(new Date());
+        param.setCreateTime(DateUtils.getBeginDate(new Date()));
         param.setChatPetId(chatPet.getId());
 
         List<ChatPetPersonalMission>  goingonSearNewsMissionList = this.getPersonalMissionListByParam(param);//所有正在进行中的资讯任务
