@@ -4,6 +4,7 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.service.ChatPetBackgroundService;
 import net.monkeystudio.chatrbtw.service.ChatPetColorService;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetBackgroundInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetColorItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,12 +32,16 @@ public class ChatPetBackgroundController extends ChatPetBaseController{
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseBody
     public RespBase getChatPetBackground(){
+
         Integer wxFanId = this.getUserId();
+
         if(wxFanId == null){
             return respHelper.nologin();
         }
-        chatPetBackgroundService.getChatPetBackgroundInfo(wxFanId);
-        return respHelper.ok();
+
+        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfo(wxFanId);
+
+        return respHelper.ok(chatPetBackgroundInfo);
     }
 
 }
