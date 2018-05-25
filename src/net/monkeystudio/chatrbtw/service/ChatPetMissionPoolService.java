@@ -198,14 +198,14 @@ public class ChatPetMissionPoolService {
      * 供邀请人类型任务使用
      * @param chatPetPersonalMissionId
      */
-   public void updateMissionWhenInvited(Integer chatPetPersonalMissionId,Integer inviteeWxFanId){
-       ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
+    public void updateMissionWhenInvited(Integer chatPetPersonalMissionId,Integer inviteeWxFanId){
+        ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
-       chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
-       chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
+        chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+        chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
 
-       this.update(chatPetPersonalMission);
-   }
+        this.update(chatPetPersonalMission);
+    }
 
 
 
