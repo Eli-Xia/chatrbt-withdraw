@@ -148,6 +148,7 @@ public class ChatPetController extends ChatPetBaseController{
             return respHelper.nologin();
         }
 
+
         ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId());
 
         return respHelper.ok(changeInfo);
