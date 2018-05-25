@@ -536,6 +536,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
         }
 
+        Boolean chatPetEnable = rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId);
+        if(chatPetEnable){
+            //图灵回复
+            return REPLY_TYPE_TU_LING;
+        }
+
         return REPLY_TYPE_NONE;
 
     }
