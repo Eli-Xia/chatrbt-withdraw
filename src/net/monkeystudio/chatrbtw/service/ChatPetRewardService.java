@@ -180,7 +180,10 @@ public class ChatPetRewardService {
         Integer chatPetId = chatPetRewardItem.getChatPetId();
 
         //修改奖励对象的领取状态为已领取
-        this.updateRewardState(chatPetRewardItemId);
+        Integer updateCount = this.updateRewardState(chatPetRewardItemId);
+        if(updateCount <= 0){
+            return;
+        }
 
         //加金币
         chatPetService.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
