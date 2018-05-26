@@ -154,7 +154,7 @@ public class ChatPetLogService {
         String missionName = chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName();
 
         if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            sb.append("完成NO." + ChatPetMissionNoUtil.getMissionNo(createTime) + missionName);
+            sb.append("完成" + ChatPetMissionNoUtil.getMissionNo(createTime) + missionName);
         }
 
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
