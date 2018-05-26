@@ -195,7 +195,11 @@ public class ChatPetRewardService {
      */
     private void missionRewardHandle(Integer chatPetRewardItemId){
         //修改金币状态
-        this.updateRewardState(chatPetRewardItemId);
+        Integer updateCount = this.updateRewardState(chatPetRewardItemId);
+
+        if(updateCount <= 0){
+            return;
+        }
 
         //修改任务记录状态
         ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
@@ -301,19 +305,18 @@ public class ChatPetRewardService {
     }
 
 
-
     /**
-     * 领取奖励后修改奖励为已领取
+     * 领取奖励之后修改奖励状态,防止多个领奖请求同时update同一奖励,加入状态判断
      * @param chatPetRewardItemId
+     * @return   返回被修改的个数,若<= 0 则修改失败
      */
-    public void updateRewardState(Integer chatPetRewardItemId){
+    public Integer updateRewardState(Integer chatPetRewardItemId){
 
         ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
 
         chatPetRewardItem.setRewardState(HAVE_AWARD);
 
-        this.chatPetRewardItemMapper.updateByPrimaryKey(chatPetRewardItem);
-
+        return this.chatPetRewardItemMapper.updateRewarded(chatPetRewardItem);
     }
 
 
