@@ -7,19 +7,19 @@ package net.monkeystudio.chatrbtw.enums.mission;
 public enum RewardMethodEnum {
     NULL_REWARD(0,"没有奖励"),GOLD_REWARD(1,"金币奖励"),EXPERIENCE_REWARD(2,"经验奖励");
 
-    private int type;
+    private Integer type;
     private String name;
 
-    RewardMethodEnum(int type,String name){
+    RewardMethodEnum(Integer type,String name){
         this.type = type;
         this.name = name;
     }
 
-    public int getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 

@@ -255,14 +255,14 @@ public class ChatPetMissionPoolService {
      * 供邀请人类型任务使用
      * @param chatPetPersonalMissionId
      */
-   public void updateMissionWhenInvited(Integer chatPetPersonalMissionId,Integer inviteeWxFanId){
-       ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
+    public void updateMissionWhenInvited(Integer chatPetPersonalMissionId,Integer inviteeWxFanId){
+        ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
-       chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
-       chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
+        chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+        chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
 
-       this.update(chatPetPersonalMission);
-   }
+        this.update(chatPetPersonalMission);
+    }
 
 
 
@@ -334,35 +334,40 @@ public class ChatPetMissionPoolService {
             return;
         }
 
-        //此次点击阅读任务广告与今日任务广告应为同一条广告
-        boolean isEquals = checkMissionAdIsEqual(chatPet.getId(), missionCode, adId);
-        if(!isEquals){
-            return;
+        //此次点击阅读任务广告与今日任务广告应为同一条广告      missionCode  adId  chatpetid      把今天没完成的任务给他找出来.
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+        param.setState(MissionStateEnum.GOING_ON.getCode());
+        param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        param.setCreateTime(new Date());
+        param.setChatPetId(chatPet.getId());
+
+        List<ChatPetPersonalMission>  goingonSearNewsMissionList = this.getPersonalMissionListByParam(param);//所有正在进行中的资讯任务
+
+        ChatPetPersonalMission chatPetPersonalMission = null;
+
+        boolean flag = false;
+
+        for(ChatPetPersonalMission cppm:goingonSearNewsMissionList){
+            if(adId.equals(cppm.getAdId())){
+                chatPetPersonalMission = cppm;//获取当前
+                flag = true;
+            }
         }
 
-        //判断今日阅读任务是否完成
-        boolean isDone = this.isDailyMissionDone(chatPet.getId(), missionCode);
-
-        if(isDone){
-            return;
+        //当前点击的这条广告在用户今日资讯阅读任务池中无法找到
+        if(!flag){
+            return ;
         }
 
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPet.getId(), missionCode);
+        chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+        this.update(chatPetPersonalMission);
 
-        chatPetRewardService.saveRewardItemWhenMissionDone(chatPet.getId(),cppm.getId());
+        chatPetRewardService.saveRewardItemWhenMissionDone(chatPet.getId(),chatPetPersonalMission.getId());
 
-        this.updateMissionWhenFinish(chatPet.getId(),missionCode);
 
     }
 
 
-    private boolean checkMissionAdIsEqual(Integer chatPetId,Integer missionCode,Integer adId){
-        ChatPetPersonalMission cppm = this.getDailyPersonalMission(chatPetId, missionCode);
-
-        Integer missionAdId = cppm.getAdId();
-
-        return adId.equals(missionAdId);
-    }
 
     /**
      * 今日任务是否完成
@@ -394,6 +399,27 @@ public class ChatPetMissionPoolService {
         param.setChatPetId(chatPetId);
         param.setCreateTime(startTime);
         param.setMissionCode(missionCode);
+
+        ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
+
+        return cppm;
+    }
+
+    /**
+     * 获取正在进行中的邀请人任务
+     * @param chatPetId
+     * @param missionCode
+     * @return
+     */
+    public ChatPetPersonalMission getShouldDoInviteMission(Integer chatPetId,Integer missionCode){
+        Date now = new Date();
+        Date startTime = DateUtils.getBeginDate(now);
+
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+        param.setChatPetId(chatPetId);
+        param.setCreateTime(startTime);
+        param.setMissionCode(missionCode);
+        param.setState(MissionStateEnum.GOING_ON.getCode());
 
         ChatPetPersonalMission cppm = this.getPersonalMissionByParam(param);
 
@@ -515,8 +541,8 @@ public class ChatPetMissionPoolService {
 
 
 
-    public void update(ChatPetPersonalMission id){
-        chatPetPersonalMissionMapper.updateByPrimaryKey(id);
+    public void update(ChatPetPersonalMission chatPetPersonalMission){
+        chatPetPersonalMissionMapper.updateByPrimaryKey(chatPetPersonalMission);
     }
 
 

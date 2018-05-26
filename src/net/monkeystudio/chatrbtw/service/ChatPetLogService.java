@@ -66,15 +66,15 @@ public class ChatPetLogService {
             petLogResp.setContent(petLog.getContent());
             petLogResp.setCreateTime(petLog.getCreateTime());
 
-            if(RewardMethodEnum.GOLD_REWARD.equals(rewardType)){
+            if(RewardMethodEnum.GOLD_REWARD.getType().equals(rewardType)){
                 petLogResp.setCoin(chatPetRewardItem.getGoldValue());
             }
 
-            if(RewardMethodEnum.EXPERIENCE_REWARD.equals(rewardType)){
+            if(RewardMethodEnum.EXPERIENCE_REWARD.getType().equals(rewardType)){
                 petLogResp.setCoin(chatPetRewardItem.getExperience());
             }
 
-            if(RewardMethodEnum.NULL_REWARD.equals(rewardType)){
+            if(RewardMethodEnum.NULL_REWARD.getType().equals(rewardType)){
                 petLogResp.setCoin(null);
             }
 

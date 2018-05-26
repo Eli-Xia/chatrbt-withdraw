@@ -317,49 +317,55 @@ public class ChatPetService {
      * @throws BizException
      */
     public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer rewardItemId) throws BizException{
+        try {
+            ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
+            ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getChatPetRewardItemById(rewardItemId);//奖励对象
 
-        ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
-        ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getChatPetRewardItemById(rewardItemId);//奖励对象
-
-        if(chatPet == null || chatPetRewardItem == null){
-            throw new BizException("无法领取");
-        }
-
-        //判断领取的奖励是否为该粉丝的奖励,通过对比宠物id
-        Integer fansChatPetId = chatPet.getId();
-        Integer rewardChatPetId = chatPetRewardItem.getChatPetId();
-        if(!fansChatPetId.equals(rewardChatPetId)){
-            throw new BizException("无法领取");
-        }
-
-        if(ChatPetRewardService.HAVE_AWARD.equals(chatPetRewardItem.getRewardState())){
-            throw new BizException("您已领取过奖励");
-        }
-
-        Integer chatPetPersonalMissionId = chatPetRewardItem.getMissionItemId();
-
-        //任务类型奖励判断
-        if(chatPetPersonalMissionId != null){
-            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
-            //任务状态,判断任务状态是否为完成可领取奖励状态
-            Integer state = chatPetPersonalMission.getState();
-
-            if(MissionStateEnum.GOING_ON.equals(state)){
-                throw new BizException("请完成任务后再来领取");
+            if(chatPet == null || chatPetRewardItem == null){
+                throw new BizException("无法领取");
             }
 
-            if(MissionStateEnum.FINISH_AND_AWARD.equals(state)){
+            //判断领取的奖励是否为该粉丝的奖励,通过对比宠物id
+            Integer fansChatPetId = chatPet.getId();
+            Integer rewardChatPetId = chatPetRewardItem.getChatPetId();
+            if(!fansChatPetId.equals(rewardChatPetId)){
+                throw new BizException("无法领取");
+            }
+
+            if(ChatPetRewardService.HAVE_AWARD.equals(chatPetRewardItem.getRewardState())){
                 throw new BizException("您已领取过奖励");
             }
+
+            Integer chatPetPersonalMissionId = chatPetRewardItem.getMissionItemId();
+
+            //任务类型奖励判断
+            if(chatPetPersonalMissionId != null){
+                ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+                //任务状态,判断任务状态是否为完成可领取奖励状态
+                Integer state = chatPetPersonalMission.getState();
+
+                if(MissionStateEnum.GOING_ON.equals(state)){
+                    throw new BizException("请完成任务后再来领取");
+                }
+
+                if(MissionStateEnum.FINISH_AND_AWARD.equals(state)){
+                    throw new BizException("您已领取过奖励");
+                }
+            }
+
+            //领取奖励
+            chatPetRewardService.reward(rewardItemId);
+
+            Integer chatPetId = chatPet.getId();
+            ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
+            return info;
+        }catch(Exception e){
+            Log.e(e);
         }
 
-        //领取奖励
-        chatPetRewardService.reward(rewardItemId);
+        return null;
 
-        Integer chatPetId = chatPet.getId();
-        ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
 
-        return info;
     }
 
 
