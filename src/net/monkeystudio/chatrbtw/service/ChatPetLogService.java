@@ -84,6 +84,64 @@ public class ChatPetLogService {
         return resps;
     }
 
+
+    /*public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+        ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = item.getChatPetId();
+        Integer chatPetPersonalMissionId = item.getMissionItemId();
+
+        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+        Integer missionCode = chatPetPersonalMission.getMissionCode();
+
+        Float goldValue = item.getGoldValue();
+        Float experience = item.getExperience();
+
+        StringBuilder missisonNameSb = new StringBuilder();
+        missisonNameSb.append("完成");
+        missisonNameSb.append(this.getPetLogMissionNameByMissionCode(chatPetPersonalMissionId));
+        missisonNameSb.append("获取POP币+" + goldValue + ",");
+        missisonNameSb.append("经验值+" + experience);
+
+        PetLog petLog1 = new PetLog();
+        petLog1.setContent(missisonNameSb.toString());
+        petLog1.setChatPetId(chatPetId);
+        petLog1.setCreateTime(new Date());
+        this.savePetLog(petLog1);
+
+        if(isUpgrade){
+            Integer level = chatPetLevelService.calculateLevel(experience);
+
+            PetLog petLog2 = new PetLog();
+            petLog2.setCreateTime(new Date());
+            petLog2.setChatPetId(chatPetId);
+            petLog2.setContent("恭喜你,升级到lv." + level + "啦");
+            this.savePetLog(petLog2);
+        }
+
+
+
+    }*/
+
+    private String getPetLogMissionNameByMissionCode(Integer chatPetPersonalMissionId){
+        StringBuilder sb = new StringBuilder();
+
+        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+        Integer missionCode = chatPetPersonalMission.getMissionCode();
+        Date createTime = chatPetPersonalMission.getCreateTime();//任务广告派发时间
+
+        sb.append("完成");
+
+        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            sb.append("NO." + this.getRandomNum(createTime));
+        }
+
+        sb.append(chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName());
+
+        sb.append(",");
+
+        return sb.toString();
+    }
+
     /**
      * 保存任务类型奖励日志
      * @param chatPetRewardItemId 领取奖励对象id
