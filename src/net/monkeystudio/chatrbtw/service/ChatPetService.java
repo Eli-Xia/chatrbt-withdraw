@@ -196,7 +196,7 @@ public class ChatPetService {
         chatPetBaseInfo.setGeneticCode(geneticCode);
 
         //今日宠物日志
-        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
+        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId);
         chatPetBaseInfo.setPetLogs(resps);
 
         //粉丝拥有代币

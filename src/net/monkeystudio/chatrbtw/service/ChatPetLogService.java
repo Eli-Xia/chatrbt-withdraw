@@ -47,7 +47,7 @@ public class ChatPetLogService {
      * @param date
      * @return
      */
-    public List<PetLogResp> getDailyPetLogList(Integer chatPetId, Date date){
+    /*public List<PetLogResp> getDailyPetLogList(Integer chatPetId, Date date){
         Date beginDate = DateUtils.getBeginDate(date);
         Date endDate = DateUtils.getEndDate(date);
 
@@ -82,23 +82,45 @@ public class ChatPetLogService {
         }
 
         return resps;
+    }*/
+
+    /**
+     * 获取今日宠物日志
+     * @param chatPetId 宠物id
+     * @return
+     */
+    public List<PetLogResp> getDailyPetLogList(Integer chatPetId){
+        Date date = new Date();
+        Date beginDate = DateUtils.getBeginDate(date);
+        Date endDate = DateUtils.getEndDate(date);
+
+        List<PetLog> pls = petLogMapper.selectDailyPetLog(chatPetId,beginDate,endDate);
+
+        List<PetLogResp> resps = new ArrayList<>();
+
+        for(PetLog petLog:pls){
+            PetLogResp petLogResp = new PetLogResp();
+            petLogResp.setCreateTime(petLog.getCreateTime());
+            petLogResp.setContent(petLog.getContent());
+
+            resps.add(petLogResp);
+        }
+
+        return resps;
     }
 
 
-    /*public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+    public void savePetLog444MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         Integer chatPetPersonalMissionId = item.getMissionItemId();
-
-        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
-        Integer missionCode = chatPetPersonalMission.getMissionCode();
 
         Float goldValue = item.getGoldValue();
         Float experience = item.getExperience();
 
         StringBuilder missisonNameSb = new StringBuilder();
-        missisonNameSb.append("完成");
-        missisonNameSb.append(this.getPetLogMissionNameByMissionCode(chatPetPersonalMissionId));
+
+        missisonNameSb.append(this.getPetLogMissionNameByChatPetPersonalMissionId(chatPetPersonalMissionId));
         missisonNameSb.append("获取POP币+" + goldValue + ",");
         missisonNameSb.append("经验值+" + experience);
 
@@ -118,24 +140,32 @@ public class ChatPetLogService {
             this.savePetLog(petLog2);
         }
 
+    }
 
-
-    }*/
-
-    private String getPetLogMissionNameByMissionCode(Integer chatPetPersonalMissionId){
+    /**
+     * 根据任务记录id获取记录在宠物日志中的任务完成信息
+     * @param chatPetPersonalMissionId
+     * @return
+     */
+    private String getPetLogMissionNameByChatPetPersonalMissionId(Integer chatPetPersonalMissionId){
         StringBuilder sb = new StringBuilder();
 
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
         Integer missionCode = chatPetPersonalMission.getMissionCode();
         Date createTime = chatPetPersonalMission.getCreateTime();//任务广告派发时间
+        String missionName = chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName();
 
-        sb.append("完成");
-
-        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            sb.append("NO." + this.getRandomNum(createTime));
+        if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            sb.append("完成NO." + this.getRandomNum(createTime) + missionName);
         }
 
-        sb.append(chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName());
+        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+            sb.append("邀请好友加入族群");
+        }
+
+        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            sb.append("完成" + missionName);
+        }
 
         sb.append(",");
 
