@@ -4,11 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
-<<<<<<< HEAD
-import net.monkeystudio.base.utils.TimeUtil;
-=======
 import net.monkeystudio.base.utils.Log;
->>>>>>> dev
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
@@ -350,7 +346,7 @@ public class ChatPetMissionPoolService {
         ChatPetPersonalMission chatPetPersonalMission = null;
 
         boolean flag = false;
-
+        //当前点击广告是否为资讯任务
         for(ChatPetPersonalMission cppm:goingonSearNewsMissionList){
             if(adId.equals(cppm.getAdId())){
                 chatPetPersonalMission = cppm;//获取当前
@@ -358,7 +354,7 @@ public class ChatPetMissionPoolService {
             }
         }
 
-        //当前点击的这条广告在用户今日资讯阅读任务池中无法找到
+        //当前点击的这条广告在用户今日资讯阅读任务池中无法找到则return
         if(!flag){
             return ;
         }

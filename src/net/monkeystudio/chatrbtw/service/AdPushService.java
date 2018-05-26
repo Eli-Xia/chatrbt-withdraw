@@ -205,6 +205,7 @@ public class AdPushService {
             return ;
         }
 
+        Log.d("===============陪聊宠随机任务触发 检查参数 adId = {?} , wxFanId = {?} =================",ad.getId().toString(),wxFanId.toString());
         //陪聊宠随机任务触发
         //chatPetMissionPoolService.updateMissionWhenPushChatPetAd(ad.getId(),wxFanId);
         if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
