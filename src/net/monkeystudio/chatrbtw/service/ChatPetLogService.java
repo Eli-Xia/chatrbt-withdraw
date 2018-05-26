@@ -154,16 +154,13 @@ public class ChatPetLogService {
         String missionName = chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName();
 
         if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            sb.append("完成NO." + this.getRandomNum(createTime) + missionName);
+            sb.append("完成NO." + ChatPetMissionNoUtil.getMissionNo(createTime) + missionName);
         }
 
-<<<<<<< HEAD
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
-            sb.append("邀请好友加入族群");
-=======
-        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            sb.append("NO." + ChatPetMissionNoUtil.getMissionNo(createTime));
->>>>>>> tttttttest
+            Integer inviteeWxFanId = chatPetPersonalMission.getInviteeWxFanId();
+            WxFan wxFan = wxFanService.getById(inviteeWxFanId);
+            sb.append("邀请" + wxFan.getNickname() + "加入族群");
         }
 
         if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
@@ -228,7 +225,7 @@ public class ChatPetLogService {
      * 根据宠物任务派发记录id获取宠物日志内容
      * @return
      */
-    private String getPetLogContentByPersonalMission(Integer chatPetPersonalMissionId){
+    /*private String getPetLogContentByPersonalMission(Integer chatPetPersonalMissionId){
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
         Date createTime = chatPetPersonalMission.getCreateTime();//派发时间
         Integer missionCode = chatPetPersonalMission.getMissionCode();//任务类型
@@ -254,17 +251,7 @@ public class ChatPetLogService {
         }
 
         return content;
-    }
-
-    //时间戳后四位,作为任务编码
-    private String getRandomNum(Date date){
-        Long time = date.getTime();
-        String timeStr = time.toString();
-        int startIndex = timeStr.length() - 4;
-        String ret = timeStr.substring(startIndex);
-        return ret;
-    }
-
+    }*/
 
 
     /**
@@ -302,79 +289,6 @@ public class ChatPetLogService {
 
     }
 
-
-    /**
-     * 领取奖励产生日志处理
-     * @param chatPetPersonalMissionId
-     * @param isUpgrade
-     *//*
-    public void savePetLogWhenReward(Integer chatPetPersonalMissionId , Boolean isUpgrade){
-
-        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
-        Integer chatPetId = chatPetPersonalMission.getId();
-
-        ChatPet chatPet = chatPetService.getById(chatPetId);
-        String wxPubOriginId = chatPet.getWxPubOriginId();
-        String wxFanOpenId = chatPet.getWxFanOpenId();
-
-
-        Integer missionCode = chatPetPersonalMission.getMissionCode();
-        ChatPetMission cpm = chatPetMissionService.getByMissionCode(missionCode);
-
-        Float coin = cpm.getCoin();
-        Float experience = cpm.getExperience();
-
-        List<PetLog> pls = new ArrayList<>();
-
-        if(coin != 0F){
-            PetLog pl1 = new PetLog();
-
-            pl1.setWxPubOriginId(wxPubOriginId);
-            pl1.setWxFanOpenId(wxFanOpenId);
-            pl1.setContent("完成"+cpm.getMissionName());
-            pl1.setCreateTime(new Date());
-            pl1.setChatPetId(chatPetId);
-            pl1.setRewardType(RewardMethodEnum.GOLD_REWARD.getType());
-            pl1.setTaskCode(missionCode);
-
-            pls.add(pl1);
-
-            if(experience != 0F){
-                PetLog pl2 = new PetLog();
-
-                pl2.setWxPubOriginId(wxPubOriginId);
-                pl2.setWxFanOpenId(wxFanOpenId);
-                pl2.setContent("经验值");
-                pl2.setCreateTime(new Date());
-                pl2.setChatPetId(chatPetId);
-                pl2.setRewardType(RewardMethodEnum.EXPERIENCE_REWARD.getType());
-                pl2.setTaskCode(missionCode);
-
-                pls.add(pl2);
-                //是否升级
-                if(isUpgrade){
-
-                    //升级后的等级
-                    Integer level = chatPetLevelService.calculateLevel(chatPet.getExperience());
-
-                    PetLog pl3 = new PetLog();
-
-                    pl3.setWxPubOriginId(wxPubOriginId);
-                    pl3.setWxFanOpenId(wxFanOpenId);
-                    pl3.setContent("恭喜你,升级到等级lv."+level+"啦");
-                    pl3.setCreateTime(new Date());
-                    pl3.setChatPetId(chatPetId);
-
-                    pls.add(pl3);
-                }
-            }
-            this.petLogMapper.batchInsert(pls);
-
-
-        }else{
-            //没有金币奖励一定有经验值奖励   "完成...任务,奖励经验..."
-        }
-    }*/
 
 
 
