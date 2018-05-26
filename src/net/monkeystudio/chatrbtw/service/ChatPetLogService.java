@@ -110,7 +110,7 @@ public class ChatPetLogService {
     }
 
 
-    public void savePetLog444MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+    public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         Integer chatPetPersonalMissionId = item.getMissionItemId();
@@ -177,7 +177,7 @@ public class ChatPetLogService {
      * @param chatPetRewardItemId 领取奖励对象id
      * @param isUpgrade             是否升级
      */
-    public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+    /*public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         Integer chatPetPersonalMissionId = item.getMissionItemId();
@@ -218,7 +218,7 @@ public class ChatPetLogService {
             this.savePetLog(upgradelog);
         }
 
-    }
+    }*/
 
 
     /**
