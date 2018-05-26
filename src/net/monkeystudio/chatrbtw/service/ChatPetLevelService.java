@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.FloatArithmeticUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetLevel;
 import net.monkeystudio.chatrbtw.mapper.ChatPetLevelMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
@@ -82,18 +83,19 @@ public class ChatPetLevelService {
         return experienceProgressRate;
     }*/
 
+
     public ExperienceProgressRate getProgressRate(Float experience){
         //当前等级
         Integer nowLevel = this.calculateLevel(experience);
 
         //当前等级的最低经验值
-        Integer nowLevelExperience = this.lowestExperienceOfLevel(nowLevel);
+        Float nowLevelExperience = Float.parseFloat(this.lowestExperienceOfLevel(nowLevel).toString());
 
         //当前分数超出最低分几分
-        Float overExperience = experience - nowLevelExperience;
+        Float overExperience = FloatArithmeticUtil.sub(experience,nowLevelExperience).floatValue();
 
         //下一级
-        Integer nextLevel = nowLevel + 1;
+        Integer nextLevel = nowLevel.intValue() + 1;
 
         //下一级所需经验值
         Float updateNeedExperience = Float.parseFloat(this.upgradeNeedExperience(nextLevel).toString());
