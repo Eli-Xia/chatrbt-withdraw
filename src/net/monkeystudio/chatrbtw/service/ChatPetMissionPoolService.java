@@ -63,7 +63,7 @@ public class ChatPetMissionPoolService {
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
                     String string = list.get(1);
-                    Log.d("receive the message [?]",string);
+                    Log.i("receive the message [?]",string);
                     String str[] = string.split(":");
                     Integer wxFanId = Integer.valueOf(str[0]);
                     String wxFanOpenId = str[1];
