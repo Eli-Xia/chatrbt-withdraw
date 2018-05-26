@@ -4,7 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,9 @@ import java.util.List;
  */
 @Service
 public class ChatPetMissionPoolService {
+
+    private final static String MESSAGE_KEY = "chat_pet_mission";
+
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
 
@@ -50,7 +54,59 @@ public class ChatPetMissionPoolService {
     @Autowired
     private ChatPetRewardService chatPetRewardService;
 
+    @PostConstruct
+    private void initSubscribe(){
+        //起一条独立的线程去监听
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
+                    String string = list.get(1);
+                    Log.d("receive the message [?]",string);
+                    String str[] = string.split(":");
+                    Integer wxFanId = Integer.valueOf(str[0]);
+                    String wxFanOpenId = str[1];
+                    Integer adId = Integer.valueOf(str[2]);
 
+                    if(str.length != 3){
+                        Log.d("chatpet mission message errror." + str);
+                        return ;
+                    }
+
+                    if(validatedWxFan(wxFanId,wxFanOpenId)){
+                        WxFan wxFan = wxFanService.getById(wxFanId);
+
+                        completeDailyReadMission(wxFanId,adId);
+                    }
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+        Log.d("finished Subscribe");
+    }
+
+
+    private Boolean validatedWxFan(Integer wxFanId ,String wxFanOpenId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        if(wxFan == null){
+            return false;
+        }
+
+        if(wxFanOpenId == null){
+            return false;
+        }
+
+        String wxFanOpenIdFromDb = wxFan.getWxFanOpenId();
+
+        if(wxFanOpenId.equals(wxFanOpenIdFromDb)){
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * 当日第一次进入宠物陪聊h5或者粉丝第一次聊天互动时创建当日任务
