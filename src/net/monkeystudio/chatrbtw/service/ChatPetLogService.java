@@ -279,11 +279,9 @@ public class ChatPetLogService {
 
         PetLog pl = new PetLog();
 
-        pl.setRewardType(RewardMethodEnum.GOLD_REWARD.getType());
         pl.setChatPetId(chatPetId);
         pl.setCreateTime(new Date());
-        pl.setContent("领取等级奖励");
-        pl.setRewardItemId(chatPetRewardItemId);
+        pl.setContent("领取等级奖励,获得POP币+" + item.getGoldValue());
 
         this.savePetLog(pl);
     }
