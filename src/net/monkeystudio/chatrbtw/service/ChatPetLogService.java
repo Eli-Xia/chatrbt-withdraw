@@ -5,6 +5,7 @@ import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.RewardMethodEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
+import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +26,6 @@ public class ChatPetLogService {
 
     @Autowired
     private ChatPetService chatPetService;
-
-    @Autowired
-    private ChatPetMissionService chatPetMissionService;
 
     @Autowired
     private ChatPetLevelService chatPetLevelService;
@@ -159,8 +157,13 @@ public class ChatPetLogService {
             sb.append("完成NO." + this.getRandomNum(createTime) + missionName);
         }
 
+<<<<<<< HEAD
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
             sb.append("邀请好友加入族群");
+=======
+        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            sb.append("NO." + ChatPetMissionNoUtil.getMissionNo(createTime));
+>>>>>>> tttttttest
         }
 
         if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){

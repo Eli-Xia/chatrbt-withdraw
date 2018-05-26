@@ -13,6 +13,7 @@ import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
+import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,7 @@ public class ChatPetMissionPoolService {
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
                     String string = list.get(1);
-                    Log.d("receive the message [?]",string);
+                    Log.i("receive the message [?]",string);
                     String str[] = string.split(":");
                     Integer wxFanId = Integer.valueOf(str[0]);
                     String wxFanOpenId = str[1];
@@ -468,10 +469,7 @@ public class ChatPetMissionPoolService {
 
             Integer missionCode = cppm.getMissionCode();
             if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode) || chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-
-                Long time = cppm.getCreateTime().getTime();
-                String no = String.valueOf(time/1000 % 10000 );
-                missionName = "NO." + no + " " + missionName;
+                missionName = ChatPetMissionNoUtil.getMissionNo(cppm.getCreateTime()) + " " + missionName;
             }
 
             item.setMissionName(missionName);
@@ -493,6 +491,8 @@ public class ChatPetMissionPoolService {
 
         return todayMission;
     }
+
+
 
 
 
