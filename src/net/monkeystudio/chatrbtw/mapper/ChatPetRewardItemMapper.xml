@@ -71,7 +71,7 @@
     update e_chat_pet_reward_item
     set gold_value = #{goldValue},reward_state = #{rewardState},mission_item_id = #{missionItemId} ,
     chat_pet_id = #{chatPetId} , experience = #{experience} , create_time = #{createTime}
-    where id = #{id,jdbcType=INTEGER} AND  state = 0
+    where id = #{id,jdbcType=INTEGER} AND  reward_state = 0
   </update>
 
 </mapper>
