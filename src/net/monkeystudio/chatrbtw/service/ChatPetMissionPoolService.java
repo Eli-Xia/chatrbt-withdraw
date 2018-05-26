@@ -346,7 +346,7 @@ public class ChatPetMissionPoolService {
         ChatPetPersonalMission chatPetPersonalMission = null;
 
         boolean flag = false;
-
+        //当前点击广告是否为资讯任务
         for(ChatPetPersonalMission cppm:goingonSearNewsMissionList){
             if(adId.equals(cppm.getAdId())){
                 chatPetPersonalMission = cppm;//获取当前
@@ -354,7 +354,7 @@ public class ChatPetMissionPoolService {
             }
         }
 
-        //当前点击的这条广告在用户今日资讯阅读任务池中无法找到
+        //当前点击的这条广告在用户今日资讯阅读任务池中无法找到则return
         if(!flag){
             return ;
         }
