@@ -956,7 +956,14 @@ public class ChatPetService {
         String wxFanOpenId = chatPet.getWxFanOpenId();
         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
         String wxFanNickname = wxFan.getNickname();
+
+        if(wxFanNickname == null){
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+            wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+            wxFanNickname = wxFan.getNickname();
+        }
         description = description.replace("#{wxFanNickname}", wxFanNickname);
+
 
         //替换出生日期
         Calendar calendar = Calendar.getInstance();
