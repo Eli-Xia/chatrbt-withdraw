@@ -39,7 +39,7 @@ public class ChatPetBackgroundController extends ChatPetBaseController{
             return respHelper.nologin();
         }
 
-        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfo(wxFanId);
+        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfoByFanId(wxFanId);
 
         return respHelper.ok(chatPetBackgroundInfo);
     }
