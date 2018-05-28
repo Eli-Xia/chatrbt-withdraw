@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -143,6 +144,7 @@ public class PortalWxPubController extends PortalBaseController{
 
     @RequestMapping(value = "/auth-callback/{key}", method = RequestMethod.GET)
     public String getWeizanHandler(
+            HttpServletRequest request,
             @RequestParam("auth_code") String authCode,
             @RequestParam("expires_in") String expiresIn,
             @PathVariable("key") String key){

@@ -44,5 +44,9 @@
         SELECT id, wx_pub_app_id, wx_fan_open_id,push_ad_timestamp , ad_id  FROM e_ad_push_log WHERE id = #{id}
     </select>
 
+    <select id="countAdPushCount4WxFan" resultType="java.lang.Integer">
+        SELECT count(id) FROM  e_ad_push_log WHERE ad_id = #{adId} AND wx_pub_app_id = #{wxPubAppId} AND wx_fan_open_id = #{wxFanOpenId}
+    </select>
+
 
 </mapper>

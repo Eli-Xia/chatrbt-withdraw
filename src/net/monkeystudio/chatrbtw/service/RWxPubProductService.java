@@ -1,9 +1,14 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.chatrbtw.entity.RWxPubProduct;
 import net.monkeystudio.chatrbtw.mapper.RWxPubProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bint on 27/03/2018.
@@ -32,12 +37,12 @@ public class RWxPubProductService {
      */
     public void openProduct(String wxPubOriginId , Integer productId){
 
-        RWxPubProduct smartChatRWxPubProduct = new RWxPubProduct();
-        smartChatRWxPubProduct.setWxPubOriginId(wxPubOriginId);
-        smartChatRWxPubProduct.setStatus(ENABLE_STATUS);
-        smartChatRWxPubProduct.setProductId(productId);
+        RWxPubProduct rWxPubProduct = new RWxPubProduct();
+        rWxPubProduct.setWxPubOriginId(wxPubOriginId);
+        rWxPubProduct.setStatus(ENABLE_STATUS);
+        rWxPubProduct.setProductId(productId);
 
-        this.insert(smartChatRWxPubProduct);
+        this.insert(rWxPubProduct);
     }
 
 
@@ -66,6 +71,14 @@ public class RWxPubProductService {
         return null;
     }
 
+    /**
+     * 获取公众对应的产品关系
+     * @param wxPubOriginId
+     * @return
+     */
+    private List<RWxPubProduct> getListByWxPubOriginId(String wxPubOriginId){
+        return rWxPubProductMapper.selectListByWxPubOriginId(wxPubOriginId);
+    }
 
     /**
      * 是否禁用指定产品
@@ -75,5 +88,21 @@ public class RWxPubProductService {
      */
     public Boolean isUnable(Integer productId , String wxPubOriginId){
         return !isEnable(productId, wxPubOriginId);
+    }
+
+    public void protalJoinProductHandle(String wxPubOriginId){
+
+        List<RWxPubProduct> rWxPubProductList = this.getListByWxPubOriginId(wxPubOriginId);
+
+
+        if(ListUtil.isEmpty(rWxPubProductList)){
+
+            //启用智能聊
+            this.openProduct(wxPubOriginId,ProductService.SMART_CHAT);
+
+            //启用问问搜
+            this.openProduct(wxPubOriginId,ProductService.ASK_SEARCH);
+        }
+
     }
 }

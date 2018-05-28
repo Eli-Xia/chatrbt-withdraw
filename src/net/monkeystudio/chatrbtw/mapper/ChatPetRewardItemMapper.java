@@ -23,4 +23,6 @@ public interface ChatPetRewardItemMapper {
     List<ChatPetRewardItem> selectByParam(ChatPetRewardItem param);
 
     ChatPetRewardItem selectLevelRewardItem(@Param("chatPetId")Integer chatPetId);
+
+    int updateRewarded(ChatPetRewardItem record);
 }

@@ -17,6 +17,16 @@ public class ChatPetPersonalMission {
 
     private Date finishTime;
 
+    private Integer inviteeWxFanId;
+
+    public Integer getInviteeWxFanId() {
+        return inviteeWxFanId;
+    }
+
+    public void setInviteeWxFanId(Integer inviteeWxFanId) {
+        this.inviteeWxFanId = inviteeWxFanId;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -124,7 +125,7 @@ public class AdPushService {
      * @param pushType          :  投放类型(陪聊宠,智能聊) -> 二者统计聊天次数的缓存策略不同(一天之内,24小时内)
      * @return
      */
-    private boolean judgeIfAdNeed2PushByStrategyType(Integer pushStrategyType,String wxPubOriginId,Integer wxFanId,Integer pushType){
+    public boolean judgeIfAdNeed2PushByStrategyType(Integer pushStrategyType,String wxPubOriginId,Integer wxFanId,Integer pushType){
         boolean needToPush = false;
 
         if(adService.AD_PUSH_STRATEGY_CHANCE.equals(pushStrategyType)){
@@ -204,6 +205,7 @@ public class AdPushService {
             return ;
         }
 
+        Log.d("===============陪聊宠随机任务触发 检查参数 adId = {?} , wxFanId = {?} =================",ad.getId().toString(),wxFanId.toString());
         //陪聊宠随机任务触发
         //chatPetMissionPoolService.updateMissionWhenPushChatPetAd(ad.getId(),wxFanId);
         if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
@@ -220,6 +222,32 @@ public class AdPushService {
 
         adPushLogService.save(adPushLog);
     }
+
+    /**
+     * 判断广告是否已经推送过给粉丝
+     * @param wxFanId   粉丝id
+     * @param adId       广告id
+     * @return
+     */
+    public Boolean isAdHasPushedWxFanId(Integer wxFanId,Integer adId){
+        Boolean isPush = false;
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+        String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);
+
+        //获取该广告推送给该粉丝的次数
+        Integer count = adPushLogService.countAdPushAmount4WxFan(wxPubAppId, wxFanOpenId, adId);
+
+        if(count.intValue() > 0){
+            isPush = true;
+        }
+
+        return isPush;
+    }
+
 
     /**
      * 得到广告开关是否开启
