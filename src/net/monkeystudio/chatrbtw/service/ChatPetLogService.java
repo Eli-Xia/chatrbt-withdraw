@@ -116,10 +116,13 @@ public class ChatPetLogService {
         Float goldValue = item.getGoldValue();
         Float experience = item.getExperience();
 
+        //金币名称
+        String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
+
         StringBuilder missisonNameSb = new StringBuilder();
 
         missisonNameSb.append(this.getPetLogMissionNameByChatPetPersonalMissionId(chatPetPersonalMissionId));
-        missisonNameSb.append("获取POP币+" + goldValue + ",");
+        missisonNameSb.append("获取" + chatPetCoinName + "+" + goldValue + ",");
         missisonNameSb.append("经验值+" + experience);
 
         PetLog petLog1 = new PetLog();
@@ -266,12 +269,14 @@ public class ChatPetLogService {
     public void saveLevelRewardLog(Integer chatPetRewardItemId){
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
+        //金币名称
+        String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
 
         PetLog pl = new PetLog();
 
         pl.setChatPetId(chatPetId);
         pl.setCreateTime(new Date());
-        pl.setContent("领取等级奖励,获得POP币+" + item.getGoldValue());
+        pl.setContent("领取等级奖励,获得" + chatPetCoinName + "+" + item.getGoldValue());
 
         this.savePetLog(pl);
     }

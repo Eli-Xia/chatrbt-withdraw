@@ -311,7 +311,7 @@ public class ChatPetRewardService {
     /**
      * 领取奖励之后修改奖励状态,防止多个领奖请求同时update同一奖励,加入状态判断
      * @param chatPetRewardItemId
-     * @return   返回被修改的个数,若<= 0 则修改失败
+     * @return   返回被修改的个数,若updateCount <= 0 则修改失败
      */
     public Integer updateRewardState(Integer chatPetRewardItemId){
 

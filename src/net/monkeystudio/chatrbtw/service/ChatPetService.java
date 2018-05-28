@@ -918,6 +918,24 @@ public class ChatPetService {
         return creationPost;
     }
 
+    /**
+     * 根据宠物id获取金币名称
+     * @param chatPetId
+     * @return
+     */
+    public String getChatPetCoinName(Integer chatPetId){
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
+
+        return chatPetTypeConfig.getCoinName();
+
+    }
+
 
     /**
      * 获取宠物的图文卡片

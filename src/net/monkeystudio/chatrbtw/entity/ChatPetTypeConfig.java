@@ -8,6 +8,15 @@ public class ChatPetTypeConfig {
     private String newsTitle;
     private String newsDescription;
     private String founderName;
+    private String coinName;
+
+    public String getCoinName() {
+        return coinName;
+    }
+
+    public void setCoinName(String coinName) {
+        this.coinName = coinName;
+    }
 
     public Integer getId() {
         return id;
