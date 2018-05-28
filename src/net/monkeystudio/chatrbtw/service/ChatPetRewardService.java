@@ -86,24 +86,6 @@ public class ChatPetRewardService {
 
         this.save(fixedItem);
 
-        //获取当前已完成任务,并创建奖励insert
-        List<ChatPetPersonalMission> finishedItems = chatPetMissionPoolService.getFinishedMissionItem(chatPetId);
-        if(ListUtil.isNotEmpty(finishedItems)){
-            for (ChatPetPersonalMission cppm:finishedItems){
-
-                ChatPetRewardItem item = new ChatPetRewardItem();
-
-                item.setGoldValue(item.getGoldValue());
-                item.setExperience(item.getExperience());
-                item.setChatPetId(chatPetId);
-                item.setMissionItemId(cppm.getId());
-                item.setRewardState(NOT_AWARD);
-                item.setCreateTime(new Date());
-
-                this.save(item);
-            }
-        }
-
     }
 
 
