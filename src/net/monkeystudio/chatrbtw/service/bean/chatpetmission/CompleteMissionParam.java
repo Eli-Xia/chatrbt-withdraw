@@ -7,7 +7,6 @@ package net.monkeystudio.chatrbtw.service.bean.chatpetmission;
 public class CompleteMissionParam {
     private Integer chatPetId;//宠物id
     private Integer missionCode;//任务类型
-    private Integer wxFanId;//微信粉丝id
     private Integer adId;//资讯任务对应广告id
     private Integer inviteeWxFanId;//被邀请人微信粉丝id
 
@@ -25,14 +24,6 @@ public class CompleteMissionParam {
 
     public void setMissionCode(Integer missionCode) {
         this.missionCode = missionCode;
-    }
-
-    public Integer getWxFanId() {
-        return wxFanId;
-    }
-
-    public void setWxFanId(Integer wxFanId) {
-        this.wxFanId = wxFanId;
     }
 
     public Integer getAdId() {

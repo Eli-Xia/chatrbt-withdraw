@@ -41,8 +41,6 @@ public class ChatPetService {
     @Autowired
     private ChatPetBackgroundService chatPetBackgroundService;
 
-    @Autowired
-    private ChatPetMissionEnumService chatPetMissionEnumService;
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;

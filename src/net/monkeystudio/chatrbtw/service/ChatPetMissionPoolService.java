@@ -13,11 +13,12 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionPara
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
-import net.monkeystudio.wx.service.WxCustomerServiceService;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 /**
  * @author xiaxin
  */
+@DependsOn
 @Service
 public class ChatPetMissionPoolService {
 
@@ -87,12 +89,20 @@ public class ChatPetMissionPoolService {
                     if(validatedWxFan(wxFanId,wxFanOpenId)){
                         WxFan wxFan = wxFanService.getById(wxFanId);
 
-                        completeDailyReadMission(wxFanId,adId);
+                        CompleteMissionParam param = new CompleteMissionParam();
+
+                        ChatPet chatPet = chatPetService.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
+                        param.setAdId(adId);
+                        param.setChatPetId(chatPet.getId());
+                        param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+
+                        completeChatPetMission(param);
                     }
                 }
             }
         });
         thread.setDaemon(true);
+        thread.setName("NewsMission");
         thread.start();
         Log.d("finished Subscribe");
     }
@@ -276,30 +286,104 @@ public class ChatPetMissionPoolService {
 
 
 
+
     /**
-     * 完成任务但是未领取奖励时更新任务池记录
-     * @param missionId
+     * 完成宠物任务
+     * @param completeMissionParam  完成任务参数
      */
-    public void updateMissionWhenFinishByMissionId(Integer missionId){
-
-        ChatPetPersonalMission cppm = this.getById(missionId);
-
-        cppm.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
-
-        this.update(cppm);
-    }
-    /*
-    *   TODO
-    *   1,聊天任务的参数是:chatpetid  missioncode 任务类型  chatpetperonalmissionid 如果有这个东西的话是最理想的,因为已经生成了这个东西的啦...
-    *   2,资讯任务的参数是:Integer wxfanId --> chatPetId ,Integer adId , missioncode这个东西是需要的.
-    *   3,邀请人任务的参数是: chatpetid  , inviteeWxFanId
-    *   =========================================================
-    *   完成任务的逻辑有什么区别???
-    *
-    * */
     public void completeChatPetMission(CompleteMissionParam completeMissionParam){
+        //查询当前任务记录查询对象
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+
+        param.setChatPetId(completeMissionParam.getChatPetId());
+        param.setMissionCode(completeMissionParam.getChatPetId());
+        param.setAdId(completeMissionParam.getAdId());
+        param.setCreateTime(DateUtils.getBeginDate(new Date()));
+        param.setState(MissionStateEnum.GOING_ON.getCode());
+
+        //获取当前任务对象
+        ChatPetPersonalMission chatPetPersonalMission = this.getPersonalMissionByParam(param);
+
+        //校验
+        this.completeMissionCheck(chatPetPersonalMission.getId());
+
+        //更新状态
+        chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
+        chatPetPersonalMission.setInviteeWxFanId(param.getInviteeWxFanId());
+        this.update(chatPetPersonalMission);
+
+        //奖励池生成奖励 TODO 插入奖励方法需要修改
+        chatPetRewardService.saveRewardItemWhenMissionDone(chatPetPersonalMission.getChatPetId(),chatPetPersonalMission.getId());
+
+        //完成任务后给粉丝发送领奖tips
+        this.sendChatPetRewardTips(chatPetPersonalMission.getChatPetId());
 
     }
+
+    /**
+     * 完成宠物任务前校验
+     * @param chatPetPersonalMissionId
+     */
+    private void completeMissionCheck(Integer chatPetPersonalMissionId){
+        ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
+
+        Integer state = chatPetPersonalMission.getState();//当前任务状态
+        Integer chatPetId = chatPetPersonalMission.getChatPetId();
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        String wxFanOpenId = chatPet.getWxFanOpenId();
+
+        //公众号是否开通陪聊宠服务
+        Assert.isTrue(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId),"公众号未开通陪聊宠");
+        //粉丝是否领取宠物
+        Assert.notNull(chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId),"未领取陪聊宠");
+        //任务是否为正在进行中状态
+        Assert.isTrue(MissionStateEnum.GOING_ON.getCode().equals(state),"任务已完成");
+
+        //资讯任务校验
+        Integer adId = chatPetPersonalMission.getAdId();
+        if(adId != null){
+            Assert.isTrue(this.getCountByChatPetIdAndAdId(chatPetId,adId).intValue() == 0,"该资讯已阅读");
+        }
+    }
+
+    /**
+     * 完成任务后发送tips
+     * @param chatPetId     宠物id
+     */
+    private void sendChatPetRewardTips(Integer chatPetId){
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        String wxFanOpenId = chatPet.getWxFanOpenId();
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+
+        String tips = String.format(CHAT_PET_NEWS_MISSION_REWARD_TIPS,chatPetService.getHomePageUrl(wxPub.getId()));
+
+        String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId,wxPub.getAppId(), tips);
+        if(result.indexOf("errcode") == -1){
+            Log.e("tips send failed ! error info :" + result);
+
+            return ;
+        }
+    }
+
+    /**
+     * 根据宠物id,广告id获取任务记录条数
+     * @param chatPetId
+     * @param adId
+     * @return
+     */
+    private Integer getCountByChatPetIdAndAdId(Integer chatPetId,Integer adId){
+        return this.chatPetPersonalMissionMapper.countByChatPetIdAndAdId(chatPetId,adId);
+    }
+
+
+
+
+
+
+
 
 
     /**
@@ -341,27 +425,9 @@ public class ChatPetMissionPoolService {
 
         this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE,adId);
 
-        //给粉丝发送提示连接
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
-        String tips = String.format(CHAT_PET_NEWS_MISSION_REWARD_TIPS,chatPetService.getHomePageUrl(wxPub.getId()));
-        this.sendChatPetRewardTips(wxFanOpenId,wxPub.getAppId(),tips);
-
     }
 
-    /**
-     * 完成任务后发送tips
-     * @param wxFanOpenId
-     * @param wxPubAppId
-     * @param tips
-     */
-    private void sendChatPetRewardTips(String wxFanOpenId,String wxPubAppId,String tips){
-        String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId,wxPubAppId, tips);
-        if(result.indexOf("errcode") == -1){
-            Log.e("tips send failed ! error info :" + result);
 
-            return ;
-        }
-    }
 
     /**
      * 完成每日资讯任务
@@ -383,7 +449,6 @@ public class ChatPetMissionPoolService {
         param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
         param.setCreateTime(DateUtils.getBeginDate(new Date()));
         param.setChatPetId(chatPet.getId());
-
         List<ChatPetPersonalMission>  goingonSearNewsMissionList = this.getPersonalMissionListByParam(param);//所有正在进行中的资讯任务
 
         ChatPetPersonalMission chatPetPersonalMission = null;
