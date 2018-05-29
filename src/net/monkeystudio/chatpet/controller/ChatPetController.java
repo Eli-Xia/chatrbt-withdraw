@@ -85,34 +85,39 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
-        Integer userId = getUserId();
+    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request)  {
+        try {
+            Integer userId = getUserId();
 
-        if(userId == null){
-            //网页授权
-            response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
-        }else{
-            //判断是否为跨公众号同session
-            if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
-
-                saveSessionUserId(null);
-
-                response.sendRedirect(chatPetService.getHomePageUrl(wxPubId));
-
-                return null;
-            }
-
-            if(chatPetService.isAble2Access(userId,wxPubId)){
-
-                chatPetService.dataPrepared(userId,wxPubId);
-
-                response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
-
+            if(userId == null){
+                //网页授权
+                response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
             }else{
-                response.sendRedirect(chatPetService.getChatPetPosterUrl());
-            }
+                //判断是否为跨公众号同session
+                if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
 
+                    saveSessionUserId(null);
+
+                    response.sendRedirect(chatPetService.getHomePageUrl(wxPubId));
+
+                    return null;
+                }
+
+                if(chatPetService.isAble2Access(userId,wxPubId)){
+
+                    chatPetService.dataPrepared(userId,wxPubId);
+
+                    response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
+
+                }else{
+                    response.sendRedirect(chatPetService.getChatPetPosterUrl());
+                }
+
+            }
+        }catch (Exception e){
+            Log.e(e);
         }
+
         return null;
     }
 
@@ -141,11 +146,13 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
+
         Integer userId = this.getUserId();
 
         if(userId == null){
             return respHelper.nologin();
         }
+
 
         ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId());
 

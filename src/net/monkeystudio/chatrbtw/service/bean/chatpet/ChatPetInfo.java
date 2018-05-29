@@ -33,13 +33,21 @@ public class ChatPetInfo {
 
     private Float fanTotalCoin = 0F;
 
-
-
     private List<PetLogResp> petLogs = new ArrayList<>();
 
     private TodayMission todayMission;
 
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
+
+    private ChatPetBackgroundInfo chatPetBackgroundInfo;
+
+    public ChatPetBackgroundInfo getChatPetBackgroundInfo() {
+        return chatPetBackgroundInfo;
+    }
+
+    public void setChatPetBackgroundInfo(ChatPetBackgroundInfo chatPetBackgroundInfo) {
+        this.chatPetBackgroundInfo = chatPetBackgroundInfo;
+    }
 
     public List<ChatPetGoldItem> getGoldItems() {
         return goldItems;

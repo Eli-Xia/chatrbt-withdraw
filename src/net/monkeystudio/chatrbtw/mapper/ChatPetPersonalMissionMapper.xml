@@ -9,10 +9,11 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+    <result column="invitee_wx_fan_id" property="inviteeWxFanId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, mission_code, ad_id, chat_pet_id, create_time,
-    state, finish_time
+    state, finish_time,invitee_wx_fan_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -27,61 +28,12 @@
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     insert into e_chat_pet_personal_mission (id, mission_code,
       ad_id, chat_pet_id,
-      create_time, state, finish_time
+      create_time, state, finish_time,invitee_wx_fan_id
       )
     values (#{id,jdbcType=INTEGER}, #{missionCode,jdbcType=INTEGER},
       #{adId,jdbcType=INTEGER},#{chatPetId,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP}
+      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP},#{inviteeWxFanId}
       )
-  </insert>
-  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
-    insert into e_chat_pet_personal_mission
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="missionCode != null" >
-        mission_code,
-      </if>
-      <if test="adId != null" >
-        ad_id,
-      </if>
-      <if test="chatPetId != null" >
-        chat_pet_id,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="state != null" >
-        state,
-      </if>
-      <if test="finishTime != null" >
-        finish_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="missionCode != null" >
-        #{missionCode,jdbcType=INTEGER},
-      </if>
-      <if test="adId != null" >
-        #{adId,jdbcType=INTEGER},
-      </if>
-      <if test="chatPetId != null" >
-        #{chatPetId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="state != null" >
-        #{state,jdbcType=INTEGER},
-      </if>
-      <if test="finishTime != null" >
-        #{finishTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     update e_chat_pet_personal_mission
@@ -107,6 +59,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     update e_chat_pet_personal_mission
     set mission_code = #{missionCode,jdbcType=INTEGER},
@@ -114,7 +67,8 @@
       chat_pet_id = #{chatPetId},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       state = #{state,jdbcType=INTEGER},
-      finish_time = #{finishTime,jdbcType=TIMESTAMP}
+      finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      invitee_wx_fan_id = #{inviteeWxFanId}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -136,6 +90,9 @@
       <if test="createTime != null">
         and create_time &gt;= #{createTime}
       </if>
+      <if test="adId != null">
+        AND ad_id = #{adId}
+      </if>
     </where>
   </select>
 
@@ -155,6 +112,9 @@
       </if>
       <if test="createTime != null">
         and create_time &gt;= #{createTime}
+      </if>
+      <if test="adId != null">
+        ad_id = #{adId}
       </if>
     </where>
   </select>

@@ -5,9 +5,15 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.TaskExecutor;
-import net.monkeystudio.base.utils.*;
+import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.AppConstants;
-import net.monkeystudio.chatrbtw.entity.*;
+import net.monkeystudio.chatrbtw.entity.KrResponse;
+import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.entity.WxPub;
+import net.monkeystudio.chatrbtw.entity.WxPubNews;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
@@ -528,6 +534,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
             //图灵回复
             return REPLY_TYPE_TU_LING;
 
+        }
+
+        Boolean chatPetEnable = rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId);
+        if(chatPetEnable){
+            //图灵回复
+            return REPLY_TYPE_TU_LING;
         }
 
         return REPLY_TYPE_NONE;
