@@ -4,6 +4,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
@@ -12,7 +13,6 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -44,7 +44,7 @@ public class ChatPetRewardService {
     public static final Integer NOT_AWARD = 0;
     public static final Integer HAVE_AWARD = 1;
 
-
+    private static final Integer DAILY_INVITE_MISSION_TIME = 3;
 
     public ChatPetRewardItem getChatPetRewardItemById(Integer id){
         return chatPetRewardItemMapper.selectByPrimaryKey(id);
@@ -96,7 +96,7 @@ public class ChatPetRewardService {
      */
     public List<ChatPetGoldItem> getChatPetGoldItems(Integer chatPetId){
 
-        ChatPetRewardItem param =new ChatPetRewardItem();
+        ChatPetRewardItem param = new ChatPetRewardItem();
         param.setRewardState(NOT_AWARD);
         param.setChatPetId(chatPetId);
         param.setCreateTime(DateUtils.getBeginDate(new Date()));
@@ -210,12 +210,18 @@ public class ChatPetRewardService {
         //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
         if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
-            chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
+            Date date = TimeUtil.getStartTimestamp();
+
+            //如果当天没有完成邀请好友次数不超过三次，继续派发任务
+            List<ChatPetRewardItem> chatPetRewardItemList = this.getByChatPetAndState(date, chatPetId ,HAVE_AWARD);
+            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INVITE_MISSION_TIME.intValue()){
+                chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
+            }
         }
     }
 
     /**
-     * 完成宠物任务后奖励池中插入数据
+     * 完成宠物任务后添加奖励
      * @param chatPetId
      * @param missionItemId
      */
@@ -295,7 +301,7 @@ public class ChatPetRewardService {
      * @param chatPetRewardItemId
      * @return   返回被修改的个数,若updateCount <= 0 则修改失败
      */
-    public Integer updateRewardState(Integer chatPetRewardItemId){
+    private Integer updateRewardState(Integer chatPetRewardItemId){
 
         ChatPetRewardItem chatPetRewardItem = this.getChatPetRewardItemById(chatPetRewardItemId);
 
@@ -333,6 +339,10 @@ public class ChatPetRewardService {
     //初始化奖励池count cache
     private String getInitRewardItemCountKey(Integer chatPetId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "initRewardItem:" + chatPetId;
+    }
+
+    private List<ChatPetRewardItem> getByChatPetAndState(Date date ,Integer chatPetId ,Integer rewardState){
+        return chatPetRewardItemMapper.selectByDateAndChatPet(date,chatPetId ,rewardState);
     }
 
 }
