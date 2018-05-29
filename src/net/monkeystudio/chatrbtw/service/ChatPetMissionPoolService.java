@@ -322,6 +322,10 @@ public class ChatPetMissionPoolService {
         //获取当前任务对象
         ChatPetPersonalMission chatPetPersonalMission = this.getPersonalMissionByParam(param);
 
+        if(chatPetPersonalMission == null){//查找不到任务记录,说明任务已经完成
+            return ;
+        }
+
         //校验
         this.completeMissionCheck(chatPetPersonalMission.getId());
 
