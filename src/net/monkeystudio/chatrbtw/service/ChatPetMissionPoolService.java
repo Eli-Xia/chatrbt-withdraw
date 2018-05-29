@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
@@ -10,6 +11,7 @@ import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
@@ -158,10 +160,12 @@ public class ChatPetMissionPoolService {
         }
 
         for(ChatPetMission cpm:activeMissions){
+
             //仅初始固定任务数据
             if(!ChatPetMissionService.CHAT_PET_MISSION_TYPE_FIXED.equals(cpm.getMissionType())){
                 continue;
             }
+
             ChatPetPersonalMission cppm = new ChatPetPersonalMission();
 
             cppm.setChatPetId(chatPetId);
@@ -174,38 +178,51 @@ public class ChatPetMissionPoolService {
     }
 
     /**
-     * TODO 支持阅读任务和互动任务
-     * 派发任务,目前仅仅支持邀请好友类型任务
-     * @param missionCode
-     * @param chatPetId
+     * 派发任务
+     * @param dispatchMissionParam
      */
-    public void dispatchMission(Integer missionCode ,Integer chatPetId){
+    public void dispatchMission(DispatchMissionParam dispatchMissionParam ) throws BizException{
 
-        ChatPetPersonalMission cppm = new ChatPetPersonalMission();
-        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        ChatPetPersonalMission chatPetPersonalMission = new ChatPetPersonalMission();
 
-            cppm.setChatPetId(chatPetId);
-            cppm.setCreateTime(new Date());
-            cppm.setState(MissionStateEnum.GOING_ON.getCode());
-            cppm.setMissionCode(missionCode);
+        Integer missionCode = dispatchMissionParam.getMissionCode();
+        Integer chatPetId = dispatchMissionParam.getChatPetId();
 
-            this.save(cppm);
+
+        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+            Integer adId = dispatchMissionParam.getAdId();
+
+            chatPetPersonalMission.setChatPetId(chatPetId);
+            chatPetPersonalMission.setCreateTime(new Date());
+            chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+            chatPetPersonalMission.setMissionCode(missionCode);
+            chatPetPersonalMission.setAdId(missionCode);
+            chatPetPersonalMission.setAdId(adId);
+
+            this.save(chatPetPersonalMission);
+            return;
         }
 
+        chatPetPersonalMission.setChatPetId(chatPetId);
+        chatPetPersonalMission.setCreateTime(new Date());
+        chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMission.setMissionCode(missionCode);
 
+        this.save(chatPetPersonalMission);
     }
+
 
 
     /**
      * 任务池新增记录
      * @param chatPetPersonalMission
      */
-    public void save(ChatPetPersonalMission chatPetPersonalMission){
+    public Integer save(ChatPetPersonalMission chatPetPersonalMission){
         ChatPetPersonalMission cppm = new ChatPetPersonalMission();
 
         BeanUtils.copyProperties(chatPetPersonalMission,cppm);
 
-        chatPetPersonalMissionMapper.insert(cppm);
+        return chatPetPersonalMissionMapper.insert(cppm);
     }
 
     /**

@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.mapper;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ChatPetRewardItemMapper {
@@ -25,4 +26,6 @@ public interface ChatPetRewardItemMapper {
     ChatPetRewardItem selectLevelRewardItem(@Param("chatPetId")Integer chatPetId);
 
     int updateRewarded(ChatPetRewardItem record);
+
+    List<ChatPetRewardItem> selectByDateAndChatPet(@Param("date") Date date , @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState);
 }
