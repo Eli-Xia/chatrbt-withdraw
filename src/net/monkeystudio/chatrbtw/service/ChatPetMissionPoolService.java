@@ -5,15 +5,16 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.ChatPetMission;
-import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
-import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
+import net.monkeystudio.wx.service.WxCustomerServiceService;
+import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,14 @@ public class ChatPetMissionPoolService {
 
     @Autowired
     private ChatPetRewardService chatPetRewardService;
+
+    @Autowired
+    private WxCustomerHelper wxCustomerHelper;
+
+    @Autowired
+    private WxPubService wxPubService;
+
+    private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "恭喜你采矿成功,点击<a href=\"%s\">领取奖励</a>";
 
     @PostConstruct
     private void initSubscribe(){
@@ -279,6 +288,18 @@ public class ChatPetMissionPoolService {
 
         this.update(cppm);
     }
+    /*
+    *   TODO
+    *   1,聊天任务的参数是:chatpetid  missioncode 任务类型  chatpetperonalmissionid 如果有这个东西的话是最理想的,因为已经生成了这个东西的啦...
+    *   2,资讯任务的参数是:Integer wxfanId --> chatPetId ,Integer adId , missioncode这个东西是需要的.
+    *   3,邀请人任务的参数是: chatpetid  , inviteeWxFanId
+    *   =========================================================
+    *   完成任务的逻辑有什么区别???
+    *
+    * */
+    public void completeChatPetMission(CompleteMissionParam completeMissionParam){
+
+    }
 
 
     /**
@@ -319,6 +340,27 @@ public class ChatPetMissionPoolService {
         String wxFanOpenId = wxfan.getWxFanOpenId();
 
         this.completeDailyReadMission(wxPubOriginId,wxFanOpenId,chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE,adId);
+
+        //给粉丝发送提示连接
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+        String tips = String.format(CHAT_PET_NEWS_MISSION_REWARD_TIPS,chatPetService.getHomePageUrl(wxPub.getId()));
+        this.sendChatPetRewardTips(wxFanOpenId,wxPub.getAppId(),tips);
+
+    }
+
+    /**
+     * 完成任务后发送tips
+     * @param wxFanOpenId
+     * @param wxPubAppId
+     * @param tips
+     */
+    private void sendChatPetRewardTips(String wxFanOpenId,String wxPubAppId,String tips){
+        String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId,wxPubAppId, tips);
+        if(result.indexOf("errcode") == -1){
+            Log.e("tips send failed ! error info :" + result);
+
+            return ;
+        }
     }
 
     /**
@@ -549,6 +591,5 @@ public class ChatPetMissionPoolService {
     public String getCreateDailyMissionCountCacheKey(Integer chatPetId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatPetDailyMission:" + chatPetId;
     }
-
 
 }
