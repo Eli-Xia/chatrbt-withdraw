@@ -203,10 +203,7 @@ public class ChatPetService {
         Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
         chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
 
-        //宠物的url
-        CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        String appearanceUrl = cryptoKitties.getUrl();
-        chatPetBaseInfo.setAppearanceUrl(appearanceUrl);
+
 
         //公众号的头像
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
@@ -246,13 +243,29 @@ public class ChatPetService {
         List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
         chatPetBaseInfo.setGoldItems(chatPetGoldItems);
 
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
-        String appearanceCode = chatPet.getAppearanceCode();
-        ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
-        Appearance appearance = new Appearance();
-        appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
-        appearance.setObject(zombiesCatAppearance);
-        chatPetBaseInfo.setAppearance(appearance);
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            String appearanceCode = chatPet.getAppearanceCode();
+            ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
+            Appearance appearance = new Appearance();
+            appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
+            appearance.setObject(zombiesCatAppearance);
+            chatPetBaseInfo.setAppearance(appearance);
+        }
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTOKITTIES.equals(chatPetType)){
+
+            //宠物的url
+            CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
+            String appearanceUrl = cryptoKitties.getUrl();
+            String realUrl = chatPetAppearenceService.convertCryptoKittiesUrl(appearanceUrl);
+
+            Appearance appearance = new Appearance();
+            appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_CRYPTOKITTIES);
+            appearance.setObject(realUrl);
+            chatPetBaseInfo.setAppearance(appearance);
+        }
 
         return chatPetBaseInfo;
     }

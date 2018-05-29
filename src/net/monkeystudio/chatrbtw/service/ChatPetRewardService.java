@@ -210,6 +210,8 @@ public class ChatPetRewardService {
         //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
         if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+
+
             chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
         }
     }
