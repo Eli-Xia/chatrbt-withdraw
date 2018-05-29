@@ -309,11 +309,12 @@ public class ChatPetMissionPoolService {
      * @param completeMissionParam  完成任务参数
      */
     public void completeChatPetMission(CompleteMissionParam completeMissionParam){
+        Log.d("================chatpetid = {?} missioncode = {?} ===========" ,completeMissionParam.getChatPetId().toString(),completeMissionParam.getMissionCode().toString());
         //查询当前任务记录查询对象
         ChatPetPersonalMission param = new ChatPetPersonalMission();
 
         param.setChatPetId(completeMissionParam.getChatPetId());
-        param.setMissionCode(completeMissionParam.getChatPetId());
+        param.setMissionCode(completeMissionParam.getMissionCode());
         param.setAdId(completeMissionParam.getAdId());
         param.setCreateTime(DateUtils.getBeginDate(new Date()));
         param.setState(MissionStateEnum.GOING_ON.getCode());
