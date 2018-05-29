@@ -121,7 +121,6 @@ public class ChatPetRewardService {
             goldItem.setRewardItemId(item.getId());
 
             goldItems.add(goldItem);
-
         }
 
         return goldItems;
@@ -209,9 +208,6 @@ public class ChatPetRewardService {
 
         //宠物日志
         chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
-
-
-
 
         //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);

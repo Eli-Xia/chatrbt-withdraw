@@ -63,7 +63,7 @@ public class CryptoKittiesService {
         String fileName = url.substring(index + 1, url.length());
 
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        return "https://" + domain +"/crypto-kitty/" + fileName;
+        return "https://" + domain + "/static/crypto-kitty/" + fileName;
 
     }
 

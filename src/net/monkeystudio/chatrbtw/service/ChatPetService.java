@@ -720,9 +720,12 @@ public class ChatPetService {
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
 
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
-            //return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+            return "https://" + domain + "/static/chat-pet/#/?id=" + wxPubId;
+        }
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.equals(chatPetType)){
             return "https://" + domain + "/static/chat-pet/#/?id=" + wxPubId;
         }
 
