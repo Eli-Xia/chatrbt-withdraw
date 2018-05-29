@@ -154,7 +154,7 @@ public class ChatPetRewardItemService {
 
 
     /**
-     * 根据任务类型插入奖励池
+     * 根据任务类型生成一个奖励
      * @param missionCode
      */
     private void saveRewardItemByMission(Integer missionCode,Integer chatPetId,Integer chatPetPersonalMissionId){
