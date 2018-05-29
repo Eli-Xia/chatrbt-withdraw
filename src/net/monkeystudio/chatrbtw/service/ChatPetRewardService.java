@@ -1,15 +1,18 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -207,6 +210,9 @@ public class ChatPetRewardService {
         //宠物日志
         chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
 
+
+
+
         //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
         if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
@@ -215,7 +221,14 @@ public class ChatPetRewardService {
             //如果当天没有完成邀请好友次数不超过三次，继续派发任务
             List<ChatPetRewardItem> chatPetRewardItemList = this.getByChatPetAndState(date, chatPetId ,HAVE_AWARD);
             if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INVITE_MISSION_TIME.intValue()){
-                chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
+                DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
+                dispatchMissionParam.setChatPetId(chatPetId);
+                dispatchMissionParam.setMissionCode(chatPetPersonalMission.getMissionCode());
+                try {
+                    chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
+                } catch (BizException e) {
+                    Log.e(e);
+                }
             }
         }
     }
