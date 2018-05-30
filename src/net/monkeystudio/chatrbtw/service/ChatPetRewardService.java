@@ -217,6 +217,7 @@ public class ChatPetRewardService {
         DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
         dispatchMissionParam.setChatPetId(chatPetId);
         dispatchMissionParam.setMissionCode(chatPetPersonalMission.getMissionCode());
+
         try {
             chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
         } catch (BizException e) {
@@ -241,7 +242,7 @@ public class ChatPetRewardService {
      * 根据任务类型生成一个奖励
      * @param missionCode
      */
-    private void saveRewardItemByMission(Integer missionCode,Integer chatPetId,Integer chatPetPersonalMissionId){
+    private void saveRewardItemByMission(Integer missionCode, Integer chatPetId, Integer chatPetPersonalMissionId){
 
         ChatPetRewardItem item = new ChatPetRewardItem();
 

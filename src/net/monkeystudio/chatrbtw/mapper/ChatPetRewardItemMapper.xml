@@ -31,7 +31,7 @@
     insert into e_chat_pet_reward_item (id, gold_value, reward_state, 
       mission_item_id, chat_pet_id,experience,create_time ,chat_pet_type)
     values (#{id,jdbcType=INTEGER}, IFNULL(#{goldValue},0) , #{rewardState,jdbcType=INTEGER},
-      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime}) ,#{chatPetType} )
+      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime} ,#{chatPetType} )
   </insert>
 
   <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
@@ -89,7 +89,5 @@
       and
           reward_state = #{rewardState}
   </select>
-  
-  
 
 </mapper>
