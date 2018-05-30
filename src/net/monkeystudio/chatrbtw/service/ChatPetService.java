@@ -212,11 +212,6 @@ public class ChatPetService {
         Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
         chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
 
-        //宠物的url
-        /*CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        String appearanceUrl = cryptoKitties.getUrl();
-        chatPetBaseInfo.setAppearanceUrl(appearanceUrl);*/
-
         //公众号的头像
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
         String wxPubHeadImgUrl = wxPub.getHeadImgUrl();
@@ -958,11 +953,6 @@ public class ChatPetService {
     }
 
 
-
-
-
-
-
     /**
      * 获取创始海报的信息
      * @param wxFanId
@@ -1080,4 +1070,18 @@ public class ChatPetService {
         return customerNewsItem;
     }
 
+
+    /**
+     * 获取宠物类型
+     * @param chatPetId
+     * @return
+     */
+    public Integer getChatPetType(Integer chatPetId){
+        ChatPet chatPet = this.getById(chatPetId);
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        return chatPetType;
+    }
 }

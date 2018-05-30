@@ -9,14 +9,15 @@
     <result column="mission_item_id" property="missionItemId" jdbcType="INTEGER" />
     <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, gold_value, reward_state, mission_item_id, chat_pet_id,experience,create_time
+    id, gold_value, reward_state, mission_item_id, chat_pet_id, experience, create_time, chat_pet_type
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List" />
+      <include refid="Base_Column_List" />
     from e_chat_pet_reward_item
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -28,10 +29,9 @@
 
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
     insert into e_chat_pet_reward_item (id, gold_value, reward_state, 
-      mission_item_id, chat_pet_id,experience,create_time)
+      mission_item_id, chat_pet_id,experience,create_time ,chat_pet_type)
     values (#{id,jdbcType=INTEGER}, IFNULL(#{goldValue},0) , #{rewardState,jdbcType=INTEGER},
-      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime})
-
+      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime}) ,#{chatPetType} )
   </insert>
 
   <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
@@ -89,5 +89,7 @@
       and
           reward_state = #{rewardState}
   </select>
+  
+  
 
 </mapper>

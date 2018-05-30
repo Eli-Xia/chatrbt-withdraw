@@ -17,6 +17,9 @@ public class ChatPetRewardItem {
 
     private Date createTime;
 
+    private Integer chatPetType;
+
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -71,5 +74,13 @@ public class ChatPetRewardItem {
 
     public void setChatPetId(Integer chatPetId) {
         this.chatPetId = chatPetId;
+    }
+
+    public Integer getChatPetType() {
+        return chatPetType;
+    }
+
+    public void setChatPetType(Integer chatPetType) {
+        this.chatPetType = chatPetType;
     }
 }
