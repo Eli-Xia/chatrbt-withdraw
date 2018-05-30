@@ -492,7 +492,7 @@ public class ChatPetMissionPoolService {
         newsMissionParam.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
         newsMissionParam.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
-        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(inviteFriendParam);
+        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(newsMissionParam);
 
         MissionItem news = new MissionItem();
         //如果没有任务，则已经完成次数为0
