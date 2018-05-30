@@ -196,8 +196,6 @@ public class ChatPetMissionPoolService {
         Integer missionCode = dispatchMissionParam.getMissionCode();
         Integer chatPetId = dispatchMissionParam.getChatPetId();
 
-
-
         if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
             Date date = TimeUtil.getStartTimestamp();
 
@@ -464,9 +462,6 @@ public class ChatPetMissionPoolService {
         }
         todayMission.setDailyInteraction(dailyInteraction);
 
-
-
-
         //今日邀请
         ChatPetPersonalMission inviteFriendParam = new ChatPetPersonalMission();
         inviteFriendParam.setChatPetId(chatPetId);
@@ -543,5 +538,6 @@ public class ChatPetMissionPoolService {
     public String getCreateDailyMissionCountCacheKey(Integer chatPetId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatPetDailyMission:" + chatPetId;
     }
+
 
 }

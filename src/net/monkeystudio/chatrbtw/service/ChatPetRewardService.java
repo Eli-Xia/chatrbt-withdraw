@@ -6,7 +6,6 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
@@ -62,7 +61,7 @@ public class ChatPetRewardService {
     }
 
     /**
-     * 给宠物填充奖励池
+     * 添加每日等级奖励
      * @param chatPetId
      */
     public void createInitRewardItems(Integer chatPetId) {
@@ -77,6 +76,9 @@ public class ChatPetRewardService {
 
         //每日可领取奖励
         ChatPetRewardItem fixedItem = new ChatPetRewardItem();
+
+        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
+        fixedItem.setChatPetType(chatPetType);
 
         //根据宠物等级获取每日可领取奖励值
         Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
@@ -220,8 +222,6 @@ public class ChatPetRewardService {
         } catch (BizException e) {
             Log.e(e);
         }
-
-
     }
 
     /**
@@ -242,13 +242,18 @@ public class ChatPetRewardService {
      * @param missionCode
      */
     private void saveRewardItemByMission(Integer missionCode,Integer chatPetId,Integer chatPetPersonalMissionId){
-        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            ChatPetRewardItem item = new ChatPetRewardItem();
 
-            item.setChatPetId(chatPetId);
-            item.setRewardState(NOT_AWARD);
-            item.setMissionItemId(chatPetPersonalMissionId);
-            item.setCreateTime(new Date());
+        ChatPetRewardItem item = new ChatPetRewardItem();
+
+        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
+        item.setChatPetType(chatPetType);
+
+        item.setChatPetId(chatPetId);
+        item.setRewardState(NOT_AWARD);
+        item.setMissionItemId(chatPetPersonalMissionId);
+        item.setCreateTime(new Date());
+
+        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
             item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
             item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
@@ -256,27 +261,17 @@ public class ChatPetRewardService {
             this.save(item);
         }
         if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
-            ChatPetRewardItem item = new ChatPetRewardItem();
 
-            item.setChatPetId(chatPetId);
-            item.setRewardState(NOT_AWARD);
             item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
-            item.setMissionItemId(chatPetPersonalMissionId);
-            item.setCreateTime(new Date());
 
             this.save(item);
         }
 
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
-            ChatPetRewardItem item = new ChatPetRewardItem();
 
-            item.setChatPetId(chatPetId);
-            item.setRewardState(NOT_AWARD);
             item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
-            item.setMissionItemId(chatPetPersonalMissionId);
-            item.setCreateTime(new Date());
 
             this.save(item);
         }
@@ -355,5 +350,6 @@ public class ChatPetRewardService {
     public List<ChatPetRewardItem> getByChatPetAndState(Date date ,Integer chatPetId ,Integer rewardState){
         return chatPetRewardItemMapper.selectByDateAndChatPet(date,chatPetId ,rewardState);
     }
+
 
 }

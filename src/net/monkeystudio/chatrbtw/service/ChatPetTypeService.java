@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChatPetTypeService {
 
-    public final static Integer CHAT_PET_TYPE_ZOMBIES_CAT = 1;
-    public final static Integer CHAT_PET_TYPE_CRYPTO_KITTIES = 2;
+    public final static Integer CHAT_PET_TYPE_ZOMBIES_CAT = 1;//魔鬼猫
+
+    public final static Integer CHAT_PET_TYPE_CRYPTO_KITTIES = 2; //以太猫
 }
