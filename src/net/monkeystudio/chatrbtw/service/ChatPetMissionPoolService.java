@@ -6,23 +6,15 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-<<<<<<< HEAD
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.MissionItem;
-=======
-import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
-import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
->>>>>>> 4e62558a47e82d377d4af8ca1b576814e242c28e
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
-import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
