@@ -214,11 +214,6 @@ public class ChatPetService {
         Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
         chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
 
-        //宠物的url
-        /*CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        String appearanceUrl = cryptoKitties.getUrl();
-        chatPetBaseInfo.setAppearanceUrl(appearanceUrl);*/
-
         //公众号的头像
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
         String wxPubHeadImgUrl = wxPub.getHeadImgUrl();

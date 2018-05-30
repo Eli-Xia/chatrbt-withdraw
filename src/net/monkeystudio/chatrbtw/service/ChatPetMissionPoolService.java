@@ -6,12 +6,11 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.ChatPetMission;
-import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
-import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.MissionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
@@ -56,6 +55,15 @@ public class ChatPetMissionPoolService {
 
     @Autowired
     private ChatPetRewardService chatPetRewardService;
+
+    //每天只能最多完成三次邀请任务
+    private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
+
+    //每天阅读文章只能最多十次
+    private static final Integer DAILY_SEARCH_NEWS_MISSION_MAX_TIME = 10;
+
+    //每日互动任务
+    private static final Integer DAILY_INTERACTION_MAX_TIME = 1;
 
     @PostConstruct
     private void initSubscribe(){
@@ -170,18 +178,42 @@ public class ChatPetMissionPoolService {
         Integer chatPetId = dispatchMissionParam.getChatPetId();
 
 
+
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+            Date date = TimeUtil.getStartTimestamp();
+
+            //如果当天没有完成邀请好友次数不超过三次，可以派发任务
+            List<ChatPetRewardItem> chatPetRewardItemList = chatPetRewardService.getByChatPetAndState(date, chatPetId ,ChatPetRewardService.HAVE_AWARD);
+            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INVITE_MISSION_MAX_TIME.intValue()){
+                Integer adId = dispatchMissionParam.getAdId();
+
+                chatPetPersonalMission.setChatPetId(chatPetId);
+                chatPetPersonalMission.setCreateTime(new Date());
+                chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+                chatPetPersonalMission.setMissionCode(missionCode);
+                chatPetPersonalMission.setAdId(missionCode);
+                chatPetPersonalMission.setAdId(adId);
+
+                this.save(chatPetPersonalMission);
+                return;
+            }
+        }
+
         if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            Integer adId = dispatchMissionParam.getAdId();
 
-            chatPetPersonalMission.setChatPetId(chatPetId);
-            chatPetPersonalMission.setCreateTime(new Date());
-            chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
-            chatPetPersonalMission.setMissionCode(missionCode);
-            chatPetPersonalMission.setAdId(missionCode);
-            chatPetPersonalMission.setAdId(adId);
+            Date date = TimeUtil.getStartTimestamp();
 
-            this.save(chatPetPersonalMission);
-            return;
+            //如果当天没有完成资讯任务十次，可以派发任务
+            List<ChatPetRewardItem> chatPetRewardItemList = chatPetRewardService.getByChatPetAndState(date, chatPetId ,ChatPetRewardService.HAVE_AWARD);
+            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_SEARCH_NEWS_MISSION_MAX_TIME.intValue()){
+
+                chatPetPersonalMission.setChatPetId(chatPetId);
+                chatPetPersonalMission.setCreateTime(new Date());
+                chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+                chatPetPersonalMission.setMissionCode(missionCode);
+
+                this.save(chatPetPersonalMission);
+            }
         }
 
         chatPetPersonalMission.setChatPetId(chatPetId);
@@ -190,6 +222,7 @@ public class ChatPetMissionPoolService {
         chatPetPersonalMission.setMissionCode(missionCode);
 
         this.save(chatPetPersonalMission);
+
     }
 
 
@@ -470,7 +503,7 @@ public class ChatPetMissionPoolService {
      * @return
      */
     public TodayMission getTodayMissionWall(Integer chatPetId){
-        ChatPetPersonalMission param = new ChatPetPersonalMission();
+        /*ChatPetPersonalMission param = new ChatPetPersonalMission();
         param.setChatPetId(chatPetId);
         param.setCreateTime(DateUtils.getBeginDate(new Date()));
 
@@ -504,7 +537,78 @@ public class ChatPetMissionPoolService {
 
         TodayMission todayMission = new TodayMission();
         todayMission.setFixedMissionList(fixedMissionList);
-        todayMission.setRandomMissionList(randomMissionList);
+        todayMission.setRandomMissionList(randomMissionList);*/
+
+
+        //互动任务
+        TodayMission todayMission = new TodayMission();
+
+        ChatPetPersonalMission dailyInteractionParam = new ChatPetPersonalMission();
+        dailyInteractionParam.setChatPetId(chatPetId);
+        dailyInteractionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        dailyInteractionParam.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
+
+        MissionItem dailyInteraction = new MissionItem();
+
+        dailyInteraction.setNeedToFinish(DAILY_INTERACTION_MAX_TIME);
+        dailyInteraction.setMissionType(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE);
+
+        List<ChatPetPersonalMission> dailyInteractionMission = this.getPersonalMissionListByParam(dailyInteractionParam);
+
+        //如果没有任务，则已经完成次数为0
+        if(ListUtil.isEmpty(dailyInteractionMission)){
+            dailyInteraction.setFinishTime(0);
+        }else {
+            dailyInteraction.setFinishTime(1);
+        }
+        todayMission.setDailyInteraction(dailyInteraction);
+
+
+
+
+        //今日邀请
+        ChatPetPersonalMission inviteFriendParam = new ChatPetPersonalMission();
+        inviteFriendParam.setChatPetId(chatPetId);
+        inviteFriendParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        inviteFriendParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+        inviteFriendParam.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
+
+        MissionItem inviteFriend = new MissionItem();
+
+        inviteFriend.setMissionType(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+        inviteFriend.setNeedToFinish(DAILY_INVITE_MISSION_MAX_TIME);
+
+        List<ChatPetPersonalMission> inviteFriendList = this.getPersonalMissionListByParam(inviteFriendParam);
+
+        //如果没有任务，则已经完成次数为0
+        if(ListUtil.isEmpty(inviteFriendList)){
+            inviteFriend.setFinishTime(0);
+        }else {
+            inviteFriend.setFinishTime(inviteFriendList.size());
+        }
+        todayMission.setInviteFriend(inviteFriend);
+
+
+        //每日资讯
+        ChatPetPersonalMission newsMissionParam = new ChatPetPersonalMission();
+        newsMissionParam.setChatPetId(chatPetId);
+        newsMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        newsMissionParam.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
+        newsMissionParam.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+
+        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(inviteFriendParam);
+
+        MissionItem news = new MissionItem();
+        //如果没有任务，则已经完成次数为0
+        if(ListUtil.isEmpty(newsMissionList)){
+            news.setFinishTime(0);
+        }else {
+            news.setFinishTime(newsMissionList.size());
+        }
+        todayMission.setNews(news);
+
+        news.setNeedToFinish(DAILY_SEARCH_NEWS_MISSION_MAX_TIME);
+        news.setMissionType(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
         return todayMission;
     }

@@ -47,7 +47,7 @@ public class ChatPetRewardService {
     public static final Integer NOT_AWARD = 0;
     public static final Integer HAVE_AWARD = 1;
 
-    private static final Integer DAILY_INVITE_MISSION_TIME = 3;
+
 
     public ChatPetRewardItem getChatPetRewardItemById(Integer id){
         return chatPetRewardItemMapper.selectByPrimaryKey(id);
@@ -211,22 +211,17 @@ public class ChatPetRewardService {
 
         //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
-        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
-            Date date = TimeUtil.getStartTimestamp();
 
-            //如果当天没有完成邀请好友次数不超过三次，继续派发任务
-            List<ChatPetRewardItem> chatPetRewardItemList = this.getByChatPetAndState(date, chatPetId ,HAVE_AWARD);
-            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INVITE_MISSION_TIME.intValue()){
-                DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
-                dispatchMissionParam.setChatPetId(chatPetId);
-                dispatchMissionParam.setMissionCode(chatPetPersonalMission.getMissionCode());
-                try {
-                    chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
-                } catch (BizException e) {
-                    Log.e(e);
-                }
-            }
+        DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
+        dispatchMissionParam.setChatPetId(chatPetId);
+        dispatchMissionParam.setMissionCode(chatPetPersonalMission.getMissionCode());
+        try {
+            chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
+        } catch (BizException e) {
+            Log.e(e);
         }
+
+
     }
 
     /**
@@ -350,7 +345,14 @@ public class ChatPetRewardService {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "initRewardItem:" + chatPetId;
     }
 
-    private List<ChatPetRewardItem> getByChatPetAndState(Date date ,Integer chatPetId ,Integer rewardState){
+    /**
+     * 获取奖励列表
+     * @param date 时间
+     * @param chatPetId 宠物id
+     * @param rewardState 奖励状态
+     * @return
+     */
+    public List<ChatPetRewardItem> getByChatPetAndState(Date date ,Integer chatPetId ,Integer rewardState){
         return chatPetRewardItemMapper.selectByDateAndChatPet(date,chatPetId ,rewardState);
     }
 
