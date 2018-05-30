@@ -351,5 +351,30 @@ public class ChatPetRewardService {
         return chatPetRewardItemMapper.selectByDateAndChatPet(date,chatPetId ,rewardState);
     }
 
+    /**
+     * 根据宠物类型获取魔币总产值
+     * @param chatPetType
+     * @return
+     */
+    public Float getTotalGoldAmountByChatPetType(Integer chatPetType){
+        return this.chatPetRewardItemMapper.countTotalGoldByChatPetType(chatPetType);
+    }
+
+    /**
+     * 根据宠物类型获取魔币昨日产值
+     * @param chatPetType
+     * @return
+     */
+    public Float getYesterdayGoldAmountByChatPetType(Integer chatPetType){
+        Date yesterday = DateUtils.getYesterday(new Date());
+
+        Date beginDate = DateUtils.getBeginDate(yesterday);
+        Date endDate = DateUtils.getEndDate(yesterday);
+
+        return this.chatPetRewardItemMapper.countDayGoldByChatPetType(beginDate,endDate,chatPetType);
+    }
+
+
+
 
 }

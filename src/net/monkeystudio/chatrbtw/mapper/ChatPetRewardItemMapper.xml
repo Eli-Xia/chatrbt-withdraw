@@ -89,7 +89,22 @@
       and
           reward_state = #{rewardState}
   </select>
-  
-  
+
+  <select id="countDayGoldByChatPetType" resultType="java.lang.Float">
+    SELECT  count(gold_value) FROM e_chat_pet_reward_item
+    WHERE
+      chat_pet_type = #{chatPetType}
+    AND
+      create_time &gt;= #{beginTime}
+    AND
+      create_time &lt;= #{endTime}
+  </select>
+
+  <select id="countTotalGoldByChatPetType" resultType="java.lang.Float">
+    SELECT  count(gold_value) FROM e_chat_pet_reward_item
+    WHERE
+      chat_pet_type = #{chatPetType}
+  </select>
+
 
 </mapper>
