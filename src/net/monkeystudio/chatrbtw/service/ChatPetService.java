@@ -814,13 +814,57 @@ public class ChatPetService {
         ChatPetExperinceRank chatPetExperinceRank = new ChatPetExperinceRank();
 
         //获取排行
-        List<ChatPetExperinceRankItem> chatPetExperinceRankList = this.getChatPetExperinceRankByPet(chatPetId,pageSize);
-        chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperinceRankList);
+        List<ChatPetExperinceRankItem> chatPetExperienceRank = this.getChatPetExperienceRank(chatPetId, pageSize);
+        chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperienceRank);
 
-        Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
+        //Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
+        Integer count = this.countExperienceRankChatPetAmount(chatPetId);
         chatPetExperinceRank.setTotal(count);
 
         return chatPetExperinceRank;
+    }
+
+    //private getExperienceRank
+
+    private List<ChatPetExperinceRankItem> getChatPetExperienceRank(Integer chatPetId,Integer pageSize){
+        //经验排行下宠物列表
+        List<ChatPet> experienceRankChatPetList = getExperienceRankList(chatPetId, pageSize);
+
+        List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
+
+        for(ChatPet chatPet : experienceRankChatPetList){
+
+            ChatPetExperinceRankItem chatPetExperinceRankItem = new ChatPetExperinceRankItem();
+
+            //宠物的等级
+            Float experience = chatPet.getExperience();
+            Integer level = chatPetLevelService.calculateLevel(experience);
+            chatPetExperinceRankItem.setLevel(level);
+
+
+            String wxFanOpenId = chatPet.getWxFanOpenId();
+            String wxPubOriginId = chatPet.getWxPubOriginId();
+            WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+            //粉丝头像
+            String headImgUrl = wxFan.getHeadImgUrl();
+            chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
+
+            //粉丝的昵称
+            chatPetExperinceRankItem.setWxFanNickname(wxFan.getNickname());
+
+            chatPetExperinceRankItemList.add(chatPetExperinceRankItem);
+        }
+
+        return chatPetExperinceRankItemList;
+    }
+
+    private List<ChatPet> getExperienceRankList(Integer parentId,Integer pageSize) {
+        Integer startIndex = 0;
+        return this.chatPetMapper.selectExperienceRankList(parentId,startIndex,pageSize);
+    }
+
+    private Integer countExperienceRankChatPetAmount(Integer chatPetId){
+        return this.chatPetMapper.countExperienceRankList(chatPetId);
     }
 
     /**
@@ -828,7 +872,7 @@ public class ChatPetService {
      * @param chatPetId
      * @param pageSize
      * @return
-     */
+     *//*
     private List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId , Integer pageSize){
         ChatPet chatPet = this.getById(chatPetId);
 
@@ -869,7 +913,7 @@ public class ChatPetService {
         }
 
         return chatPetExperinceRankItemList;
-    }
+    }*/
 
     /**
      * 获取宠物等级

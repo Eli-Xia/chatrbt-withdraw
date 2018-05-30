@@ -25,4 +25,8 @@ public interface ChatPetMapper {
     Integer countSecondEthnicGroupsById(@Param("secondEthnicGroupsId") Integer secondEthnicGroupsId);
 
     Integer countByAppearceCode(@Param("appearenceCode") String appearenceCode);
+
+    List<ChatPet> selectExperienceRankList(@Param("chatPetId") Integer chatPetId,@Param("startIndex")Integer startIndex,@Param("pageSize")Integer pageSize);
+
+    Integer countExperienceRankList(Integer chatPetId);
 }
