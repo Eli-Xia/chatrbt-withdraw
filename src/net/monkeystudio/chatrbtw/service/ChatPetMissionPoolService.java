@@ -18,7 +18,6 @@ import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -30,7 +29,6 @@ import java.util.List;
 /**
  * @author xiaxin
  */
-@DependsOn
 @Service
 public class ChatPetMissionPoolService {
 
