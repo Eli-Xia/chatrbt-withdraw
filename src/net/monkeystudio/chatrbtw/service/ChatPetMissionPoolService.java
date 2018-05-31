@@ -72,14 +72,15 @@ public class ChatPetMissionPoolService {
     @Autowired
     private WxPubService wxPubService;
 
-    private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "恭喜你采矿成功,点击<a href=\"%s\">领取奖励</a>";
+    //private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "恭喜你采矿成功,点击<a href=\"%s\">领取奖励</a>";
+    private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "\u2705任务完成 前往\ud83d\udc49<a href=\"%s\">领取奖励</a>\ud83d\udc48";
 
     @PostConstruct
     private void initSubscribe(){
         //起一条独立的线程去监听
-        //Thread thread = new Thread(new Runnable() {
-            //@Override
-            //public void run() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
                     String string = list.get(1);
@@ -104,15 +105,19 @@ public class ChatPetMissionPoolService {
                         param.setChatPetId(chatPet.getId());
                         param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
-                        completeChatPetMission(param);
+                        try {
+                            completeChatPetMission(param);
+                        }catch (Exception e){
+                            Log.e(e);
+                        }
                     }
                 }
-           // }
-        //});
-       // thread.setDaemon(true);
-        //thread.setName("NewsMission");
-        //thread.start();
-       // Log.d("finished Subscribe");
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("NewsMission");
+        thread.start();
+        Log.d("finished Subscribe");
     }
 
 
@@ -228,15 +233,28 @@ public class ChatPetMissionPoolService {
                 chatPetPersonalMission.setMissionCode(missionCode);
 
                 this.save(chatPetPersonalMission);
+
             }
+            return ;
         }
 
-        chatPetPersonalMission.setChatPetId(chatPetId);
-        chatPetPersonalMission.setCreateTime(new Date());
-        chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
-        chatPetPersonalMission.setMissionCode(missionCode);
+        if(chatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            Date date = TimeUtil.getStartTimestamp();
 
-        this.save(chatPetPersonalMission);
+            //如果当天没有完成每日互动任务一次，可以派发任务
+            List<ChatPetRewardItem> chatPetRewardItemList = chatPetRewardService.getByChatPetAndState(date, chatPetId ,ChatPetRewardService.HAVE_AWARD);
+            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INTERACTION_MAX_TIME.intValue()){
+
+                chatPetPersonalMission.setChatPetId(chatPetId);
+                chatPetPersonalMission.setCreateTime(new Date());
+                chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+                chatPetPersonalMission.setMissionCode(missionCode);
+
+                this.save(chatPetPersonalMission);
+
+                return ;
+            }
+        }
 
     }
 
@@ -301,7 +319,11 @@ public class ChatPetMissionPoolService {
         }
 
         //校验
-        this.completeMissionCheck(chatPetPersonalMission.getId());
+        try{
+            this.completeMissionCheck(chatPetPersonalMission.getId());
+        }catch(BizException e){
+            Log.e(e);
+        }
 
         //更新状态
         chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
@@ -320,7 +342,7 @@ public class ChatPetMissionPoolService {
      * 完成宠物任务前校验
      * @param chatPetPersonalMissionId
      */
-    private void completeMissionCheck(Integer chatPetPersonalMissionId){
+    private void completeMissionCheck(Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
         Integer state = chatPetPersonalMission.getState();//当前任务状态
@@ -330,16 +352,24 @@ public class ChatPetMissionPoolService {
         String wxFanOpenId = chatPet.getWxFanOpenId();
 
         //公众号是否开通陪聊宠服务
-        Assert.isTrue(rWxPubProductService.isEnable(ProductService.CHAT_PET, wxPubOriginId),"公众号未开通陪聊宠");
+        if(rWxPubProductService.isUnable(ProductService.CHAT_PET, wxPubOriginId)){
+            throw new BizException("公众号未开通陪聊宠");
+        }
         //粉丝是否领取宠物
-        Assert.notNull(chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId),"未领取陪聊宠");
+        if(chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId) == null){
+            throw new BizException("未领取陪聊宠");
+        }
         //任务是否为正在进行中状态
-        Assert.isTrue(MissionStateEnum.GOING_ON.getCode().equals(state),"任务已完成");
+        if(!MissionStateEnum.GOING_ON.getCode().equals(state)){
+            throw new BizException("任务已完成");
+        }
 
         //资讯任务校验
         Integer adId = chatPetPersonalMission.getAdId();
         if(adId != null){
-            Assert.isTrue(this.getCountByChatPetIdAndAdId(chatPetId,adId).intValue() == 0,"该资讯已阅读");
+            if(this.getCountByChatPetIdAndAdId(chatPetId,adId).intValue() > 1){
+                throw new BizException("该资讯已阅读");
+            }
         }
     }
 
@@ -357,6 +387,7 @@ public class ChatPetMissionPoolService {
         String tips = String.format(CHAT_PET_NEWS_MISSION_REWARD_TIPS,chatPetService.getHomePageUrl(wxPub.getId()));
 
         String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId,wxPub.getAppId(), tips);
+
         if(result.indexOf("errcode") == -1){
             Log.e("tips send failed ! error info :" + result);
 
@@ -490,7 +521,7 @@ public class ChatPetMissionPoolService {
         newsMissionParam.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
         newsMissionParam.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
-        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(inviteFriendParam);
+        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(newsMissionParam);
 
         MissionItem news = new MissionItem();
         //如果没有任务，则已经完成次数为0
