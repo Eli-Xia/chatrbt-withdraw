@@ -27,5 +27,5 @@ public interface ChatPetRewardItemMapper {
 
     int updateRewarded(ChatPetRewardItem record);
 
-    List<ChatPetRewardItem> selectByDateAndChatPet(@Param("date") Date date , @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState);
+    List<ChatPetRewardItem> selectByDateAndChatPet(@Param("date") Date createTime , @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState );
 }

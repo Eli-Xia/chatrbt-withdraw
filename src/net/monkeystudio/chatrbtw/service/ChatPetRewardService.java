@@ -343,13 +343,13 @@ public class ChatPetRewardService {
 
     /**
      * 获取奖励列表
-     * @param date 时间
+     * @param createTime 时间
      * @param chatPetId 宠物id
      * @param rewardState 奖励状态
      * @return
      */
-    public List<ChatPetRewardItem> getByChatPetAndState(Date date ,Integer chatPetId ,Integer rewardState){
-        return chatPetRewardItemMapper.selectByDateAndChatPet(date,chatPetId ,rewardState);
+    public List<ChatPetRewardItem> getByChatPetAndState(Date createTime ,Integer chatPetId ,Integer rewardState){
+        return chatPetRewardItemMapper.selectByDateAndChatPet(createTime,chatPetId ,rewardState );
     }
 
 
