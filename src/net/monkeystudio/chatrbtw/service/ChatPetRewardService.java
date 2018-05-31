@@ -6,9 +6,7 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
-import net.monkeystudio.chatrbtw.entity.ChatPetRewardItem;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
@@ -23,6 +21,7 @@ import java.util.*;
  */
 @Service
 public class ChatPetRewardService {
+
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
     @Autowired
@@ -43,8 +42,14 @@ public class ChatPetRewardService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
 
-    public static final Integer NOT_AWARD = 0;
-    public static final Integer HAVE_AWARD = 1;
+    @Autowired
+    private RWxPubProductService rWxPubProductService;
+
+    @Autowired
+    private WxFanService wxFanService;
+
+    public static final Integer NOT_AWARD = 0;//为领取
+    public static final Integer HAVE_AWARD = 1;//已经领取
 
 
 
@@ -353,4 +358,26 @@ public class ChatPetRewardService {
     }
 
 
+    /**
+     * 生成等级奖励
+     */
+    public void generateLevelReward(){
+        List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
+
+        for(RWxPubProduct rWxPubProduct : rWxPubProductList){
+
+            String wxPubOriginId = rWxPubProduct.getWxPubOriginId();
+
+            List<WxFan> wxFanList = wxFanService.getListByWxPubOriginid(wxPubOriginId);
+
+            String key = this.getLevelReward();
+            for(WxFan wxFan : wxFanList){
+                redisCacheTemplate.lpush(key,String.valueOf(wxFan.getId()));
+            }
+        }
+    }
+
+    private String getLevelReward(){
+        return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
+    }
 }

@@ -16,4 +16,6 @@ public interface WxFanMapper {
     List<WxFan> select(@Param("wxPubOriginId") String wxPubOriginId , @Param("wxFanOpenId")  String wxFanOpenId);
 
     WxFan selectById(Integer id);
+
+    List<WxFan> selectListByWxPubOriginId(@Param("wxPubOriginId") String wxPubOriginId);
 }
