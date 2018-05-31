@@ -244,6 +244,10 @@ public class AdService {
         redisCacheTemplate.expire(key, AD_CACHE_PERIOD);
     }
 
+    public void handleCache(){
+       //redisCacheTemplate.del()
+    }
+
     /**
      * 获得所有的数据数
      * @return

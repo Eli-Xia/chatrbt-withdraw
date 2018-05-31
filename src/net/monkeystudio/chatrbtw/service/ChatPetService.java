@@ -252,6 +252,16 @@ public class ChatPetService {
 
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
+
+        //魔币总产值,昨日产值
+        Float historyTotalAmount = chatPetRewardService.getTotalGoldAmountByChatPetType(chatPetType);
+        Float yesterdayTotalAmount = chatPetRewardService.getYesterdayGoldAmountByChatPetType(chatPetType);
+        MagicCoinCount magicCoinCount = new MagicCoinCount();
+        magicCoinCount.setHistoryTotalAmount(historyTotalAmount);
+        magicCoinCount.setYesterdayTotalAmount(yesterdayTotalAmount);
+        chatPetBaseInfo.setMagicCoinCount(magicCoinCount);
+
+
         //如果是魔鬼猫
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.intValue() == chatPetType.intValue()){
             String appearanceCode = chatPet.getAppearanceCode();
@@ -290,6 +300,7 @@ public class ChatPetService {
 
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
         String originId = wxPub.getOriginId();
+
         //第一次登录需要准备任务池数据
         chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(originId,wxFanOpenId);
 
@@ -323,6 +334,8 @@ public class ChatPetService {
         //族群排名
         ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
+        //魔币产值
+        changeInfo.setMagicCoinCount(info.getMagicCoinCount());
 
         List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
         changeInfo.setGoldItems(chatPetGoldItems);

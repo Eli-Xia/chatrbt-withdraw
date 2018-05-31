@@ -40,6 +40,15 @@ public class ChatPetInfo {
 
     private ChatPetBackgroundInfo chatPetBackgroundInfo;
 
+    private MagicCoinCount magicCoinCount;
+
+    public MagicCoinCount getMagicCoinCount() {
+        return magicCoinCount;
+    }
+
+    public void setMagicCoinCount(MagicCoinCount magicCoinCount) {
+        this.magicCoinCount = magicCoinCount;
+    }
 
     public ChatPetBackgroundInfo getChatPetBackgroundInfo() {
         return chatPetBackgroundInfo;

@@ -5,5 +5,22 @@ package net.monkeystudio.chatrbtw.service.bean.chatpet;
  * @author xiaxin
  */
 public class MagicCoinCount {
-    private Float total;
+    private Float historyTotalAmount;//魔币总产值
+    private Float yesterdayTotalAmount;//昨日总产值
+
+    public Float getHistoryTotalAmount() {
+        return historyTotalAmount;
+    }
+
+    public void setHistoryTotalAmount(Float historyTotalAmount) {
+        this.historyTotalAmount = historyTotalAmount;
+    }
+
+    public Float getYesterdayTotalAmount() {
+        return yesterdayTotalAmount;
+    }
+
+    public void setYesterdayTotalAmount(Float yesterdayTotalAmount) {
+        this.yesterdayTotalAmount = yesterdayTotalAmount;
+    }
 }
