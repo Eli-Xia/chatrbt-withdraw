@@ -79,9 +79,9 @@ public class ChatPetMissionPoolService {
     @PostConstruct
     private void initSubscribe(){
         //起一条独立的线程去监听
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        //Thread thread = new Thread(new Runnable() {
+            //@Override
+           // public void run() {
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
                     String string = list.get(1);
@@ -109,12 +109,12 @@ public class ChatPetMissionPoolService {
                         completeChatPetMission(param);
                     }
                 }
-            }
-        });
-        thread.setDaemon(true);
-        thread.setName("NewsMission");
-        thread.start();
-        Log.d("finished Subscribe");
+          //  }
+       // });
+       // thread.setDaemon(true);
+       // thread.setName("NewsMission");
+       // thread.start();
+       // Log.d("finished Subscribe");
     }
 
 
