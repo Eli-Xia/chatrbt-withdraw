@@ -8,9 +8,10 @@
         <result column="news_title" property="newsTitle" jdbcType="INTEGER" />
         <result column="news_description" property="newsDescription" jdbcType="VARCHAR" />
         <result column="founder_name" property="founderName" jdbcType="VARCHAR" />
+        <result column="coin_name" property="coinName" jdbcType="VARCHAR" />
     </resultMap>
     <sql id="Base_Column_List" >
-        id, chat_pet_type, news_cover_url, news_title, news_description, founder_name
+        id, chat_pet_type, news_cover_url, news_title, news_description, founder_name,coin_name
     </sql>
 
     <select id="selectByChatPetTypeId" resultMap="baseResultMap" parameterType="map">

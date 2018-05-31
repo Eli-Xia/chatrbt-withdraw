@@ -2,11 +2,14 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceMaterial;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceSite;
+import net.monkeystudio.chatrbtw.entity.GlobalConfig;
 import net.monkeystudio.chatrbtw.entity.RChatPetAppearenceSiteColor;
 import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceMaterialMapper;
 import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceSiteMapper;
@@ -41,6 +44,9 @@ public class ChatPetAppearenceService {
     @Autowired
     private RChatPetAppearenceSiteColorMapper rChatPetAppearenceSiteColorMapper;
 
+    @Autowired
+    private CfgService cfgService;
+
     //外观池里面常驻的个数
     private final static Long CODE_PERMANENT_COUNT = 100L;
     //每次补充的个数
@@ -59,7 +65,7 @@ public class ChatPetAppearenceService {
      * 从外观池取出
      * @return
      */
-    public String getChatPetAppearenceCodeFromPool(){
+    public String getZombiesCatAppearanceCodeFromPool(){
         String key = this.getAppearenceCodePoolKey();
 
         String appearenceCode = redisCacheTemplate.lpop(key);
@@ -277,5 +283,19 @@ public class ChatPetAppearenceService {
         }
 
         return newInstance;
+    }
+
+
+    /**
+     * 以太猫形象文件url转换
+     * @param source
+     * @return
+     */
+    public String convertCryptoKittiesUrl(String source){
+
+        String fileName = source.substring(source.lastIndexOf("/"));
+
+        String demain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
+        return "https:" + demain + "/" + "static/crypto-kitty/" + fileName;
     }
 }

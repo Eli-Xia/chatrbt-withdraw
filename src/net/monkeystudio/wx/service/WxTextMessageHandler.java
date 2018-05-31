@@ -10,14 +10,12 @@ import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.XmlUtil;
 import net.monkeystudio.chatrbtw.AppConstants;
-import net.monkeystudio.chatrbtw.entity.KrResponse;
-import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.entity.WxPub;
-import net.monkeystudio.chatrbtw.entity.WxPubNews;
+import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.asksearch.AskSearchVo;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
 import net.monkeystudio.chatrbtw.service.bean.wxmessage.ReplyMessage;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
@@ -178,7 +176,13 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(wxPubOriginId,wxFanOpenId);
 
                 //完成陪聊宠每日签到任务
-                chatPetMissionPoolService.completeDailyChatCheckinMission(wxPubOriginId,wxFanOpenId, ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE);
+                ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+                CompleteMissionParam param = new CompleteMissionParam();
+                param.setMissionCode(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE);
+                param.setChatPetId(chatPet.getId());
+
+                chatPetMissionPoolService.completeChatPetMission(param);
 
                 this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
             }

@@ -23,81 +23,9 @@ public class ChatPetMissionService {
     public final static Integer CHAT_PET_MISSION_TYPE_RANDOM = 1;
 
     @Autowired
-    private RedisCacheTemplate redisCacheTemplate;
-
-    @Autowired
-    private WxFanService wxFanService;
-
-    @Autowired
-    private TaskExecutor taskExecutor;
-
-    @Autowired
-    private ChatPetMissionPoolService chatPetMissionPoolService;
-
-    @Autowired
     private ChatPetMissionMapper chatPetMissionMapper;
 
 
-    private final static String MESSAGE_KEY = "chat_pet_mission";
-
-
-
-    @PostConstruct
-    private void initSubscribe(){
-        //起一条独立的线程去监听
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
-                    String string = list.get(1);
-                    Log.d("receive the message [?]",string);
-                    String str[] = string.split(":");
-                    Integer wxFanId = Integer.valueOf(str[0]);
-                    String wxFanOpenId = str[1];
-                    Integer adId = Integer.valueOf(str[2]);
-
-                    if(str.length != 3){
-                        Log.d("chatpet mission message errror." + str);
-                        return ;
-                    }
-
-                    if(validatedWxFan(wxFanId,wxFanOpenId)){
-                        WxFan wxFan = wxFanService.getById(wxFanId);
-
-                        chatPetMissionPoolService.completeDailyReadMission(wxFanId,adId);
-                    }
-
-
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
-        Log.d("finished Subscribe");
-    }
-
-
-
-    private Boolean validatedWxFan(Integer wxFanId ,String wxFanOpenId){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-
-        if(wxFan == null){
-            return false;
-        }
-
-        if(wxFanOpenId == null){
-            return false;
-        }
-
-        String wxFanOpenIdFromDb = wxFan.getWxFanOpenId();
-
-        if(wxFanOpenId.equals(wxFanOpenIdFromDb)){
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * 后台新增任务类型

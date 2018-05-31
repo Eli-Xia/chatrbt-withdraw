@@ -37,8 +37,10 @@ import java.util.List;
 public class ChatPetService {
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
+
     @Autowired
-    private ChatPetMissionEnumService chatPetMissionEnumService;
+    private ChatPetBackgroundService chatPetBackgroundService;
+
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
@@ -84,6 +86,9 @@ public class ChatPetService {
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
 
+    @Autowired
+    private ChatPetTypeService chatPetTypeService;
+
     /**
      * 生成宠物
      * @param wxPubOriginId
@@ -95,21 +100,28 @@ public class ChatPetService {
         ChatPet chatPet = new ChatPet();
         //Integer appearance = this.ramdomGenerateAppearence();
 
-        cryptoKittiesService.designateKitty(wxPubOriginId,wxFanOpenId);
-        CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        Integer appearance = cryptoKitties.getId();
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
-        chatPet.setTempAppearence(appearance);
+        //如果是魔鬼猫
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.intValue() == chatPetType.intValue()){
+            String appearanceCode = chatPetAppearenceService.getZombiesCatAppearanceCodeFromPool();
+            chatPet.setAppearanceCode(appearanceCode);
+        }
+
+        //如果是以太猫
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.intValue() == chatPetType.intValue()){
+            cryptoKittiesService.designateKitty(wxPubOriginId,wxFanOpenId);
+            CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
+            Integer appearance = cryptoKitties.getId();
+            chatPet.setTempAppearence(appearance);
+        }
+
         chatPet.setWxFanOpenId(wxFanOpenId);
         chatPet.setWxPubOriginId(wxPubOriginId);
         chatPet.setEthnicGroupsId(ethnicGroupsId);
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
-
-        String appearanceCode = chatPetAppearenceService.getChatPetAppearenceCodeFromPool();
-        chatPet.setAppearanceCode(appearanceCode);
-
 
         this.save(chatPet);
 
@@ -119,13 +131,6 @@ public class ChatPetService {
         return chatPetId;
     }
 
-    /**
-     * 随机生成
-     * @return
-     */
-    public Integer ramdomGenerateAppearence(){
-        return RandomUtil.randomIndex(MAX_APPERANCE_RANGE);
-    }
 
     public ChatPet getById(Integer id){
         return chatPetMapper.selectById(id);
@@ -191,22 +196,21 @@ public class ChatPetService {
         String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
         chatPetBaseInfo.setOwnerId(owerId);
 
+        //宠物背景图信息
+        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfo(chatPetId);
+        chatPetBaseInfo.setChatPetBackgroundInfo(chatPetBackgroundInfo);
+
         //宠物基因
         String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
         chatPetBaseInfo.setGeneticCode(geneticCode);
 
         //今日宠物日志
-        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId, new Date());
+        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId);
         chatPetBaseInfo.setPetLogs(resps);
 
         //粉丝拥有代币
         Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
         chatPetBaseInfo.setFanTotalCoin(fansTotalCoin);
-
-        //宠物的url
-        CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
-        String appearanceUrl = cryptoKitties.getUrl();
-        chatPetBaseInfo.setAppearanceUrl(appearanceUrl);
 
         //公众号的头像
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
@@ -246,13 +250,31 @@ public class ChatPetService {
         List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
         chatPetBaseInfo.setGoldItems(chatPetGoldItems);
 
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
-        String appearanceCode = chatPet.getAppearanceCode();
-        ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
-        Appearance appearance = new Appearance();
-        appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
-        appearance.setObject(zombiesCatAppearance);
-        chatPetBaseInfo.setAppearance(appearance);
+        //如果是魔鬼猫
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.intValue() == chatPetType.intValue()){
+            String appearanceCode = chatPet.getAppearanceCode();
+            ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
+
+            Appearance appearance = new Appearance();
+            appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
+            appearance.setObject(zombiesCatAppearance);
+            chatPetBaseInfo.setAppearance(appearance);
+        }
+
+
+        //如果是以太猫
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.intValue() == chatPetType.intValue()){
+            Appearance appearance = new Appearance();
+            appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES);
+
+            CryptoKitties cryptoKitties = cryptoKittiesService.getKittyByOwner(wxPubOriginId, wxFanOpenId);
+            String appearanceUrl = cryptoKitties.getUrl();
+            appearance.setObject(appearanceUrl);
+
+            chatPetBaseInfo.setAppearance(appearance);
+        }
 
         return chatPetBaseInfo;
     }
@@ -528,7 +550,7 @@ public class ChatPetService {
         WxOauthAccessToken wxOauthAccessToken = this.getOauthAccessTokenResponse(code, wxPubAppId);
 
         if(wxOauthAccessToken == null){
-            throw  new BizException("未能成功获取wxOauthAccessToken!");
+            throw new BizException("未能成功获取wxOauthAccessToken!");
         }
 
         String wxFanOpenId = wxOauthAccessToken.getWxFanOpenId();
@@ -691,9 +713,12 @@ public class ChatPetService {
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
 
-        String domain = cfgService.get(GlobalConfigConstants.WEB_DOMAIN_KEY);
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
-            //return "http://" + domain + "/res/wedo/zombiescat.html?id=" + wxPubId;
+            return "https://" + domain + "/static/chat-pet/#/?id=" + wxPubId;
+        }
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.equals(chatPetType)){
             return "https://" + domain + "/static/chat-pet/#/?id=" + wxPubId;
         }
 
@@ -884,11 +909,6 @@ public class ChatPetService {
     }
 
 
-
-
-
-
-
     /**
      * 获取创始海报的信息
      * @param wxFanId
@@ -916,6 +936,24 @@ public class ChatPetService {
         creationPost.setChatPetType(type);
 
         return creationPost;
+    }
+
+    /**
+     * 根据宠物id获取金币名称
+     * @param chatPetId
+     * @return
+     */
+    public String getChatPetCoinName(Integer chatPetId){
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
+
+        return chatPetTypeConfig.getCoinName();
+
     }
 
 
@@ -956,7 +994,14 @@ public class ChatPetService {
         String wxFanOpenId = chatPet.getWxFanOpenId();
         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
         String wxFanNickname = wxFan.getNickname();
+
+        if(wxFanNickname == null){
+            wxFanService.reviseWxPub(wxPubOriginId,wxFanOpenId);
+            wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+            wxFanNickname = wxFan.getNickname();
+        }
         description = description.replace("#{wxFanNickname}", wxFanNickname);
+
 
         //替换出生日期
         Calendar calendar = Calendar.getInstance();
@@ -981,4 +1026,18 @@ public class ChatPetService {
         return customerNewsItem;
     }
 
+
+    /**
+     * 获取宠物类型
+     * @param chatPetId
+     * @return
+     */
+    public Integer getChatPetType(Integer chatPetId){
+        ChatPet chatPet = this.getById(chatPetId);
+        String wxPubOriginId = chatPet.getWxPubOriginId();
+
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        return chatPetType;
+    }
 }

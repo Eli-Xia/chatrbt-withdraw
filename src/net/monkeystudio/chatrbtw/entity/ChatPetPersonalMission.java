@@ -19,6 +19,8 @@ public class ChatPetPersonalMission {
 
     private Integer inviteeWxFanId;
 
+
+
     public Integer getInviteeWxFanId() {
         return inviteeWxFanId;
     }

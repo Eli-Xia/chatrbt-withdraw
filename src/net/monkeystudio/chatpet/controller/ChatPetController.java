@@ -13,6 +13,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.CreationPost;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.portlet.ModelAndView;
 
@@ -85,34 +86,39 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
-        Integer userId = getUserId();
+    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request)  {
+        try {
+            Integer userId = getUserId();
 
-        if(userId == null){
-            //网页授权
-            response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
-        }else{
-            //判断是否为跨公众号同session
-            if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
-
-                saveSessionUserId(null);
-
-                response.sendRedirect(chatPetService.getHomePageUrl(wxPubId));
-
-                return null;
-            }
-
-            if(chatPetService.isAble2Access(userId,wxPubId)){
-
-                chatPetService.dataPrepared(userId,wxPubId);
-
-                response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
-
+            if(userId == null){
+                //网页授权
+                response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
             }else{
-                response.sendRedirect(chatPetService.getChatPetPosterUrl());
-            }
+                //判断是否为跨公众号同session
+                if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
 
+                    saveSessionUserId(null);
+
+                    response.sendRedirect(chatPetService.getHomePageUrl(wxPubId));
+
+                    return null;
+                }
+
+                if(chatPetService.isAble2Access(userId,wxPubId)){
+
+                    chatPetService.dataPrepared(userId,wxPubId);
+
+                    response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
+
+                }else{
+                    response.sendRedirect(chatPetService.getChatPetPosterUrl());
+                }
+
+            }
+        }catch (Exception e){
+            Log.e(e);
         }
+
         return null;
     }
 

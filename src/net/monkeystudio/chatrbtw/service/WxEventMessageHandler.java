@@ -9,6 +9,7 @@ import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 import net.monkeystudio.wx.service.WxPubService;
@@ -125,14 +126,13 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Log.d("================== 孩子宠物的id = {?} ===============",chatPetId.toString());
 
 
-                            ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getShouldDoInviteMission(parentId,ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            CompleteMissionParam param = new CompleteMissionParam();
 
-                            if(chatPetPersonalMission != null){
-                                //生成任务奖励
-                                chatPetRewardService.saveRewardItemWhenMissionDone(parentId,chatPetPersonalMission.getId());
-                                //更新任务完成状态,设置被邀请人
-                                chatPetMissionPoolService.updateMissionWhenInvited(chatPetPersonalMission.getId(),wxFan.getId());
-                            }
+                            param.setChatPetId(parentId);
+                            param.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                            param.setInviteeWxFanId(wxFan.getId());
+
+                            chatPetMissionPoolService.completeChatPetMission(param);//完成宠物邀请人任务
 
                         }
 

@@ -114,8 +114,12 @@
         and create_time &gt;= #{createTime}
       </if>
       <if test="adId != null">
-        ad_id = #{adId}
+        and ad_id = #{adId}
       </if>
     </where>
+  </select>
+
+  <select id="countByChatPetIdAndAdId" resultType="java.lang.Integer">
+    SELECT  count(id) FROM e_chat_pet_personal_mission WHERE  ad_id = #{adId} AND chat_pet_id = #{chatPetId}
   </select>
 </mapper>
