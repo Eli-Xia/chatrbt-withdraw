@@ -80,8 +80,8 @@ public class ChatPetMissionPoolService {
     private void initSubscribe(){
         //起一条独立的线程去监听
         //Thread thread = new Thread(new Runnable() {
-            //@Override
-           // public void run() {
+        //    @Override
+        //    public void run() {
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,MESSAGE_KEY);
                     String string = list.get(1);
@@ -230,15 +230,28 @@ public class ChatPetMissionPoolService {
                 chatPetPersonalMission.setMissionCode(missionCode);
 
                 this.save(chatPetPersonalMission);
+
             }
+            return ;
         }
 
-        chatPetPersonalMission.setChatPetId(chatPetId);
-        chatPetPersonalMission.setCreateTime(new Date());
-        chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
-        chatPetPersonalMission.setMissionCode(missionCode);
+        if(chatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            Date date = TimeUtil.getStartTimestamp();
 
-        this.save(chatPetPersonalMission);
+            //如果当天没有完成每日互动任务一次，可以派发任务
+            List<ChatPetRewardItem> chatPetRewardItemList = chatPetRewardService.getByChatPetAndState(date, chatPetId ,ChatPetRewardService.HAVE_AWARD);
+            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INTERACTION_MAX_TIME.intValue()){
+
+                chatPetPersonalMission.setChatPetId(chatPetId);
+                chatPetPersonalMission.setCreateTime(new Date());
+                chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+                chatPetPersonalMission.setMissionCode(missionCode);
+
+                this.save(chatPetPersonalMission);
+
+                return ;
+            }
+        }
 
     }
 
@@ -492,7 +505,7 @@ public class ChatPetMissionPoolService {
         newsMissionParam.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
         newsMissionParam.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
-        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(inviteFriendParam);
+        List<ChatPetPersonalMission> newsMissionList = this.getPersonalMissionListByParam(newsMissionParam);
 
         MissionItem news = new MissionItem();
         //如果没有任务，则已经完成次数为0
