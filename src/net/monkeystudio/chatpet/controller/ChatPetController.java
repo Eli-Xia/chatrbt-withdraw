@@ -174,4 +174,17 @@ public class ChatPetController extends ChatPetBaseController{
 
         return respHelper.ok(creationPost);
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/reward/list", method = RequestMethod.POST)
+    public RespBase getRewardGoldList(){
+        Integer fanId = getUserId();
+
+        if(fanId == null){
+            return respHelper.nologin();
+        }
+
+
+        return respHelper.ok();
+    }
 }
