@@ -114,7 +114,7 @@
         and create_time &gt;= #{createTime}
       </if>
       <if test="adId != null">
-        ad_id = #{adId}
+        and ad_id = #{adId}
       </if>
     </where>
   </select>
