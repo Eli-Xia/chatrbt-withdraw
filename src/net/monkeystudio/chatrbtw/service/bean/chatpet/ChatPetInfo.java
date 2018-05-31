@@ -3,7 +3,6 @@ package net.monkeystudio.chatrbtw.service.bean.chatpet;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMissionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,7 @@ public class ChatPetInfo {
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
 
     private ChatPetBackgroundInfo chatPetBackgroundInfo;
+
 
     public ChatPetBackgroundInfo getChatPetBackgroundInfo() {
         return chatPetBackgroundInfo;
