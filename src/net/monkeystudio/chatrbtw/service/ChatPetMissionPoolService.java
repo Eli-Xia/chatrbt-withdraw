@@ -230,7 +230,9 @@ public class ChatPetMissionPoolService {
                 chatPetPersonalMission.setMissionCode(missionCode);
 
                 this.save(chatPetPersonalMission);
+
             }
+            return ;
         }
 
         chatPetPersonalMission.setChatPetId(chatPetId);
