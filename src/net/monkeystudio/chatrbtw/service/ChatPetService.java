@@ -403,6 +403,17 @@ public class ChatPetService {
 
     }
 
+    /**
+     * 根据粉丝id获取宠物金币列表
+     * @param wxFanId
+     * @return
+     */
+    public List<ChatPetGoldItem> getRewardListByWxFanId(Integer wxFanId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        ChatPet chatPet = this.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
+        return chatPetRewardService.getChatPetGoldItems(chatPet.getId());
+    }
+
 
 
     /**
