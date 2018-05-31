@@ -369,7 +369,7 @@ public class ChatPetMissionPoolService {
         //资讯任务校验
         Integer adId = chatPetPersonalMission.getAdId();
         if(adId != null){
-            if(this.getCountByChatPetIdAndAdId(chatPetId,adId).intValue() != 0){
+            if(this.getCountByChatPetIdAndAdId(chatPetId,adId).intValue() > 1){
                 throw new BizException("该资讯已阅读");
             }
         }
