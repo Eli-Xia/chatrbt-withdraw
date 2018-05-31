@@ -235,6 +235,24 @@ public class ChatPetMissionPoolService {
             return ;
         }
 
+        if(chatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            Date date = TimeUtil.getStartTimestamp();
+
+            //如果当天没有完成每日互动任务一次，可以派发任务
+            List<ChatPetRewardItem> chatPetRewardItemList = chatPetRewardService.getByChatPetAndState(date, chatPetId ,ChatPetRewardService.HAVE_AWARD);
+            if(chatPetRewardItemList == null || chatPetRewardItemList.size() < DAILY_INTERACTION_MAX_TIME.intValue()){
+
+                chatPetPersonalMission.setChatPetId(chatPetId);
+                chatPetPersonalMission.setCreateTime(new Date());
+                chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+                chatPetPersonalMission.setMissionCode(missionCode);
+
+                this.save(chatPetPersonalMission);
+
+                return ;
+            }
+        }
+
         chatPetPersonalMission.setChatPetId(chatPetId);
         chatPetPersonalMission.setCreateTime(new Date());
         chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
