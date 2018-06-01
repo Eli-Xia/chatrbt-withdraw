@@ -6,10 +6,12 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,7 @@ import java.util.*;
  * @author xiaxin
  */
 @Service
-public class ChatPetRewardService {
+public class ChatPetRewardService{
 
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
@@ -48,9 +50,10 @@ public class ChatPetRewardService {
     @Autowired
     private WxFanService wxFanService;
 
-    public static final Integer NOT_AWARD = 0;//为领取
+    public static final Integer NOT_AWARD = 0;//未领取
     public static final Integer HAVE_AWARD = 1;//已经领取
 
+    private static final Integer MAX_NOT_AWARD_COUNT = 8;//等级奖励最大个数
 
 
     public ChatPetRewardItem getChatPetRewardItemById(Integer id){
@@ -359,7 +362,7 @@ public class ChatPetRewardService {
 
 
     /**
-     * 生成等级奖励
+     * 获取所有的开通陪聊宠公众号的粉丝，把粉丝塞入队列
      */
     public void generateLevelReward(){
         List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
@@ -380,4 +383,75 @@ public class ChatPetRewardService {
     private String getLevelReward(){
         return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
     }
+
+    public void comsumeLevelReward(){
+        //起一条独立的线程去监听
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    levelRewardHanle();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("comsumeLevelReward");
+        thread.start();
+    }
+
+
+    private void levelRewardHanle(){
+        String key = this.getLevelReward();
+
+        List<String> list = redisCacheTemplate.brpop(0,key);
+        String wxFanIdStr = list.get(1);
+
+        Integer wxFanId = Integer.valueOf(wxFanIdStr);
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+
+        //如果没有宠物，返回
+        if(chatPet == null){
+            return ;
+        }
+
+        Integer chatPetId = chatPet.getId();
+        //如果奖励超过了8个，不再分发
+        List<ChatPetRewardItem> rewardItemList = this.getByChatPetAndState(TimeUtil.getStartTimestamp(),chatPetId,NOT_AWARD);
+        if(rewardItemList.size() > MAX_NOT_AWARD_COUNT.intValue()){
+            return ;
+        }
+
+        Float levelExperience = this.calculateLevelExperience(chatPetId);
+
+        //每日可领取奖励
+        ChatPetRewardItem levelReward = new ChatPetRewardItem();
+
+        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
+        levelReward.setChatPetType(chatPetType);
+
+        levelReward.setGoldValue( levelExperience );
+
+        levelReward.setRewardState(NOT_AWARD);
+        levelReward.setChatPetId(chatPetId);
+        levelReward.setCreateTime(new Date());
+
+        this.save(levelReward);
+    }
+
+    private Float calculateLevelExperience(Integer chatPetId){
+
+        Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
+
+        Float levelExperience = (chatPetLevel + 1) * 0.01F;
+
+        return levelExperience;
+
+    }
+
+
 }
