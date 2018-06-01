@@ -6,7 +6,6 @@
         <result column="ad_type" property="adType" jdbcType="INTEGER" />
         <result column="title" property="title" jdbcType="VARCHAR" />
         <result column="description" property="description" jdbcType="VARCHAR" />
-        <result column="text_content" property="textContent" jdbcType="VARCHAR" />
         <result column="url" property="url" jdbcType="VARCHAR" />
         <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
         <result column="push_type" property="pushType" jdbcType="INTEGER" />
@@ -25,22 +24,30 @@
         <result column="push_strategy_type" property="pushStrategyType" jdbcType="INTEGER" />
     </resultMap>
 
+    <resultMap extends="baseResultMap" id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.Ad">
+        <result column="text_content" jdbcType="LONGVARCHAR" property="textContent" />
+    </resultMap>
+
     <sql id="Base_Column_List" >
-        id, ad_type, title, description, text_content, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content,push_strategy_type
+        id, ad_type, title, description, url, pic_url, push_type, create_at,ad_recommend_statement,income,alias,push_time,pre_push_time,is_open,close_time,cover_pic,click_amount,portal_title,portal_content,push_strategy_type
     </sql>
 
-    <select id="selectById" resultMap="baseResultMap">
+    <sql id="Blob_Column_List">
+        text_content
+    </sql>
+
+    <select id="selectById" resultMap="ResultMapWithBLOBs">
         select
-            <include refid="Base_Column_List"></include>
+            <include refid="Base_Column_List"></include>,<include refid="Blob_Column_List"></include>
         from
             e_ad
         where
             id = #{id}
     </select>
 
-    <select id="selectNewestByType" resultMap="baseResultMap" parameterType="map">
+    <select id="selectNewestByType" resultMap="ResultMapWithBLOBs" parameterType="map">
         select
-            <include refid="Base_Column_List"></include>
+            <include refid="Base_Column_List"></include>,<include refid="Blob_Column_List"></include>
         from
             e_ad
         where
@@ -52,9 +59,9 @@
         limit 1
     </select>
     
-    <select id="selectByPage" resultMap="baseResultMap" parameterType="map">
+    <select id="selectByPage" resultMap="ResultMapWithBLOBs" parameterType="map">
         select
-            <include refid="Base_Column_List"></include>
+            <include refid="Base_Column_List"></include>,<include refid="Blob_Column_List"></include>
         from
             e_ad
         order BY
@@ -76,7 +83,7 @@
                 ad_type = #{adType,jdbcType=VARCHAR},
                 title = #{title,jdbcType=VARCHAR},
                 description = #{description,jdbcType=VARCHAR},
-                text_content = #{textContent,jdbcType=VARCHAR},
+                text_content = #{textContent},
                 url = #{url,jdbcType=VARCHAR},
                 pic_url = #{picUrl,jdbcType=VARCHAR},
                 push_type = #{pushType,jdbcType=INTEGER},
@@ -91,7 +98,7 @@
                 click_amount = #{clickAmount},
                 portal_title = #{portalTitle},
                 portal_content = #{portalContent},
-                push_strategy_type = #{pushStrategyType}
+                push_strategy_type = IFNULL(#{pushStrategyType},0)
         where
             id = #{id,jdbcType=VARCHAR}
     </update>
@@ -171,7 +178,7 @@
           #{adType,jdbcType=VARCHAR},
           #{title,jdbcType=VARCHAR},
           #{description,jdbcType=VARCHAR},
-          #{textContent,jdbcType=VARCHAR},
+          #{textContent},
           #{url,jdbcType=VARCHAR},
           #{picUrl,jdbcType=VARCHAR},
           #{pushType,jdbcType=INTEGER},
@@ -187,7 +194,7 @@
           #{clickAmount},
           #{portalTitle},
           #{portalContent},
-          #{pushStrategyType}
+          IFNULL(#{pushStrategyType},0)
           )
     </insert>
 
