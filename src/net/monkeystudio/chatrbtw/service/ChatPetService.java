@@ -306,7 +306,7 @@ public class ChatPetService {
 
         ChatPet chatPet = this.getChatPetByFans(originId, wxFanOpenId);
         //奖励池数据
-        chatPetRewardService.createInitRewardItems(chatPet.getId());
+        //chatPetRewardService.createInitRewardItems(chatPet.getId());
     }
 
     /**

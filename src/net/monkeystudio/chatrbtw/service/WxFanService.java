@@ -201,4 +201,14 @@ public class WxFanService {
         }
         return isFans;
     }
+
+
+    /**
+     * 根据公众号原始id获取该公众号的粉丝
+     * @param wxPubOriginid
+     * @return
+     */
+    public List<WxFan> getListByWxPubOriginid(String wxPubOriginid){
+        return wxFanMapper.selectListByWxPubOriginId(wxPubOriginid);
+    }
 }

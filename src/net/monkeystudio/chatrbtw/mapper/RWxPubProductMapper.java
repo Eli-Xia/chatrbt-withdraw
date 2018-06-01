@@ -16,4 +16,6 @@ public interface RWxPubProductMapper {
     RWxPubProduct selectByWxPubAndProduct(@Param("wxPubOriginId") String wxPubOriginId , @Param("productId") Integer productId);
 
     List<RWxPubProduct> selectListByWxPubOriginId(@Param("wxPubOriginId") String wxPubOriginId);
+
+    List<RWxPubProduct> selectListByProduct(@Param("productId") Integer productId);
 }

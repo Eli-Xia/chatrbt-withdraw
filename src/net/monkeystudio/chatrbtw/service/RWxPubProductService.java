@@ -90,10 +90,13 @@ public class RWxPubProductService {
         return !isEnable(productId, wxPubOriginId);
     }
 
+    /**
+     * portal接入产品处理
+     * @param wxPubOriginId
+     */
     public void protalJoinProductHandle(String wxPubOriginId){
 
         List<RWxPubProduct> rWxPubProductList = this.getListByWxPubOriginId(wxPubOriginId);
-
 
         if(ListUtil.isEmpty(rWxPubProductList)){
 
@@ -105,4 +108,14 @@ public class RWxPubProductService {
         }
 
     }
+
+    /**
+     * 根据产品id获取公众号
+     * @param productId
+     * @return
+     */
+    public List<RWxPubProduct> getWxPubListByProduct(Integer productId){
+        return rWxPubProductMapper.selectListByProduct(productId);
+    }
+
 }

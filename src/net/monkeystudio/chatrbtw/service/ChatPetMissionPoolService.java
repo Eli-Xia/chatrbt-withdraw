@@ -75,8 +75,8 @@ public class ChatPetMissionPoolService {
     //private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "恭喜你采矿成功,点击<a href=\"%s\">领取奖励</a>";
     private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "\u2705任务完成 前往\ud83d\udc49<a href=\"%s\">领取奖励</a>\ud83d\udc48";
 
-    @PostConstruct
-    private void initSubscribe(){
+
+    public void initSubscribe(){
         //起一条独立的线程去监听
         Thread thread = new Thread(new Runnable() {
             @Override
