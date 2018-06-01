@@ -91,7 +91,7 @@
                 click_amount = #{clickAmount},
                 portal_title = #{portalTitle},
                 portal_content = #{portalContent},
-                push_strategy_type = #{pushStrategyType}
+                push_strategy_type = IFNULL(#{pushStrategyType},0)
         where
             id = #{id,jdbcType=VARCHAR}
     </update>
@@ -187,7 +187,7 @@
           #{clickAmount},
           #{portalTitle},
           #{portalContent},
-          #{pushStrategyType}
+          IFNULL(#{pushStrategyType},0)
           )
     </insert>
 
