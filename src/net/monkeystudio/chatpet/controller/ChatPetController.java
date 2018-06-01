@@ -176,12 +176,11 @@ public class ChatPetController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/gold/list", method = RequestMethod.POST)
     public RespBase getRewardGoldList(){
-        /*Integer fanId = getUserId();
+        Integer fanId = getUserId();
 
         if(fanId == null){
             return respHelper.nologin();
-        }*/
-        Integer fanId = 104;
+        }
 
         List<ChatPetGoldItem> goldList = chatPetService.getRewardListByWxFanId(fanId);
 
