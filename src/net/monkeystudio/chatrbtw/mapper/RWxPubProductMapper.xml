@@ -45,5 +45,13 @@
             wx_pub_origin_id = #{wxPubOriginId}
     </select>
 
+    <select id="selectListByProduct" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"></include>
+        from
+            r_wx_pub_product
+        where
+            product_id = #{productId}
+    </select>
 
 </mapper>

@@ -75,4 +75,14 @@
             wx_fan_open_id = #{wxFanOpenId}
     </update>
 
+
+    <select id="selectListByWxPubOriginId" parameterType="java.lang.String" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"></include>
+        from
+            e_wx_fan
+        where
+            wx_pub_origin_id = #{wxPubOriginId}
+    </select>
+
 </mapper>
