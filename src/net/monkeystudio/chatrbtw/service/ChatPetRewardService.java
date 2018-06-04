@@ -385,6 +385,9 @@ public class ChatPetRewardService{
         return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
     }
 
+    /**
+     * 消费等级奖励的消息队列
+     */
     public void comsumeLevelReward(){
         //起一条独立的线程去监听
         Thread thread = new Thread(new Runnable() {
