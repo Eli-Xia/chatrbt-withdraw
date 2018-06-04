@@ -7,7 +7,6 @@ import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -195,10 +194,6 @@ public class ChatPetService {
 
         String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
         chatPetBaseInfo.setOwnerId(owerId);
-
-        //宠物背景图信息
-        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfo(chatPetId);
-        chatPetBaseInfo.setChatPetBackgroundInfo(chatPetBackgroundInfo);
 
         //宠物基因
         String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());

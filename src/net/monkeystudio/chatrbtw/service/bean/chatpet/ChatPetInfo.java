@@ -38,8 +38,6 @@ public class ChatPetInfo {
 
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
 
-    private ChatPetBackgroundInfo chatPetBackgroundInfo;
-
     private MagicCoinCount magicCoinCount;
 
     public MagicCoinCount getMagicCoinCount() {
@@ -48,14 +46,6 @@ public class ChatPetInfo {
 
     public void setMagicCoinCount(MagicCoinCount magicCoinCount) {
         this.magicCoinCount = magicCoinCount;
-    }
-
-    public ChatPetBackgroundInfo getChatPetBackgroundInfo() {
-        return chatPetBackgroundInfo;
-    }
-
-    public void setChatPetBackgroundInfo(ChatPetBackgroundInfo chatPetBackgroundInfo) {
-        this.chatPetBackgroundInfo = chatPetBackgroundInfo;
     }
 
     public List<ChatPetGoldItem> getGoldItems() {
