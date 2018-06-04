@@ -78,4 +78,9 @@ public class Scheduling {
 
         chatPetRewardService.generateLevelReward();
     }
+
+    @Scheduled(cron="0 0 0 * * ?") //当日12点去掉过期的任务奖励
+    public void deleteMissionReward(){
+        chatPetRewardService.expireAward();
+    }
 }

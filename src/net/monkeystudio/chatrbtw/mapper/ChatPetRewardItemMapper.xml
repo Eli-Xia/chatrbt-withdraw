@@ -106,6 +106,18 @@
     chat_pet_type = #{chatPetType}
   </select>
 
+
+  <select id="updateMissionRewardState" parameterType="map" resultType="java.lang.Integer">
+      update
+        e_chat_pet_reward_item
+      set
+        reward_state = #{newState}
+      where
+        reward_state = #{originState}
+      and
+        mission_item_id is not null
+  </select>
+
 </mapper>
 
 
