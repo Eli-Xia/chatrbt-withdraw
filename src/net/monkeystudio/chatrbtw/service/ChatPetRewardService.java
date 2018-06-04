@@ -127,7 +127,6 @@ public class ChatPetRewardService{
             ChatPetGoldItem goldItem = new ChatPetGoldItem();
 
             goldItem.setGoldValue(item.getGoldValue());
-            goldItem.setMissionItemId(item.getMissionItemId());
             goldItem.setRewardItemId(item.getId());
 
             goldItems.add(goldItem);
