@@ -109,8 +109,8 @@
     <select id="selectExperienceRankList" resultMap="baseResultMap">
         SELECT <include refid="Base_Column_List"/> FROM e_chat_pet WHERE id = #{chatPetId}
         OR parent_id = #{chatPetId}
-        limit #{startIndex},#{pageSize}
         ORDER BY experience DESC
+        limit #{startIndex},#{pageSize}
     </select>
 
     <select id="countExperienceRankList" resultType="java.lang.Integer">
