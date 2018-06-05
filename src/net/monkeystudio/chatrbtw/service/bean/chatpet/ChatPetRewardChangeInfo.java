@@ -27,6 +27,16 @@ public class ChatPetRewardChangeInfo {
 
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
 
+    private MagicCoinCount magicCoinCount;
+
+    public MagicCoinCount getMagicCoinCount() {
+        return magicCoinCount;
+    }
+
+    public void setMagicCoinCount(MagicCoinCount magicCoinCount) {
+        this.magicCoinCount = magicCoinCount;
+    }
+
     public List<ChatPetGoldItem> getGoldItems() {
         return goldItems;
     }

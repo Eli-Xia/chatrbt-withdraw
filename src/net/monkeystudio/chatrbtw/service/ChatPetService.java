@@ -7,7 +7,6 @@ import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -196,10 +195,6 @@ public class ChatPetService {
         String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
         chatPetBaseInfo.setOwnerId(owerId);
 
-        //宠物背景图信息
-        ChatPetBackgroundInfo chatPetBackgroundInfo = chatPetBackgroundService.getChatPetBackgroundInfo(chatPetId);
-        chatPetBaseInfo.setChatPetBackgroundInfo(chatPetBackgroundInfo);
-
         //宠物基因
         String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
         chatPetBaseInfo.setGeneticCode(geneticCode);
@@ -252,6 +247,16 @@ public class ChatPetService {
 
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
+
+        //魔币总产值,昨日产值
+        Float historyTotalAmount = chatPetRewardService.getTotalGoldAmountByChatPetType(chatPetType);
+        Float yesterdayTotalAmount = chatPetRewardService.getYesterdayGoldAmountByChatPetType(chatPetType);
+        MagicCoinCount magicCoinCount = new MagicCoinCount();
+        magicCoinCount.setHistoryTotalAmount(historyTotalAmount);
+        magicCoinCount.setYesterdayTotalAmount(yesterdayTotalAmount);
+        chatPetBaseInfo.setMagicCoinCount(magicCoinCount);
+
+
         //如果是魔鬼猫
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.intValue() == chatPetType.intValue()){
             String appearanceCode = chatPet.getAppearanceCode();
@@ -290,12 +295,13 @@ public class ChatPetService {
 
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
         String originId = wxPub.getOriginId();
+
         //第一次登录需要准备任务池数据
         chatPetMissionPoolService.createMissionWhenFirstChatOrComeH5(originId,wxFanOpenId);
 
         ChatPet chatPet = this.getChatPetByFans(originId, wxFanOpenId);
         //奖励池数据
-        chatPetRewardService.createInitRewardItems(chatPet.getId());
+        //chatPetRewardService.createInitRewardItems(chatPet.getId());
     }
 
     /**
@@ -323,6 +329,8 @@ public class ChatPetService {
         //族群排名
         ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
+        //魔币产值
+        changeInfo.setMagicCoinCount(info.getMagicCoinCount());
 
         List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
         changeInfo.setGoldItems(chatPetGoldItems);
@@ -388,6 +396,17 @@ public class ChatPetService {
         return null;
 
 
+    }
+
+    /**
+     * 根据粉丝id获取宠物金币列表
+     * @param wxFanId
+     * @return
+     */
+    public List<ChatPetGoldItem> getRewardListByWxFanId(Integer wxFanId){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        ChatPet chatPet = this.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
+        return chatPetRewardService.getChatPetGoldItems(chatPet.getId());
     }
 
 
@@ -809,13 +828,57 @@ public class ChatPetService {
         ChatPetExperinceRank chatPetExperinceRank = new ChatPetExperinceRank();
 
         //获取排行
-        List<ChatPetExperinceRankItem> chatPetExperinceRankList = this.getChatPetExperinceRankByPet(chatPetId,pageSize);
-        chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperinceRankList);
+        List<ChatPetExperinceRankItem> chatPetExperienceRank = this.getChatPetExperienceRank(chatPetId, pageSize);
+        chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperienceRank);
 
-        Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
+        //Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
+        Integer count = this.countExperienceRankChatPetAmount(chatPetId);
         chatPetExperinceRank.setTotal(count);
 
         return chatPetExperinceRank;
+    }
+
+    //private getExperienceRank
+
+    private List<ChatPetExperinceRankItem> getChatPetExperienceRank(Integer chatPetId,Integer pageSize){
+        //经验排行下宠物列表
+        List<ChatPet> experienceRankChatPetList = getExperienceRankList(chatPetId, pageSize);
+
+        List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
+
+        for(ChatPet chatPet : experienceRankChatPetList){
+
+            ChatPetExperinceRankItem chatPetExperinceRankItem = new ChatPetExperinceRankItem();
+
+            //宠物的等级
+            Float experience = chatPet.getExperience();
+            Integer level = chatPetLevelService.calculateLevel(experience);
+            chatPetExperinceRankItem.setLevel(level);
+
+
+            String wxFanOpenId = chatPet.getWxFanOpenId();
+            String wxPubOriginId = chatPet.getWxPubOriginId();
+            WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+            //粉丝头像
+            String headImgUrl = wxFan.getHeadImgUrl();
+            chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
+
+            //粉丝的昵称
+            chatPetExperinceRankItem.setWxFanNickname(wxFan.getNickname());
+
+            chatPetExperinceRankItemList.add(chatPetExperinceRankItem);
+        }
+
+        return chatPetExperinceRankItemList;
+    }
+
+    private List<ChatPet> getExperienceRankList(Integer parentId,Integer pageSize) {
+        Integer startIndex = 0;
+        return this.chatPetMapper.selectExperienceRankList(parentId,startIndex,pageSize);
+    }
+
+    private Integer countExperienceRankChatPetAmount(Integer chatPetId){
+        return this.chatPetMapper.countExperienceRankList(chatPetId);
     }
 
     /**
@@ -823,7 +886,7 @@ public class ChatPetService {
      * @param chatPetId
      * @param pageSize
      * @return
-     */
+     *//*
     private List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId , Integer pageSize){
         ChatPet chatPet = this.getById(chatPetId);
 
@@ -864,7 +927,7 @@ public class ChatPetService {
         }
 
         return chatPetExperinceRankItemList;
-    }
+    }*/
 
     /**
      * 获取宠物等级

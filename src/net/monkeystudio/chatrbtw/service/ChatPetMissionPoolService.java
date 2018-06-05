@@ -18,7 +18,6 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -30,7 +29,6 @@ import java.util.List;
 /**
  * @author xiaxin
  */
-@DependsOn
 @Service
 public class ChatPetMissionPoolService {
 
@@ -76,8 +74,8 @@ public class ChatPetMissionPoolService {
 
     private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "\u2705任务完成 前往\ud83d\udc49<a href=\"%s\">领取奖励</a>\ud83d\udc48";
 
-    @PostConstruct
-    private void initSubscribe(){
+
+    public void initSubscribe(){
         //起一条独立的线程去监听
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -115,10 +113,10 @@ public class ChatPetMissionPoolService {
                 }
             }
         });
-       thread.setDaemon(true);
-       thread.setName("NewsMission");
-       thread.start();
-       Log.d("finished Subscribe");
+        thread.setDaemon(true);
+        thread.setName("NewsMission");
+        thread.start();
+        Log.d("finished Subscribe");
     }
 
 
@@ -388,6 +386,7 @@ public class ChatPetMissionPoolService {
         String tips = String.format(CHAT_PET_NEWS_MISSION_REWARD_TIPS,chatPetService.getHomePageUrl(wxPub.getId()));
 
         String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId,wxPub.getAppId(), tips);
+
         if(result.indexOf("errcode") == -1){
             Log.e("tips send failed ! error info :" + result);
 

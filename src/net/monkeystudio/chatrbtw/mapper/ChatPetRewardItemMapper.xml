@@ -16,8 +16,8 @@
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-      <include refid="Base_Column_List" />
+    select
+    <include refid="Base_Column_List" />
     from e_chat_pet_reward_item
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -28,10 +28,10 @@
   </delete>
 
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
-    insert into e_chat_pet_reward_item (id, gold_value, reward_state, 
-      mission_item_id, chat_pet_id,experience,create_time ,chat_pet_type)
+    insert into e_chat_pet_reward_item (id, gold_value, reward_state,
+    mission_item_id, chat_pet_id,experience,create_time ,chat_pet_type)
     values (#{id,jdbcType=INTEGER}, IFNULL(#{goldValue},0) , #{rewardState,jdbcType=INTEGER},
-      #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime} ,#{chatPetType} )
+    #{missionItemId,jdbcType=INTEGER}, #{chatPetId,jdbcType=INTEGER} ,IFNULL(#{experience},0) ,#{createTime} ,#{chatPetType} )
   </insert>
 
   <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
@@ -63,12 +63,12 @@
     </where>
   </select>
 
-    <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
-        update e_chat_pet_reward_item
-        set gold_value = #{goldValue},reward_state = #{rewardState},mission_item_id = #{missionItemId} ,
-        chat_pet_id = #{chatPetId} , experience = #{experience} , create_time = #{createTime}
-        where id = #{id,jdbcType=INTEGER}
-    </update>
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
+    update e_chat_pet_reward_item
+    set gold_value = #{goldValue},reward_state = #{rewardState},mission_item_id = #{missionItemId} ,
+    chat_pet_id = #{chatPetId} , experience = #{experience} , create_time = #{createTime}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 
   <update id="updateRewarded" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetRewardItem" >
     update e_chat_pet_reward_item
@@ -78,16 +78,36 @@
   </update>
 
   <select id="selectByDateAndChatPet" parameterType="map" resultMap="BaseResultMap">
-      select
-          <include refid="Base_Column_List"/>
-      from
-          e_chat_pet_reward_item
-      where
-          create_time &gt;= #{createTime}
-      and
-          chat_pet_id = #{chatPetId}
-      and
-          reward_state = #{rewardState}
+    select
+    <include refid="Base_Column_List"/>
+    from
+    e_chat_pet_reward_item
+    where
+    create_time &gt;= #{createTime}
+    and
+    chat_pet_id = #{chatPetId}
+    and
+    reward_state = #{rewardState}
+  </select>
+
+  <select id="countDayGoldByChatPetType" resultType="java.lang.Float">
+    SELECT IFNULL(sum(gold_value),0) FROM e_chat_pet_reward_item
+    WHERE
+    chat_pet_type = #{chatPetType}
+    AND
+    create_time &gt;= #{beginTime}
+    AND
+    create_time &lt;= #{endTime}
+    AND
+    reward_state = 1
+  </select>
+
+  <select id="countTotalGoldByChatPetType" resultType="java.lang.Float">
+    SELECT IFNULL(sum(gold_value),0) FROM e_chat_pet_reward_item
+    WHERE
+    chat_pet_type = #{chatPetType} AND  reward_state = 1
   </select>
 
 </mapper>
+
+

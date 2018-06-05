@@ -6,20 +6,17 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetRewardChangeInfo;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetSessionVo;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.CreationPost;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.portlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by bint on 2018/4/19.
@@ -86,7 +83,7 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request)  {
+    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws ArithmeticException {
         try {
             Integer userId = getUserId();
 
@@ -154,7 +151,6 @@ public class ChatPetController extends ChatPetBaseController{
             return respHelper.nologin();
         }
 
-
         ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId());
 
         return respHelper.ok(changeInfo);
@@ -173,5 +169,19 @@ public class ChatPetController extends ChatPetBaseController{
         CreationPost creationPost = chatPetService.getCreationPost(wxFanId);
 
         return respHelper.ok(creationPost);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/gold/list", method = RequestMethod.POST)
+    public RespBase getRewardGoldList(){
+        Integer fanId = getUserId();
+
+        if(fanId == null){
+            return respHelper.nologin();
+        }
+
+        List<ChatPetGoldItem> goldList = chatPetService.getRewardListByWxFanId(fanId);
+
+        return respHelper.ok(goldList);
     }
 }

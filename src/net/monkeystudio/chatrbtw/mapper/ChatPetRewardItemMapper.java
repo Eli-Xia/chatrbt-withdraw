@@ -27,5 +27,9 @@ public interface ChatPetRewardItemMapper {
 
     int updateRewarded(ChatPetRewardItem record);
 
+    Float countDayGoldByChatPetType(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime,@Param("chatPetType")Integer chatPetType);
+
+    Float countTotalGoldByChatPetType(Integer chatPetType);
+
     List<ChatPetRewardItem> selectByDateAndChatPet(@Param("createTime") Date createTime , @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState );
 }
