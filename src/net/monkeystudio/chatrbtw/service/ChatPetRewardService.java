@@ -52,6 +52,7 @@ public class ChatPetRewardService{
 
     public static final Integer NOT_AWARD = 0;//未领取
     public static final Integer HAVE_AWARD = 1;//已经领取
+    public static final Integer EXPIRED_AWARD = 2;//已经过期
 
     private static final Integer MAX_NOT_AWARD_COUNT = 8;//等级奖励最大个数
 
@@ -112,7 +113,7 @@ public class ChatPetRewardService{
         ChatPetRewardItem param = new ChatPetRewardItem();
         param.setRewardState(NOT_AWARD);
         param.setChatPetId(chatPetId);
-        param.setCreateTime(DateUtils.getBeginDate(new Date()));
+        //param.setCreateTime(DateUtils.getBeginDate(new Date()));
 
         List<ChatPetRewardItem> items = this.chatPetRewardItemMapper.selectByParam(param);
 
@@ -383,6 +384,9 @@ public class ChatPetRewardService{
         return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
     }
 
+    /**
+     * 消费等级奖励的消息队列
+     */
     public void comsumeLevelReward(){
         //起一条独立的线程去监听
         Thread thread = new Thread(new Runnable() {
@@ -472,10 +476,14 @@ public class ChatPetRewardService{
         Date beginDate = DateUtils.getBeginDate(yesterday);
         Date endDate = DateUtils.getEndDate(yesterday);
 
-        return this.chatPetRewardItemMapper.countDayGoldByChatPetType(beginDate,endDate,chatPetType);
+        return chatPetRewardItemMapper.countDayGoldByChatPetType(beginDate,endDate,chatPetType);
     }
 
-
-
+    /**
+     * 让任务奖励过期
+     */
+    public void expireAward(){
+        chatPetRewardItemMapper.updateMissionRewardState(NOT_AWARD , EXPIRED_AWARD);
+    }
 
 }
