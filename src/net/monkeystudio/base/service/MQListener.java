@@ -1,5 +1,7 @@
-package net.monkeystudio.chatrbtw.service;
+package net.monkeystudio.base.service;
 
+import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
+import net.monkeystudio.chatrbtw.service.ChatPetRewardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
