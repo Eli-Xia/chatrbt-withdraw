@@ -79,9 +79,9 @@
 
   <select id="selectByDateAndChatPet" parameterType="map" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
     from
-    e_chat_pet_reward_item
+        e_chat_pet_reward_item
     where
     create_time &gt;= #{createTime}
     and
@@ -106,6 +106,36 @@
     SELECT IFNULL(sum(gold_value),0) FROM e_chat_pet_reward_item
     WHERE
     chat_pet_type = #{chatPetType} AND  reward_state = 1
+  </select>
+
+
+  <update id="updateMissionRewardState" parameterType="map" >
+      update
+        e_chat_pet_reward_item
+      set
+        reward_state = #{newState}
+      where
+        reward_state = #{originState}
+      and
+        mission_item_id is not null
+  </update>
+
+
+  <select id="selectByChatPetAndMissionId" resultMap="BaseResultMap" >
+      select
+          <include refid="Base_Column_List"/>
+      from
+          e_chat_pet_reward_item
+      where
+          chat_pet_id = #{chatPetId}
+      and
+          reward_state = #{rewardState}
+      <if test="missionItemId != null">
+        and mission_item_id = #{missionItemId}
+      </if>
+      <if test="missionItemId == null">
+        and mission_item_id is null
+      </if>
   </select>
 
 </mapper>
