@@ -11,6 +11,7 @@ import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -381,7 +382,7 @@ public class ChatPetRewardService{
     }
 
     private String getLevelReward(){
-        return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
+            return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
     }
 
     /**
@@ -424,8 +425,9 @@ public class ChatPetRewardService{
 
         Integer chatPetId = chatPet.getId();
         //如果奖励超过了8个，不再分发
-        List<ChatPetRewardItem> rewardItemList = this.getByChatPetAndState(TimeUtil.getStartTimestamp(),chatPetId,NOT_AWARD);
+        List<ChatPetRewardItem> rewardItemList = this.getByChatPetAndMissionId(chatPetId,NOT_AWARD,null);
         if(rewardItemList.size() > MAX_NOT_AWARD_COUNT.intValue()){
+            Log.d("more than 8 , don't generate level reward");
             return ;
         }
 
@@ -484,6 +486,17 @@ public class ChatPetRewardService{
      */
     public void expireAward(){
         chatPetRewardItemMapper.updateMissionRewardState(NOT_AWARD , EXPIRED_AWARD);
+    }
+
+    /**
+     * 根据宠物id、奖励状态和任务id获取奖励
+     * @param chatPetId
+     * @param rewardState
+     * @param missionItemId
+     * @return
+     */
+    public List<ChatPetRewardItem> getByChatPetAndMissionId(Integer chatPetId , Integer rewardState ,  Integer missionItemId){
+        return chatPetRewardItemMapper.selectByChatPetAndMissionId(chatPetId, rewardState, missionItemId);
     }
 
 }

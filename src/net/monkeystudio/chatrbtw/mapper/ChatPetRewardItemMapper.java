@@ -33,5 +33,7 @@ public interface ChatPetRewardItemMapper {
 
     List<ChatPetRewardItem> selectByDateAndChatPet(@Param("createTime") Date createTime , @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState );
 
+    List<ChatPetRewardItem> selectByChatPetAndMissionId( @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState ,@Param("missionItemId") Integer missionItemId);
+
     Integer updateMissionRewardState(@Param("originState") Integer originState ,@Param("newState") Integer newState );
 }
