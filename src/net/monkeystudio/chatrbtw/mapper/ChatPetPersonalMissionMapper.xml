@@ -122,4 +122,10 @@
   <select id="countByChatPetIdAndAdId" resultType="java.lang.Integer">
     SELECT  count(id) FROM e_chat_pet_personal_mission WHERE  ad_id = #{adId} AND chat_pet_id = #{chatPetId}
   </select>
+
+  <select id="countCompletedMissionAmountByMissionCode" resultType="java.lang.Integer">
+    SELECT count(id) FROM e_chat_pet_personal_mission
+    WHERE
+    state = #{state} AND chat_pet_id = #{chatPetId} AND create_time &gt;= #{createTime} AND  mission_code = #{missionCode}
+  </select>
 </mapper>

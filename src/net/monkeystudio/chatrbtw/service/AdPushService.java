@@ -184,7 +184,7 @@ public class AdPushService {
      * @param ad
      * @param wxFanId
      */
-    private void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
+    public void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
 
 
         WxFan wxFan = wxFanService.getById(wxFanId);
@@ -210,7 +210,6 @@ public class AdPushService {
 
         Log.d("===============陪聊宠随机任务触发 检查参数 adId = {?} , wxFanId = {?} =================",ad.getId().toString(),wxFanId.toString());
         //陪聊宠随机任务触发
-        //chatPetMissionPoolService.updateMissionWhenPushChatPetAd(ad.getId(),wxFanId);
         /*if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
             chatPetMissionPoolService.saveMissionRecordWhenPushChatPetAd(ad.getId(),wxFanId);
         }*/
