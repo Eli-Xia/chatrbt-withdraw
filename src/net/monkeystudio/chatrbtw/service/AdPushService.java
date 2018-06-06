@@ -8,6 +8,7 @@ import net.monkeystudio.chatrbtw.entity.Ad;
 import net.monkeystudio.chatrbtw.entity.AdPushLog;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.service.WxTextMessageHandler;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +52,9 @@ public class AdPushService {
     private CfgService cfgService;
 
     private static String AD_COUNT_SYS_API =  null;
+
+    @Autowired
+    private ChatPetService chatPetService;
 
     @PostConstruct
     public void init(){
@@ -181,7 +184,7 @@ public class AdPushService {
      * @param ad
      * @param wxFanId
      */
-    private void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
+    public void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
 
 
         WxFan wxFan = wxFanService.getById(wxFanId);
@@ -207,10 +210,16 @@ public class AdPushService {
 
         Log.d("===============陪聊宠随机任务触发 检查参数 adId = {?} , wxFanId = {?} =================",ad.getId().toString(),wxFanId.toString());
         //陪聊宠随机任务触发
-        //chatPetMissionPoolService.updateMissionWhenPushChatPetAd(ad.getId(),wxFanId);
-        if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
+        /*if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
             chatPetMissionPoolService.saveMissionRecordWhenPushChatPetAd(ad.getId(),wxFanId);
-        }
+        }*/
+        DispatchMissionParam param = new DispatchMissionParam();
+
+        param.setChatPetId(chatPetService.getChatPetIdByFans(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId()));
+        param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        param.setAdId(ad.getId());
+
+        chatPetMissionPoolService.dispatchMission(param);
 
         //记录广告推送日志
         AdPushLog adPushLog = new AdPushLog();
