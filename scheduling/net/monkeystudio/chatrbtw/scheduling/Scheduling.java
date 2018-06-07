@@ -4,7 +4,6 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.mapper.GlobalConfigMapper;
 import net.monkeystudio.chatrbtw.service.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
