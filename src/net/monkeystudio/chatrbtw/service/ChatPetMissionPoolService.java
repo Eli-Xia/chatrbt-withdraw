@@ -253,6 +253,16 @@ public class ChatPetMissionPoolService {
 
     }
 
+    //临时:用于判断资讯任务派发是否到达最大次数
+    public Boolean isReachMaxDispatchTime(Integer chatPetId,Integer missionCode){
+        Boolean result = false;
+        Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);
+        if(count.intValue() < DAILY_SEARCH_NEWS_MISSION_MAX_TIME.intValue()){
+            result = true;
+        }
+        return result;
+    }
+
     /**
      * 根据任务类型统计当天派发的次数
      * @param chatPetId
