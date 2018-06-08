@@ -221,6 +221,10 @@ public class ChatPetRewardService{
         //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
 
+        if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+            return;
+        }
+
         DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
         dispatchMissionParam.setChatPetId(chatPetId);
         dispatchMissionParam.setMissionCode(chatPetPersonalMission.getMissionCode());
