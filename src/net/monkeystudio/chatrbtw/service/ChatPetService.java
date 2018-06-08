@@ -327,7 +327,7 @@ public class ChatPetService {
         changeInfo.setPetLogs(info.getPetLogs());
         changeInfo.setTodayMission(info.getTodayMission());
         //族群排名
-        ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 1);
+        ChatPetExperinceRank chatPetExperinceRankByWxFan = this.getChatPetExperinceRankByWxFan(wxFanId, 5);
         changeInfo.setGroupRank(chatPetExperinceRankByWxFan);
         //魔币产值
         changeInfo.setMagicCoinCount(info.getMagicCoinCount());

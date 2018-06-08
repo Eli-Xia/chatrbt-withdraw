@@ -198,10 +198,10 @@ public class ChatPetMissionPoolService {
         Integer missionCode = dispatchMissionParam.getMissionCode();
         Integer chatPetId = dispatchMissionParam.getChatPetId();
 
-        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
 
-            //如果当天没有完成邀请好友次数不超过三次，可以派发任务
-            Integer count = this.countCompletedMissionAmount(chatPetId, missionCode);//已完成任务数量
+            //如果当天没有派发邀请好友任务次数不超过三次，可以派发任务
+            Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_INVITE_MISSION_MAX_TIME.intValue()){
                 Integer adId = dispatchMissionParam.getAdId();
 
@@ -218,8 +218,8 @@ public class ChatPetMissionPoolService {
 
         if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
-            //如果当天没有完成资讯任务十次，可以派发任务
-            Integer count = this.countCompletedMissionAmount(chatPetId, missionCode);//已完成任务数量
+            //如果当天没有派发资讯任务十次，可以派发任务
+            Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_SEARCH_NEWS_MISSION_MAX_TIME.intValue()){
 
                 chatPetPersonalMission.setChatPetId(chatPetId);
@@ -236,8 +236,8 @@ public class ChatPetMissionPoolService {
 
         if(chatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
 
-            //如果当天没有完成每日互动任务一次，可以派发任务
-            Integer count = this.countCompletedMissionAmount(chatPetId, missionCode);//已完成任务数量
+            //如果当天没有派发每日互动任务一次，可以派发任务
+            Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_INTERACTION_MAX_TIME.intValue()){
 
                 chatPetPersonalMission.setChatPetId(chatPetId);
@@ -253,15 +253,25 @@ public class ChatPetMissionPoolService {
 
     }
 
+    //临时:用于判断资讯任务派发是否到达最大次数
+    public Boolean isReachMaxDispatchTime(Integer chatPetId,Integer missionCode){
+        Boolean result = true;
+        Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);
+        if(count.intValue() < DAILY_SEARCH_NEWS_MISSION_MAX_TIME.intValue()){
+            result = false;
+        }
+        return result;
+    }
+
     /**
-     * 根据宠物id和任务类型获取当天任务完成数量
+     * 根据任务类型统计当天派发的次数
      * @param chatPetId
      * @param missionCode
      * @return
      */
-    public Integer countCompletedMissionAmount(Integer chatPetId,Integer missionCode){
+    public Integer countDispatchMissionAmount(Integer chatPetId,Integer missionCode){
         Date createTime = DateUtils.getBeginDate(new Date());
-        return chatPetPersonalMissionMapper.countCompletedMissionAmountByMissionCode(chatPetId,missionCode,MissionStateEnum.FINISH_AND_AWARD.getCode(),createTime);
+        return chatPetPersonalMissionMapper.countDispatchMissionAmountByMissionCode(chatPetId,missionCode,createTime);
     }
 
 
@@ -307,7 +317,6 @@ public class ChatPetMissionPoolService {
      * @param completeMissionParam  完成任务参数
      */
     public void completeChatPetMission(CompleteMissionParam completeMissionParam){
-        Log.d("================chatpetid = {?} missioncode = {?} ===========" ,completeMissionParam.getChatPetId().toString(),completeMissionParam.getMissionCode().toString());
         //查询当前任务记录查询对象
         ChatPetPersonalMission param = new ChatPetPersonalMission();
 
@@ -333,7 +342,7 @@ public class ChatPetMissionPoolService {
 
         //更新状态
         chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
-        chatPetPersonalMission.setInviteeWxFanId(param.getInviteeWxFanId());
+        chatPetPersonalMission.setInviteeWxFanId(completeMissionParam.getInviteeWxFanId());
         this.update(chatPetPersonalMission);
 
         //奖励池生成奖励 TODO 插入奖励方法需要修改

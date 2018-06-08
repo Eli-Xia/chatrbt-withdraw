@@ -6,6 +6,7 @@ import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.Ad;
 import net.monkeystudio.chatrbtw.entity.AdPushLog;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
@@ -99,7 +100,6 @@ public class AdPushService {
 
 
         Ad ad = this.getAd4WxFanByPushType(wxPubOriginId,pushType,wxfanId);
-
         if(ad == null){
             return ;
         }
@@ -114,8 +114,17 @@ public class AdPushService {
             //点击数到达最大点击数
             adService.closeAdPushWhenReachMaxClick(ad);
         }
+
+        //临时:如果是陪聊宠资讯任务广告派发到达最大次数,则不再推广告
+        Boolean isReachMaxDispatchTime = false;
+        if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
+            WxFan wxFan = wxFanService.getById(wxfanId);
+            ChatPet chatPet = chatPetService.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
+            isReachMaxDispatchTime = chatPetMissionPoolService.isReachMaxDispatchTime(chatPet.getId(), ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        }
+
         //当前广告点击数量 < 最大广告点击数量
-        if(needToPush && !isReach){
+        if(needToPush && !isReach && !isReachMaxDispatchTime){
             this.pushAdHandle(ad,wxfanId);
         }
     }
