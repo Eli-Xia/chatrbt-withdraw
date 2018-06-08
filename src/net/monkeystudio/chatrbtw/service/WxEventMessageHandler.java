@@ -109,8 +109,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                         } else {
                             Integer parentId = Integer.valueOf(parentIdStr);
 
-                            Log.d("============ 父亲宠物的id = {?} =============",parentIdStr);
-
                             parentChatPet = chatPetService.getById(parentId);
 
                             //如果不是长老
@@ -123,7 +121,6 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer secondEthnicGroupsId = parentChatPet.getSecondEthnicGroupsId();
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
-                            Log.d("================== 孩子宠物的id = {?} ===============",chatPetId.toString());
 
 
                             CompleteMissionParam param = new CompleteMissionParam();

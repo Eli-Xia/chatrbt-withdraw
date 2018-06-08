@@ -198,7 +198,7 @@ public class ChatPetMissionPoolService {
         Integer missionCode = dispatchMissionParam.getMissionCode();
         Integer chatPetId = dispatchMissionParam.getChatPetId();
 
-        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
+        if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
 
             //如果当天没有派发邀请好友任务次数不超过三次，可以派发任务
             Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
@@ -317,7 +317,6 @@ public class ChatPetMissionPoolService {
      * @param completeMissionParam  完成任务参数
      */
     public void completeChatPetMission(CompleteMissionParam completeMissionParam){
-        Log.d("================chatpetid = {?} missioncode = {?} ===========" ,completeMissionParam.getChatPetId().toString(),completeMissionParam.getMissionCode().toString());
         //查询当前任务记录查询对象
         ChatPetPersonalMission param = new ChatPetPersonalMission();
 
@@ -343,7 +342,7 @@ public class ChatPetMissionPoolService {
 
         //更新状态
         chatPetPersonalMission.setState(MissionStateEnum.FINISH_NOT_AWARD.getCode());
-        chatPetPersonalMission.setInviteeWxFanId(param.getInviteeWxFanId());
+        chatPetPersonalMission.setInviteeWxFanId(completeMissionParam.getInviteeWxFanId());
         this.update(chatPetPersonalMission);
 
         //奖励池生成奖励 TODO 插入奖励方法需要修改
