@@ -99,9 +99,7 @@ public class AdPushService {
         Boolean needToPush = RandomUtil.shot(ratio);*/
 
 
-        //Ad ad = this.getAd4WxFanByPushType(wxPubOriginId,pushType,wxfanId);
-        Integer adidid = 103;
-        Ad ad = adService.getAdById(adidid);
+        Ad ad = this.getAd4WxFanByPushType(wxPubOriginId,pushType,wxfanId);
         if(ad == null){
             return ;
         }
