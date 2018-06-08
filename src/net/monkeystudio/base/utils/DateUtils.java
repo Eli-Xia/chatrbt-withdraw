@@ -151,5 +151,14 @@ public class DateUtils {
         return (int) ((dateEnd.getTime() - dateStart.getTime()) / DAY_MILLISECOND) + 1;
     }
 
+    /**
+     * 得到以毫秒计算的时间戳
+     * @param date
+     * @return
+     */
+    public static Long getMillisecondTimestamp(Date date){
+        Long time = date.getTime();
+        return time;
+    }
 
 }
