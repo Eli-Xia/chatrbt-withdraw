@@ -87,6 +87,9 @@ public class AdService {
     private WxPubService wxPubService;
 
     @Autowired
+    private WxFanService wxFanService;
+
+    @Autowired
     private RAdWxPubMapper rAdWxPubMapper;
 
     @Autowired
@@ -463,11 +466,10 @@ public class AdService {
 
     /**
      * 随机获取一条指定公众号下的陪聊宠广告
-     * @param wxPubOriginId
      * @return
      */
-    public Ad getChatPetPushAd(String wxPubOriginId,Integer wxFanId) {
-        Ad ad = this.getPushAdTemplate(wxPubOriginId,wxFanId, new Hook() {
+    public Ad getChatPetPushAd(Integer wxFanId){
+        Ad ad = this.getPushAdTemplate(wxFanId, new Hook() {
 
             @Override
             public boolean callback(Ad ad) {
@@ -481,12 +483,11 @@ public class AdService {
 
     /**
      * 随机获取一条接入指定公众号的智能聊广告
-     * @param wxPubOriginId
      * @return
      */
-    public Ad getSmartChatPushAd(String wxPubOriginId,Integer wxFanId){
+    public Ad getSmartChatPushAd(Integer wxFanId){
 
-        Ad ad = this.getPushAdTemplate(wxPubOriginId,wxFanId ,new Hook() {
+        Ad ad = this.getPushAdTemplate(wxFanId ,new Hook() {
 
             @Override
             public boolean callback(Ad ad) {
@@ -501,11 +502,10 @@ public class AdService {
     /**
      * 随机获取一条接入指定公众号的问问搜广告
      * 图文广告
-     * @param wxPubOriginId
      * @return
      */
-    public Ad getAskSearchPushAd(String wxPubOriginId, Integer wxFanId){
-        Ad ad = this.getPushAdTemplate(wxPubOriginId,wxFanId, new Hook() {
+    public Ad getAskSearchPushAd(Integer wxFanId){
+        Ad ad = this.getPushAdTemplate(wxFanId, new Hook() {
 
             @Override
             public boolean callback(Ad ad) {
@@ -519,12 +519,13 @@ public class AdService {
 
     /**
      * 随机获取指定公众号下的一条广告 模板方法
-     * @param wxPubOriginId :公众号
+     * @param wxFanId : 微信粉丝id
      * @param judgePushTypeHook:callback
      * @return
      */
-    private Ad getPushAdTemplate(String wxPubOriginId,Integer wxFanId,Hook judgePushTypeHook){
-        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+    private Ad getPushAdTemplate(Integer wxFanId,Hook judgePushTypeHook) {
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        WxPub wxPub = wxPubService.getByOrginId(wxFan.getWxPubOriginId());
 
         //未认证及未授权公众号不推送广告
         if(wxPubService.WX_PUB_VERIFY_TYPE_UN_VERIFY.intValue()  == wxPub.getVerifyTypeInfo().intValue()
@@ -551,6 +552,7 @@ public class AdService {
             Ad ad = this.getAdById(obj.getAdId());
 
             if(AD_PUSH_CLOSE.equals(ad.getIsOpen()) //广告开发
+                    //||  isReachMaxClick(ad)//广告点击数
                     ||  judgePushTypeHook.callback(ad)//宠物类型
                     ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)//广告投放状态
                     ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())//公众号主设置广告投放状态
@@ -700,9 +702,9 @@ public class AdService {
         Integer maxClickAmount = ad.getClickAmount();
 
         if(maxClickAmount == null || maxClickAmount <= 0 ){
-            throw new BizException("该广告未设置最大点击数");
+            return false;
         }
-        return currentClickAmount >= maxClickAmount;
+        return currentClickAmount.intValue() >= maxClickAmount.intValue();
     }
 
     /**

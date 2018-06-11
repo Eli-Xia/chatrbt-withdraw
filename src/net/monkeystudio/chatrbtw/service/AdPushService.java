@@ -99,7 +99,7 @@ public class AdPushService {
         Boolean needToPush = RandomUtil.shot(ratio);*/
 
 
-        Ad ad = this.getAd4WxFanByPushType(wxPubOriginId,pushType,wxfanId);
+        Ad ad = this.getAd4WxFanByPushType(pushType,wxfanId);
         if(ad == null){
             return ;
         }
@@ -392,18 +392,17 @@ public class AdPushService {
 
     /**
      * 根据推送类型(智能聊,陪聊宠)为指定公众号下指定的粉丝获取一条广告
-     * @param wxPubOriginId : 微信公众号OriginId
      * @param pushType   :     广告类型(智能聊,陪聊宠)
      * @param wxFanId    :     粉丝id
      * @return
      */
-    public Ad getAd4WxFanByPushType(String wxPubOriginId,Integer pushType,Integer wxFanId){
+    public Ad getAd4WxFanByPushType(Integer pushType,Integer wxFanId){
 
         if(adService.AD_PUSH_TYPE_CHAT_PET.equals(pushType)){
-            return adService.getChatPetPushAd(wxPubOriginId,wxFanId);
+            return adService.getChatPetPushAd(wxFanId);
         }
         if(adService.AD_PUSH_TYPE_SMART_CHAT.equals(pushType)){
-            return adService.getSmartChatPushAd(wxPubOriginId,wxFanId);
+            return adService.getSmartChatPushAd(wxFanId);
         }
 
         return null;
