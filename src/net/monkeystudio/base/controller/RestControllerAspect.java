@@ -32,4 +32,16 @@ public class RestControllerAspect {
         }
         return resp;
     }
+
+    public String stringReturnApiWrap(ProceedingJoinPoint pjp){
+        String resp = null;
+        try{
+            resp = (String)pjp.proceed();
+        }catch (BizException e){
+            Log.e(e);
+        }catch(Throwable t){
+            Log.e(t);
+        }
+        return resp;
+    }
 }

@@ -83,7 +83,7 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws ArithmeticException {
+    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws Exception {
         try {
             Integer userId = getUserId();
 
@@ -118,6 +118,8 @@ public class ChatPetController extends ChatPetBaseController{
 
         return null;
     }
+
+
 
     /**
      * 测试接口
