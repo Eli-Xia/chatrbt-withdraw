@@ -7,6 +7,7 @@ import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -720,6 +721,23 @@ public class ChatPetService {
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         String url = "https://" + domain + "/api/chat-pet/pet/home-page?id=" + wxPubId;
         return url;
+    }
+
+    /**
+     * 宠物主页带锚点
+     * @param wxPubId
+     * @param anchor
+     * @return
+     */
+    public String getChatPetPageUrl(Integer wxPubId,String anchor){
+        String anchorVar = "";
+
+        if(StringUtil.isNotEmpty(anchor)){
+            anchorVar = "&anchor=" + anchor;
+        }
+        String chatPetPageUrl = this.getChatPetPageUrl(wxPubId);
+
+        return chatPetPageUrl + anchorVar;
     }
 
     /**
