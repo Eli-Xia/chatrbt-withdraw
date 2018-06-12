@@ -358,8 +358,8 @@ public class ChatPetMissionPoolService {
         chatPetPersonalMission.setInviteeWxFanId(completeMissionParam.getInviteeWxFanId());
         this.update(chatPetPersonalMission);
 
-        //奖励池生成奖励 TODO 插入奖励方法需要修改
-        chatPetRewardService.saveRewardItemWhenMissionDone(chatPetPersonalMission.getChatPetId(),chatPetPersonalMission.getId());
+        //奖励池生成奖励
+        chatPetRewardService.generateRewardWhenMissionDone(chatPetPersonalMission.getId());
 
         //完成任务后给粉丝发送领奖tips
         this.sendChatPetRewardTips(chatPetPersonalMission.getChatPetId());
