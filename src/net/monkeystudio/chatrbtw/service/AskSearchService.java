@@ -173,7 +173,7 @@ public class AskSearchService {
         //获取问问搜广告
         WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxfanOpenId);
 
-        Ad ad = adService.getAskSearchPushAd(wxPubOriginId,wxFan.getId());
+        Ad ad = adService.getAskSearchPushAd(wxFan.getId());
 
         List<AskSearchVo> result = new ArrayList<>();
         //当前页数为1且为空

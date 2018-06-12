@@ -6,8 +6,10 @@ import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.Ad;
 import net.monkeystudio.chatrbtw.entity.AdPushLog;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.service.WxTextMessageHandler;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +53,9 @@ public class AdPushService {
     private CfgService cfgService;
 
     private static String AD_COUNT_SYS_API =  null;
+
+    @Autowired
+    private ChatPetService chatPetService;
 
     @PostConstruct
     public void init(){
@@ -95,15 +99,14 @@ public class AdPushService {
         Boolean needToPush = RandomUtil.shot(ratio);*/
 
 
-        Ad ad = this.getAd4WxFanByPushType(wxPubOriginId,pushType,wxfanId);
-
+        Ad ad = this.getAd4WxFanByPushType(pushType,wxfanId);
         if(ad == null){
             return ;
         }
 
         Log.i("adType = ?  title = ?  textContext = ?   url = ?  adRecommendStatement ",ad.getAdType().toString(),ad.getTitle(),ad.getTextContent(),ad.getUrl(),ad.getAdRecommendStatement());
 
-        boolean needToPush = this.judgeIfAdNeed2PushByStrategyType(ad.getPushStrategyType(),wxPubOriginId,wxfanId,ad.getPushType());
+        boolean needToPush = this.isAdNeed2PushByStrategyType(ad.getPushStrategyType(),wxfanId,ad.getPushType());
 
         boolean isReach = adService.isReachMaxClick(ad);
 
@@ -111,8 +114,17 @@ public class AdPushService {
             //点击数到达最大点击数
             adService.closeAdPushWhenReachMaxClick(ad);
         }
+
+        //临时:如果是陪聊宠资讯任务广告派发到达最大次数,则不再推广告
+        Boolean isReachMaxDispatchTime = false;
+        if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
+            WxFan wxFan = wxFanService.getById(wxfanId);
+            ChatPet chatPet = chatPetService.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
+            isReachMaxDispatchTime = chatPetMissionPoolService.isReachMaxDispatchTime(chatPet.getId(), ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        }
+
         //当前广告点击数量 < 最大广告点击数量
-        if(needToPush && !isReach){
+        if(needToPush && !isReach && !isReachMaxDispatchTime){
             this.pushAdHandle(ad,wxfanId);
         }
     }
@@ -120,12 +132,13 @@ public class AdPushService {
     /**
      * 根据广告推送策略类型(1:概率触发 2:聊天次数触发)判断广告是否能够推送
      * @param pushStrategyType : 推送策略
-     * @param wxPubOriginId    :  wx原始id
      * @param wxFanId           :  粉丝id
      * @param pushType          :  投放类型(陪聊宠,智能聊) -> 二者统计聊天次数的缓存策略不同(一天之内,24小时内)
      * @return
      */
-    public boolean judgeIfAdNeed2PushByStrategyType(Integer pushStrategyType,String wxPubOriginId,Integer wxFanId,Integer pushType){
+    public boolean isAdNeed2PushByStrategyType(Integer pushStrategyType,Integer wxFanId,Integer pushType){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxPubOriginId = wxFan.getWxPubOriginId();
         boolean needToPush = false;
 
         if(adService.AD_PUSH_STRATEGY_CHANCE.equals(pushStrategyType)){
@@ -181,8 +194,7 @@ public class AdPushService {
      * @param ad
      * @param wxFanId
      */
-    private void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
-
+    public void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
 
         WxFan wxFan = wxFanService.getById(wxFanId);
         String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxFan.getWxPubOriginId());
@@ -194,7 +206,6 @@ public class AdPushService {
             this.pushTextAd(wxPubAppId,wxFanOpenId,adRecommendStatement);
         }
 
-
         //推送广告
         String pushAdRespStr = this.pushAd(wxPubAppId,wxFanId,ad);
 
@@ -203,13 +214,6 @@ public class AdPushService {
             Log.e("ad push faild ! error info :" + pushAdRespStr);
 
             return ;
-        }
-
-        Log.d("===============陪聊宠随机任务触发 检查参数 adId = {?} , wxFanId = {?} =================",ad.getId().toString(),wxFanId.toString());
-        //陪聊宠随机任务触发
-        //chatPetMissionPoolService.updateMissionWhenPushChatPetAd(ad.getId(),wxFanId);
-        if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
-            chatPetMissionPoolService.saveMissionRecordWhenPushChatPetAd(ad.getId(),wxFanId);
         }
 
         //记录广告推送日志
@@ -374,18 +378,17 @@ public class AdPushService {
 
     /**
      * 根据推送类型(智能聊,陪聊宠)为指定公众号下指定的粉丝获取一条广告
-     * @param wxPubOriginId : 微信公众号OriginId
      * @param pushType   :     广告类型(智能聊,陪聊宠)
      * @param wxFanId    :     粉丝id
      * @return
      */
-    public Ad getAd4WxFanByPushType(String wxPubOriginId,Integer pushType,Integer wxFanId){
+    public Ad getAd4WxFanByPushType(Integer pushType,Integer wxFanId){
 
         if(adService.AD_PUSH_TYPE_CHAT_PET.equals(pushType)){
-            return adService.getChatPetPushAd(wxPubOriginId,wxFanId);
+            return adService.getChatPetPushAd(wxFanId);
         }
         if(adService.AD_PUSH_TYPE_SMART_CHAT.equals(pushType)){
-            return adService.getSmartChatPushAd(wxPubOriginId,wxFanId);
+            return adService.getSmartChatPushAd(wxFanId);
         }
 
         return null;

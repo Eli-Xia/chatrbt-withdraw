@@ -83,7 +83,7 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,HttpServletResponse response,HttpServletRequest request) throws ArithmeticException {
+    public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, HttpServletResponse response,HttpServletRequest request) throws Exception {
         try {
             Integer userId = getUserId();
 
@@ -105,7 +105,7 @@ public class ChatPetController extends ChatPetBaseController{
 
                     chatPetService.dataPrepared(userId,wxPubId);
 
-                    response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId));
+                    response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId,anchor));
 
                 }else{
                     response.sendRedirect(chatPetService.getChatPetPosterUrl());
@@ -118,6 +118,8 @@ public class ChatPetController extends ChatPetBaseController{
 
         return null;
     }
+
+
 
     /**
      * 测试接口
@@ -184,4 +186,5 @@ public class ChatPetController extends ChatPetBaseController{
 
         return respHelper.ok(goldList);
     }
+
 }

@@ -123,7 +123,7 @@ public class ChatPetLogService {
 
         missisonNameSb.append(this.getPetLogMissionNameByChatPetPersonalMissionId(chatPetPersonalMissionId));
         missisonNameSb.append("获得" + chatPetCoinName + "+" + goldValue + ",");
-        missisonNameSb.append("经验值+" + experience);
+        missisonNameSb.append("算力" + experience);
 
         PetLog petLog1 = new PetLog();
         petLog1.setContent(missisonNameSb.toString());

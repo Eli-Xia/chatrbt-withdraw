@@ -136,10 +136,15 @@
 	<aop:config>
 		<aop:aspect id="myOpenApiAspect" ref="RestControllerAspectBean">
 			<aop:pointcut id="openApiPointCut"
-						  expression="execution(public net.monkeystudio.base.controller.bean.RespBase net.monkeystudio..controller..*.*(..))
-									||	execution(public String net.monkeystudio..controller..*.*(..))"/>
+						  expression="execution(public net.monkeystudio.base.controller.bean.RespBase net.monkeystudio..controller..*.*(..))"/>
 
 			<aop:around pointcut-ref="openApiPointCut" method="apiWrap"/>
+		</aop:aspect>
+
+		<aop:aspect id = "myOpenApiAspect1" ref="RestControllerAspectBean">
+			<aop:pointcut id="stringReturnApiPointCut"
+						  expression="execution(public String net.monkeystudio..controller..*.*(..))"/>
+			<aop:around pointcut-ref="stringReturnApiPointCut" method="stringReturnApiWrap"/>
 		</aop:aspect>
 	</aop:config>
 </beans>
