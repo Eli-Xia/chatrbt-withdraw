@@ -184,11 +184,21 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
                 chatPetMissionPoolService.completeChatPetMission(param);
 
-                this.petChatAdProcess(wxPubOriginId,wxFanOpenId);
+
+                //资讯任务广告推送
+                taskExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            petChatAdProcess(chatPet.getId(),wxPubOriginId,wxFanOpenId);
+                        } catch (BizException e){
+                            Log.e(e);
+                        }
+                    }
+                });
             }
 
         }else{
-
             this.smartChatAdProecess(wxPubOriginId,wxFanOpenId);
         }
 
@@ -352,7 +362,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
      * @param wxFanOpenId
      * @throws BizException
      */
-    private void petChatAdProcess(String wxPubOriginId,String wxFanOpenId) throws BizException {
+    /*private void petChatAdProcess(String wxPubOriginId,String wxFanOpenId) throws BizException {
         WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
 
         if(wxPub != null ){
@@ -382,16 +392,16 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 }
             }
 
-            /*if(PUSH_TASK_AD_CHAT_COUNT.equals(count.intValue())){
+            *//*if(PUSH_TASK_AD_CHAT_COUNT.equals(count.intValue())){
                 WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
                 if(wxFan != null){
                     Log.d("============= smart chat ad has been pushed !! ============");
                     this.sendAd(wxFan.getId(), wxPubOriginId,adService.AD_PUSH_TYPE_CHAT_PET);
                 }
-            }*/
+            }*//*
 
         }
-    }
+    }*/
 
     /**
      * 陪聊宠:获取当日指定公众号下指定粉丝的聊天次数
@@ -462,6 +472,58 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
                 }
             }*/
         }
+    }
+
+    /**
+     * 陪聊宠广告推送
+     * @param wxPubOriginId
+     * @param wxFanOpenId
+     * @throws BizException
+     */
+    private void petChatAdProcess(Integer chatPetId,String wxPubOriginId,String wxFanOpenId) throws BizException {
+        Log.d("============= chatPetMissionAdProcess =============");
+        WxPub wxPub = wxPubService.getByOrginId(wxPubOriginId);
+
+        if(wxPub == null){
+            return;
+        }
+
+        Integer wxPubVerifyTypeInfo = wxPub.getVerifyTypeInfo();
+        if(wxPubVerifyTypeInfo  == null){
+            this.reviseWxPub(wxPubOriginId);
+            wxPub = wxPubService.getByOrginId(wxPubOriginId);
+        }
+
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        if(wxFan == null){
+            return;
+        }
+
+        if(wxPubVerifyTypeInfo.intValue() != wxPubService.WX_PUB_VERIFY_TYPE_WX_VERIFY){
+            return ;
+        }
+
+        //获取给粉丝派发的资讯任务
+        ChatPetPersonalMission ongoingSearchNewMission = chatPetMissionPoolService.getOngoingMissionByMissionCodeAndChatPetId(chatPetId, ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        if(ongoingSearchNewMission == null){
+            return;
+        }
+        //获取资讯任务广告id
+        Integer adId = ongoingSearchNewMission.getAdId();
+        Log.d("===============资讯任务广告id = {?}============",adId.toString());
+        Ad ad = adService.getAdById(adId);
+
+        //根据触发策略判断是否触发推送
+        boolean need2Push = adPushService.isAdNeed2PushByStrategyType(ad.getPushStrategyType(), wxFan.getId(), ad.getPushType());
+        if(!need2Push){
+            return;
+        }
+
+        //到达触发广告机制次数的人数+1
+        wxChatCountService.incrArrivalCount();
+
+        //推送广告
+        adPushService.pushAdHandle(ad,wxFan.getId());
     }
 
     /**

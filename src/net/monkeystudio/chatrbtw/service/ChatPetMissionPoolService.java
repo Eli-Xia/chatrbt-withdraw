@@ -6,12 +6,11 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.MissionItem;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.MissionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
@@ -19,10 +18,7 @@ import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +67,9 @@ public class ChatPetMissionPoolService {
 
     @Autowired
     private WxPubService wxPubService;
+
+    @Autowired
+    private AdService adService;
 
     private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "\u2705任务完成 前往\ud83d\udc49<a href=\"%s\">领取奖励</a>\ud83d\udc48";
 
@@ -165,25 +164,18 @@ public class ChatPetMissionPoolService {
      */
     private void createDailyMission(Integer chatPetId){
         List<ChatPetMission> activeMissions = this.chatPetMissionService.getActiveMissions();
+
         if(ListUtil.isEmpty(activeMissions)){
             return;
         }
 
         for(ChatPetMission cpm:activeMissions){
+            //派发任务
+            DispatchMissionParam param = new DispatchMissionParam();
+            param.setChatPetId(chatPetId);
+            param.setMissionCode(cpm.getMissionCode());
 
-            //仅初始固定任务数据
-            if(!ChatPetMissionService.CHAT_PET_MISSION_TYPE_FIXED.equals(cpm.getMissionType())){
-                continue;
-            }
-
-            ChatPetPersonalMission cppm = new ChatPetPersonalMission();
-
-            cppm.setChatPetId(chatPetId);
-            cppm.setCreateTime(new Date());
-            cppm.setState(MissionStateEnum.GOING_ON.getCode());
-            cppm.setMissionCode(cpm.getMissionCode());
-
-            this.save(cppm);
+            this.dispatchMission(param);
         }
     }
 
@@ -191,7 +183,7 @@ public class ChatPetMissionPoolService {
      * 派发任务
      * @param dispatchMissionParam
      */
-    public void dispatchMission(DispatchMissionParam dispatchMissionParam ) throws BizException{
+    public void dispatchMission(DispatchMissionParam dispatchMissionParam) {
 
         ChatPetPersonalMission chatPetPersonalMission = new ChatPetPersonalMission();
 
@@ -221,12 +213,18 @@ public class ChatPetMissionPoolService {
             //如果当天没有派发资讯任务十次，可以派发任务
             Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_SEARCH_NEWS_MISSION_MAX_TIME.intValue()){
+                //从任务池中获取一条陪聊宠广告
+                Ad ad = this.getSearchNewsMissionAd(chatPetId);
+
+                if(ad == null){
+                    return;
+                }
 
                 chatPetPersonalMission.setChatPetId(chatPetId);
                 chatPetPersonalMission.setCreateTime(new Date());
                 chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
                 chatPetPersonalMission.setMissionCode(missionCode);
-                chatPetPersonalMission.setAdId(dispatchMissionParam.getAdId());
+                chatPetPersonalMission.setAdId(ad.getId());
 
                 this.save(chatPetPersonalMission);
 
@@ -251,6 +249,21 @@ public class ChatPetMissionPoolService {
             }
         }
 
+    }
+
+    /**
+     * 为宠物获取一则咨询任务广告
+     * @param chatPetId
+     * @return
+     */
+    private Ad getSearchNewsMissionAd(Integer chatPetId){
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+
+        WxFan wxFan = wxFanService.getWxFan(chatPet.getWxPubOriginId(), chatPet.getWxFanOpenId());
+
+        Ad missionAd = adService.getChatPetPushAd(wxFan.getId());
+
+        return missionAd;
     }
 
     //临时:用于判断资讯任务派发是否到达最大次数
@@ -393,6 +406,7 @@ public class ChatPetMissionPoolService {
      * @param chatPetId     宠物id
      */
     private void sendChatPetRewardTips(Integer chatPetId){
+
         ChatPet chatPet = chatPetService.getById(chatPetId);
 
         String wxPubOriginId = chatPet.getWxPubOriginId();
@@ -404,7 +418,7 @@ public class ChatPetMissionPoolService {
         String result = wxCustomerHelper.sendTextMessageByAuthorizerId(wxFanOpenId,wxPub.getAppId(), tips);
 
         if(result.indexOf("errcode") == -1){
-            Log.e("tips send failed ! error info :" + result);
+            Log.d(" =============== tips send failed ! error info : {?} =================" + result);
 
             return ;
         }
@@ -420,7 +434,21 @@ public class ChatPetMissionPoolService {
         return this.chatPetPersonalMissionMapper.countByChatPetIdAndAdId(chatPetId,adId);
     }
 
+    /**
+     * 根据任务类型获取当前正在进行中的任务 (1条)
+     * @param missionCode  任务类型
+     * @param chatPetId    宠物id
+     * @return
+     */
+    public ChatPetPersonalMission getOngoingMissionByMissionCodeAndChatPetId(Integer chatPetId,Integer missionCode){
+        ChatPetPersonalMission param = new ChatPetPersonalMission();
+        param.setChatPetId(chatPetId);
+        param.setMissionCode(missionCode);
+        param.setCreateTime(DateUtils.getBeginDate(new Date()));
+        param.setState(MissionStateEnum.GOING_ON.getCode());
 
+        return this.getPersonalMissionByParam(param);
+    }
 
     /**
      * 查询任务池记录

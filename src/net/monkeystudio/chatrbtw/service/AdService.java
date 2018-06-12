@@ -552,7 +552,7 @@ public class AdService {
             Ad ad = this.getAdById(obj.getAdId());
 
             if(AD_PUSH_CLOSE.equals(ad.getIsOpen()) //广告开发
-                    //||  isReachMaxClick(ad)//广告点击数
+                    ||  isReachMaxClick(ad)//广告点击数
                     ||  judgePushTypeHook.callback(ad)//宠物类型
                     ||  AD_PUSH_STATE_PUSHING != this.getAdPushState(ad)//广告投放状态
                     ||  WX_PUB_AD_PUSH_STATE_CLOSE.equals(obj.getState())//公众号主设置广告投放状态
@@ -696,14 +696,11 @@ public class AdService {
      * @param ad
      * @return
      */
-    public boolean isReachMaxClick(Ad ad) throws BizException {
+    public boolean isReachMaxClick(Ad ad)  {
         Integer currentClickAmount = adClickLogService.getAdTotalClick(ad.getId());
 
         Integer maxClickAmount = ad.getClickAmount();
 
-        if(maxClickAmount == null || maxClickAmount <= 0 ){
-            return false;
-        }
         return currentClickAmount.intValue() >= maxClickAmount.intValue();
     }
 

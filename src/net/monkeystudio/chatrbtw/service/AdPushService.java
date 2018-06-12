@@ -106,7 +106,7 @@ public class AdPushService {
 
         Log.i("adType = ?  title = ?  textContext = ?   url = ?  adRecommendStatement ",ad.getAdType().toString(),ad.getTitle(),ad.getTextContent(),ad.getUrl(),ad.getAdRecommendStatement());
 
-        boolean needToPush = this.judgeIfAdNeed2PushByStrategyType(ad.getPushStrategyType(),wxPubOriginId,wxfanId,ad.getPushType());
+        boolean needToPush = this.isAdNeed2PushByStrategyType(ad.getPushStrategyType(),wxfanId,ad.getPushType());
 
         boolean isReach = adService.isReachMaxClick(ad);
 
@@ -132,12 +132,13 @@ public class AdPushService {
     /**
      * 根据广告推送策略类型(1:概率触发 2:聊天次数触发)判断广告是否能够推送
      * @param pushStrategyType : 推送策略
-     * @param wxPubOriginId    :  wx原始id
      * @param wxFanId           :  粉丝id
      * @param pushType          :  投放类型(陪聊宠,智能聊) -> 二者统计聊天次数的缓存策略不同(一天之内,24小时内)
      * @return
      */
-    public boolean judgeIfAdNeed2PushByStrategyType(Integer pushStrategyType,String wxPubOriginId,Integer wxFanId,Integer pushType){
+    public boolean isAdNeed2PushByStrategyType(Integer pushStrategyType,Integer wxFanId,Integer pushType){
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxPubOriginId = wxFan.getWxPubOriginId();
         boolean needToPush = false;
 
         if(adService.AD_PUSH_STRATEGY_CHANCE.equals(pushStrategyType)){
@@ -195,7 +196,6 @@ public class AdPushService {
      */
     public void pushAdHandle(Ad ad,Integer wxFanId) throws BizException {
 
-
         WxFan wxFan = wxFanService.getById(wxFanId);
         String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxFan.getWxPubOriginId());
 
@@ -206,7 +206,6 @@ public class AdPushService {
             this.pushTextAd(wxPubAppId,wxFanOpenId,adRecommendStatement);
         }
 
-
         //推送广告
         String pushAdRespStr = this.pushAd(wxPubAppId,wxFanId,ad);
 
@@ -216,19 +215,6 @@ public class AdPushService {
 
             return ;
         }
-
-        Log.d("===============陪聊宠随机任务触发 检查参数 adId = {?} , wxFanId = {?} =================",ad.getId().toString(),wxFanId.toString());
-        //陪聊宠随机任务触发
-        /*if(adService.AD_PUSH_TYPE_CHAT_PET.equals(ad.getPushType())){
-            chatPetMissionPoolService.saveMissionRecordWhenPushChatPetAd(ad.getId(),wxFanId);
-        }*/
-        DispatchMissionParam param = new DispatchMissionParam();
-
-        param.setChatPetId(chatPetService.getChatPetIdByFans(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId()));
-        param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
-        param.setAdId(ad.getId());
-
-        chatPetMissionPoolService.dispatchMission(param);
 
         //记录广告推送日志
         AdPushLog adPushLog = new AdPushLog();
