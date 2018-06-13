@@ -122,7 +122,7 @@ public class ChatPetLogService {
         StringBuilder missisonNameSb = new StringBuilder();
 
         missisonNameSb.append(this.getPetLogMissionNameByChatPetPersonalMissionId(chatPetPersonalMissionId));
-        missisonNameSb.append("获得" + chatPetCoinName + "+" + goldValue + ",");
+        missisonNameSb.append(chatPetCoinName + "+" + goldValue + ",");
         missisonNameSb.append("算力" + "+" + experience);
 
         PetLog petLog1 = new PetLog();
@@ -153,20 +153,20 @@ public class ChatPetLogService {
 
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
         Integer missionCode = chatPetPersonalMission.getMissionCode();
-        Date createTime = chatPetPersonalMission.getCreateTime();//任务广告派发时间
         String missionName = chatPetMissionEnumService.getMissionByCode(missionCode).getMissionName();
+        //Date createTime = chatPetPersonalMission.getCreateTime();//任务广告派发时间
 
-        if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            sb.append("完成" + ChatPetMissionNoUtil.getMissionNo(createTime) + missionName);
-        }
+//        if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+//            sb.append("完成" + ChatPetMissionNoUtil.getMissionNo(createTime) + missionName);
+//        }
 
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
             Integer inviteeWxFanId = chatPetPersonalMission.getInviteeWxFanId();
             WxFan wxFan = wxFanService.getById(inviteeWxFanId);
-            sb.append("邀请" + wxFan.getNickname() + "加入族群");
+            sb.append("邀请" + wxFan.getNickname() + "加入");
         }
 
-        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
             sb.append("完成" + missionName);
         }
 
