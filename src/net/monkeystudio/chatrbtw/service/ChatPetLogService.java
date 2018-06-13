@@ -276,7 +276,7 @@ public class ChatPetLogService {
 
         pl.setChatPetId(chatPetId);
         pl.setCreateTime(new Date());
-        pl.setContent("领取等级奖励,获得" + chatPetCoinName + "+" + item.getGoldValue());
+        pl.setContent("算力等级奖励," + chatPetCoinName + "+" + item.getGoldValue());
 
         this.savePetLog(pl);
     }
