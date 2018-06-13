@@ -167,7 +167,7 @@ public class ChatPetLogService {
         }
 
         if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-            sb.append("完成" + missionName);
+            sb.append(missionName);
         }
 
         sb.append(",");
