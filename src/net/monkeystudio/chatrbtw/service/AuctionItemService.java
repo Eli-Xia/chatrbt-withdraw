@@ -199,6 +199,10 @@ public class AuctionItemService {
 
             chatPetAuctionItemListResp.setNumber(participantNumber);
 
+            chatPetAuctionItemListResp.setAuctionItemName(auctionItem.getName());
+            chatPetAuctionItemListResp.setAuctionItemPic(auctionItem.getAuctionItemPic());
+
+
             Integer state = chatPetAuctionItemListResp.getState();
             if(state.intValue() == HAVE_FINISHED.intValue()){
                 AuctionRecord auctionRecord = auctionRecordService.getMaxPriceAuctionItem(id);

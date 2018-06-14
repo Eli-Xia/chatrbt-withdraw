@@ -13,11 +13,11 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        `id`, `start_time`, `end_time`, `name`, `state`, `auction_type` , `chat_pet_type`
+        `id`, `start_time`, `end_time`, `name`, `state`, `auction_type` , `chat_pet_type` ,`auction_item_pic`
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem">
-        insert into  e_auction_item (`start_time`, `end_time`, `name`, `state`, `auction_type` ,`chat_pet_type`)
+        insert into  e_auction_item (`start_time`, `end_time`, `name`, `state`, `auction_type` ,`chat_pet_type` ,`auction_item_pic`)
         values (
             #{startTime},
             #{endTime},
