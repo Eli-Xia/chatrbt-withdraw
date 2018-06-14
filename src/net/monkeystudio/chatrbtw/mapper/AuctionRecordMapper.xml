@@ -27,7 +27,7 @@
         select
             <include refid="Base_Column_List"/>
         from
-            e_auction_item
+            e_auction_record
         where
             auction_item_id = #{auctionItemId}
         order by
