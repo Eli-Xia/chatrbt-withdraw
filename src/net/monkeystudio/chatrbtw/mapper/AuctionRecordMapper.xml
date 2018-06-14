@@ -31,7 +31,7 @@
         where
             auction_item_id = #{auctionItemId}
         order by
-            price desc ,create_tiem asc
+            price desc ,bid_time asc
         limit 1
     </select>
 
