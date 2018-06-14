@@ -57,7 +57,7 @@ public class ChatPetAuctionItemController extends ChatPetBaseController{
 
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxFan.getWxPubOriginId());
 
-        List<ChatPetAuctionItemListResp> auctionItemList = auctionItemService.getAuctionItemListByChatPetType(chatPetType , page , pageSize);
+        List<ChatPetAuctionItemListResp> auctionItemList = auctionItemService.getAuctionItemListByChatPetType(chatPetType , page , pageSize ,wxFanId);
 
         return respHelper.ok(auctionItemList);
     }

@@ -18,7 +18,7 @@ public class AuctionRecordService {
 
     /**
      * 获取最高出价的记录
-     * @param auctionRecordId
+     * @param auctionItemId
      * @return
      */
     public AuctionRecord getMaxPriceAuctionItem(Integer auctionItemId){
@@ -31,7 +31,6 @@ public class AuctionRecordService {
 
     public Integer countParticipant(Integer id) {
 
-
         Integer result = auctionRecordMapper.countParticipant(id);
 
         if(result == null){
@@ -39,6 +38,15 @@ public class AuctionRecordService {
         }
 
         return result;
+    }
+
+    /**
+     * 得到个人出价最高的记录
+     * @param wxFanId
+     * @return
+     */
+    public AuctionRecord getAuctionRecordByWxFan(Integer wxFanId ,Integer auctionItemId){
+        return auctionRecordMapper.selectMaxByWxFanId(wxFanId, auctionItemId);
     }
 
 

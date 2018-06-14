@@ -180,7 +180,7 @@ public class AuctionItemService {
      * @param pageSize
      * @return
      */
-    public List<ChatPetAuctionItemListResp> getAuctionItemListByChatPetType(Integer chatPetType , Integer page , Integer pageSize ){
+    public List<ChatPetAuctionItemListResp> getAuctionItemListByChatPetType(Integer chatPetType , Integer page , Integer pageSize ,Integer wxFanId){
 
         Integer startIndex = CommonUtils.page2startIndex(page, pageSize);
 
@@ -191,29 +191,48 @@ public class AuctionItemService {
 
         for(AuctionItem auctionItem : auctionItemList){
 
-            Integer id = auctionItem.getId();
+            Integer auctionItemId = auctionItem.getId();
 
             ChatPetAuctionItemListResp chatPetAuctionItemListResp = BeanUtils.copyBean(auctionItem,ChatPetAuctionItemListResp.class);
 
-            Integer participantNumber = auctionRecordService.countParticipant(id);
+            Integer participantNumber = auctionRecordService.countParticipant(auctionItemId);
 
             chatPetAuctionItemListResp.setNumber(participantNumber);
 
             chatPetAuctionItemListResp.setAuctionItemName(auctionItem.getName());
             chatPetAuctionItemListResp.setAuctionItemPic(auctionItem.getAuctionItemPic());
 
-
             Integer state = chatPetAuctionItemListResp.getState();
             if(state.intValue() == HAVE_FINISHED.intValue()){
-                AuctionRecord auctionRecord = auctionRecordService.getMaxPriceAuctionItem(id);
+                AuctionRecord auctionRecord = auctionRecordService.getMaxPriceAuctionItem(auctionItemId);
 
-                Integer wxFanId = auctionRecord.getWxFanId();
-
-                WxFan wxFan = wxFanService.getById(wxFanId);
-
+                //中标人
+                Integer ownerId = auctionRecord.getWxFanId();
+                WxFan wxFan = wxFanService.getById(ownerId);
                 String nickName = wxFan.getNickname();
-
                 chatPetAuctionItemListResp.setWxFanNickname(nickName);
+
+                //成交时间
+                chatPetAuctionItemListResp.setDealTime(auctionRecord.getBidTime());
+
+                //是否为中标人
+                if(wxFanId.intValue() == ownerId.intValue()){
+                    chatPetAuctionItemListResp.setWinner(Boolean.TRUE);
+                }else {
+                    chatPetAuctionItemListResp.setWinner(Boolean.FALSE);
+                }
+            }
+
+            if(state.intValue() == PROCESSING.intValue()){
+
+                //获取粉丝的出价
+                AuctionRecord auctionRecord = auctionRecordService.getAuctionRecordByWxFan(wxFanId ,auctionItemId);
+
+                if(auctionRecord != null){
+                    chatPetAuctionItemListResp.setBidPrice(auctionRecord.getPrice());
+                    chatPetAuctionItemListResp.setBidTime(auctionRecord.getBidTime());
+                }
+
             }
 
             chatPetAuctionItemListRespList.add(chatPetAuctionItemListResp);

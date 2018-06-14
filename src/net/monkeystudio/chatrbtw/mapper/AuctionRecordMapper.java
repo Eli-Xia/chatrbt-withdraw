@@ -13,4 +13,6 @@ public interface AuctionRecordMapper {
     AuctionRecord selectByAuctionItemId(@Param("auctionItemId") Integer auctionItemId);
 
     Integer countParticipant(Integer id);
+
+    AuctionRecord selectMaxByWxFanId(@Param("wxFanId" ) Integer wxFanId ,@Param("auctionItemId") Integer auctionItemId);
 }

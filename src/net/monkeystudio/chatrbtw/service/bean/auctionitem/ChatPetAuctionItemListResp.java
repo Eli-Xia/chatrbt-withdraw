@@ -16,6 +16,11 @@ public class ChatPetAuctionItemListResp {
     private String auctionItemPic;
     private Integer number;
     private String wxFanNickname;
+    private Date bidTime;
+    private Float bidPrice;
+    private Date dealTime;
+    private Boolean isWinner;
+
 
     public Integer getId() {
         return id;
@@ -87,5 +92,37 @@ public class ChatPetAuctionItemListResp {
 
     public void setWxFanNickname(String wxFanNickname) {
         this.wxFanNickname = wxFanNickname;
+    }
+
+    public Date getDealTime() {
+        return dealTime;
+    }
+
+    public void setDealTime(Date dealTime) {
+        this.dealTime = dealTime;
+    }
+
+    public Date getBidTime() {
+        return bidTime;
+    }
+
+    public void setBidTime(Date bidTime) {
+        this.bidTime = bidTime;
+    }
+
+    public Float getBidPrice() {
+        return bidPrice;
+    }
+
+    public void setBidPrice(Float bidPrice) {
+        this.bidPrice = bidPrice;
+    }
+
+    public Boolean getWinner() {
+        return isWinner;
+    }
+
+    public void setWinner(Boolean winner) {
+        isWinner = winner;
     }
 }
