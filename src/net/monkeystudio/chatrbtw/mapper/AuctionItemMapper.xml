@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.AuctionItemMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.AuctionItem">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="auction_type" property="auctionType" jdbcType="INTEGER" />
+        <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
+        <result column="auction_item_pic" property="auctionItemPic" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        `id`, `start_time`, `end_time`, `name`, `state`, `auction_type` , `chat_pet_type`
+    </sql>
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem">
+        insert into  e_auction_item (`start_time`, `end_time`, `name`, `state`, `auction_type` ,`chat_pet_type`)
+        values (
+            #{startTime},
+            #{endTime},
+            #{name},
+            #{state},
+            #{auctionType},
+            #{chatPetType},
+            #{auctionItemPic}
+        );
+    </insert>
+
+    <select id="selectPage" resultMap="baseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_auction_item
+        order by start_time limit #{startIndex} , #{pageSize};
+    </select>
+
+    <select id="selectPageByChatPetType" resultMap="baseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_auction_item
+        where
+            chat_pet_type = #{chatPetType}
+        order by start_time limit #{startIndex} , #{pageSize};
+    </select>
+
+
+    <update id="updateStateAndWxFanId" parameterType="map">
+        update
+            e_auction_item
+        set
+            state = #{targetState},
+            wx_fan_id = #{wxFanId}
+        where
+            state = #{origintState}
+        and
+            id = #{id}
+    </update>
+
+
+    <select id="selectByEndTime" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_auction_item
+        where
+            end_time <![CDATA[   >  ]]> #{endTime}
+    </select>
+
+    
+    <update id="updateAuctionItem" parameterType="map" >
+        update
+            e_auction_item
+        set
+            `start_time` = #{startTime},
+            `end_time` = #{endTime},
+            `chat_pet_tpye` = #{chatPetType},
+            `auction_type` = #{auctionType},
+            `name` =  #{name},
+            `auction_item_pic` = #{auctionItemPic}
+        where
+            id = #{id}
+    </update>
+
+
+</mapper>
