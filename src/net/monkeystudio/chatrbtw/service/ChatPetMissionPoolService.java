@@ -192,7 +192,7 @@ public class ChatPetMissionPoolService {
 
         if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
 
-            //如果当天没有派发邀请好友任务次数不超过三次，可以派发任务
+            //如果当天派发邀请好友任务次数不超过三次，可以派发任务
             Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_INVITE_MISSION_MAX_TIME.intValue()){
                 Integer adId = dispatchMissionParam.getAdId();
@@ -210,7 +210,7 @@ public class ChatPetMissionPoolService {
 
         if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
-            //如果当天没有派发资讯任务十次，可以派发任务
+            //如果当天派发资讯任务不超过十次，可以派发任务
             Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_SEARCH_NEWS_MISSION_MAX_TIME.intValue()){
                 //从任务池中获取一条陪聊宠广告
@@ -234,7 +234,7 @@ public class ChatPetMissionPoolService {
 
         if(chatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
 
-            //如果当天没有派发每日互动任务一次，可以派发任务
+            //如果当天派发每日互动任务不超过一次，可以派发任务
             Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);//已完成任务数量
             if(count.intValue() < DAILY_INTERACTION_MAX_TIME.intValue()){
 
@@ -363,6 +363,14 @@ public class ChatPetMissionPoolService {
 
         //完成任务后给粉丝发送领奖tips
         this.sendChatPetRewardTips(chatPetPersonalMission.getChatPetId());
+
+        //完成任务后派发一条新的任务
+        DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
+        dispatchMissionParam.setMissionCode(completeMissionParam.getMissionCode());
+        dispatchMissionParam.setChatPetId(completeMissionParam.getChatPetId());
+
+        this.dispatchMission(dispatchMissionParam);
+
 
     }
 

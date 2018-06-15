@@ -220,7 +220,7 @@ public class ChatPetRewardService{
         //宠物日志
         chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
 
-        //邀请人
+        /*//邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
 
         DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
@@ -231,7 +231,7 @@ public class ChatPetRewardService{
             chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
         } catch (Exception e) {
             Log.e(e);
-        }
+        }*/
     }
 
     /**
