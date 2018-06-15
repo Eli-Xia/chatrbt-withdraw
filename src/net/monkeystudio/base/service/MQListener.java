@@ -1,5 +1,6 @@
 package net.monkeystudio.base.service;
 
+import net.monkeystudio.base.SpringContextService;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetRewardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class MQListener implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
+
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {

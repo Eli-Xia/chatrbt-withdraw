@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
+import net.monkeystudio.base.SpringContextService;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
@@ -7,6 +9,7 @@ import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
@@ -24,6 +27,8 @@ import java.util.*;
  */
 @Service
 public class ChatPetRewardService{
+    @Autowired
+    private SpringContextService springContextService;
 
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
@@ -51,11 +56,22 @@ public class ChatPetRewardService{
     @Autowired
     private WxFanService wxFanService;
 
+    @Autowired
+    private OpLogService opLogService;
+
     public static final Integer NOT_AWARD = 0;//未领取
     public static final Integer HAVE_AWARD = 1;//已经领取
     public static final Integer EXPIRED_AWARD = 2;//已经过期
 
     private static final Integer MAX_NOT_AWARD_COUNT = 8;//等级奖励最大个数
+
+    public void test()throws Exception{
+        String className = "net.monkeystudio.chatrbtw.service.AdService";
+        Class<AdService> aClass = (Class<AdService>) Class.forName(className);
+        AdService adService = springContextService.popBean(aClass);
+        List<AdMgrListResp> ads = adService.getAds(1, 10);
+        System.out.println(1);
+    }
 
 
     public ChatPetRewardItem getChatPetRewardItemById(Integer id){
@@ -515,4 +531,20 @@ public class ChatPetRewardService{
         return chatPetRewardItemMapper.selectByChatPetAndMissionId(chatPetId, rewardState, missionItemId);
     }
 
+    /**
+     * 每隔两小时分发一次等级奖励
+     */
+    public void generateLevelRewardTask(){
+        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_GENERATE_LEVEL_REWARD, "生成等级奖励");
+        Log.i("generateLevelReward method run ! ");
+        this.generateLevelReward();
+    }
+
+    /**
+     *当日12点去掉过期的任务奖励
+     */
+    public void deleteMissionRewardTask(){
+        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_MISSION_REWARD, "生成等级奖励");
+        this.expireAward();
+    }
 }

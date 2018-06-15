@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.ImageUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.QRCodeUtil;
+import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.mapper.EthnicGroupsMapper;
@@ -45,6 +46,9 @@ public class EthnicGroupsService {
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
+
+    @Autowired
+    private OpLogService opLogService;
 
 
     @Autowired
@@ -265,5 +269,13 @@ public class EthnicGroupsService {
 
         return ethnicGroupsExistingNumberKey;
 
+    }
+
+    /**
+     * 当日晚上12点重置族群接入个数
+     */
+    public void resetDailyRestrictionsTask(){
+        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS, "重置当日族群接入个数限制");
+        this.resetDailyRestrictions();
     }
 }

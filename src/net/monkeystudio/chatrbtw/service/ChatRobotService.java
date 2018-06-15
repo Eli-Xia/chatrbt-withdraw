@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.BeanUtils;
+import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.ChatRobotBaseInfo;
 import net.monkeystudio.chatrbtw.entity.RRobotCharacter;
 import net.monkeystudio.chatrbtw.entity.WxPub;
@@ -30,6 +31,9 @@ public class ChatRobotService {
 
     @Autowired
     private WxPubService wxPubService;
+
+    @Autowired
+    private OpLogService opLogService;
 
     //机器人性别
     private final Integer CHAT_BOT_GENDER_EMPTY = 0;
@@ -247,4 +251,12 @@ public class ChatRobotService {
         return this.updateChatRobotBaseInfo(chatRobotBaseInfo);
     }
 
+    /**
+     * 定时器任务:
+     * 删除无效机器人
+     */
+    public void deleteRobotInfoTask(){
+        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_INVALID_ROBOT,"删除无效机器人");
+        this.deleteInvalidRobot();
+    }
 }
