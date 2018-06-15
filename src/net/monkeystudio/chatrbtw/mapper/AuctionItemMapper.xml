@@ -85,5 +85,12 @@
             id = #{id}
     </update>
 
-
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_auction_item
+        where
+            id = #{id}
+    </select>
 </mapper>

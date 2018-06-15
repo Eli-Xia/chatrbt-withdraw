@@ -86,15 +86,23 @@ public class AuctionItemController extends BaseController{
     }
 
     /**
-     *
-     * @param auctionItem
+     * 更新竞拍品
+     * @param updateAuctionItem
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public RespBase updateAuctionItem(@RequestBody UpdateAuctionItem auctionItem){
+    public RespBase updateAuctionItem(@RequestBody UpdateAuctionItem updateAuctionItem){
 
-        auctionItemService.updateAuctionItem(auctionItem);
+        Integer id = updateAuctionItem.getId();
+
+        AuctionItem auctionItem = auctionItemService.getById(id);
+
+        if(auctionItem.getState().intValue() != AuctionItemService.HAS_NOT_STARTED.intValue()){
+            return respHelper.failed("非预投放状态不能更改");
+        }
+
+        auctionItemService.updateAuctionItem(updateAuctionItem);
 
         return respHelper.ok();
     }

@@ -8,18 +8,12 @@ import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
-import net.monkeystudio.chatrbtw.service.bean.UploadFile;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemListResp;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -47,8 +41,8 @@ public class AuctionItemService {
     @Autowired
     private UploadService uploadService;
 
-    private final static Integer HAS_NOT_STARTED = 0; //未开始
-    private final static Integer PROCESSING = 1;      //进行中
+    public final static Integer HAS_NOT_STARTED = 0; //未开始
+    public final static Integer PROCESSING = 1;      //进行中
     private final static Integer HAVE_FINISHED = 2;   //已完成
     private final static Integer UNCLAIMED = 3;       //流拍
 
@@ -74,6 +68,15 @@ public class AuctionItemService {
             fixedScheduling.createFixedScheduling(endDate ,runnable);
         }
 
+    }
+
+    /**
+     * 通过id获取竞拍品
+     * @param id
+     * @return
+     */
+    public AuctionItem getById(Integer id){
+        return auctionItemMapper.selectById(id);
     }
 
 
@@ -268,12 +271,17 @@ public class AuctionItemService {
      */
     public Integer updateAuctionItem(UpdateAuctionItem updateAuctionItem){
 
+        Integer id = updateAuctionItem.getId();
+
+
+
+
+
         Date startTime = updateAuctionItem.getStartTime();
         Date endTime = updateAuctionItem.getEndTime();
         Integer auctionType = updateAuctionItem.getAuctionType();
         String name = updateAuctionItem.getName();
         Integer chatPetType = updateAuctionItem.getChatPetType();
-        Integer id = updateAuctionItem.getId();
 
         Integer result = auctionItemMapper.updateAuctionItem(startTime ,endTime ,id ,chatPetType ,auctionType ,name);
 
