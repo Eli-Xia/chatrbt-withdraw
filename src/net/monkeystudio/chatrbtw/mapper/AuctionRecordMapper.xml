@@ -37,13 +37,11 @@
 
 
     <select id="countParticipant" resultType="java.lang.Integer">
+
         select
-            count(wx_fan_id)
+            count(w.wx_fan_id)
         from
-            e_auction_record
-        where
-            auction_item_id = #{auctionItemId}
-        GROUP  by wx_fan_id
+            (select wx_fan_id from e_auction_record where auction_item_id = #{auctionItemId} GROUP by wx_fan_id) as w ;
     </select>
 
     <select id="selectMaxByWxFanId" resultType="map" resultMap="baseResultMap">

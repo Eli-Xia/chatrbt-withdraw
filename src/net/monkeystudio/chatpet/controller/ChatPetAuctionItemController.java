@@ -7,6 +7,7 @@ import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemListResp;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,9 +58,9 @@ public class ChatPetAuctionItemController extends ChatPetBaseController{
 
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxFan.getWxPubOriginId());
 
-        List<ChatPetAuctionItemListResp> auctionItemList = auctionItemService.getAuctionItemListByChatPetType(chatPetType , page , pageSize ,wxFanId);
+        ChatPetAuctionItemResp chatPetAuctionItemResp = auctionItemService.getAuctionItemListByChatPetType(chatPetType , page , pageSize ,wxFanId);
 
-        return respHelper.ok(auctionItemList);
+        return respHelper.ok(chatPetAuctionItemResp);
     }
 
 }

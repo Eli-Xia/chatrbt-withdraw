@@ -6,9 +6,11 @@ import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.entity.AuctionRecord;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemListResp;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemResp;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class AuctionItemService {
 
     @Autowired
     private UploadService uploadService;
+
+    @Autowired
+    private ChatPetService chatPetService;
 
     public final static Integer HAS_NOT_STARTED = 0; //未开始
     public final static Integer PROCESSING = 1;      //进行中
@@ -183,12 +188,11 @@ public class AuctionItemService {
      * @param pageSize
      * @return
      */
-    public List<ChatPetAuctionItemListResp> getAuctionItemListByChatPetType(Integer chatPetType , Integer page , Integer pageSize ,Integer wxFanId){
+    public ChatPetAuctionItemResp getAuctionItemListByChatPetType(Integer chatPetType , Integer page , Integer pageSize , Integer wxFanId){
 
         Integer startIndex = CommonUtils.page2startIndex(page, pageSize);
 
         List<AuctionItem> auctionItemList = auctionItemMapper.selectPageByChatPetType(startIndex, pageSize, chatPetType);
-
 
         List<ChatPetAuctionItemListResp> chatPetAuctionItemListRespList = new ArrayList<>();
 
@@ -241,7 +245,13 @@ public class AuctionItemService {
             chatPetAuctionItemListRespList.add(chatPetAuctionItemListResp);
         }
 
-        return chatPetAuctionItemListRespList;
+        ChatPetAuctionItemResp chatPetAuctionItemResp = new ChatPetAuctionItemResp();
+        chatPetAuctionItemResp.setList(chatPetAuctionItemListRespList);
+
+        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
+        chatPetAuctionItemResp.setCoin(chatPet.getCoin());
+
+        return chatPetAuctionItemResp;
     }
 
 
@@ -272,10 +282,6 @@ public class AuctionItemService {
     public Integer updateAuctionItem(UpdateAuctionItem updateAuctionItem){
 
         Integer id = updateAuctionItem.getId();
-
-
-
-
 
         Date startTime = updateAuctionItem.getStartTime();
         Date endTime = updateAuctionItem.getEndTime();
