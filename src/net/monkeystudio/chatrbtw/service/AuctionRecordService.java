@@ -25,10 +25,20 @@ public class AuctionRecordService {
         return auctionRecordMapper.selectByAuctionItemId(auctionItemId );
     }
 
-    private Integer insert(AuctionRecord auctionRecord){
+    /**
+     *
+     * @param auctionRecord
+     * @return
+     */
+    private Integer save(AuctionRecord auctionRecord){
         return auctionRecordMapper.insert(auctionRecord);
     }
 
+    /**
+     * 获得该拍卖品有多少人参与
+     * @param id
+     * @return
+     */
     public Integer countParticipant(Integer id) {
 
         Integer result = auctionRecordMapper.countParticipant(id);
@@ -59,6 +69,8 @@ public class AuctionRecordService {
         auctionRecord.setWxFanId(wxFanId);
         auctionRecord.setPrice(price);
 
-        return auctionRecordMapper.insert(auctionRecord);
+        return this.save(auctionRecord);
     }
+
+
 }

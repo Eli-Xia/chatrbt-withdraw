@@ -13,7 +13,7 @@
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem" >
-        insert into  e_auction_record (id, wx_fan_id, price, bid_time, auction_item_id)
+        insert into  e_auction_record (wx_fan_id, price, bid_time, auction_item_id)
         values (
             #{wxFanId},
             #{price},
