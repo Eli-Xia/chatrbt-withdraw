@@ -476,6 +476,8 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
     /**
      * 陪聊宠广告推送
+     * 存在的一个问题:如果推送了资讯广告后粉丝没有完成任务,而是继续踩雷,这样会拿到之前派发的任务
+     * 粉丝点击咨询广告就是完成任务 --> Dispatch一条新的任务
      * @param wxPubOriginId
      * @param wxFanOpenId
      * @throws BizException

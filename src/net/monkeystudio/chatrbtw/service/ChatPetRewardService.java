@@ -239,18 +239,7 @@ public class ChatPetRewardService{
         Integer missionCode = cppm.getMissionCode();
         Integer chatPetId = cppm.getChatPetId();
 
-        ChatPetRewardItem item = new ChatPetRewardItem();
-
-        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
-        item.setChatPetType(chatPetType);
-        item.setChatPetId(chatPetId);
-        item.setRewardState(NOT_AWARD);
-        item.setMissionItemId(chatPetPersonalMissionId);
-        item.setCreateTime(new Date());
-        item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
-        item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
-
-        this.save(item);
+        this.saveRewardItemByMission(missionCode,chatPetId,chatPetPersonalMissionId);
     }
 
 
@@ -269,15 +258,11 @@ public class ChatPetRewardService{
         item.setRewardState(NOT_AWARD);
         item.setMissionItemId(chatPetPersonalMissionId);
         item.setCreateTime(new Date());
-        item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
-        item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
 
-        this.save(item);
+        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
-        /*if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-
-//            item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
-//            item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
+            item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
+            item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
 
             this.save(item);
         }
@@ -295,7 +280,7 @@ public class ChatPetRewardService{
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
 
             this.save(item);
-        }*/
+        }
 
     }
 
@@ -442,7 +427,7 @@ public class ChatPetRewardService{
             return ;
         }
 
-        //Float levelExperience = this.calculateLevelExperience(chatPetId);
+        Float levelExperience = this.calculateLevelExperience(chatPetId);
 
         //每日可领取奖励
         ChatPetRewardItem levelReward = new ChatPetRewardItem();
@@ -450,7 +435,7 @@ public class ChatPetRewardService{
         Integer chatPetType = chatPetService.getChatPetType(chatPetId);
         levelReward.setChatPetType(chatPetType);
 
-        levelReward.setGoldValue( 0.02F );
+        levelReward.setGoldValue(levelExperience);
 
         levelReward.setRewardState(NOT_AWARD);
         levelReward.setChatPetId(chatPetId);
