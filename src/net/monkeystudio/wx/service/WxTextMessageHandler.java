@@ -5,7 +5,6 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.TaskExecutor;
-import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.XmlUtil;
@@ -513,6 +512,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         Log.d("===============资讯任务广告id = {?}============",adId.toString());
         Ad ad = adService.getAdById(adId);
 
+        //若未完成任务继续挖矿会获取到同一条咨询广告,此时不再推送
+        Boolean isPushed = adPushService.isAdHasPushedWxFanId(wxFan.getId(), adId);
+        if(isPushed){
+            return;
+        }
+
         //根据触发策略判断是否触发推送
         boolean need2Push = adPushService.isAdNeed2PushByStrategyType(ad.getPushStrategyType(), wxFan.getId(), ad.getPushType());
         if(!need2Push){
@@ -525,6 +530,9 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         //推送广告
         adPushService.pushAdHandle(ad,wxFan.getId());
     }
+
+    //同一条广告推送给一个用户的
+    //private String getCount
 
     /**
      * 智能聊:获取粉丝聊天次数

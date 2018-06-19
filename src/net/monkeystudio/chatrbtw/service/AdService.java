@@ -2,7 +2,6 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.req.ad.AddAd;
 import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
-import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.*;
@@ -14,7 +13,6 @@ import net.monkeystudio.chatrbtw.service.bean.ad.*;
 import net.monkeystudio.wx.service.WxPubAuthorizerRefreshTokenService;
 import net.monkeystudio.wx.service.WxPubService;
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -580,7 +578,7 @@ public class AdService {
     }
 
     /**
-     * 从当前可投放的广告集中剔除粉丝已经点击过的广告并返回剔除后的广告集
+     * 从当前可投放的广告集中剔除粉丝已经推送过的广告并返回剔除后的广告集
      * @param ads : 当前可投放的广告集
      * @param wxFanId : 粉丝Id
      * @return

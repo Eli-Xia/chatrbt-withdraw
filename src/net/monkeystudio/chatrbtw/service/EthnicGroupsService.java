@@ -3,10 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import com.google.zxing.WriterException;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
-import net.monkeystudio.base.utils.ImageUtils;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.ListUtil;
-import net.monkeystudio.base.utils.QRCodeUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
@@ -43,6 +40,9 @@ public class EthnicGroupsService {
     private final static String FOUNDER_EVENT_KEY = "-1";
 
     public final static String EVENT_SPECIAL_STR = "keendo_chat_pet";
+
+    //定时任务队列key
+    private final static String RESET_ETHNIC_GROUP_MESSAGE_KEY = "reset_ethnic_group_task";
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
@@ -275,7 +275,21 @@ public class EthnicGroupsService {
      * 当日晚上12点重置族群接入个数
      */
     public void resetDailyRestrictionsTask(){
-        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS, "重置当日族群接入个数限制");
-        this.resetDailyRestrictions();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    List<String> list = redisCacheTemplate.brpop(0,RESET_ETHNIC_GROUP_MESSAGE_KEY);
+                    String msg = list.get(1);
+                    Log.i("receive the message [?]",msg);
+                    opLogService.systemOper(AppConstants.OP_LOG_TAG_S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS, "重置当日族群接入个数限制");
+                    resetDailyRestrictions();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("resetDailyRestrictionsTask");
+        thread.start();
+        Log.d("finished task");
     }
 }

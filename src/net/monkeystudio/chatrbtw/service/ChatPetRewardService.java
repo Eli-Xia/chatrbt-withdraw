@@ -2,20 +2,15 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
 import net.monkeystudio.base.SpringContextService;
-import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +22,6 @@ import java.util.*;
  */
 @Service
 public class ChatPetRewardService{
-    @Autowired
-    private SpringContextService springContextService;
 
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
@@ -65,13 +58,11 @@ public class ChatPetRewardService{
 
     private static final Integer MAX_NOT_AWARD_COUNT = 8;//等级奖励最大个数
 
-    public void test()throws Exception{
-        String className = "net.monkeystudio.chatrbtw.service.AdService";
-        Class<AdService> aClass = (Class<AdService>) Class.forName(className);
-        AdService adService = springContextService.popBean(aClass);
-        List<AdMgrListResp> ads = adService.getAds(1, 10);
-        System.out.println(1);
-    }
+    //定时产生等级奖励队列key
+    private final static String LEVEL_REWARD_MESSAGE_KEY = "generate_level_reward_task";
+    //定时删除过时奖励
+    private final static String DELETE_EXPIRE_REWARD_MESSAGE_KEY = "delete_expire_reward_task";
+
 
 
     public ChatPetRewardItem getChatPetRewardItemById(Integer id){
@@ -236,7 +227,7 @@ public class ChatPetRewardService{
         //宠物日志
         chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
 
-        //邀请人
+        /*//邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
 
         DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
@@ -247,7 +238,7 @@ public class ChatPetRewardService{
             chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
         } catch (Exception e) {
             Log.e(e);
-        }
+        }*/
     }
 
     /**
@@ -260,18 +251,7 @@ public class ChatPetRewardService{
         Integer missionCode = cppm.getMissionCode();
         Integer chatPetId = cppm.getChatPetId();
 
-        ChatPetRewardItem item = new ChatPetRewardItem();
-
-        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
-        item.setChatPetType(chatPetType);
-        item.setChatPetId(chatPetId);
-        item.setRewardState(NOT_AWARD);
-        item.setMissionItemId(chatPetPersonalMissionId);
-        item.setCreateTime(new Date());
-        item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
-        item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
-
-        this.save(item);
+        this.saveRewardItemByMission(missionCode,chatPetId,chatPetPersonalMissionId);
     }
 
 
@@ -290,15 +270,11 @@ public class ChatPetRewardService{
         item.setRewardState(NOT_AWARD);
         item.setMissionItemId(chatPetPersonalMissionId);
         item.setCreateTime(new Date());
-        item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
-        item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
 
-        this.save(item);
+        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
-        /*if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
-
-//            item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
-//            item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
+            item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
+            item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
 
             this.save(item);
         }
@@ -316,7 +292,7 @@ public class ChatPetRewardService{
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
 
             this.save(item);
-        }*/
+        }
 
     }
 
@@ -463,7 +439,7 @@ public class ChatPetRewardService{
             return ;
         }
 
-        //Float levelExperience = this.calculateLevelExperience(chatPetId);
+        Float levelExperience = this.calculateLevelExperience(chatPetId);
 
         //每日可领取奖励
         ChatPetRewardItem levelReward = new ChatPetRewardItem();
@@ -471,7 +447,7 @@ public class ChatPetRewardService{
         Integer chatPetType = chatPetService.getChatPetType(chatPetId);
         levelReward.setChatPetType(chatPetType);
 
-        levelReward.setGoldValue( 0.02F );
+        levelReward.setGoldValue(levelExperience);
 
         levelReward.setRewardState(NOT_AWARD);
         levelReward.setChatPetId(chatPetId);
@@ -535,16 +511,47 @@ public class ChatPetRewardService{
      * 每隔两小时分发一次等级奖励
      */
     public void generateLevelRewardTask(){
-        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_GENERATE_LEVEL_REWARD, "生成等级奖励");
-        Log.i("generateLevelReward method run ! ");
-        this.generateLevelReward();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    List<String> list = redisCacheTemplate.brpop(0,LEVEL_REWARD_MESSAGE_KEY);
+                    String msg = list.get(1);
+                    Log.i("receive the message [?]",msg);
+                    opLogService.systemOper(AppConstants.OP_LOG_TAG_S_GENERATE_LEVEL_REWARD, "生成等级奖励");
+                    generateLevelReward();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("generateLevelRewardTask");
+        thread.start();
+        Log.d("finished task");
+
+
+
     }
 
     /**
      *当日12点去掉过期的任务奖励
      */
     public void deleteMissionRewardTask(){
-        opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_MISSION_REWARD, "生成等级奖励");
-        this.expireAward();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    List<String> list = redisCacheTemplate.brpop(0,DELETE_EXPIRE_REWARD_MESSAGE_KEY);
+                    String msg = list.get(1);
+                    Log.i("receive the message [?]",msg);
+                    opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_MISSION_REWARD, "生成等级奖励");
+                    expireAward();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("deleteMissionRewardTask");
+        thread.start();
+        Log.d("finished task");
+
     }
 }
