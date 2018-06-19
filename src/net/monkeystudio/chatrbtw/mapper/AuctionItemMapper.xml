@@ -10,10 +10,11 @@
         <result column="auction_type" property="auctionType" jdbcType="INTEGER" />
         <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
         <result column="auction_item_pic" property="auctionItemPic" jdbcType="VARCHAR" />
+        <result column="ship_state" property="shipState" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        `id`, `start_time`, `end_time`, `name`, `state`, `auction_type` , `chat_pet_type` ,`auction_item_pic`
+        `id`, `start_time`, `end_time`, `name`, `state`, `auction_type` , `chat_pet_type` ,`auction_item_pic` , `ship_state`
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem">
@@ -93,4 +94,14 @@
         where
             id = #{id}
     </select>
+
+    <update id="updateShipState" parameterType="map" >
+        update
+            e_auction_item
+        set
+            `ship_state` = #{shipState}
+        where
+            id = #{id}
+    </update>
+
 </mapper>

@@ -13,6 +13,7 @@ public class AuctionItem {
     private Integer auctionType;
     private Integer chatPetType;
     private String auctionItemPic;
+    private Integer shipState;
 
     public Integer getId() {
         return id;
@@ -77,5 +78,13 @@ public class AuctionItem {
 
     public void setAuctionItemPic(String auctionItemPic) {
         this.auctionItemPic = auctionItemPic;
+    }
+
+    public Integer getShipState() {
+        return shipState;
+    }
+
+    public void setShipState(Integer shipState) {
+        this.shipState = shipState;
     }
 }

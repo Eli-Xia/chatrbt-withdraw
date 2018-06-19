@@ -22,4 +22,6 @@ public interface AuctionItemMapper {
     int updateAuctionItem(@Param("startTime") Date startTime ,@Param("endTime") Date endTime ,@Param("id") Integer id ,@Param("chatPetType") Integer chatPetType, @Param("auctionType") Integer auctionType ,@Param("name") String name);
 
     AuctionItem selectById(Integer id);
+
+    Integer updateShipState(@Param("id") Integer auctionItemId,@Param("shipState") Integer shipState);
 }

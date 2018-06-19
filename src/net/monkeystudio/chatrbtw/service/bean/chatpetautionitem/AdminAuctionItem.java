@@ -15,6 +15,8 @@ public class AdminAuctionItem {
     private Integer chatPetType;
     //参与人数
     private Integer participantNumber;
+    //发货状态
+    private Integer shipState;
 
     public Date getStartTime() {
         return startTime;
@@ -70,5 +72,13 @@ public class AdminAuctionItem {
 
     public void setParticipantNumber(Integer participantNumber) {
         this.participantNumber = participantNumber;
+    }
+
+    public Integer getShipState() {
+        return shipState;
+    }
+
+    public void setShipState(Integer shipState) {
+        this.shipState = shipState;
     }
 }

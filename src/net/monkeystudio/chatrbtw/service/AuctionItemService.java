@@ -293,4 +293,13 @@ public class AuctionItemService {
 
         return result;
     }
+
+
+    /**
+     * 修改竞拍品的发货状态
+     * @return
+     */
+    public Integer updateAuctionItemShipState(Integer auctionItemId , Integer shipState){
+        return auctionItemMapper.updateShipState(auctionItemId , shipState);
+    }
 }

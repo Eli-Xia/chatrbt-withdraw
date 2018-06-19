@@ -1,6 +1,7 @@
 package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.auctionitem.AuctionItemPageReq;
+import net.monkeystudio.admin.controller.req.auctionitem.AuctionItemShipState;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
@@ -41,7 +42,6 @@ public class AuctionItemController extends BaseController{
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public RespBase getAuctionItemPage(@RequestBody AuctionItemPageReq auctionItemPageReq){
 
-
         Integer userId = this.getUserId();
 
         if(userId == null){
@@ -64,6 +64,12 @@ public class AuctionItemController extends BaseController{
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RespBase addAuctionItem(@RequestBody AuctionItem auctionItem){
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
 
         auctionItemService.save(auctionItem);
 
@@ -94,6 +100,12 @@ public class AuctionItemController extends BaseController{
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public RespBase updateAuctionItem(@RequestBody UpdateAuctionItem updateAuctionItem){
 
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
         Integer id = updateAuctionItem.getId();
 
         AuctionItem auctionItem = auctionItemService.getById(id);
@@ -103,6 +115,25 @@ public class AuctionItemController extends BaseController{
         }
 
         auctionItemService.updateAuctionItem(updateAuctionItem);
+
+        return respHelper.ok();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/update/ship-state", method = RequestMethod.POST)
+    public RespBase updateShipState(@RequestBody AuctionItemShipState auctionItemShipState){
+
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        Integer shipState = auctionItemShipState.getShipState();
+        Integer auctionItemId = auctionItemShipState.getId();
+
+        auctionItemService.updateAuctionItemShipState(auctionItemId, shipState);
 
         return respHelper.ok();
     }
