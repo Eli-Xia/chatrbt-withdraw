@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by bint on 2018/6/11.
@@ -23,6 +24,13 @@ public class AuctionRecordService {
      */
     public AuctionRecord getMaxPriceAuctionItem(Integer auctionItemId){
         return auctionRecordMapper.selectByAuctionItemId(auctionItemId );
+    }
+
+
+    public List<AuctionRecord> getMaxPriceAuctionItemList(Integer auctionItemId){
+
+        return auctionRecordMapper.selectListByAuctionItemId(auctionItemId ,100);
+
     }
 
     /**

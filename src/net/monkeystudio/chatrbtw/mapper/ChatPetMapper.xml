@@ -117,4 +117,12 @@
         SELECT count(id) FROM  e_chat_pet WHERE id = #{chatPetId} OR parent_id = #{chatPetId}
     </select>
 
+
+    <update id="decreaseCoin">
+        update
+        e_chat_pet
+        set coin = IFNULL(coin,0) - #{coin}
+        where
+        id = #{id}
+    </update>
 </mapper>

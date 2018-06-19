@@ -58,4 +58,19 @@
         limit 1
     </select>
 
+
+    <select id="selectListByAuctionItemId" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_auction_record
+        where
+            auction_item_id = #{auctionItemId}
+        and
+            wx_fan_id = #{wxFanId}
+        order by
+            `price` desc ,`bid_time` asc
+        limit #{count}
+    </select>
+
 </mapper>
