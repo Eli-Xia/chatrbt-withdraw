@@ -17,7 +17,7 @@
         `id`, `start_time`, `end_time`, `name`, `state`, `auction_type` , `chat_pet_type` ,`auction_item_pic` , `ship_state`
     </sql>
 
-    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem">
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem" useGeneratedKeys="true" keyProperty="id">
         insert into  e_auction_item (`start_time`, `end_time`, `name`, `state`, `auction_type` ,`chat_pet_type` ,`auction_item_pic`)
         values (
             #{startTime},

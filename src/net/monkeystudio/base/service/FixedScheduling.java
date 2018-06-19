@@ -22,14 +22,14 @@ public class FixedScheduling {
      * @param date 执行时间
      * @param runnable 运行内容
      */
-    public void createFixedScheduling(Date date , Runnable runnable){
+    public Thread createFixedScheduling(Date date , Runnable runnable){
         Long time = DateUtils.getMillisecondTimestamp(date);
 
         Long currentTime = System.currentTimeMillis();
 
         if(currentTime > time){
             Log.e("FixedScheduling : scheduling  is outdated");
-            return ;
+            return null;
         }
 
 
@@ -47,6 +47,8 @@ public class FixedScheduling {
 
         thread.setDaemon(true);
         thread.start();
+
+        return thread;
     }
 
 }

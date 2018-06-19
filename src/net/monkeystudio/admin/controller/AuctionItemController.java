@@ -71,7 +71,7 @@ public class AuctionItemController extends BaseController{
             return respHelper.nologin();
         }
 
-        auctionItemService.save(auctionItem);
+        auctionItemService.add(auctionItem);
 
         return respHelper.ok();
     }
