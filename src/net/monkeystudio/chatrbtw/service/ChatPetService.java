@@ -777,6 +777,11 @@ public class ChatPetService {
         chatPetMapper.increaseCoin(chatPetId,coin);
     }
 
+
+    public void decreaseCoin(Integer chatPetId ,Float coin){
+        chatPetMapper.decreaseCoin(chatPetId,coin);
+    }
+
     /**
      * 获取宠物的总金币
      * @return
