@@ -652,11 +652,6 @@ public class ChatPetService {
             Log.d("============ wxoauth access_token = {?} , openid = {?} =============",wxOauthAccessToken.getAccessToken(),wxOauthAccessToken.getWxFanOpenId());
         }
 
-        //测试代码需要删除
-        String fetchFansInfoUrl = wxOauthService.getFansInfoUrl(wxOauthAccessToken.getAccessToken(),wxOauthAccessToken.getWxFanOpenId());
-        String info = HttpsHelper.get(fetchFansInfoUrl);
-        Log.d("==============================  网页授权后获取用户信息 info = {?} ========================",info);
-
         return wxOauthAccessToken;
     }
 
