@@ -5,7 +5,6 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.TaskExecutor;
-import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.XmlUtil;
@@ -476,8 +475,6 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
     /**
      * 陪聊宠广告推送
-     * 存在的一个问题:如果推送了资讯广告后粉丝没有完成任务,而是继续踩雷,这样会拿到之前派发的任务
-     * 粉丝点击咨询广告就是完成任务 --> Dispatch一条新的任务
      * @param wxPubOriginId
      * @param wxFanOpenId
      * @throws BizException
@@ -514,6 +511,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         Integer adId = ongoingSearchNewMission.getAdId();
         Log.d("===============资讯任务广告id = {?}============",adId.toString());
         Ad ad = adService.getAdById(adId);
+
+        //若未完成任务继续挖矿会获取到同一条咨询广告,此时不再推送
+        Boolean isPushed = adPushService.isAdHasPushedWxFanId(wxFan.getId(), adId);
+        if(isPushed){
+            return;
+        }
 
         //根据触发策略判断是否触发推送
         boolean need2Push = adPushService.isAdNeed2PushByStrategyType(ad.getPushStrategyType(), wxFan.getId(), ad.getPushType());
