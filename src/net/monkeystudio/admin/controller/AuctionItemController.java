@@ -8,14 +8,13 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.service.AuctionItemService;
 import net.monkeystudio.chatrbtw.service.bean.UploadFile;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.AddAuctionItem;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.AuctionItemDetail;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -57,13 +56,13 @@ public class AuctionItemController extends BaseController{
     }
 
     /**
-     *
-     * @param auctionItem
+     * 新增竞拍商品
+     * @param addAuctionItem
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public RespBase addAuctionItem(@RequestBody AuctionItem auctionItem){
+    public RespBase addAuctionItem(@RequestBody AddAuctionItem addAuctionItem){
 
         Integer userId = this.getUserId();
 
@@ -71,7 +70,7 @@ public class AuctionItemController extends BaseController{
             return respHelper.nologin();
         }
 
-        auctionItemService.add(auctionItem);
+        auctionItemService.add(addAuctionItem);
 
         return respHelper.ok();
     }
@@ -106,9 +105,13 @@ public class AuctionItemController extends BaseController{
             return respHelper.nologin();
         }
 
-        Integer id = updateAuctionItem.getId();
+        Integer auctionId = updateAuctionItem.getId();
 
-        AuctionItem auctionItem = auctionItemService.getById(id);
+        AuctionItem auctionItem = auctionItemService.getById(auctionId);
+
+        if(auctionItem == null){
+            return respHelper.failed("找不到该竞拍品");
+        }
 
         if(auctionItem.getState().intValue() != AuctionItemService.HAS_NOT_STARTED.intValue()){
             return respHelper.failed("非预投放状态不能更改");
@@ -138,4 +141,61 @@ public class AuctionItemController extends BaseController{
         return respHelper.ok();
     }
 
+
+    /**
+     * 获取竞拍品的详细信息
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get-info", method = RequestMethod.POST)
+    public RespBase getDetailInfo(@RequestParam Integer id){
+
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        AuctionItemDetail auctionItemDetail = auctionItemService.getAuctionItemDetail(id);
+
+        return respHelper.ok(auctionItemDetail);
+    }
+
+
+
+
+    /**
+     * 删除id
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public RespBase delete(@RequestParam Integer id){
+
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        AuctionItem auctionItem = auctionItemService.getById(id);
+
+        if(auctionItem == null){
+            return respHelper.failed("找不到该竞拍品");
+
+        }
+
+        //如果非未开始的状态的,不能修改
+        if(auctionItem.getState().intValue() != AuctionItemService.HAS_NOT_STARTED){
+            return respHelper.failed("不是未开始状态下的不能删除");
+        }
+
+        auctionItemService.deleteById(id);
+
+        return respHelper.ok();
+    }
 }

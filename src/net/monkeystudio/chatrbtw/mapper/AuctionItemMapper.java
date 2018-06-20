@@ -17,13 +17,15 @@ public interface AuctionItemMapper {
 
     List<AuctionItem> selectPage(@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize );
 
-    int updateStateAndWxFanId(@Param("id") Integer id , @Param("originIdState") Integer originId , @Param("targetState") Integer targetState , @Param("wxFanId") Integer wxFanId );
+    int updateStateAndWxFanId(@Param("id") Integer id , @Param("originState") Integer originId , @Param("targetState") Integer targetState , @Param("wxFanId") Integer wxFanId );
 
     List<AuctionItem> selectByEndTime(@Param("endTime") Date endTime);
 
-    int updateAuctionItem(@Param("startTime") Date startTime ,@Param("endTime") Date endTime ,@Param("id") Integer id ,@Param("chatPetType") Integer chatPetType, @Param("auctionType") Integer auctionType ,@Param("name") String name);
+    int updateAuctionItem(@Param("startTime") Date startTime ,@Param("endTime") Date endTime ,@Param("id") Integer id ,@Param("chatPetType") Integer chatPetType, @Param("auctionType") Integer auctionType ,@Param("name") String name ,@Param("auctionItemPic") String auctionItemPic);
 
     AuctionItem selectById(Integer id);
 
     Integer updateShipState(@Param("id") Integer auctionItemId,@Param("shipState") Integer shipState);
+
+    Integer delete(Integer id);
 }

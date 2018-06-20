@@ -9,9 +9,7 @@ import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemListResp;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemResp;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,11 +42,15 @@ public class AuctionItemService {
     @Autowired
     private ChatPetService chatPetService;
 
+    //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
     public final static Integer PROCESSING = 1;      //进行中
-    private final static Integer HAVE_FINISHED = 2;   //已完成
+    public final static Integer HAVE_FINISHED = 2;   //已完成
     private final static Integer UNCLAIMED = 3;       //流拍
 
+    //发货状态
+    public final static Integer HAS_NOT_SHIP = 0;//未发货
+    public final static Integer HAS_SHIP = 1;   //已经发货
 
     private final static String DIRCTORY_NAME = "/chat_pet/auction_item";
 
@@ -73,7 +75,10 @@ public class AuctionItemService {
 
     }
 
-
+    /**
+     * 设定竞拍品生成对应的定时任务，并放入线程map
+     * @param auctionItem
+     */
     private void setFixedScheduling(AuctionItem auctionItem ){
         Runnable runnable = this.createRunnable(auctionItem);
 
@@ -81,6 +86,7 @@ public class AuctionItemService {
 
         Thread thread = fixedScheduling.createFixedScheduling(endDate ,runnable);
 
+        //放入到线程map里面
         if(thread != null){
             threadMap.put(auctionItem.getId(),thread);
         }
@@ -116,15 +122,16 @@ public class AuctionItemService {
                         return ;
                     }
 
+                    Boolean hasOwner = false;
                     for(AuctionRecord maxPriceAuctionItem : maxPriceAuctionItemList){
 
-                        Integer wxFanId = maxPriceAuctionItem.getId();
+                        Integer wxFanId = maxPriceAuctionItem.getWxFanId();
                         ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
 
 
                         //如果所拥有的钱,比出价高
                         Float priceFloat = maxPriceAuctionItem.getPrice();
-                        if(priceFloat.floatValue() > chatPet.getCoin().floatValue()){
+                        if(priceFloat.floatValue() <= chatPet.getCoin().floatValue()){
 
                             //修改状态为已经结束和填充获得人
                             Integer result = translateStatus(auctionItemId , PROCESSING , HAVE_FINISHED , wxFanId);
@@ -137,10 +144,22 @@ public class AuctionItemService {
                             //减去所得者的金币
                             Integer chatPetId = chatPet.getId();
                             chatPetService.decreaseCoin(chatPetId , priceFloat);
+                            hasOwner = true;
+                            break;
                         }
-
                     }
 
+                    //如果所有出价的人都没有对应的金币,则流拍
+                    if(!hasOwner){
+                        Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
+                        return ;
+                    }
+
+                    //线程从map里面删除
+                    threadMap.remove(auctionItemId);
+
+                    //设定一个线程定时任务
+                    setFixedScheduling(auctionItem);
                 }
             };
             return runnable;
@@ -170,7 +189,7 @@ public class AuctionItemService {
     }
 
 
-    private Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
+    public Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
     }
 
@@ -284,7 +303,13 @@ public class AuctionItemService {
         return chatPetAuctionItemResp;
     }
 
-    public void add(AuctionItem auctionItem){
+    public void add(AddAuctionItem addAuctionItem){
+
+
+        AuctionItem auctionItem = BeanUtils.copyBean(addAuctionItem, AuctionItem.class);
+
+        auctionItem.setState(HAS_NOT_STARTED);
+        auctionItem.setShipState(HAS_NOT_SHIP);
 
         Integer result = this.save(auctionItem);
 
@@ -329,8 +354,9 @@ public class AuctionItemService {
         Integer auctionType = updateAuctionItem.getAuctionType();
         String name = updateAuctionItem.getName();
         Integer chatPetType = updateAuctionItem.getChatPetType();
+        String auctionItemPic = updateAuctionItem.getAuctionItemPic();
 
-        Integer result = auctionItemMapper.updateAuctionItem(startTime ,endTime ,id ,chatPetType ,auctionType ,name);
+        Integer result = auctionItemMapper.updateAuctionItem(startTime ,endTime ,id ,chatPetType ,auctionType ,name ,auctionItemPic);
 
         if(result == null){
             return null;
@@ -358,5 +384,64 @@ public class AuctionItemService {
      */
     public Integer updateAuctionItemShipState(Integer auctionItemId , Integer shipState){
         return auctionItemMapper.updateShipState(auctionItemId , shipState);
+    }
+
+
+    /**
+     * 获取竞拍品的详细信息
+     * @param auctionItemId
+     * @return
+     */
+    public AuctionItemDetail getAuctionItemDetail(Integer auctionItemId){
+
+        AuctionItem auctionItem = this.getById(auctionItemId);
+
+        if(auctionItem == null){
+            return null;
+        }
+
+        AuctionItemDetail auctionItemDetail = BeanUtils.copyBean(auctionItem, AuctionItemDetail.class);
+
+        //如果已经结束且不流拍
+        if(auctionItem.getState().intValue() == HAVE_FINISHED.intValue()){
+            AuctionResultInfo auctionResultInfo = new AuctionResultInfo();
+
+            Integer wxFanId = auctionItem.getWxFanId();
+
+            WxFan wxFan = wxFanService.getById(wxFanId);
+
+            String nickname = wxFan.getNickname();
+            auctionResultInfo.setOwnerNickname(nickname);
+
+            String wxFanOpenId = wxFan.getWxFanOpenId();
+            String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+            auctionResultInfo.setOpenId(owerId);
+
+            AuctionRecord maxPriceAuctionItem = auctionRecordService.getMaxPriceAuctionItem(auctionItemId);
+            Date bidTime = maxPriceAuctionItem.getBidTime();
+            auctionResultInfo.setBidTime(bidTime);
+
+            Float price = maxPriceAuctionItem.getPrice();
+            auctionResultInfo.setPrice(price);
+
+            Integer shipState = auctionItem.getShipState();
+            if(shipState == null){
+                shipState = HAS_NOT_SHIP;
+            }
+            auctionResultInfo.setShipState(shipState);
+
+            auctionItemDetail.setAuctionResultInfo(auctionResultInfo);
+        }
+
+        return auctionItemDetail;
+    }
+
+    /**
+     * 通过id删除
+     * @param id
+     * @return
+     */
+    public Integer deleteById(Integer id){
+        return auctionItemMapper.delete(id);
     }
 }

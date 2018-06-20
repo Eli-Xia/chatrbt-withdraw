@@ -118,11 +118,11 @@
     </select>
 
 
-    <update id="decreaseCoin">
+    <update id="decreaseCoin" parameterType="map">
         update
-        e_chat_pet
+            e_chat_pet
         set coin = IFNULL(coin,0) - #{coin}
         where
-        id = #{id}
+        id = #{chatPetId}
     </update>
 </mapper>
