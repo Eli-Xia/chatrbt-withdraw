@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by bint on 2018/6/11.
@@ -54,6 +52,10 @@ public class AuctionItemService {
 
     private final static String DIRCTORY_NAME = "/chat_pet/auction_item";
 
+
+    private Map<Integer,Thread> threadMap = new HashMap<>();
+
+
     @PostConstruct
     private void init(){
 
@@ -66,11 +68,21 @@ public class AuctionItemService {
 
         for(AuctionItem auctionItem : auctionItemList){
 
-            Date endDate = auctionItem.getEndTime();
+            this.setFixedScheduling(auctionItem);
+        }
 
-            Runnable runnable = this.createRunnable(auctionItem);
+    }
 
-            fixedScheduling.createFixedScheduling(endDate ,runnable);
+
+    private void setFixedScheduling(AuctionItem auctionItem ){
+        Runnable runnable = this.createRunnable(auctionItem);
+
+        Date endDate = auctionItem.getEndTime();
+
+        Thread thread = fixedScheduling.createFixedScheduling(endDate ,runnable);
+
+        if(thread != null){
+            threadMap.put(auctionItem.getId(),thread);
         }
 
     }
@@ -126,7 +138,6 @@ public class AuctionItemService {
                             Integer chatPetId = chatPet.getId();
                             chatPetService.decreaseCoin(chatPetId , priceFloat);
                         }
-
 
                     }
 
@@ -273,8 +284,19 @@ public class AuctionItemService {
         return chatPetAuctionItemResp;
     }
 
+    public void add(AuctionItem auctionItem){
 
-    public Integer save(AuctionItem auctionItem){
+        Integer result = this.save(auctionItem);
+
+        //如果没有保存成功
+        if(result == null || result.intValue() == 1) {
+            return ;
+        }
+
+       this.setFixedScheduling(auctionItem);
+    }
+
+    private Integer save(AuctionItem auctionItem){
         return auctionItemMapper.insert(auctionItem);
     }
 
@@ -309,6 +331,22 @@ public class AuctionItemService {
         Integer chatPetType = updateAuctionItem.getChatPetType();
 
         Integer result = auctionItemMapper.updateAuctionItem(startTime ,endTime ,id ,chatPetType ,auctionType ,name);
+
+        if(result == null){
+            return null;
+        }
+
+        AuctionItem auctionItem = this.getById(id);
+
+        if(result.intValue() == 1){
+
+            //把线程停止
+            Thread thread = threadMap.get(id);
+            thread.interrupted();
+
+            //重新建立线程
+            setFixedScheduling(auctionItem);
+        }
 
         return result;
     }

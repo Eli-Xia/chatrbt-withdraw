@@ -10,7 +10,9 @@ import java.util.List;
  * Created by bint on 2018/6/8.
  */
 public interface AuctionItemMapper {
+
     int insert(AuctionItem auctionItem);
+
     List<AuctionItem> selectPageByChatPetType(@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize , @Param("chatPetType") Integer chatPetType);
 
     List<AuctionItem> selectPage(@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize );
