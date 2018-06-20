@@ -16,6 +16,8 @@ public class WxOauthAccessToken {
     private String wxFanOpenId;
     @JsonProperty("scope")
     private String scope;
+    @JsonProperty("unionid")
+    private String unionId;
 
     public String getAccessToken() {
         return accessToken;
@@ -55,5 +57,13 @@ public class WxOauthAccessToken {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getUnionId() {
+        return unionId;
+    }
+
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
     }
 }

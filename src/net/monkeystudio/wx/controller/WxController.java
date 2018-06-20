@@ -131,7 +131,7 @@ public class WxController extends BaseController {
 	    return null;
 	}
 
-    /**
+   /* *//**
      * 当用户禁止授权的时候,只会传state值过来.
      * * @param request
      * @param code
@@ -139,7 +139,7 @@ public class WxController extends BaseController {
      * @param appId
      * @return
      * @throws Exception
-     */
+     *//*
 	@RequestMapping(value = "/oauth/code", method = RequestMethod.GET)
 	public ModelAndView oauth(HttpServletResponse response,HttpServletRequest request,@RequestParam(value = "code",required = false)String code,@RequestParam("state")String state,@RequestParam(value = "appid",required = false)String appId)throws Exception{
 		Log.d("============== code = {?}  , state = {?} ,  appid = {?}",code,state,appId);
@@ -148,7 +148,7 @@ public class WxController extends BaseController {
 
 		response.sendRedirect("http://www.baidu.com");//测试,跳转h5
 		return null;
-	}
+	}*/
 
 
 
