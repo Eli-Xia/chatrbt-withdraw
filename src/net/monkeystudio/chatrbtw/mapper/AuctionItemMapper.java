@@ -17,7 +17,7 @@ public interface AuctionItemMapper {
 
     List<AuctionItem> selectPage(@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize );
 
-    int updateStateAndWxFanId(@Param("id") Integer id , @Param("originIdState") Integer originId , @Param("targetState") Integer targetState , @Param("wxFanId") Integer wxFanId );
+    int updateStateAndWxFanId(@Param("id") Integer id , @Param("originState") Integer originId , @Param("targetState") Integer targetState , @Param("wxFanId") Integer wxFanId );
 
     List<AuctionItem> selectByEndTime(@Param("endTime") Date endTime);
 

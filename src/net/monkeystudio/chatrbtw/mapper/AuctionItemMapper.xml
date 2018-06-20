@@ -56,7 +56,7 @@
             state = #{targetState},
             wx_fan_id = #{wxFanId}
         where
-            state = #{origintState}
+            state = #{originState}
         and
             id = #{id}
     </update>

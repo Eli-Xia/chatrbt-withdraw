@@ -8,6 +8,7 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.service.AuctionItemService;
 import net.monkeystudio.chatrbtw.service.bean.UploadFile;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.AddAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,13 +58,13 @@ public class AuctionItemController extends BaseController{
     }
 
     /**
-     *
-     * @param auctionItem
+     * 新增竞拍商品
+     * @param addAuctionItem
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public RespBase addAuctionItem(@RequestBody AuctionItem auctionItem){
+    public RespBase addAuctionItem(@RequestBody AddAuctionItem addAuctionItem){
 
         Integer userId = this.getUserId();
 
@@ -71,7 +72,7 @@ public class AuctionItemController extends BaseController{
             return respHelper.nologin();
         }
 
-        auctionItemService.add(auctionItem);
+        auctionItemService.add(addAuctionItem);
 
         return respHelper.ok();
     }

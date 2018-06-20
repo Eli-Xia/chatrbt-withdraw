@@ -9,6 +9,7 @@ import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.AddAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemListResp;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemResp;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
@@ -44,11 +45,15 @@ public class AuctionItemService {
     @Autowired
     private ChatPetService chatPetService;
 
+    //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
     public final static Integer PROCESSING = 1;      //进行中
-    private final static Integer HAVE_FINISHED = 2;   //已完成
+    public final static Integer HAVE_FINISHED = 2;   //已完成
     private final static Integer UNCLAIMED = 3;       //流拍
 
+    //发货状态
+    public final static Integer HAS_NOT_SHIP = 0;
+    public final static Integer HAS_SHIP = 1;
 
     private final static String DIRCTORY_NAME = "/chat_pet/auction_item";
 
@@ -116,15 +121,16 @@ public class AuctionItemService {
                         return ;
                     }
 
+                    Boolean hasOwner = false;
                     for(AuctionRecord maxPriceAuctionItem : maxPriceAuctionItemList){
 
-                        Integer wxFanId = maxPriceAuctionItem.getId();
+                        Integer wxFanId = maxPriceAuctionItem.getWxFanId();
                         ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
 
 
                         //如果所拥有的钱,比出价高
                         Float priceFloat = maxPriceAuctionItem.getPrice();
-                        if(priceFloat.floatValue() > chatPet.getCoin().floatValue()){
+                        if(priceFloat.floatValue() <= chatPet.getCoin().floatValue()){
 
                             //修改状态为已经结束和填充获得人
                             Integer result = translateStatus(auctionItemId , PROCESSING , HAVE_FINISHED , wxFanId);
@@ -137,9 +143,18 @@ public class AuctionItemService {
                             //减去所得者的金币
                             Integer chatPetId = chatPet.getId();
                             chatPetService.decreaseCoin(chatPetId , priceFloat);
+                            hasOwner = true;
+                            break;
                         }
-
                     }
+
+                    //如果所有出价的人都没有对应的金币,则流拍
+                    if(!hasOwner){
+                        Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
+                        return ;
+                    }
+
+
 
                 }
             };
@@ -170,7 +185,7 @@ public class AuctionItemService {
     }
 
 
-    private Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
+    public Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
     }
 
@@ -284,7 +299,13 @@ public class AuctionItemService {
         return chatPetAuctionItemResp;
     }
 
-    public void add(AuctionItem auctionItem){
+    public void add(AddAuctionItem addAuctionItem){
+
+
+        AuctionItem auctionItem = BeanUtils.copyBean(addAuctionItem, AuctionItem.class);
+
+        auctionItem.setState(HAS_NOT_STARTED);
+        auctionItem.setShipState(HAS_NOT_SHIP);
 
         Integer result = this.save(auctionItem);
 
