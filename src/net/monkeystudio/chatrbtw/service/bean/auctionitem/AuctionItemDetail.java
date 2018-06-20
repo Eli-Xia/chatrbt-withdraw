@@ -1,11 +1,14 @@
-package net.monkeystudio.chatrbtw.entity;
+package net.monkeystudio.chatrbtw.service.bean.auctionitem;
+
+import net.monkeystudio.chatrbtw.entity.AuctionItem;
 
 import java.util.Date;
 
-//表名e_auction_item
-public class AuctionItem {
+/**
+ * Created by bint on 2018/6/20.
+ */
+public class AuctionItemDetail {
 
-    private Integer id;
     private Date startTime;
     private Date endTime;
     private String name;
@@ -13,16 +16,9 @@ public class AuctionItem {
     private Integer auctionType;
     private Integer chatPetType;
     private String auctionItemPic;
-    private Integer shipState;
-    private Integer wxFanId;
 
-    public Integer getId() {
-        return id;
-    }
+    private AuctionResultInfo auctionResultInfo;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Date getStartTime() {
         return startTime;
@@ -64,7 +60,6 @@ public class AuctionItem {
         this.auctionType = auctionType;
     }
 
-
     public Integer getChatPetType() {
         return chatPetType;
     }
@@ -81,19 +76,11 @@ public class AuctionItem {
         this.auctionItemPic = auctionItemPic;
     }
 
-    public Integer getShipState() {
-        return shipState;
+    public AuctionResultInfo getAuctionResultInfo() {
+        return auctionResultInfo;
     }
 
-    public void setShipState(Integer shipState) {
-        this.shipState = shipState;
-    }
-
-    public Integer getWxFanId() {
-        return wxFanId;
-    }
-
-    public void setWxFanId(Integer wxFanId) {
-        this.wxFanId = wxFanId;
+    public void setAuctionResultInfo(AuctionResultInfo auctionResultInfo) {
+        this.auctionResultInfo = auctionResultInfo;
     }
 }

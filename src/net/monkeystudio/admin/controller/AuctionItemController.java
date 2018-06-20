@@ -9,14 +9,12 @@ import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.service.AuctionItemService;
 import net.monkeystudio.chatrbtw.service.bean.UploadFile;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.AddAuctionItem;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.AuctionItemDetail;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -137,6 +135,28 @@ public class AuctionItemController extends BaseController{
         auctionItemService.updateAuctionItemShipState(auctionItemId, shipState);
 
         return respHelper.ok();
+    }
+
+
+    /**
+     * 获取竞拍品的详细信息
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get-info", method = RequestMethod.POST)
+    public RespBase getDetailInfo(@RequestParam Integer id){
+
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        AuctionItemDetail auctionItemDetail = auctionItemService.getAuctionItemDetail(id);
+
+        return respHelper.ok(auctionItemDetail);
     }
 
 }

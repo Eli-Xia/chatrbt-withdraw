@@ -9,10 +9,7 @@ import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.AddAuctionItem;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemListResp;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.ChatPetAuctionItemResp;
-import net.monkeystudio.chatrbtw.service.bean.auctionitem.UpdateAuctionItem;
+import net.monkeystudio.chatrbtw.service.bean.auctionitem.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -379,5 +376,56 @@ public class AuctionItemService {
      */
     public Integer updateAuctionItemShipState(Integer auctionItemId , Integer shipState){
         return auctionItemMapper.updateShipState(auctionItemId , shipState);
+    }
+
+
+    /**
+     * 获取竞拍品的详细信息
+     * @param auctionItemId
+     * @return
+     */
+    public AuctionItemDetail getAuctionItemDetail(Integer auctionItemId){
+
+        AuctionItem auctionItem = this.getById(auctionItemId);
+
+        if(auctionItem == null){
+            return null;
+        }
+
+        AuctionItemDetail auctionItemDetail = BeanUtils.copyBean(auctionItem, AuctionItemDetail.class);
+
+        //如果已经结束且不流拍
+        if(auctionItem.getState().intValue() == HAVE_FINISHED.intValue()){
+            AuctionResultInfo auctionResultInfo = new AuctionResultInfo();
+
+            Integer wxFanId = auctionItem.getWxFanId();
+
+            WxFan wxFan = wxFanService.getById(wxFanId);
+
+            String nickname = wxFan.getNickname();
+            auctionResultInfo.setOwnerNickname(nickname);
+
+            String wxFanOpenId = wxFan.getWxFanOpenId();
+            String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+            auctionResultInfo.setOpenId(owerId);
+
+            AuctionRecord maxPriceAuctionItem = auctionRecordService.getMaxPriceAuctionItem(auctionItemId);
+            Date bidTime = maxPriceAuctionItem.getBidTime();
+            auctionResultInfo.setBidTime(bidTime);
+
+            Float price = maxPriceAuctionItem.getPrice();
+            auctionResultInfo.setPrice(price);
+
+            Integer shipState = auctionItem.getShipState();
+
+            if(shipState == null){
+                shipState = HAS_NOT_SHIP;
+            }
+            auctionResultInfo.setShipState(shipState);
+
+            auctionItemDetail.setAuctionResultInfo(auctionResultInfo);
+        }
+
+        return auctionItemDetail;
     }
 }
