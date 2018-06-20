@@ -12,6 +12,7 @@ import net.monkeystudio.chatrbtw.service.bean.income.WxPubDailyIncomeItem;
 import net.monkeystudio.chatrbtw.service.bean.income.WxPubIncomeCountInfoResp;
 import net.monkeystudio.portal.controller.req.income.UserDailyIncomeDetailQueryReq;
 import net.monkeystudio.portal.controller.req.income.UserDailyIncomeQueryReq;
+import net.monkeystudio.portal.controller.req.income.WxPubIncomeReq;
 import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,12 +41,11 @@ public class PortalIncomeController extends PortalBaseController{
 
     /**
      * 获取公众号的收益统计
-     * @param wxPubOriginId
      * @return
      */
     @RequestMapping(value = "/wx-pub/base/count",method = RequestMethod.POST)
     @ResponseBody
-    public RespBase getWxPubIncomeCount(@RequestBody String wxPubOriginId) throws BizException {
+    public RespBase getWxPubIncomeCount(@RequestBody WxPubIncomeReq wxPubIncomeReq) throws BizException {
 
         Integer userId = getUserId();
 
@@ -53,7 +53,9 @@ public class PortalIncomeController extends PortalBaseController{
             return respHelper.nologin();
         }
 
-        if(wxPubService.hasPub(wxPubOriginId,userId)){
+        String wxPubOriginId = wxPubIncomeReq.getWxPubOriginId();
+
+        if(!wxPubService.hasPub(wxPubOriginId,userId)){
             return respHelper.authFailed();
         }
 
