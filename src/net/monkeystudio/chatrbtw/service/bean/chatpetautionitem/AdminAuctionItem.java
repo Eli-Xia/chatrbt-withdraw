@@ -7,6 +7,8 @@ import java.util.Date;
  */
 public class AdminAuctionItem {
 
+    private Integer id;
+
     private Date startTime;
     private Date endTime;
     private String name;
@@ -80,5 +82,13 @@ public class AdminAuctionItem {
 
     public void setShipState(Integer shipState) {
         this.shipState = shipState;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
