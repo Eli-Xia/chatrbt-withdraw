@@ -75,7 +75,10 @@ public class AuctionItemService {
 
     }
 
-
+    /**
+     * 设定竞拍品生成对应的定时任务，并放入线程map
+     * @param auctionItem
+     */
     private void setFixedScheduling(AuctionItem auctionItem ){
         Runnable runnable = this.createRunnable(auctionItem);
 
@@ -83,6 +86,7 @@ public class AuctionItemService {
 
         Thread thread = fixedScheduling.createFixedScheduling(endDate ,runnable);
 
+        //放入到线程map里面
         if(thread != null){
             threadMap.put(auctionItem.getId(),thread);
         }
@@ -151,8 +155,11 @@ public class AuctionItemService {
                         return ;
                     }
 
+                    //线程从map里面删除
+                    threadMap.remove(auctionItemId);
 
-
+                    //设定一个线程定时任务
+                    setFixedScheduling(auctionItem);
                 }
             };
             return runnable;
