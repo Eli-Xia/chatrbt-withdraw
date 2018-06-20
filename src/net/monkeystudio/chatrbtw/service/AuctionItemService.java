@@ -158,8 +158,9 @@ public class AuctionItemService {
                     //线程从map里面删除
                     threadMap.remove(auctionItemId);
 
+                    AuctionItem auctionItemFrom = getById(auctionItemId);
                     //设定一个线程定时任务
-                    setFixedScheduling(auctionItem);
+                    setFixedScheduling(auctionItemFrom);
                 }
             };
             return runnable;
@@ -401,6 +402,9 @@ public class AuctionItemService {
         }
 
         AuctionItemDetail auctionItemDetail = BeanUtils.copyBean(auctionItem, AuctionItemDetail.class);
+
+        Integer participantNumber = auctionRecordService.countParticipant(auctionItemId);
+        auctionItemDetail.setParticipantNumber(participantNumber);
 
         //如果已经结束且不流拍
         if(auctionItem.getState().intValue() == HAVE_FINISHED.intValue()){
