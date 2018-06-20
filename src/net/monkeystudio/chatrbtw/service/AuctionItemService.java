@@ -49,8 +49,8 @@ public class AuctionItemService {
     private final static Integer UNCLAIMED = 3;       //流拍
 
     //发货状态
-    public final static Integer HAS_NOT_SHIP = 0;
-    public final static Integer HAS_SHIP = 1;
+    public final static Integer HAS_NOT_SHIP = 0;//未发货
+    public final static Integer HAS_SHIP = 1;   //已经发货
 
     private final static String DIRCTORY_NAME = "/chat_pet/auction_item";
 
@@ -417,7 +417,6 @@ public class AuctionItemService {
             auctionResultInfo.setPrice(price);
 
             Integer shipState = auctionItem.getShipState();
-
             if(shipState == null){
                 shipState = HAS_NOT_SHIP;
             }
@@ -427,5 +426,14 @@ public class AuctionItemService {
         }
 
         return auctionItemDetail;
+    }
+
+    /**
+     * 通过id删除
+     * @param id
+     * @return
+     */
+    public Integer deleteById(Integer id){
+        return auctionItemMapper.delete(id);
     }
 }

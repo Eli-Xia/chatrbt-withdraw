@@ -26,4 +26,6 @@ public interface AuctionItemMapper {
     AuctionItem selectById(Integer id);
 
     Integer updateShipState(@Param("id") Integer auctionItemId,@Param("shipState") Integer shipState);
+
+    Integer delete(Integer id);
 }

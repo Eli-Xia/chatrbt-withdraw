@@ -105,4 +105,10 @@
             id = #{id}
     </update>
 
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete
+            from e_auction_item
+        where id = #{id}
+    </delete>
+
 </mapper>

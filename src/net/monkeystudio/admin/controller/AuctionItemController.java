@@ -159,4 +159,27 @@ public class AuctionItemController extends BaseController{
         return respHelper.ok(auctionItemDetail);
     }
 
+
+
+
+    /**
+     * 删除id
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public RespBase delete(@RequestParam Integer id){
+
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        auctionItemService.deleteById(id);
+
+        return respHelper.ok();
+    }
 }
