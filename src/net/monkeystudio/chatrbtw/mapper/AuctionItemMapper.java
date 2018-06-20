@@ -21,7 +21,7 @@ public interface AuctionItemMapper {
 
     List<AuctionItem> selectByEndTime(@Param("endTime") Date endTime);
 
-    int updateAuctionItem(@Param("startTime") Date startTime ,@Param("endTime") Date endTime ,@Param("id") Integer id ,@Param("chatPetType") Integer chatPetType, @Param("auctionType") Integer auctionType ,@Param("name") String name);
+    int updateAuctionItem(@Param("startTime") Date startTime ,@Param("endTime") Date endTime ,@Param("id") Integer id ,@Param("chatPetType") Integer chatPetType, @Param("auctionType") Integer auctionType ,@Param("name") String name ,@Param("auctionItemPic") String auctionItemPic);
 
     AuctionItem selectById(Integer id);
 

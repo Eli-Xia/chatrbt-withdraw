@@ -79,7 +79,7 @@
         set
             `start_time` = #{startTime},
             `end_time` = #{endTime},
-            `chat_pet_tpye` = #{chatPetType},
+            `chat_pet_type` = #{chatPetType},
             `auction_type` = #{auctionType},
             `name` =  #{name},
             `auction_item_pic` = #{auctionItemPic}

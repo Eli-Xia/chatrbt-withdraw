@@ -347,8 +347,9 @@ public class AuctionItemService {
         Integer auctionType = updateAuctionItem.getAuctionType();
         String name = updateAuctionItem.getName();
         Integer chatPetType = updateAuctionItem.getChatPetType();
+        String auctionItemPic = updateAuctionItem.getAuctionItemPic();
 
-        Integer result = auctionItemMapper.updateAuctionItem(startTime ,endTime ,id ,chatPetType ,auctionType ,name);
+        Integer result = auctionItemMapper.updateAuctionItem(startTime ,endTime ,id ,chatPetType ,auctionType ,name ,auctionItemPic);
 
         if(result == null){
             return null;

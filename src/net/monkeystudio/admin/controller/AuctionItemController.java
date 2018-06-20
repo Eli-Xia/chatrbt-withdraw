@@ -105,9 +105,13 @@ public class AuctionItemController extends BaseController{
             return respHelper.nologin();
         }
 
-        Integer id = updateAuctionItem.getId();
+        Integer auctionId = updateAuctionItem.getId();
 
-        AuctionItem auctionItem = auctionItemService.getById(id);
+        AuctionItem auctionItem = auctionItemService.getById(auctionId);
+
+        if(auctionItem == null){
+            return respHelper.failed("找不到该竞拍品");
+        }
 
         if(auctionItem.getState().intValue() != AuctionItemService.HAS_NOT_STARTED.intValue()){
             return respHelper.failed("非预投放状态不能更改");
@@ -176,6 +180,18 @@ public class AuctionItemController extends BaseController{
 
         if(userId == null){
             return respHelper.nologin();
+        }
+
+        AuctionItem auctionItem = auctionItemService.getById(id);
+
+        if(auctionItem == null){
+            return respHelper.failed("找不到该竞拍品");
+
+        }
+
+        //如果非未开始的状态的,不能修改
+        if(auctionItem.getState().intValue() != AuctionItemService.HAS_NOT_STARTED){
+            return respHelper.failed("不是未开始状态下的不能删除");
         }
 
         auctionItemService.deleteById(id);

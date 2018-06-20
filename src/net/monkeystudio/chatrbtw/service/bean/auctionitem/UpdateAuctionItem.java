@@ -13,6 +13,7 @@ public class UpdateAuctionItem {
     private Integer chatPetType;
     private Integer auctionType;
     private String name;
+    private String auctionItemPic;
 
     public Integer getId() {
         return id;
@@ -60,5 +61,13 @@ public class UpdateAuctionItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAuctionItemPic() {
+        return auctionItemPic;
+    }
+
+    public void setAuctionItemPic(String auctionItemPic) {
+        this.auctionItemPic = auctionItemPic;
     }
 }
