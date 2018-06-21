@@ -43,7 +43,6 @@ public class AuctionItemController extends BaseController{
     public RespBase getAuctionItemPage(@RequestBody AuctionItemPageReq auctionItemPageReq){
 
         Integer userId = this.getUserId();
-
         if(userId == null){
             return respHelper.nologin();
         }
@@ -79,7 +78,7 @@ public class AuctionItemController extends BaseController{
 
         Date newDate = new Date();
         if(newDate.compareTo(startTime) > 0){
-            return respHelper.failed("开始时间不能早于当前时间");
+            return respHelper.failed( "开始时间不能早于当前时间");
         }
 
         auctionItemService.add(addAuctionItem);
@@ -97,6 +96,11 @@ public class AuctionItemController extends BaseController{
     @RequestMapping(value = "/pic-image", method = RequestMethod.POST)
     public RespBase addAuctionItem(UploadFile uploadFile){
 
+        Integer userId = this.getUserId();
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
         String url = auctionItemService.uploadShowPic(uploadFile.getMultipartFile());
 
         return respHelper.ok(url);
@@ -112,7 +116,6 @@ public class AuctionItemController extends BaseController{
     public RespBase updateAuctionItem(@RequestBody UpdateAuctionItem updateAuctionItem){
 
         Integer userId = this.getUserId();
-
         if(userId == null){
             return respHelper.nologin();
         }
@@ -140,7 +143,6 @@ public class AuctionItemController extends BaseController{
 
 
         Integer userId = this.getUserId();
-
         if(userId == null){
             return respHelper.nologin();
         }
@@ -163,9 +165,7 @@ public class AuctionItemController extends BaseController{
     @RequestMapping(value = "/get-info", method = RequestMethod.POST)
     public RespBase getDetailInfo(@RequestParam Integer id){
 
-
         Integer userId = this.getUserId();
-
         if(userId == null){
             return respHelper.nologin();
         }
