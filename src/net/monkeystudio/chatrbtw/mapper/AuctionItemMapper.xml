@@ -46,7 +46,8 @@
             e_auction_item
         where
             chat_pet_type = #{chatPetType}
-        order by start_time limit #{startIndex} , #{pageSize};
+        order by start_time desc
+            limit #{startIndex} , #{pageSize};
     </select>
 
 
@@ -110,5 +111,7 @@
             from e_auction_item
         where id = #{id}
     </delete>
+
+
 
 </mapper>

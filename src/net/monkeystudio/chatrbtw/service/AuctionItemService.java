@@ -162,16 +162,14 @@ public class AuctionItemService {
                         }
                     }
 
+                    //线程从map里面删除
+                    threadMap.remove(auctionItemId);
+
                     //如果所有出价的人都没有对应的金币,则流拍
                     if(!hasOwner){
                         Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
                         return ;
                     }
-
-                    //线程从map里面删除
-                    threadMap.remove(auctionItemId);
-
-
                 }
             };
             return runnable;
