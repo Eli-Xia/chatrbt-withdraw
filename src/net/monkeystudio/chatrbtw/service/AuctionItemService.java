@@ -83,9 +83,19 @@ public class AuctionItemService {
     private void setFixedScheduling(AuctionItem auctionItem ){
         Runnable runnable = this.createRunnable(auctionItem);
 
-        Date endDate = auctionItem.getEndTime();
 
-        Thread thread = fixedScheduling.createFixedScheduling(endDate ,runnable);
+        Integer state = auctionItem.getState();
+
+        Date date = null;
+        if(state.intValue() == HAS_NOT_STARTED.intValue()){
+            date = auctionItem.getStartTime();
+        }
+
+        if(state.intValue() ==  PROCESSING.intValue()){
+            date = auctionItem.getEndTime();
+        }
+
+        Thread thread = fixedScheduling.createFixedScheduling(date ,runnable);
 
         //放入到线程map里面
         if(thread != null){
@@ -183,10 +193,11 @@ public class AuctionItemService {
                         return ;
                     }
 
-
                     AuctionItem auctionItemFrom = getById(auctionItemId);
                     //设定一个线程定时任务
                     setFixedScheduling(auctionItemFrom);
+
+                    //test(auctionItemId);
                 }
             };
 
@@ -197,6 +208,21 @@ public class AuctionItemService {
         return null;
     }
 
+    /*public void test(Integer auctionItemId){
+        Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
+
+        Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
+
+        //如果已经处理，则返回
+        if(result == null || result.intValue() == 0){
+            return ;
+        }
+
+
+        AuctionItem auctionItemFrom = getById(auctionItemId);
+        //设定一个线程定时任务
+        setFixedScheduling(auctionItemFrom);
+    }*/
 
     public Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
