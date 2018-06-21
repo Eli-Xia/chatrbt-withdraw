@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,9 +66,20 @@ public class AuctionItemController extends BaseController{
     public RespBase addAuctionItem(@RequestBody AddAuctionItem addAuctionItem){
 
         Integer userId = this.getUserId();
-
         if(userId == null){
             return respHelper.nologin();
+        }
+
+        Date startTime = addAuctionItem.getStartTime();
+        Date eneTime = addAuctionItem.getEndTime();
+
+        if(startTime.compareTo(eneTime) > 0){
+            return respHelper.failed("开始时间不能在结束时间后面");
+        }
+
+        Date newDate = new Date();
+        if(newDate.compareTo(startTime) > 0){
+            return respHelper.ok("开始时间不能早于当前时间");
         }
 
         auctionItemService.add(addAuctionItem);
