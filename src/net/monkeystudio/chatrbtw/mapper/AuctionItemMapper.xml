@@ -36,7 +36,8 @@
             <include refid="Base_Column_List" />
         from
             e_auction_item
-        order by start_time limit #{startIndex} , #{pageSize};
+        order by start_time desc
+        limit #{startIndex} , #{pageSize};
     </select>
 
     <select id="selectPageByChatPetType" resultMap="baseResultMap" parameterType="map">
