@@ -141,7 +141,6 @@ public class AuctionItemService {
                         Integer wxFanId = maxPriceAuctionItem.getWxFanId();
                         ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
 
-
                         //如果所拥有的钱,比出价高
                         Float priceFloat = maxPriceAuctionItem.getPrice();
                         if(priceFloat.floatValue() <= chatPet.getCoin().floatValue()){
@@ -347,7 +346,7 @@ public class AuctionItemService {
         Integer result = this.save(auctionItem);
 
         //如果没有保存成功
-        if(result == null || result.intValue() == 1) {
+        if(result == null || result.intValue() == 0) {
             return ;
         }
 
