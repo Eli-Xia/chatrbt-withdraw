@@ -4,6 +4,7 @@ import net.monkeystudio.base.service.FixedScheduling;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
@@ -114,6 +115,8 @@ public class AuctionItemService {
                 @Override
                 public void run() {
 
+                    Log.i("It is time to run perform fixed tasks , auctionItemId :" + auctionItemId);
+
                     List<AuctionRecord> maxPriceAuctionItemList = auctionRecordService.getMaxPriceAuctionItemList(auctionItemId);
 
                     //如果没人竞价,设置竞拍品状态为无人竞拍
@@ -158,9 +161,7 @@ public class AuctionItemService {
                     //线程从map里面删除
                     threadMap.remove(auctionItemId);
 
-                    AuctionItem auctionItemFrom = getById(auctionItemId);
-                    //设定一个线程定时任务
-                    setFixedScheduling(auctionItemFrom);
+
                 }
             };
             return runnable;
@@ -173,12 +174,19 @@ public class AuctionItemService {
                 @Override
                 public void run() {
 
+                    Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
+
                     Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
 
                     //如果已经处理，则返回
                     if(result == null || result.intValue() == 0){
                         return ;
                     }
+
+
+                    AuctionItem auctionItemFrom = getById(auctionItemId);
+                    //设定一个线程定时任务
+                    setFixedScheduling(auctionItemFrom);
                 }
             };
 
