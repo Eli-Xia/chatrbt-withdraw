@@ -309,6 +309,9 @@ public class AuctionItemService {
                     chatPetAuctionItemListResp.setWinner(Boolean.FALSE);
                 }
 
+                AuctionRecord maxPriceRecord = auctionRecordService.getAuctionRecordByWxFan(ownerId, auctionItemId);
+                chatPetAuctionItemListResp.setDealPrice(maxPriceRecord.getPrice());
+
             }
 
             if(state.intValue() == PROCESSING.intValue()){
@@ -452,7 +455,7 @@ public class AuctionItemService {
             String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
             auctionResultInfo.setOpenId(owerId);
 
-            AuctionRecord maxPriceAuctionItem = auctionRecordService.getMaxPriceAuctionItem(auctionItemId);
+            AuctionRecord maxPriceAuctionItem = auctionRecordService.getAuctionRecordByWxFan(wxFanId, auctionItemId);
             Date bidTime = maxPriceAuctionItem.getBidTime();
             auctionResultInfo.setBidTime(bidTime);
 
@@ -470,6 +473,7 @@ public class AuctionItemService {
 
         return auctionItemDetail;
     }
+
 
     /**
      * 通过id删除
