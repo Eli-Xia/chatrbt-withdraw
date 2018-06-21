@@ -79,7 +79,7 @@ public class AuctionItemController extends BaseController{
 
         Date newDate = new Date();
         if(newDate.compareTo(startTime) > 0){
-            return respHelper.ok("开始时间不能早于当前时间");
+            return respHelper.failed("开始时间不能早于当前时间");
         }
 
         auctionItemService.add(addAuctionItem);
