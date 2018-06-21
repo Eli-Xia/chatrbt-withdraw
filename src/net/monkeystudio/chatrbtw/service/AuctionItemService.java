@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.FixedScheduling;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.CommonUtils;
@@ -10,8 +11,10 @@ import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
+import net.monkeystudio.wx.service.WxAuthApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +45,12 @@ public class AuctionItemService {
 
     @Autowired
     private ChatPetService chatPetService;
+
+    @Autowired
+    private WxCustomerHelper wxCustomerHelper;
+
+    @Autowired
+    private WxAuthApiService wxAuthApiService;
 
     //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
@@ -150,7 +159,6 @@ public class AuctionItemService {
                     //设定一个线程定时任务
                     setFixedScheduling(auctionItemFrom);
 
-                    //test(auctionItemId);
                 }
             };
 
@@ -198,6 +206,10 @@ public class AuctionItemService {
                 Integer chatPetId = chatPet.getId();
                 chatPetService.decreaseCoin(chatPetId , priceFloat);
                 hasOwner = true;
+
+                //发送中标提示
+                this.sentRemindMsg(wxFanId);
+
                 break;
             }
         }
@@ -228,7 +240,7 @@ public class AuctionItemService {
         setFixedScheduling(auctionItemFrom);
     }*/
 
-    public Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
+    private Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
     }
 
@@ -348,7 +360,6 @@ public class AuctionItemService {
     }
 
     public void add(AddAuctionItem addAuctionItem){
-
 
         AuctionItem auctionItem = BeanUtils.copyBean(addAuctionItem, AuctionItem.class);
 
@@ -483,6 +494,23 @@ public class AuctionItemService {
         return auctionItemDetail;
     }
 
+
+    private void sentRemindMsg(Integer wxFanId){
+        String content = "恭喜你中标啦，快快前往活动页面查看详情";
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+
+        String accessToken = null;
+        try {
+            accessToken = wxAuthApiService.getWxPubAccessTokenByOriginId(wxPubOriginId);
+            String wxFanOpenId = wxFan.getWxFanOpenId();
+            wxCustomerHelper.sendTextMessage(wxFanOpenId ,content ,accessToken);
+        } catch (BizException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 通过id删除
