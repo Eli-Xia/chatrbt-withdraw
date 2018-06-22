@@ -637,7 +637,7 @@ public class ChatPetService {
      * 通过code获取access_token及openid
      * @return
      */
-    private WxOauthAccessToken getOauthAccessTokenResponse(String code,String wxPubAppId) throws BizException{
+        private WxOauthAccessToken getOauthAccessTokenResponse(String code,String wxPubAppId) throws BizException{
 
         String fetchAccessTokenUrl = wxOauthService.getAccessTokenUrl(code,wxPubAppId);
         String response = HttpsHelper.get(fetchAccessTokenUrl);
@@ -645,6 +645,8 @@ public class ChatPetService {
         if(response == null || response.indexOf("errorcode") != -1){
             return null;
         }
+
+        Log.d("================= 网页授权response = {?} ===================",response);
 
         WxOauthAccessToken wxOauthAccessToken = JsonUtil.readValue(response, WxOauthAccessToken.class);
 
