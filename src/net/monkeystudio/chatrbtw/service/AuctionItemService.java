@@ -1,16 +1,20 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.FixedScheduling;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.AuctionItem;
 import net.monkeystudio.chatrbtw.entity.AuctionRecord;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
+import net.monkeystudio.wx.service.WxAuthApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +45,12 @@ public class AuctionItemService {
 
     @Autowired
     private ChatPetService chatPetService;
+
+    @Autowired
+    private WxCustomerHelper wxCustomerHelper;
+
+    @Autowired
+    private WxAuthApiService wxAuthApiService;
 
     //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
@@ -82,9 +92,19 @@ public class AuctionItemService {
     private void setFixedScheduling(AuctionItem auctionItem ){
         Runnable runnable = this.createRunnable(auctionItem);
 
-        Date endDate = auctionItem.getEndTime();
 
-        Thread thread = fixedScheduling.createFixedScheduling(endDate ,runnable);
+        Integer state = auctionItem.getState();
+
+        Date date = null;
+        if(state.intValue() == HAS_NOT_STARTED.intValue()){
+            date = auctionItem.getStartTime();
+        }
+
+        if(state.intValue() ==  PROCESSING.intValue()){
+            date = auctionItem.getEndTime();
+        }
+
+        Thread thread = fixedScheduling.createFixedScheduling(date ,runnable);
 
         //放入到线程map里面
         if(thread != null){
@@ -113,53 +133,7 @@ public class AuctionItemService {
 
                 @Override
                 public void run() {
-
-                    List<AuctionRecord> maxPriceAuctionItemList = auctionRecordService.getMaxPriceAuctionItemList(auctionItemId);
-
-                    //如果没人竞价,设置竞拍品状态为无人竞拍
-                    if(ListUtil.isEmpty(maxPriceAuctionItemList)){
-                        Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
-                        return ;
-                    }
-
-                    Boolean hasOwner = false;
-                    for(AuctionRecord maxPriceAuctionItem : maxPriceAuctionItemList){
-
-                        Integer wxFanId = maxPriceAuctionItem.getWxFanId();
-                        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
-
-
-                        //如果所拥有的钱,比出价高
-                        Float priceFloat = maxPriceAuctionItem.getPrice();
-                        if(priceFloat.floatValue() <= chatPet.getCoin().floatValue()){
-
-                            //修改状态为已经结束和填充获得人
-                            Integer result = translateStatus(auctionItemId , PROCESSING , HAVE_FINISHED , wxFanId);
-
-                            //如果已经处理，则返回
-                            if(result == null || result.intValue() == 0){
-                                return ;
-                            }
-
-                            //减去所得者的金币
-                            Integer chatPetId = chatPet.getId();
-                            chatPetService.decreaseCoin(chatPetId , priceFloat);
-                            hasOwner = true;
-                            break;
-                        }
-                    }
-
-                    //如果所有出价的人都没有对应的金币,则流拍
-                    if(!hasOwner){
-                        Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
-                        return ;
-                    }
-
-                    //线程从map里面删除
-                    threadMap.remove(auctionItemId);
-
-                    //设定一个线程定时任务
-                    setFixedScheduling(auctionItem);
+                    processing2haveFinished(auctionItemId);
                 }
             };
             return runnable;
@@ -172,12 +146,19 @@ public class AuctionItemService {
                 @Override
                 public void run() {
 
+                    Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
+
                     Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
 
                     //如果已经处理，则返回
                     if(result == null || result.intValue() == 0){
                         return ;
                     }
+
+                    AuctionItem auctionItemFrom = getById(auctionItemId);
+                    //设定一个线程定时任务
+                    setFixedScheduling(auctionItemFrom);
+
                 }
             };
 
@@ -188,8 +169,78 @@ public class AuctionItemService {
         return null;
     }
 
+    /**
+     * 把竞拍品从进行中状态专程已经结束状态
+     * @param auctionItemId
+     */
+    public void processing2haveFinished(Integer auctionItemId){
+        Log.i("It is time to run perform fixed tasks , auctionItemId :" + auctionItemId);
 
-    public Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
+        List<AuctionRecord> maxPriceAuctionItemList = auctionRecordService.getMaxPriceAuctionItemList(auctionItemId);
+
+        //如果没人竞价,设置竞拍品状态为无人竞拍
+        if(ListUtil.isEmpty(maxPriceAuctionItemList)){
+            Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
+            return ;
+        }
+
+        Boolean hasOwner = false;
+        for(AuctionRecord maxPriceAuctionItem : maxPriceAuctionItemList){
+
+            Integer wxFanId = maxPriceAuctionItem.getWxFanId();
+            ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
+
+            //如果所拥有的钱,比出价高
+            Float priceFloat = maxPriceAuctionItem.getPrice();
+            if(priceFloat.floatValue() <= chatPet.getCoin().floatValue()){
+
+                //修改状态为已经结束和填充获得人
+                Integer result = translateStatus(auctionItemId , PROCESSING , HAVE_FINISHED , wxFanId);
+
+                //如果已经处理，则返回
+                if(result == null || result.intValue() == 0){
+                    return ;
+                }
+
+                //减去所得者的金币
+                Integer chatPetId = chatPet.getId();
+                chatPetService.decreaseCoin(chatPetId , priceFloat);
+                hasOwner = true;
+
+                //发送中标提示
+                this.sentRemindMsg(wxFanId);
+
+                break;
+            }
+        }
+
+        //线程从map里面删除
+        threadMap.remove(auctionItemId);
+
+        //如果所有出价的人都没有对应的金币,则流拍
+        if(!hasOwner){
+            Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
+            return ;
+        }
+    }
+
+    /*public void test(Integer auctionItemId){
+        Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
+
+        Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
+
+        //如果已经处理，则返回
+        if(result == null || result.intValue() == 0){
+            return ;
+        }
+
+
+        AuctionItem auctionItemFrom = getById(auctionItemId);
+        //设定一个线程定时任务
+        setFixedScheduling(auctionItemFrom);
+    }*/
+
+    private Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
     }
 
@@ -259,10 +310,12 @@ public class AuctionItemService {
 
             Integer state = chatPetAuctionItemListResp.getState();
             if(state.intValue() == HAVE_FINISHED.intValue()){
-                AuctionRecord auctionRecord = auctionRecordService.getMaxPriceAuctionItem(auctionItemId);
+
+                //中标的出价记录
+                Integer ownerId = auctionItem.getWxFanId();
+                AuctionRecord auctionRecord = auctionRecordService.getAuctionRecordByWxFan(ownerId ,auctionItemId);
 
                 //中标人
-                Integer ownerId = auctionRecord.getWxFanId();
                 WxFan wxFan = wxFanService.getById(ownerId);
                 String nickName = wxFan.getNickname();
                 chatPetAuctionItemListResp.setWxFanNickname(nickName);
@@ -276,6 +329,9 @@ public class AuctionItemService {
                 }else {
                     chatPetAuctionItemListResp.setWinner(Boolean.FALSE);
                 }
+
+                AuctionRecord maxPriceRecord = auctionRecordService.getAuctionRecordByWxFan(ownerId, auctionItemId);
+                chatPetAuctionItemListResp.setDealPrice(maxPriceRecord.getPrice());
 
             }
 
@@ -305,7 +361,6 @@ public class AuctionItemService {
 
     public void add(AddAuctionItem addAuctionItem){
 
-
         AuctionItem auctionItem = BeanUtils.copyBean(addAuctionItem, AuctionItem.class);
 
         auctionItem.setState(HAS_NOT_STARTED);
@@ -314,7 +369,7 @@ public class AuctionItemService {
         Integer result = this.save(auctionItem);
 
         //如果没有保存成功
-        if(result == null || result.intValue() == 1) {
+        if(result == null || result.intValue() == 0) {
             return ;
         }
 
@@ -402,6 +457,9 @@ public class AuctionItemService {
 
         AuctionItemDetail auctionItemDetail = BeanUtils.copyBean(auctionItem, AuctionItemDetail.class);
 
+        Integer participantNumber = auctionRecordService.countParticipant(auctionItemId);
+        auctionItemDetail.setParticipantNumber(participantNumber);
+
         //如果已经结束且不流拍
         if(auctionItem.getState().intValue() == HAVE_FINISHED.intValue()){
             AuctionResultInfo auctionResultInfo = new AuctionResultInfo();
@@ -417,7 +475,7 @@ public class AuctionItemService {
             String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
             auctionResultInfo.setOpenId(owerId);
 
-            AuctionRecord maxPriceAuctionItem = auctionRecordService.getMaxPriceAuctionItem(auctionItemId);
+            AuctionRecord maxPriceAuctionItem = auctionRecordService.getAuctionRecordByWxFan(wxFanId, auctionItemId);
             Date bidTime = maxPriceAuctionItem.getBidTime();
             auctionResultInfo.setBidTime(bidTime);
 
@@ -434,6 +492,24 @@ public class AuctionItemService {
         }
 
         return auctionItemDetail;
+    }
+
+
+    private void sentRemindMsg(Integer wxFanId){
+        String content = "恭喜你中标啦，快快前往活动页面查看详情";
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        String wxPubOriginId = wxFan.getWxPubOriginId();
+
+        String accessToken = null;
+        try {
+            accessToken = wxAuthApiService.getWxPubAccessTokenByOriginId(wxPubOriginId);
+            String wxFanOpenId = wxFan.getWxFanOpenId();
+            wxCustomerHelper.sendTextMessage(wxFanOpenId ,content ,accessToken);
+        } catch (BizException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

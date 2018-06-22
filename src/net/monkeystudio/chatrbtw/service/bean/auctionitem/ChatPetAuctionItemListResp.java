@@ -19,8 +19,16 @@ public class ChatPetAuctionItemListResp {
     private Date bidTime;
     private Float bidPrice;
     private Date dealTime;
+    private Float dealPrice;
     private Boolean isWinner;
 
+    public Float getDealPrice() {
+        return dealPrice;
+    }
+
+    public void setDealPrice(Float dealPrice) {
+        this.dealPrice = dealPrice;
+    }
 
     public Integer getId() {
         return id;

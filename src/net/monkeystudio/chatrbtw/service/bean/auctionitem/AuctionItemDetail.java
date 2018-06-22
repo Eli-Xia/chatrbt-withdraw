@@ -16,6 +16,7 @@ public class AuctionItemDetail {
     private Integer auctionType;
     private Integer chatPetType;
     private String auctionItemPic;
+    private Integer participantNumber;
 
     private AuctionResultInfo auctionResultInfo;
 
@@ -82,5 +83,13 @@ public class AuctionItemDetail {
 
     public void setAuctionResultInfo(AuctionResultInfo auctionResultInfo) {
         this.auctionResultInfo = auctionResultInfo;
+    }
+
+    public Integer getParticipantNumber() {
+        return participantNumber;
+    }
+
+    public void setParticipantNumber(Integer participantNumber) {
+        this.participantNumber = participantNumber;
     }
 }
