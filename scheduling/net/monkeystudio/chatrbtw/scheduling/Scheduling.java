@@ -1,3 +1,4 @@
+/*
 package net.monkeystudio.chatrbtw.scheduling;
 
 import net.monkeystudio.base.utils.Log;
@@ -8,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+*/
 /**
  * Created by bint on 09/01/2018.
- */
+ *//*
+
 @Component
 public class Scheduling {
 
@@ -33,9 +36,11 @@ public class Scheduling {
     @Autowired
     private ChatPetRewardService chatPetRewardService;
 
-    /**
+    */
+/**
      * 删除无效的机器人
-     */
+     *//*
+
     @Scheduled(cron="0 0 2 * * ?") //当日2点
     public void deleteRobotInfo(){
     	opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_INVALID_ROBOT, "删除无效机器人任务启动。");
@@ -43,9 +48,11 @@ public class Scheduling {
     }
 
 
-    /**
+    */
+/**
      * 重置当日族群接入个数
-     */
+     *//*
+
     @Scheduled(cron="0 0 0 * * ?") //当日晚上12点重置族群接入个数
     public void resetDailyRestrictions(){
         opLogService.systemOper(AppConstants.OP_LOG_TAG_S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS, "重置当日族群接入个数限制");
@@ -53,15 +60,19 @@ public class Scheduling {
     }
 
 
-    /*@Scheduled(cron="* 0/30 * * * ? ") //间隔30分钟执行
+    */
+/*@Scheduled(cron="* 0/30 * * * ? ") //间隔30分钟执行
     public void checkNeedToSendMessageHandle(){
         pushMessage.checkNeedToSendMessageHandle();
 
-    }*/
+    }*//*
 
-    /**
+
+    */
+/**
      * sql心跳
-     */
+     *//*
+
     @Scheduled(cron="0/50 * * * * ? ") //间隔50秒执行  
     public void sqlHeartBeat(){
         Log.d("Sql heartbeat, period 50 seconds.");
@@ -83,3 +94,4 @@ public class Scheduling {
         chatPetRewardService.expireAward();
     }
 }
+*/

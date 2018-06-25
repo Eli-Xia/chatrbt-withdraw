@@ -31,7 +31,7 @@ public class SqlHeartBeatService {
                 while(true){
                     List<String> list = redisCacheTemplate.brpop(0,HEART_BEAT_MESSAGE_KEY);
                     String msg = list.get(1);
-                    Log.i("receive the message [?]",msg);
+                    Log.d("receive the message [?]",msg);
                     globalConfigMapper.selectTest();
                 }
             }
