@@ -210,4 +210,50 @@ public class AuctionItemController extends BaseController{
 
         return respHelper.ok();
     }
+
+
+    /**
+     * 手动转换竞拍品状态
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/transform-state", method = RequestMethod.POST)
+    public RespBase transformState(@RequestParam Integer id){
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        AuctionItem auctionItem = auctionItemService.getById(id);
+
+        Integer state = auctionItem.getState();
+
+        if(state.intValue() == AuctionItemService.HAVE_FINISHED.intValue() || state.intValue() == AuctionItemService.UNCLAIMED.intValue()){
+            return respHelper.failed("该活动已经结束或者流拍");
+        }
+
+        Date currentTime = new Date();
+
+        //如果活动还没有开始，而且开始时间没有到，则返回
+        if(state.intValue() == AuctionItemService.HAS_NOT_STARTED){
+            Date startTime = auctionItem.getStartTime();
+            if(currentTime.compareTo(startTime) < 0){
+                return respHelper.failed("开始时间未到");
+            }
+        }
+
+        if(state.intValue() == AuctionItemService.PROCESSING){
+            Date endTime = auctionItem.getEndTime();
+            if(currentTime.compareTo(endTime) < 0){
+                return respHelper.failed("还没到结束时间");
+            }
+        }
+
+        auctionItemService.transformState(id);
+
+        return respHelper.ok();
+    }
 }

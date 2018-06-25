@@ -56,7 +56,7 @@ public class AuctionItemService {
     public final static Integer HAS_NOT_STARTED = 0; //未开始
     public final static Integer PROCESSING = 1;      //进行中
     public final static Integer HAVE_FINISHED = 2;   //已完成
-    private final static Integer UNCLAIMED = 3;       //流拍
+    public final static Integer UNCLAIMED = 3;       //流拍
 
     //发货状态
     public final static Integer HAS_NOT_SHIP = 0;//未发货
@@ -79,7 +79,6 @@ public class AuctionItemService {
         }
 
         for(AuctionItem auctionItem : auctionItemList){
-
             this.setFixedScheduling(auctionItem);
         }
 
@@ -130,7 +129,6 @@ public class AuctionItemService {
         Runnable runnable = null;
         if(auctionItem.getState().intValue() == PROCESSING.intValue()){
             runnable = new Runnable() {
-
                 @Override
                 public void run() {
                     processing2haveFinished(auctionItemId);
@@ -139,26 +137,12 @@ public class AuctionItemService {
             return runnable;
         }
 
-
         //如果本来是未开始的，时间到了，修改状态为进行中
         if(auctionItem.getState().intValue() == HAS_NOT_STARTED.intValue()){
             runnable = new Runnable() {
                 @Override
                 public void run() {
-
-                    Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
-
-                    Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
-
-                    //如果已经处理，则返回
-                    if(result == null || result.intValue() == 0){
-                        return ;
-                    }
-
-                    AuctionItem auctionItemFrom = getById(auctionItemId);
-                    //设定一个线程定时任务
-                    setFixedScheduling(auctionItemFrom);
-
+                    notStarted2processing(auctionItemId);
                 }
             };
 
@@ -167,6 +151,25 @@ public class AuctionItemService {
 
 
         return null;
+    }
+
+    /**
+     * 把竞拍产品从未开始转为进行中
+     * @param auctionItemId
+     */
+    private void notStarted2processing(Integer auctionItemId){
+        Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
+
+        Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
+
+        //如果已经处理，则返回
+        if(result == null || result.intValue() == 0){
+            return ;
+        }
+
+        AuctionItem auctionItemFrom = getById(auctionItemId);
+        //设定一个线程定时任务
+        setFixedScheduling(auctionItemFrom);
     }
 
     /**
@@ -508,7 +511,7 @@ public class AuctionItemService {
             String wxFanOpenId = wxFan.getWxFanOpenId();
             wxCustomerHelper.sendTextMessage(wxFanOpenId ,content ,accessToken);
         } catch (BizException e) {
-            e.printStackTrace();
+            Log.e(e);
         }
     }
 
@@ -520,4 +523,18 @@ public class AuctionItemService {
     public Integer deleteById(Integer id){
         return auctionItemMapper.delete(id);
     }
+
+
+    public void transformState(Integer auctionItemId){
+        AuctionItem auctionItem = this.getById(auctionItemId);
+
+        if(auctionItem.getState().intValue() == HAS_NOT_STARTED.intValue()){
+            notStarted2processing(auctionItemId);
+        }
+
+        if(auctionItem.getState().intValue() == PROCESSING.intValue()){
+            processing2haveFinished(auctionItemId);
+        }
+    }
+
 }
