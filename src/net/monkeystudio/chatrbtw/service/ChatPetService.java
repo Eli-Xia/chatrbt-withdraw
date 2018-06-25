@@ -11,6 +11,7 @@ import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
@@ -88,6 +89,9 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetTypeService chatPetTypeService;
+
+    @Autowired
+    private WxFanHelper wxFanHelper;
 
     /**
      * 生成宠物
