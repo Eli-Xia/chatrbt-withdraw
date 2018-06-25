@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.AuctionRecordMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.AuctionRecord">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
+        <result column="bid_time" property="bidTime" jdbcType="TIMESTAMP" />
+        <result column="auction_item_id" property="auctionItemId" jdbcType="INTEGER" />
+        <result column="price" property="price" jdbcType="REAL" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, wx_fan_id, price, bid_time, auction_item_id
+    </sql>
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.AuctionItem" >
+        insert into  e_auction_record (wx_fan_id, price, bid_time, auction_item_id)
+        values (
+            #{wxFanId},
+            #{price},
+            #{bidTime},
+            #{auctionItemId}
+        );
+    </insert>
+
+
+    <select id="selectByAuctionItemId" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_auction_record
+        where
+            auction_item_id = #{auctionItemId}
+        order by
+            `price` desc ,`bid_time` asc
+        limit 1
+    </select>
+
+
+    <select id="countParticipant" resultType="java.lang.Integer">
+
+        select
+            count(w.wx_fan_id)
+        from
+            (select wx_fan_id from e_auction_record where auction_item_id = #{auctionItemId} GROUP by wx_fan_id) as w ;
+    </select>
+
+    <select id="selectMaxByWxFanId" resultType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_auction_record
+        where
+            auction_item_id = #{auctionItemId}
+        and
+            wx_fan_id = #{wxFanId}
+        order by
+        `price` desc ,`bid_time` asc
+        limit 1
+    </select>
+
+
+    <select id="selectListByAuctionItemId" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_auction_record
+        where
+            auction_item_id = #{auctionItemId}
+        order by
+            `price` desc ,`bid_time` asc
+        limit #{count}
+    </select>
+
+</mapper>
