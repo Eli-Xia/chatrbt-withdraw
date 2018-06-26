@@ -730,6 +730,27 @@ public class ChatPetService {
     }
 
     /**
+     * 宠物暗拍url
+     * @param wxPubId
+     * @return
+     */
+    public String getChatPetAuctionUrl(Integer wxPubId){
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
+
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
+        }
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.equals(chatPetType)){
+            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
+        }
+
+        return null;
+    }
+
+    /**
      * 宠物主页带锚点
      * @param wxPubId
      * @param anchor
@@ -745,6 +766,7 @@ public class ChatPetService {
 
         return chatPetPageUrl + anchorVar;
     }
+
 
     /**
      * 获取宠物对应的html的url
