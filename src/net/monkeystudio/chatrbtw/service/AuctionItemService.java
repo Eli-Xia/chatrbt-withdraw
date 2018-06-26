@@ -52,6 +52,9 @@ public class AuctionItemService {
     @Autowired
     private WxAuthApiService wxAuthApiService;
 
+    @Autowired
+    private ChatPetTypeConfigService chatPetTypeConfigService;
+
     //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
     public final static Integer PROCESSING = 1;      //进行中
@@ -90,7 +93,6 @@ public class AuctionItemService {
      */
     private void setFixedScheduling(AuctionItem auctionItem ){
         Runnable runnable = this.createRunnable(auctionItem);
-
 
         Integer state = auctionItem.getState();
 
@@ -210,6 +212,10 @@ public class AuctionItemService {
                 chatPetService.decreaseCoin(chatPetId , priceFloat);
                 hasOwner = true;
 
+                //减少的金币放到改种宠物的池子中
+                AuctionItem auctionItem = this.getById(auctionItemId);
+                chatPetTypeConfigService.increaseCoin(auctionItem.getChatPetType(), priceFloat);
+
                 //发送中标提示
                 this.sentRemindMsg(wxFanId);
 
@@ -226,22 +232,6 @@ public class AuctionItemService {
             return ;
         }
     }
-
-    /*public void test(Integer auctionItemId){
-        Log.i("It is time to perform translate status to PROCESSING from HAS_NOT_STARTED" );
-
-        Integer result = translateStatus(auctionItemId , HAS_NOT_STARTED , PROCESSING , null);
-
-        //如果已经处理，则返回
-        if(result == null || result.intValue() == 0){
-            return ;
-        }
-
-
-        AuctionItem auctionItemFrom = getById(auctionItemId);
-        //设定一个线程定时任务
-        setFixedScheduling(auctionItemFrom);
-    }*/
 
     private Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
@@ -362,6 +352,10 @@ public class AuctionItemService {
         return chatPetAuctionItemResp;
     }
 
+    /**
+     * 新增竞拍品
+     * @param addAuctionItem
+     */
     public void add(AddAuctionItem addAuctionItem){
 
         AuctionItem auctionItem = BeanUtils.copyBean(addAuctionItem, AuctionItem.class);
