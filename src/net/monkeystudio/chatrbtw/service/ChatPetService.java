@@ -730,24 +730,13 @@ public class ChatPetService {
     }
 
     /**
-     * 宠物暗拍url
-     * @param wxPubId
+     * 宠物其他页面url
      * @return
      */
-    public String getChatPetAuctionUrl(Integer wxPubId){
-        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
-        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
-
+    public String getHomePageRedirectUrl(String homePageRedirectUri){
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
-            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
-        }
-
-        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.equals(chatPetType)){
-            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
-        }
-
-        return null;
+        //例如:https://www.keendo.com.cn/static/chat-pet/#/activity?id=253  homePageRedirectUri为 "/static/chat-pet/#/activity?id=253"
+        return "https://" + domain + homePageRedirectUri;
     }
 
     /**

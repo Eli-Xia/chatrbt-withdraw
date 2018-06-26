@@ -31,9 +31,6 @@ public class ChatPetController extends ChatPetBaseController{
     @Autowired
     private RespHelper respHelper;
 
-    //魔宠拍卖中心类型页面参数
-    private final static Integer CHAT_PET_ACTIVITY_PAGE_ARG = 1;
-
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
@@ -85,7 +82,7 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, @RequestParam(value = "type",required = false)Integer type,HttpServletResponse response,HttpServletRequest request) throws Exception {
+    public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, @RequestParam(value = "redirectUri",required = false)String redirectUri,HttpServletResponse response,HttpServletRequest request) throws Exception {
         try {
             Integer userId = getUserId();
 
@@ -107,10 +104,12 @@ public class ChatPetController extends ChatPetBaseController{
 
                     chatPetService.dataPrepared(userId,wxPubId);
 
-                    if(CHAT_PET_ACTIVITY_PAGE_ARG.equals(type)){
-                        response.sendRedirect(chatPetService.getChatPetAuctionUrl(wxPubId));//跳转拍卖中心
-                    }else{
+                    if(redirectUri == null){
+
                         response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId,anchor));//跳转我的魔宠
+                    }else{
+
+                        response.sendRedirect(chatPetService.getHomePageRedirectUrl(redirectUri));//跳转其他页面
                     }
 
                 }else{
