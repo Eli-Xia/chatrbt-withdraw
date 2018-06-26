@@ -11,6 +11,7 @@ import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
@@ -88,6 +89,9 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetTypeService chatPetTypeService;
+
+    @Autowired
+    private WxFanHelper wxFanHelper;
 
     /**
      * 生成宠物
@@ -637,7 +641,7 @@ public class ChatPetService {
      * 通过code获取access_token及openid
      * @return
      */
-    private WxOauthAccessToken getOauthAccessTokenResponse(String code,String wxPubAppId) throws BizException{
+        private WxOauthAccessToken getOauthAccessTokenResponse(String code,String wxPubAppId) throws BizException{
 
         String fetchAccessTokenUrl = wxOauthService.getAccessTokenUrl(code,wxPubAppId);
         String response = HttpsHelper.get(fetchAccessTokenUrl);
@@ -645,6 +649,8 @@ public class ChatPetService {
         if(response == null || response.indexOf("errorcode") != -1){
             return null;
         }
+
+        Log.d("================= 网页授权response = {?} ===================",response);
 
         WxOauthAccessToken wxOauthAccessToken = JsonUtil.readValue(response, WxOauthAccessToken.class);
 
@@ -724,6 +730,27 @@ public class ChatPetService {
     }
 
     /**
+     * 宠物暗拍url
+     * @param wxPubId
+     * @return
+     */
+    public String getChatPetAuctionUrl(Integer wxPubId){
+        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
+        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
+
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
+        }
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.equals(chatPetType)){
+            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
+        }
+
+        return null;
+    }
+
+    /**
      * 宠物主页带锚点
      * @param wxPubId
      * @param anchor
@@ -739,6 +766,7 @@ public class ChatPetService {
 
         return chatPetPageUrl + anchorVar;
     }
+
 
     /**
      * 获取宠物对应的html的url
