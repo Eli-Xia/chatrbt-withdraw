@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +35,8 @@ import java.util.List;
  */
 @Service
 public class ChatPetService {
+
+    public final static String DEFAULT_PAGE_URI = "home";
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
@@ -730,11 +734,15 @@ public class ChatPetService {
      * 宠物其他页面url
      * @return
      */
-    public String getHomePageRedirectUrl(String homePageRedirectUri)throws Exception{
-        homePageRedirectUri = Base64EncodingUtil.decryptBASE64(homePageRedirectUri);
+    public String getPageRedirectUrlByUrlEncoder(String pageRedirectUri)throws Exception{
+        String decodeUri = URLDecoder.decode(pageRedirectUri,"utf-8");
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        //例如:https://www.keendo.com.cn/static/chat-pet/#/activity?id=253  homePageRedirectUri为 "/static/chat-pet/#/activity?id=253"
-        return "https://" + domain + homePageRedirectUri;
+        return "https://" + domain + decodeUri;
+    }
+
+    public String getPageRedirectUrl(String pageRedirectUri) {
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
+        return "https://" + domain + pageRedirectUri;
     }
 
     /**
@@ -777,9 +785,12 @@ public class ChatPetService {
         return null;
     }
 
-    public String getWxOauthUrl(Integer wxPubId){
+    public String getWxOauthUrl(Integer wxPubId,String pageUri) throws Exception{
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String url = "https://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
+        if(StringUtil.isEmpty(pageUri)){
+            pageUri = DEFAULT_PAGE_URI;
+        }
+        String url = "https://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId + "&pageUri=" + URLEncoder.encode(pageUri,"utf-8");
         return url;
     }
 
@@ -817,7 +828,12 @@ public class ChatPetService {
         chatPetMapper.increaseExperience(chatPetId,experience);
     }
 
-
+    public static void main(String[]args)throws Exception{
+        String str = "/static/chat-pet/#/activity?id=253";
+        String ret = URLEncoder.encode(str, "utf-8");
+        System.out.println(ret);
+        System.out.println(1);
+    }
 
     /**
      * 获得宠物的经验
