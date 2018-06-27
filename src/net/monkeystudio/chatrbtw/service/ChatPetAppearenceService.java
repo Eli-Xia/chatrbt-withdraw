@@ -9,7 +9,6 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RandomUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceMaterial;
 import net.monkeystudio.chatrbtw.entity.ChatPetAppearenceSite;
-import net.monkeystudio.chatrbtw.entity.GlobalConfig;
 import net.monkeystudio.chatrbtw.entity.RChatPetAppearenceSiteColor;
 import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceMaterialMapper;
 import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceSiteMapper;
@@ -54,18 +53,48 @@ public class ChatPetAppearenceService {
 
     @PostConstruct
     public void init(){
-        Long count = this.countAppearenceCodeInPool();
-        if(count.longValue() < CODE_PERMANENT_COUNT){
-            Long change = CODE_PERMANENT_COUNT.longValue() - count.longValue();
-            this.generateChatPetAppearence(change.intValue());
+
+        Long zombiesCatCount = this.countAppearenceCodeInPool(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
+        if(zombiesCatCount.longValue() < CODE_PERMANENT_COUNT){
+            Long change = CODE_PERMANENT_COUNT.longValue() - zombiesCatCount.longValue();
+            this.generateChatPetAppearence(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT ,change.intValue());
         }
+
+        Long luckyCatCount = this.countAppearenceCodeInPool(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+        if(luckyCatCount.longValue() < CODE_PERMANENT_COUNT){
+            Long change = CODE_PERMANENT_COUNT.longValue() - luckyCatCount.longValue();
+            this.generateChatPetAppearence(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT ,change.intValue());
+        }
+    }
+
+
+    /**
+     *
+     * @param chatPetType
+     * @return
+     */
+    public String getAppearanceCodeFromPool(Integer chatPetType){
+        String key = this.getAppearenceCodePoolKey(chatPetType);
+
+        if(key == null){
+            return null;
+        }
+
+        String appearenceCode = redisCacheTemplate.lpop(key);
+
+        Long count = this.countAppearenceCodeInPool(chatPetType);
+        if(count.longValue() < CODE_PERMANENT_COUNT){
+            this.generateChatPetAppearence(chatPetType,SUPPLEMENTS_CONT_EACH_TIME);
+        }
+
+        return appearenceCode;
     }
 
     /**
      * 从外观池取出
      * @return
      */
-    public String getZombiesCatAppearanceCodeFromPool(){
+    /*public String getZombiesCatAppearanceCodeFromPool(){
         String key = this.getAppearenceCodePoolKey();
 
         String appearenceCode = redisCacheTemplate.lpop(key);
@@ -76,23 +105,37 @@ public class ChatPetAppearenceService {
         }
 
         return appearenceCode;
+    }*/
+
+    private String getAppearenceCodePoolKey(Integer chatPetType){
+
+        if(chatPetType.intValue() == ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT){
+            return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:zombies-cat-appearence-code:pool";
+        }
+
+        if(chatPetType.intValue() == ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT){
+            return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:lucky-cat-appearence-code:pool";
+        }
+
+        Log.e("the chatPetType is not supported ,chatPetType :" + chatPetType);
+        return null;
     }
 
-    private String getAppearenceCodePoolKey(){
-        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "chat-pet:zombies-cat-appearence-code:pool";
-        return key;
-    }
+    private List<String> getAllAppearenceCodeFromPool(Integer chatPetType){
 
-    private List<String> getAllAppearenceCodeFromPool(){
-        String key = this.getAppearenceCodePoolKey();
+        String key = this.getAppearenceCodePoolKey(chatPetType);
 
         return redisCacheTemplate.lrange(key, 0L, -1L);
     }
 
-
-    private void generateChatPetAppearence(Integer count){
+    /**
+     * 批量生成外观
+     * @param chatPetType
+     * @param count
+     */
+    private void generateChatPetAppearence(Integer chatPetType,Integer count){
         while (count.intValue() > 0){
-            this.generateChatPetAppearence();
+            this.generateAChatPetAppearence(chatPetType);
             count--;
         }
     }
@@ -100,30 +143,33 @@ public class ChatPetAppearenceService {
     /**
      * 生成一个宠物外观放入外观池
      */
-    private void generateChatPetAppearence(){
+    private void generateAChatPetAppearence(Integer chatPetType){
 
         Boolean flag = false;
         String appearanceCode = null;
         while (!flag){
-            appearanceCode = this.randomToalAppearence(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
-            if(!this.appearenceIsExist(null,appearanceCode)){
+            appearanceCode = this.randomToalAppearence(chatPetType);
+            if(!this.appearenceIsExist(chatPetType,appearanceCode)){
                 flag = true;
             }
         }
-        this.pushAppearence(appearanceCode);
+        this.pushAppearence(chatPetType , appearanceCode);
     }
 
 
-    private void pushAppearence(String appearenceCode){
-        String key = this.getAppearenceCodePoolKey();
+    private void pushAppearence(Integer chatPetType, String appearenceCode){
+        String key = this.getAppearenceCodePoolKey(chatPetType);
         redisCacheTemplate.rpush(key, appearenceCode);
     }
 
+
+
     /**
      * 随机生成一个外观
+     * @param chatPetType 宠物类型
      * @return
      */
-    private String randomToalAppearence(Integer chatPetType ){
+    private String randomToalAppearence(Integer chatPetType){
 
         List<ChatPetAppearenceSite> chatPetAppearenceSiteList = this.getChatPetAppearenceSite(chatPetType);
 
@@ -132,16 +178,6 @@ public class ChatPetAppearenceService {
             Integer site = chatPetAppearenceSite.getSite();
             String siteKey = this.randomSite(chatPetType,site);
             stringBuilder.append(siteKey);
-
-            //颜色的处理
-            /*List<RChatPetAppearenceSiteColor> siteColorList = this.getSiteColorBySite(chatPetType,site);
-            if(siteColorList == null || siteColorList.size() == 0){
-                stringBuilder.append(ChatPetColorService.NONE_COLOR_KEY);
-            }else {
-                RChatPetAppearenceSiteColor rChatPetAppearenceSiteColor = RandomUtil.randomPick(siteColorList);
-
-                stringBuilder.append(rChatPetAppearenceSiteColor.getColorKey());
-            }*/
         }
         return stringBuilder.toString();
     }
@@ -181,13 +217,13 @@ public class ChatPetAppearenceService {
      */
     private Boolean appearenceIsExist (Integer chatPetType ,String appearenceCode){
 
-        Integer count = chatPetMapper.countByAppearceCode(appearenceCode);
+        Integer count = chatPetMapper.countByAppearceCode(chatPetType, appearenceCode);
 
         if(count.intValue() != 0){
             return true;
         }
 
-        List<String> all = this.getAllAppearenceCodeFromPool();
+        List<String> all = this.getAllAppearenceCodeFromPool(chatPetType);
 
         for(String string : all){
             if(appearenceCode.equals(string)){
@@ -236,9 +272,9 @@ public class ChatPetAppearenceService {
      * 获得外观池的个数
      * @return
      */
-    private Long countAppearenceCodeInPool(){
+    private Long countAppearenceCodeInPool(Integer chatPetType){
 
-        String key = this.getAppearenceCodePoolKey();
+        String key = this.getAppearenceCodePoolKey(chatPetType);
 
         Long count = redisCacheTemplate.llen(key);
 
@@ -250,12 +286,23 @@ public class ChatPetAppearenceService {
      * @param code
      * @return
      */
-    public ZombiesCatAppearance getZombiesCatAppearence(String code){
+    /*public ZombiesCatAppearance getZombiesCatAppearence(String code){
         ZombiesCatAppearance zombiesCatAppearance = this.getAppearance(code, ZombiesCatAppearance.class);
         return zombiesCatAppearance;
-    }
+    }*/
 
-    private <T> T getAppearance(String code ,Class<T> clazz){
+
+    /*private<T> T getAppearance(String code ,Class<T> clazz){
+            ZombiesCatAppearance zombiesCatAppearance = this.getAppearance(code, clazz);
+            return (T) zombiesCatAppearance;
+        }
+
+        if(chatPetType.intValue() == ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.intValue()){
+
+        }
+    }*/
+
+    public  <T> T getAppearance(String code ,Class<T> clazz){
         T newInstance = null;
         try {
             newInstance = (T)clazz.newInstance();

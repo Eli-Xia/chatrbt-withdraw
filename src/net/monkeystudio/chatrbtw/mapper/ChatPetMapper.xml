@@ -104,6 +104,8 @@
             e_chat_pet
         where
             appearance_code = #{appearenceCode}
+        and
+            chat_pet_type = #{chatPetType};
     </select>
     
     <select id="selectExperienceRankList" resultMap="baseResultMap">

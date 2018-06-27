@@ -14,6 +14,7 @@ import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
@@ -108,7 +109,7 @@ public class ChatPetService {
 
         //如果是魔鬼猫
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.intValue() == chatPetType.intValue()){
-            String appearanceCode = chatPetAppearenceService.getZombiesCatAppearanceCodeFromPool();
+            String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
             chatPet.setAppearanceCode(appearanceCode);
         }
 
@@ -231,7 +232,6 @@ public class ChatPetService {
 
         //宠物的经验
         Float experience = chatPet.getExperience();
-
         chatPetBaseInfo.setExperience(experience);
 
         //经验条进度
@@ -265,14 +265,13 @@ public class ChatPetService {
         //如果是魔鬼猫
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.intValue() == chatPetType.intValue()){
             String appearanceCode = chatPet.getAppearanceCode();
-            ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getZombiesCatAppearence(appearanceCode);
+            ZombiesCatAppearance zombiesCatAppearance = chatPetAppearenceService.getAppearance(appearanceCode , ZombiesCatAppearance.class);
 
             Appearance appearance = new Appearance();
             appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT);
             appearance.setObject(zombiesCatAppearance);
             chatPetBaseInfo.setAppearance(appearance);
         }
-
 
         //如果是以太猫
         if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.intValue() == chatPetType.intValue()){
@@ -283,6 +282,17 @@ public class ChatPetService {
             String appearanceUrl = cryptoKitties.getUrl();
             appearance.setObject(appearanceUrl);
 
+            chatPetBaseInfo.setAppearance(appearance);
+        }
+
+        //如果是招财猫
+        if(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.intValue() == chatPetType.intValue()){
+            String appearanceCode = chatPet.getAppearanceCode();
+            LuckyCatAppearance luckyCatAppearance = chatPetAppearenceService.getAppearance(appearanceCode , LuckyCatAppearance.class);
+
+            Appearance appearance = new Appearance();
+            appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+            appearance.setObject(luckyCatAppearance);
             chatPetBaseInfo.setAppearance(appearance);
         }
 
@@ -889,7 +899,6 @@ public class ChatPetService {
         return chatPetExperinceRank;
     }
 
-    //private getExperienceRank
 
     private List<ChatPetExperinceRankItem> getChatPetExperienceRank(Integer chatPetId,Integer pageSize){
         //经验排行下宠物列表
