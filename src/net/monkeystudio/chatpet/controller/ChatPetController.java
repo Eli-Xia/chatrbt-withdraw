@@ -47,6 +47,7 @@ public class ChatPetController extends ChatPetBaseController{
     }
 
 
+
     /**
      * 当用户禁止授权的时候,只会传state值过来.
      * * @param request
@@ -81,6 +82,14 @@ public class ChatPetController extends ChatPetBaseController{
     }
 
 
+    /**
+     *
+     * @param wxPubId       公众号id
+     * @param anchor        锚点
+     * @param redirectUri  未登录页面重定向uribase64
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, @RequestParam(value = "redirectUri",required = false)String redirectUri,HttpServletResponse response,HttpServletRequest request) throws Exception {
         Log.d("====================== wxPubId = [?] , redirectUri = [?] ==============",wxPubId.toString(),redirectUri);
@@ -128,11 +137,27 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     /**
-     * 测试接口
+     * 登出接口
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @ResponseBody
+    public RespBase login(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
+        if(!wxFanId.startsWith("keendo")){
+            return respHelper.failed("fail");
+        }
+        int i = wxFanId.lastIndexOf(".");
+        String wxFanIdStr = wxFanId.substring(i + 1);
+        int id = Integer.parseInt(wxFanIdStr);
+        saveSessionUserId(null);
+        return respHelper.ok();
+    }
+
+    /**
+     * 登录接口
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ResponseBody
-    public RespBase login(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
+    public RespBase logout(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
         if(!wxFanId.startsWith("keendo")){
             return respHelper.failed("fail");
         }

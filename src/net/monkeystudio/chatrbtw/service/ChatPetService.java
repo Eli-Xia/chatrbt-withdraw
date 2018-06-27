@@ -4,10 +4,7 @@ import com.google.zxing.WriterException;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.base.utils.HttpsHelper;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.StringUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -733,7 +730,8 @@ public class ChatPetService {
      * 宠物其他页面url
      * @return
      */
-    public String getHomePageRedirectUrl(String homePageRedirectUri){
+    public String getHomePageRedirectUrl(String homePageRedirectUri)throws Exception{
+        homePageRedirectUri = Base64EncodingUtil.decryptBASE64(homePageRedirectUri);
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
         //例如:https://www.keendo.com.cn/static/chat-pet/#/activity?id=253  homePageRedirectUri为 "/static/chat-pet/#/activity?id=253"
         return "https://" + domain + homePageRedirectUri;
