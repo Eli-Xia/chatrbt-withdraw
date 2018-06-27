@@ -83,6 +83,7 @@ public class ChatPetController extends ChatPetBaseController{
 
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
     public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, @RequestParam(value = "redirectUri",required = false)String redirectUri,HttpServletResponse response,HttpServletRequest request) throws Exception {
+        Log.d("====================== wxPubId = [?] , redirectUri = [?] ==============",wxPubId.toString(),redirectUri);
         try {
             Integer userId = getUserId();
 
