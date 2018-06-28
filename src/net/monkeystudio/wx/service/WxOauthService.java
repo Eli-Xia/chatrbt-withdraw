@@ -24,7 +24,8 @@ public class WxOauthService {
     @Autowired
     private WxPubService wxPubService;
 
-    private static final String OAUTH_CODE_URL_SCOPE = "snsapi_userinfo";
+    //private static final String OAUTH_CODE_URL_SCOPE = "snsapi_userinfo";
+    private static final String OAUTH_CODE_URL_SCOPE = "snsapi_base";
     public static final String OAUTH_CODE_URL_STATE = "KEENdo";
     private static final String FETCH_OAUTH_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s&component_appid=%s#wechat_redirect";
     private static final String FETCH_OAUTH_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&code=%s&grant_type=authorization_code&component_appid=%s&component_access_token=%s";
@@ -41,7 +42,8 @@ public class WxOauthService {
     }
 
 
-    private String getRequestCodeUrl(String redirectUrl,Integer wxPubId) throws Exception {
+    private String getRequestCodeUrl(String redirectUrl,Integer wxPubId,String pageUri) throws Exception {
+        Log.d(" ================== wxoauth step one pageUri = {?} ============",pageUri);
 
         WxPub wxPub = wxPubService.getWxPubById(wxPubId);
 
@@ -50,7 +52,7 @@ public class WxOauthService {
         String componentAppid = cfgService.get(GlobalConfigConstants.COMPONENT_APP_ID_KEY);
 
         return String.format(FETCH_OAUTH_CODE_URL,
-                wxPubAppId, URLEncoder.encode(redirectUrl,"UTF-8"), OAUTH_CODE_URL_SCOPE,OAUTH_CODE_URL_STATE,componentAppid);
+                wxPubAppId, URLEncoder.encode(redirectUrl,"UTF-8"), OAUTH_CODE_URL_SCOPE,URLEncoder.encode(pageUri,"utf-8"),componentAppid);
     }
 
     /**
@@ -59,9 +61,9 @@ public class WxOauthService {
      * @return
      * @throws Exception
      */
-    public String getRequestCodeUrl(Integer wxPubId) throws  Exception{
+    public String getRequestCodeUrl(Integer wxPubId,String pageUri) throws  Exception{
         String redirectUrl = this.createWxOauthRedirectUrl();
-        return this.getRequestCodeUrl(redirectUrl,wxPubId);
+        return this.getRequestCodeUrl(redirectUrl,wxPubId,pageUri);
     }
 
     public void handleCode(String code,String wxPubAppId) throws BizException {
@@ -69,12 +71,12 @@ public class WxOauthService {
         String response = HttpsHelper.get(fetchAccessTokenUrl);
         String access_token = JsonHelper.getStringFromJson(response,"access_token");
         String fansOpenId = JsonHelper.getStringFromJson(response,"openid");
-        Log.d("================通过code获取accessToken结果  access_token = {?}  , openId = {?} =====================");
+        Log.d("================get accessToken response by code :  access_token = {?}  , openId = {?} =====================");
         String fetchFansInfoUrl = this.getFansInfoUrl(access_token,fansOpenId);
         String info = HttpsHelper.get(fetchFansInfoUrl);
         String openid2 = JsonHelper.getStringFromJson(info,"openid");
         String nickname = JsonHelper.getStringFromJson(info,"nickname");
-        Log.d("=================成功获取用户信息 openid = {?} , nickname = {?}==============",openid2,nickname);
+        Log.d("=================get user info : openid = {?} , nickname = {?}==============",openid2,nickname);
 
     }
 

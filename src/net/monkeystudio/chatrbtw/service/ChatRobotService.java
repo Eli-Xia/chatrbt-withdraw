@@ -1,6 +1,10 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.BeanUtils;
+import net.monkeystudio.base.utils.ListUtil;
+import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.ChatRobotBaseInfo;
 import net.monkeystudio.chatrbtw.entity.RRobotCharacter;
 import net.monkeystudio.chatrbtw.entity.WxPub;
@@ -30,6 +34,16 @@ public class ChatRobotService {
 
     @Autowired
     private WxPubService wxPubService;
+
+    @Autowired
+    private OpLogService opLogService;
+
+
+    @Autowired
+    private RedisCacheTemplate redisCacheTemplate;
+
+    //删除无效机器人定时任务队列key
+    private final static String DELETE_ROBOT_MESSAGE_KEY = "delete_robot_task";
 
     //机器人性别
     private final Integer CHAT_BOT_GENDER_EMPTY = 0;
@@ -221,7 +235,7 @@ public class ChatRobotService {
      * @return
      */
     @Transactional
-    private void deleteRobot(Integer chatRobotBaseInfoId ){
+    public void deleteRobot(Integer chatRobotBaseInfoId ){
         //删除机器人基本信息
         chatRobotBaseInfoMapper.deleteById(chatRobotBaseInfoId);
         //删除机器人和性格的对应关系
@@ -247,4 +261,26 @@ public class ChatRobotService {
         return this.updateChatRobotBaseInfo(chatRobotBaseInfo);
     }
 
+    /**
+     * 定时器任务:
+     * 删除无效机器人
+     */
+    public void deleteRobotInfoTask(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    List<String> list = redisCacheTemplate.brpop(0,DELETE_ROBOT_MESSAGE_KEY);
+                    String msg = list.get(1);
+                    Log.i("receive the message [?]",msg);
+                    opLogService.systemOper(AppConstants.OP_LOG_TAG_S_DELETE_INVALID_ROBOT, "删除无效机器人任务启动");
+                    deleteInvalidRobot();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("deleteRobotInfoTask");
+        thread.start();
+        Log.d("finished task");
+    }
 }

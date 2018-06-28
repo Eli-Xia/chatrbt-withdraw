@@ -136,7 +136,8 @@
 	<aop:config>
 		<aop:aspect id="myOpenApiAspect" ref="RestControllerAspectBean">
 			<aop:pointcut id="openApiPointCut"
-						  expression="execution(public net.monkeystudio.base.controller.bean.RespBase net.monkeystudio..controller..*.*(..)) "/>
+						  expression="execution(public net.monkeystudio.base.controller.bean.RespBase net.monkeystudio..controller..*.*(..))"/>
+
 			<aop:around pointcut-ref="openApiPointCut" method="apiWrap"/>
 		</aop:aspect>
 
