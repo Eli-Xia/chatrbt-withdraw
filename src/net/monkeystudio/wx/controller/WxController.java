@@ -123,8 +123,9 @@ public class WxController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/oauth/redirect", method = RequestMethod.GET)
-    public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("id")Integer wxPubId) throws Exception{
-	    String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubId);
+    public ModelAndView oauth(HttpServletRequest request, HttpServletResponse response,@RequestParam("id")Integer wxPubId,@RequestParam("pageUri")String pageUri) throws Exception{
+		Log.d(" ===================== 网页授权第一步 pageUri = {?} ===============",pageUri);
+	    String redirectUrl = wxOauthService.getRequestCodeUrl(wxPubId,pageUri);
 
 	    response.sendRedirect(redirectUrl);
 

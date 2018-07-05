@@ -9,7 +9,9 @@
         <result column="news_description" property="newsDescription" jdbcType="VARCHAR" />
         <result column="founder_name" property="founderName" jdbcType="VARCHAR" />
         <result column="coin_name" property="coinName" jdbcType="VARCHAR" />
+        <result column="coin" property="coin" jdbcType="REAL" />
     </resultMap>
+
     <sql id="Base_Column_List" >
         id, chat_pet_type, news_cover_url, news_title, news_description, founder_name,coin_name
     </sql>
@@ -22,5 +24,15 @@
         where
             chat_pet_type = #{chatPetType}
     </select>
+    
+
+
+    <update id="increaseCoin" parameterType="map">
+        update
+            e_chat_pet_type_config
+        set coin = IFNULL(coin,0) + #{coin}
+        where
+            chat_pet_type = #{chatPetTypeId}
+    </update>
 
 </mapper>

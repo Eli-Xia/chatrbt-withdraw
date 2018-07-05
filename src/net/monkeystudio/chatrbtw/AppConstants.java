@@ -41,6 +41,7 @@ public class AppConstants {
 	public final static String OP_LOG_TAG_S_DELETE_INVALID_ROBOT = "S_DEL_INV_ROBOT";
 	public final static String OP_LOG_TAG_S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS = "S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS";
 	public final static String OP_LOG_TAG_S_GENERATE_LEVEL_REWARD = "S_RESET_ETHNIC_GROUPS_DAILY_RESTRICTIONS";
+	public final static String OP_LOG_TAG_S_DELETE_MISSION_REWARD = "S_DEL_MISSION_REWARD";
 
 	public final static Map<String,String> OP_LOG_TAG_NAMES = new HashMap<String,String>();
 	static {

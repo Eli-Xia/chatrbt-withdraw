@@ -25,4 +25,12 @@ public class ChatPetTypeConfigService {
     }
 
 
+    /**
+     * 增加金币
+     * @param chaPetTypeId
+     * @return
+     */
+    public Integer increaseCoin(Integer chaPetTypeId ,Float coin){
+        return chatPetTypeConfigMapper.increaseCoin(chaPetTypeId,coin);
+    }
 }
