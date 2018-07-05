@@ -32,7 +32,7 @@
             e_chat_pet_type_config
         set coin = IFNULL(coin,0) + #{coin}
         where
-            id = #{chat_pet_type}
+            chat_pet_type = #{chatPetTypeId}
     </update>
 
 </mapper>

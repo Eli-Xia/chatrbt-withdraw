@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Param;
 public interface ChatPetTypeConfigMapper {
     ChatPetTypeConfig selectByChatPetTypeId(Integer chatPetType);
 
-    Integer increaseCoin(@Param("id") Integer id ,@Param("coin") Float coin);
+    Integer increaseCoin(@Param("chatPetTypeId") Integer chatPetTypeId ,@Param("coin") Float coin);
 }
