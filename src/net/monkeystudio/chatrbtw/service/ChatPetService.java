@@ -892,7 +892,6 @@ public class ChatPetService {
         List<ChatPetExperinceRankItem> chatPetExperienceRank = this.getChatPetExperienceRank(chatPetId, pageSize);
         chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperienceRank);
 
-        //Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
         Integer count = this.countExperienceRankChatPetAmount(chatPetId);
         chatPetExperinceRank.setTotal(count);
 
@@ -900,9 +899,14 @@ public class ChatPetService {
     }
 
 
+
     private List<ChatPetExperinceRankItem> getChatPetExperienceRank(Integer chatPetId,Integer pageSize){
+
+        ChatPet chatPetHimself = this.getById(chatPetId);
+        Integer parentId = chatPetHimself.getParentId();
+
         //经验排行下宠物列表
-        List<ChatPet> experienceRankChatPetList = getExperienceRankList(chatPetId, pageSize);
+        List<ChatPet> experienceRankChatPetList = getExperienceRankList(parentId , chatPetId ,pageSize);
 
         List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
 
@@ -915,10 +919,10 @@ public class ChatPetService {
             Integer level = chatPetLevelService.calculateLevel(experience);
             chatPetExperinceRankItem.setLevel(level);
 
-
             String wxFanOpenId = chatPet.getWxFanOpenId();
             String wxPubOriginId = chatPet.getWxPubOriginId();
             WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+
             //粉丝头像
             String headImgUrl = wxFan.getHeadImgUrl();
             chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
@@ -932,62 +936,15 @@ public class ChatPetService {
         return chatPetExperinceRankItemList;
     }
 
-    private List<ChatPet> getExperienceRankList(Integer parentId,Integer pageSize) {
+    private List<ChatPet> getExperienceRankList(Integer parentId,Integer chatPetId ,Integer pageSize) {
         Integer startIndex = 0;
-        return this.chatPetMapper.selectExperienceRankList(parentId,startIndex,pageSize);
+        return this.chatPetMapper.selectExperienceRankList(parentId,chatPetId ,startIndex, pageSize);
     }
 
     private Integer countExperienceRankChatPetAmount(Integer chatPetId){
         return this.chatPetMapper.countExperienceRankList(chatPetId);
     }
 
-    /**
-     * 通过宠物id获取二级族群排行
-     * @param chatPetId
-     * @param pageSize
-     * @return
-     *//*
-        private List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId , Integer pageSize){
-            ChatPet chatPet = this.getById(chatPetId);
-
-            if(chatPet == null){
-                return null;
-            }
-
-            Integer secondEthnicGroupsId = chatPet.getSecondEthnicGroupsId();
-            return this.getChatPetExperinceRank(secondEthnicGroupsId, pageSize);
-        }
-
-        private List<ChatPetExperinceRankItem> getChatPetExperinceRank(Integer secondEthnicGroupsId ,Integer pageSize){
-            List<ChatPet> chatPetList = this.getListByExperience(secondEthnicGroupsId, 1, pageSize);
-
-            List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
-
-            for(ChatPet chatPet : chatPetList){
-
-                ChatPetExperinceRankItem chatPetExperinceRankItem = new ChatPetExperinceRankItem();
-
-                //宠物的等级
-                Float experience = chatPet.getExperience();
-                Integer level = chatPetLevelService.calculateLevel(experience);
-                chatPetExperinceRankItem.setLevel(level);
-
-
-                String wxFanOpenId = chatPet.getWxFanOpenId();
-                String wxPubOriginId = chatPet.getWxPubOriginId();
-                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-                //粉丝头像
-                String headImgUrl = wxFan.getHeadImgUrl();
-                chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
-
-                //粉丝的昵称
-                chatPetExperinceRankItem.setWxFanNickname(wxFan.getNickname());
-
-                chatPetExperinceRankItemList.add(chatPetExperinceRankItem);
-            }
-
-            return chatPetExperinceRankItemList;
-        }*/
 
     /**
      * 获取宠物等级
@@ -1002,18 +959,6 @@ public class ChatPetService {
     }
 
 
-
-    /**
-     * 得到封面图的url
-     * @return
-     */
-    public String getNewsMessageCoverUrl(){
-
-        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String picUrl = "https://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
-
-        return picUrl;
-    }
 
     private Integer countSecondEthnicGroupsById(Integer secondEthnicGroupsId){
         return chatPetMapper.countSecondEthnicGroupsById(secondEthnicGroupsId);

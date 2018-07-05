@@ -26,7 +26,7 @@ public interface ChatPetMapper {
 
     Integer countByAppearceCode(@Param("chatPetType") Integer chatPetType ,@Param("appearenceCode") String appearenceCode);
 
-    List<ChatPet> selectExperienceRankList(@Param("chatPetId") Integer chatPetId,@Param("startIndex")Integer startIndex,@Param("pageSize")Integer pageSize);
+    List<ChatPet> selectExperienceRankList(@Param("parentId") Integer parentId ,@Param("chatPetId") Integer chatPetId,@Param("startIndex")Integer startIndex,@Param("pageSize")Integer pageSize);
 
     Integer countExperienceRankList(Integer chatPetId);
 

@@ -109,8 +109,13 @@
     </select>
     
     <select id="selectExperienceRankList" resultMap="baseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM e_chat_pet WHERE id = #{chatPetId}
-        OR parent_id = #{chatPetId}
+        SELECT <include refid="Base_Column_List"/> FROM e_chat_pet
+        WHERE
+            id = #{chatPetId}
+        OR
+          id = #{parentId}
+        OR
+          parent_id = #{chatPetId}
         ORDER BY experience DESC
         limit #{startIndex},#{pageSize}
     </select>
