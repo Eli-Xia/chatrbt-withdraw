@@ -17,6 +17,7 @@ public class ChatPet {
     private Float experience;
     private Float coin;
     private String appearanceCode;
+    private Integer chatPetType;
 
     public Float getCoin() {
         return coin;
@@ -104,5 +105,13 @@ public class ChatPet {
 
     public void setAppearanceCode(String appearanceCode) {
         this.appearanceCode = appearanceCode;
+    }
+
+    public Integer getChatPetType() {
+        return chatPetType;
+    }
+
+    public void setChatPetType(Integer chatPetType) {
+        this.chatPetType = chatPetType;
     }
 }

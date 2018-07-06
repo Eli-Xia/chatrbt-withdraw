@@ -13,6 +13,7 @@
         <result column="experience" property="experience" jdbcType="REAL" />
         <result column="coin" property="coin" jdbcType="REAL" />
         <result column="appearance_code" property="appearanceCode" jdbcType="VARCHAR" />
+        <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
@@ -105,7 +106,7 @@
         where
             appearance_code = #{appearenceCode}
         and
-            chat_pet_type = #{chatPetType};
+            chat_pet_type = #{chatPetType}
     </select>
     
     <select id="selectExperienceRankList" resultMap="baseResultMap">

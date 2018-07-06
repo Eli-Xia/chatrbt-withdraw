@@ -81,7 +81,7 @@ public class ChatPetRewardService{
      * 添加每日等级奖励
      * @param chatPetId
      */
-    public void createInitRewardItems(Integer chatPetId) {
+    /*public void createInitRewardItems(Integer chatPetId) {
         String initRewardItemCountKey = this.getInitRewardItemCountKey(chatPetId);
         Long count = redisCacheTemplate.incr(initRewardItemCountKey);
 
@@ -108,7 +108,7 @@ public class ChatPetRewardService{
 
         this.save(fixedItem);
 
-    }
+    }*/
 
 
     /**
@@ -366,7 +366,7 @@ public class ChatPetRewardService{
      * @return
      */
     public List<ChatPetRewardItem> getByChatPetAndState(Date createTime ,Integer chatPetId ,Integer rewardState){
-        return chatPetRewardItemMapper.selectByDateAndChatPet(createTime,chatPetId ,rewardState );
+        return chatPetRewardItemMapper.selectByDateAndChatPet(createTime , chatPetId ,rewardState );
     }
 
 

@@ -253,7 +253,6 @@ public class ChatPetService {
 
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
-
         //魔币总产值,昨日产值
         Float historyTotalAmount = chatPetRewardService.getTotalGoldAmountByChatPetType(chatPetType);
         Float yesterdayTotalAmount = chatPetRewardService.getYesterdayGoldAmountByChatPetType(chatPetType);
