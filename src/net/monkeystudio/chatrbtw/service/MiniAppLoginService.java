@@ -24,7 +24,7 @@ public class MiniAppLoginService {
 
     public String loginHandle(String jsCode){
         LoginVerifyInfo loginVerifyInfo = wxMiniAppHelper.fetchLoginVerifyInfo(jsCode);
-
+        
         String openId = loginVerifyInfo.getOpneId();
 
         String sessionKey = loginVerifyInfo.getSessionKey();
@@ -48,7 +48,7 @@ public class MiniAppLoginService {
             miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
             wxFanService.save(miniAppFan);
 
-
+            //生成一只宠物
         }
 
         return token;

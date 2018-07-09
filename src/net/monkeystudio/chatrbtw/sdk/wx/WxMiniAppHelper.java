@@ -24,12 +24,14 @@ public class WxMiniAppHelper {
      * @param jsCode
      * @return
      */
-    private String getfetchLoginVerifyUrl(String jsCode){
+    public String getfetchLoginVerifyUrl(String jsCode){
         String appId = cfgService.get(GlobalConfigConstants.MINI_APP_APP_ID);
 
         String secrect = cfgService.get(GlobalConfigConstants.MINI_APP_APP_SECRET);
 
-        return WxApiUrlUtil.getMiniAppLoginVerifyUrl(appId,secrect,jsCode);
+        String url =  WxApiUrlUtil.getMiniAppLoginVerifyUrl(appId,secrect,jsCode);
+
+        return url;
     }
 
     /**
@@ -38,6 +40,7 @@ public class WxMiniAppHelper {
      * @return
      */
     public LoginVerifyInfo fetchLoginVerifyInfo(String jsCode){
+        Log.d("================= jsCode = {?} =================",jsCode);
         String fetchLoginVerifyInfoUrl = this.getfetchLoginVerifyUrl(jsCode);
 
         String response = HttpsHelper.get(fetchLoginVerifyInfoUrl);

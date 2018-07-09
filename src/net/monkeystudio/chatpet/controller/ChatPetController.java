@@ -31,7 +31,7 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @ResponseBody
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getChatPetInfo(HttpServletRequest request,HttpServletResponse response){
         Integer fanId = getUserId();
 

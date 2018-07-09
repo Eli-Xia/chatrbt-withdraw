@@ -83,9 +83,9 @@ public class WxApiUrlUtil {
      */
     public static String getMiniAppLoginVerifyUrl(String appId,String secret,String code){
         String url = CODE_2_SESSION_URL;
-        url.replace("#{app_id}",appId);
-        url.replace("#{secret}",secret);
-        url.replace("#{js_code}",code);
+        url = url.replace("#{app_id}",appId);
+        url = url.replace("#{secret}",secret);
+        url = url.replace("#{js_code}",code);
         return url;
     }
 
