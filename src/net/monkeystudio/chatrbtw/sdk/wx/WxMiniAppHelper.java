@@ -27,7 +27,7 @@ public class WxMiniAppHelper {
     private String getfetchLoginVerifyUrl(String jsCode){
         String appId = cfgService.get(GlobalConfigConstants.MINI_APP_APP_ID);
 
-        String secrect = cfgService.get(GlobalConfigConstants.MINI_APP_SECRET);
+        String secrect = cfgService.get(GlobalConfigConstants.MINI_APP_APP_SECRET);
 
         return WxApiUrlUtil.getMiniAppLoginVerifyUrl(appId,secrect,jsCode);
     }

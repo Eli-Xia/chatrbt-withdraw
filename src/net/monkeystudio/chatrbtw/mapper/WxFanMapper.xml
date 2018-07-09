@@ -51,10 +51,10 @@
                 wx_pub_origin_id = #{wxPubOriginId}
             </if>
             <if test="wxFanOpenId != null">
-                wx_fan_open_id = #{wxFanOpenId}
+                and wx_fan_open_id = #{wxFanOpenId}
             </if>
             <if test="wxMiniAppId != null">
-                wx_mini_app_id = #{wxMiniAppId}
+                and wx_mini_app_id = #{wxMiniAppId}
             </if>
         </where>
     </select>
@@ -87,10 +87,10 @@
                 wx_pub_origin_id = #{wxPubOriginId}
             </if>
             <if test="wxFanOpenId != null">
-                wx_fan_open_id = #{wxFanOpenId}
+                and wx_fan_open_id = #{wxFanOpenId}
             </if>
             <if test="wxMiniAppId != null">
-                wx_mini_app_id = #{wxMiniAppId}
+                and wx_mini_app_id = #{wxMiniAppId}
             </if>
         </where>
     </update>

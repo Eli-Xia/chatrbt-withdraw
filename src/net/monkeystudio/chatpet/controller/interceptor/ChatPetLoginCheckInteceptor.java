@@ -46,7 +46,6 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
                 returnErrorResponse(response,respHelper.nologin());
                 return false;
             }
-
         }else{
             //小程序登录
             String sessionTokenCacheKey = miniAppLoginService.getSessionTokenCacheKey(sessionToken);

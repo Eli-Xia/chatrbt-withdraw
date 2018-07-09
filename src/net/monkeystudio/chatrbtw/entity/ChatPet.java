@@ -10,6 +10,7 @@ public class ChatPet {
     private Integer tempAppearence;
     private String wxPubOriginId;
     private String wxFanOpenId;
+    private Integer wxMiniAppId;
     private Integer ethnicGroupsId;
     private Integer secondEthnicGroupsId;
     private Date createTime;
@@ -18,6 +19,14 @@ public class ChatPet {
     private Float coin;
     private String appearanceCode;
     private Integer chatPetType;
+
+    public Integer getWxMiniAppId() {
+        return wxMiniAppId;
+    }
+
+    public void setWxMiniAppId(Integer wxMiniAppId) {
+        this.wxMiniAppId = wxMiniAppId;
+    }
 
     public Float getCoin() {
         return coin;

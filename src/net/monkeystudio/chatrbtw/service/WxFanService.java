@@ -218,7 +218,7 @@ public class WxFanService {
         this.setWxFanCache(wxPubOriginId, wxFanOpenId ,null,wxFan);
     }
 
-    private Integer update(WxFan wxFan) {
+    public Integer update(WxFan wxFan) {
         return wxFanMapper.update(wxFan);
     }
 

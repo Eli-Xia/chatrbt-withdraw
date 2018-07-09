@@ -550,6 +550,13 @@ public class ChatPetService {
         return chatPetMapper.selectByParam(param);
     }
 
+    public ChatPet getChatPetByFans(String wxFanOpenId,Integer wxMiniAppId){
+        ChatPet param = new ChatPet();
+        param.setWxFanOpenId(wxFanOpenId);
+        param.setWxMiniAppId(wxMiniAppId);
+        return chatPetMapper.selectByParam(param);
+    }
+
     public Integer getChatPetIdByFans(String wxPubOriginId,String wxFanOpenId){
         Integer ret = null;
         ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
@@ -567,11 +574,22 @@ public class ChatPetService {
      */
     public ChatPet getChatPetByWxFanId(Integer fanId){
         WxFan wxFan = wxFanService.getById(fanId);
+        Integer wxServiceType = wxFan.getWxServiceType();
+
         String wxPubOriginId = wxFan.getWxPubOriginId();
         String wxFanOpenId = wxFan.getWxFanOpenId();
+        Integer wxMiniAppId = wxFan.getWxMiniAppId();
 
-        ChatPet chatPetByFans = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
-        return chatPetByFans;
+        ChatPet chatPet = null;
+
+        if(WxFanService.WX_SERVICE_TYPE_PUB.equals(wxServiceType)){
+            chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        }
+
+        if(WxFanService.WX_SERVICE_TYPE_MINI_APP.equals(wxServiceType)){
+            chatPet = this.getChatPetByFans(wxFanOpenId,wxMiniAppId);
+        }
+        return chatPet;
     }
 
 

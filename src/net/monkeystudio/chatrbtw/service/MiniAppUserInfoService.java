@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import com.sun.org.apache.xml.internal.security.utils.Base64;
+import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.WxFan;
@@ -8,10 +9,13 @@ import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniAppFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.util.Arrays;
@@ -28,18 +32,59 @@ public class MiniAppUserInfoService {
     @Autowired
     private WxFanService wxFanService;
 
-    public void reviseMiniAppFan(Integer fanId,String rawData,String encryptedData,String iv,String signature){
+    @Autowired
+    private RedisCacheTemplate redisCacheTemplate;
+
+    /**
+     * 完善小程序用户信息
+     * @param fanId             小程序粉丝id
+     * @param rawData
+     * @param encryptedData
+     * @param iv
+     * @param signature
+     * @throws Exception
+     */
+    public void reviseMiniAppFan(Integer fanId,String rawData,String encryptedData,String iv,String signature)throws Exception{
         WxFan wxFan = wxFanService.getById(fanId);
 
         if(wxFan == null){
             return;
         }
 
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
+        String token = request.getHeader("token");
 
+        if(token != null){
+            String value = redisCacheTemplate.getString(token);
+            String sessionKey = value.split("\\+")[0];
+            MiniAppFanBaseInfo miniAppFanBaseInfo = this.getMiniAppFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
+
+            wxFan.setCity(miniAppFanBaseInfo.getCity());
+            wxFan.setProvince(miniAppFanBaseInfo.getProvince());
+            wxFan.setCountry(miniAppFanBaseInfo.getCountry());
+            wxFan.setNickname(miniAppFanBaseInfo.getNickname());
+            wxFan.setHeadImgUrl(miniAppFanBaseInfo.getHeadImgUrl());
+            wxFan.setSex(miniAppFanBaseInfo.getSex());
+            wxFan.setUnionId(miniAppFanBaseInfo.getUnionId());
+
+            wxFanService.update(wxFan);
+        }
     }
 
-    public Object getUserInfo(String rawData,String encryptedData,String iv,String signature,String sessionKey)throws Exception{
+
+    /**
+     * 解密小程序用户信息
+     * @param rawData
+     * @param encryptedData
+     * @param iv
+     * @param signature
+     * @param sessionKey
+     * @return
+     * @throws Exception
+     */
+    public MiniAppFanBaseInfo getMiniAppFanBaseInfo(String rawData,String encryptedData,String iv,String signature,String sessionKey)throws Exception{
         // 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
@@ -78,7 +123,7 @@ public class MiniAppUserInfoService {
         Map<String,Object> map = new HashMap<>();
         map.put("openId","OPENID");
         map.put("nickName","NICKNAME");
-        map.put("gender","GENDER");
+        map.put("gender",1);
         map.put("city","CITY");
         map.put("province","PROVINCE");
         map.put("country","COUNTRY");
@@ -90,10 +135,8 @@ public class MiniAppUserInfoService {
         map.put("watermark",map2);
 
         String s = JsonUtil.toJSon(map);
-
-        MiniAppFanBaseInfo miniAppFanBaseInfo = JsonUtil.readValue(s, MiniAppFanBaseInfo.class);
-
         System.out.println(s);
+        MiniAppFanBaseInfo miniAppFanBaseInfo = JsonUtil.readValue(s, MiniAppFanBaseInfo.class);
         System.out.println(1);
     }
 }
