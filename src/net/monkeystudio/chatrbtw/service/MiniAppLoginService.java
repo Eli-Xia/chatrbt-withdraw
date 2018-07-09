@@ -47,6 +47,8 @@ public class MiniAppLoginService {
             miniAppFan.setWxMiniAppId(wxFanService.LUCK_CAT_MINI_APP_ID);
             miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
             wxFanService.save(miniAppFan);
+
+
         }
 
         return token;
