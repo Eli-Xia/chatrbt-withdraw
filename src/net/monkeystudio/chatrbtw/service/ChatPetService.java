@@ -4,10 +4,7 @@ import com.google.zxing.WriterException;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.base.utils.HttpsHelper;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.StringUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -26,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +36,8 @@ import java.util.List;
  */
 @Service
 public class ChatPetService {
+
+    public final static String DEFAULT_PAGE_URI = "home";
 
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
@@ -251,7 +252,6 @@ public class ChatPetService {
         chatPetBaseInfo.setGoldItems(chatPetGoldItems);
 
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
-
 
         //魔币总产值,昨日产值
         Float historyTotalAmount = chatPetRewardService.getTotalGoldAmountByChatPetType(chatPetType);
@@ -722,6 +722,8 @@ public class ChatPetService {
     }
 
 
+    
+
     /**
      * 宠物日志页面url
      *
@@ -740,24 +742,18 @@ public class ChatPetService {
     }
 
     /**
-     * 宠物暗拍url
-     * @param wxPubId
+     * 宠物其他页面url
      * @return
      */
-    public String getChatPetAuctionUrl(Integer wxPubId){
-        WxPub wxPub = wxPubService.getWxPubById(wxPubId);
-        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPub.getOriginId());
-
+    public String getPageRedirectUrlByUrlEncoder(String pageRedirectUri)throws Exception{
+        String decodeUri = URLDecoder.decode(pageRedirectUri,"utf-8");
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
-            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
-        }
+        return "https://" + domain + decodeUri;
+    }
 
-        if(ChatPetTypeService.CHAT_PET_TYPE_CRYPTO_KITTIES.equals(chatPetType)){
-            return "https://" + domain + "/static/chat-pet/#/activity/?id=" + wxPubId;
-        }
-
-        return null;
+    public String getPageRedirectUrl(String pageRedirectUri) {
+        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
+        return "https://" + domain + pageRedirectUri;
     }
 
     /**
@@ -800,9 +796,12 @@ public class ChatPetService {
         return null;
     }
 
-    public String getWxOauthUrl(Integer wxPubId){
+    public String getWxOauthUrl(Integer wxPubId,String pageUri) throws Exception{
         String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String url = "https://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId;
+        if(StringUtil.isEmpty(pageUri)){
+            pageUri = DEFAULT_PAGE_URI;
+        }
+        String url = "https://" + domain + "/api/wx/oauth/redirect?id=" + wxPubId + "&pageUri=" + URLEncoder.encode(pageUri,"utf-8");
         return url;
     }
 
@@ -840,7 +839,12 @@ public class ChatPetService {
         chatPetMapper.increaseExperience(chatPetId,experience);
     }
 
-
+    public static void main(String[]args)throws Exception{
+        String str = "/static/chat-pet/#/activity?id=253";
+        String ret = URLEncoder.encode(str, "utf-8");
+        System.out.println(ret);
+        System.out.println(1);
+    }
 
     /**
      * 获得宠物的经验
@@ -892,7 +896,6 @@ public class ChatPetService {
         List<ChatPetExperinceRankItem> chatPetExperienceRank = this.getChatPetExperienceRank(chatPetId, pageSize);
         chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperienceRank);
 
-        //Integer count = this.countSecondEthnicGroupsById(chatPet.getSecondEthnicGroupsId());
         Integer count = this.countExperienceRankChatPetAmount(chatPetId);
         chatPetExperinceRank.setTotal(count);
 
@@ -900,9 +903,14 @@ public class ChatPetService {
     }
 
 
+
     private List<ChatPetExperinceRankItem> getChatPetExperienceRank(Integer chatPetId,Integer pageSize){
+
+        ChatPet chatPetHimself = this.getById(chatPetId);
+        Integer parentId = chatPetHimself.getParentId();
+
         //经验排行下宠物列表
-        List<ChatPet> experienceRankChatPetList = getExperienceRankList(chatPetId, pageSize);
+        List<ChatPet> experienceRankChatPetList = getExperienceRankList(parentId , chatPetId ,pageSize);
 
         List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
 
@@ -915,10 +923,10 @@ public class ChatPetService {
             Integer level = chatPetLevelService.calculateLevel(experience);
             chatPetExperinceRankItem.setLevel(level);
 
-
             String wxFanOpenId = chatPet.getWxFanOpenId();
             String wxPubOriginId = chatPet.getWxPubOriginId();
             WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+
             //粉丝头像
             String headImgUrl = wxFan.getHeadImgUrl();
             chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
@@ -932,62 +940,15 @@ public class ChatPetService {
         return chatPetExperinceRankItemList;
     }
 
-    private List<ChatPet> getExperienceRankList(Integer parentId,Integer pageSize) {
+    private List<ChatPet> getExperienceRankList(Integer parentId,Integer chatPetId ,Integer pageSize) {
         Integer startIndex = 0;
-        return this.chatPetMapper.selectExperienceRankList(parentId,startIndex,pageSize);
+        return this.chatPetMapper.selectExperienceRankList(parentId,chatPetId ,startIndex, pageSize);
     }
 
     private Integer countExperienceRankChatPetAmount(Integer chatPetId){
         return this.chatPetMapper.countExperienceRankList(chatPetId);
     }
 
-    /**
-     * 通过宠物id获取二级族群排行
-     * @param chatPetId
-     * @param pageSize
-     * @return
-     *//*
-        private List<ChatPetExperinceRankItem> getChatPetExperinceRankByPet(Integer chatPetId , Integer pageSize){
-            ChatPet chatPet = this.getById(chatPetId);
-
-            if(chatPet == null){
-                return null;
-            }
-
-            Integer secondEthnicGroupsId = chatPet.getSecondEthnicGroupsId();
-            return this.getChatPetExperinceRank(secondEthnicGroupsId, pageSize);
-        }
-
-        private List<ChatPetExperinceRankItem> getChatPetExperinceRank(Integer secondEthnicGroupsId ,Integer pageSize){
-            List<ChatPet> chatPetList = this.getListByExperience(secondEthnicGroupsId, 1, pageSize);
-
-            List<ChatPetExperinceRankItem> chatPetExperinceRankItemList = new ArrayList<>();
-
-            for(ChatPet chatPet : chatPetList){
-
-                ChatPetExperinceRankItem chatPetExperinceRankItem = new ChatPetExperinceRankItem();
-
-                //宠物的等级
-                Float experience = chatPet.getExperience();
-                Integer level = chatPetLevelService.calculateLevel(experience);
-                chatPetExperinceRankItem.setLevel(level);
-
-
-                String wxFanOpenId = chatPet.getWxFanOpenId();
-                String wxPubOriginId = chatPet.getWxPubOriginId();
-                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-                //粉丝头像
-                String headImgUrl = wxFan.getHeadImgUrl();
-                chatPetExperinceRankItem.setWxFanHeadImgUrl(headImgUrl);
-
-                //粉丝的昵称
-                chatPetExperinceRankItem.setWxFanNickname(wxFan.getNickname());
-
-                chatPetExperinceRankItemList.add(chatPetExperinceRankItem);
-            }
-
-            return chatPetExperinceRankItemList;
-        }*/
 
     /**
      * 获取宠物等级
@@ -1002,18 +963,6 @@ public class ChatPetService {
     }
 
 
-
-    /**
-     * 得到封面图的url
-     * @return
-     */
-    public String getNewsMessageCoverUrl(){
-
-        String domain = cfgService.get(GlobalConfigConstants.CHAT_PET_WEB_DOMAIN_KEY);
-        String picUrl = "https://" + domain + "/res/wedo/images/kitties_normal_cover.jpg";
-
-        return picUrl;
-    }
 
     private Integer countSecondEthnicGroupsById(Integer secondEthnicGroupsId){
         return chatPetMapper.countSecondEthnicGroupsById(secondEthnicGroupsId);

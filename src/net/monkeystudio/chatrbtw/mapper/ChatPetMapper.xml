@@ -13,6 +13,7 @@
         <result column="experience" property="experience" jdbcType="REAL" />
         <result column="coin" property="coin" jdbcType="REAL" />
         <result column="appearance_code" property="appearanceCode" jdbcType="VARCHAR" />
+        <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
@@ -105,12 +106,17 @@
         where
             appearance_code = #{appearenceCode}
         and
-            chat_pet_type = #{chatPetType};
+            chat_pet_type = #{chatPetType}
     </select>
     
     <select id="selectExperienceRankList" resultMap="baseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM e_chat_pet WHERE id = #{chatPetId}
-        OR parent_id = #{chatPetId}
+        SELECT <include refid="Base_Column_List"/> FROM e_chat_pet
+        WHERE
+            id = #{chatPetId}
+        OR
+          id = #{parentId}
+        OR
+          parent_id = #{chatPetId}
         ORDER BY experience DESC
         limit #{startIndex},#{pageSize}
     </select>

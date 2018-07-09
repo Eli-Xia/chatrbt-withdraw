@@ -16,6 +16,8 @@ import org.springframework.web.portlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -30,9 +32,6 @@ public class ChatPetController extends ChatPetBaseController{
 
     @Autowired
     private RespHelper respHelper;
-
-    //魔宠拍卖中心类型页面参数
-    private final static Integer CHAT_PET_ACTIVITY_PAGE_ARG = 1;
 
 
     @ResponseBody
@@ -50,6 +49,7 @@ public class ChatPetController extends ChatPetBaseController{
     }
 
 
+
     /**
      * 当用户禁止授权的时候,只会传state值过来.
      * * @param request
@@ -60,11 +60,10 @@ public class ChatPetController extends ChatPetBaseController{
      * @throws BizException
      */
     @RequestMapping(value = "/oauth/fan-info", method = RequestMethod.GET)
-    public ModelAndView oauth(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code",required = false)String code, @RequestParam("state")String state, @RequestParam(value = "appid",required = false)String appId) throws BizException, IOException {
+    public ModelAndView oauth(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code",required = false)String code, @RequestParam("state")String state, @RequestParam(value = "appid",required = false)String appId) throws Exception {
 
-        if(!WxOauthService.OAUTH_CODE_URL_STATE.equals(state)){
-            return null;
-        }
+        String pageUri = state;//跳转页面uri
+        Log.d("=============== chatpetcontroller oauth redirect args : pageUri = {?} ==================",pageUri);
 
         //微信网页授权处理
         ChatPetSessionVo vo = chatPetService.wxOauthHandle(code,appId);
@@ -76,22 +75,38 @@ public class ChatPetController extends ChatPetBaseController{
         //fanId存入session
         this.saveSessionUserId(vo.getWxFanId());
 
-        String homePageUrl = chatPetService.getHomePageUrl(vo.getWxPubId());
+        if(ChatPetService.DEFAULT_PAGE_URI.equals(pageUri)){
 
-        response.sendRedirect(homePageUrl);
+            String homePageUrl = chatPetService.getHomePageUrl(vo.getWxPubId());
+            response.sendRedirect(homePageUrl);
+        }else{
+            //response.sendRedirect(chatPetService.getPageRedirectUrlByUrlEncoder(pageUri));
+            response.sendRedirect(chatPetService.getPageRedirectUrl(pageUri));
+        }
+
+
 
         return null;
     }
 
 
+    /**
+     *
+     * @param wxPubId       公众号id
+     * @param anchor        锚点
+     * @param redirectUri  未登录页面重定向uribase64
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/home-page", method = RequestMethod.GET)
-    public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, @RequestParam(value = "type",required = false)Integer type,HttpServletResponse response,HttpServletRequest request) throws Exception {
+    public String homePage(@RequestParam("id") Integer wxPubId,@RequestParam(value = "anchor",required = false)String anchor, @RequestParam(value = "redirectUri",required = false)String redirectUri,HttpServletResponse response,HttpServletRequest request) throws Exception {
+        Log.d("======================  home-page wxPubId = [?] , redirectUri = [?] ==============",wxPubId.toString(),redirectUri);
         try {
             Integer userId = getUserId();
 
             if(userId == null){
                 //网页授权
-                response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId));
+                response.sendRedirect(chatPetService.getWxOauthUrl(wxPubId, redirectUri));
             }else{
                 //判断是否为跨公众号同session
                 if(!chatPetService.isNeed2EmptyUser4Session(userId,wxPubId)){
@@ -107,10 +122,11 @@ public class ChatPetController extends ChatPetBaseController{
 
                     chatPetService.dataPrepared(userId,wxPubId);
 
-                    if(CHAT_PET_ACTIVITY_PAGE_ARG.equals(type)){
-                        response.sendRedirect(chatPetService.getChatPetAuctionUrl(wxPubId));//跳转拍卖中心
-                    }else{
+                    if(redirectUri == null){
+
                         response.sendRedirect(chatPetService.getChatPetPageUrl(wxPubId,anchor));//跳转我的魔宠
+                    }else{
+                        response.sendRedirect(chatPetService.getPageRedirectUrl(redirectUri));//跳转其他页面
                     }
 
                 }else{
@@ -128,11 +144,27 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     /**
-     * 测试接口
+     * 登出接口
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @ResponseBody
+    public RespBase login(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
+        if(!wxFanId.startsWith("keendo")){
+            return respHelper.failed("fail");
+        }
+        int i = wxFanId.lastIndexOf(".");
+        String wxFanIdStr = wxFanId.substring(i + 1);
+        int id = Integer.parseInt(wxFanIdStr);
+        saveSessionUserId(null);
+        return respHelper.ok();
+    }
+
+    /**
+     * 登录接口
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     @ResponseBody
-    public RespBase login(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
+    public RespBase logout(@RequestParam("id") String wxFanId, HttpServletResponse response, HttpServletRequest request) {
         if(!wxFanId.startsWith("keendo")){
             return respHelper.failed("fail");
         }

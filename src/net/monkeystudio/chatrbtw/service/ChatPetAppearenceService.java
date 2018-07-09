@@ -14,7 +14,6 @@ import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceMaterialMapper;
 import net.monkeystudio.chatrbtw.mapper.ChatPetAppearenceSiteMapper;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.mapper.RChatPetAppearenceSiteColorMapper;
-import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -147,13 +146,13 @@ public class ChatPetAppearenceService {
 
         Boolean flag = false;
         String appearanceCode = null;
-        while (!flag){
-            appearanceCode = this.randomToalAppearence(chatPetType);
+        while (!flag){appearanceCode = this.randomToalAppearence(chatPetType);
             if(!this.appearenceIsExist(chatPetType,appearanceCode)){
                 flag = true;
             }
         }
         this.pushAppearence(chatPetType , appearanceCode);
+        Log.i("generate ChatPet Appearence");
     }
 
 

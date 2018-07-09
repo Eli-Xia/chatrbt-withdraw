@@ -531,6 +531,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         adPushService.pushAdHandle(ad,wxFan.getId());
     }
 
+
     /**
      * 智能聊:获取粉丝聊天次数
      * @param wxPubOriginId

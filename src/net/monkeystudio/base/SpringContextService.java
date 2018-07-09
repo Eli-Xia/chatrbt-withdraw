@@ -25,4 +25,11 @@ public class SpringContextService implements ApplicationContextAware {
     public static Object getBean(String name) throws BeansException {
         return applicationContext.getBean(name);
     }
+
+    public static <T> T popBean(Class<T> clazz) {
+        if (applicationContext == null) {
+            return null;
+        }
+        return applicationContext.getBean(clazz);
+    }
 }
