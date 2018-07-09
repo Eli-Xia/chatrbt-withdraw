@@ -5,6 +5,9 @@ package net.monkeystudio.base.service;
  */
 public class GlobalConfigConstants {
 
+    public final static String MINI_APP_APP_ID = "MINI_APP_APP_ID";
+    public final static String MINI_APP_SECRET = "MINI_APP_SECRET";
+
     public final static String COMPONENT_APP_ID_KEY = "COMPONENT_APP_ID";
 
     public final static String APP_SECRET_KEY = "APP_SECRET";

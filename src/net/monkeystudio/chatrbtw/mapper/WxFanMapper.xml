@@ -13,14 +13,16 @@
         <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
         <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR" />
+        <result column="wx_mini_app_id" property="wxMiniAppId" jdbcType="INTEGER" />
+        <result column="wx_service_type" property="wxServiceType" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url
+        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,wx_mini_app_id,wx_service_type
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxFan" keyProperty="id" useGeneratedKeys="true" >
-        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url)
+        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,wx_mini_app_id,wx_service_type)
             values (
               #{id,jdbcType=INTEGER},
               #{nickname,jdbcType=VARCHAR},
@@ -33,7 +35,9 @@
               #{wxPubOriginId,jdbcType=VARCHAR},
               #{wxFanOpenId,jdbcType=VARCHAR},
               #{createAt,jdbcType=INTEGER},
-              #{headImgUrl,jdbcType=VARCHAR}
+              #{headImgUrl,jdbcType=VARCHAR},
+              #{wx_mini_app_id,jdbcType=INTEGER},
+              #{wx_service_type,jdbcType=INTEGER}
             )
     </insert>
 
@@ -42,10 +46,17 @@
             <include refid="Base_Column_List"></include>
         FROM
             e_wx_fan
-        WHERE
-            wx_pub_origin_id = #{wxPubOriginId}
-        AND
-            wx_fan_open_id = #{wxFanOpenId}
+        <where>
+            <if test="wxPubOriginId != null">
+                wx_pub_origin_id = #{wxPubOriginId}
+            </if>
+            <if test="wxFanOpenId != null">
+                wx_fan_open_id = #{wxFanOpenId}
+            </if>
+            <if test="wxMiniAppId != null">
+                wx_mini_app_id = #{wxMiniAppId}
+            </if>
+        </where>
     </select>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap">
@@ -68,11 +79,20 @@
             subscribe_time = #{subscribeTime},
             wx_pub_origin_id = #{ wxPubOriginId},
             wx_fan_open_id = #{wxFanOpenId},
-            head_img_url = #{headImgUrl}
-        where
-            wx_pub_origin_id = #{wxPubOriginId}
-        and
-            wx_fan_open_id = #{wxFanOpenId}
+            head_img_url = #{headImgUrl},
+            wx_mini_app_id = #{wxMiniAppId},
+            wx_service_type = #{wxServiceType}
+        <where>
+            <if test="wxPubOriginId != null">
+                wx_pub_origin_id = #{wxPubOriginId}
+            </if>
+            <if test="wxFanOpenId != null">
+                wx_fan_open_id = #{wxFanOpenId}
+            </if>
+            <if test="wxMiniAppId != null">
+                wx_mini_app_id = #{wxMiniAppId}
+            </if>
+        </where>
     </update>
 
 

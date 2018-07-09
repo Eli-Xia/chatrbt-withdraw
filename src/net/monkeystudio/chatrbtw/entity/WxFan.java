@@ -16,6 +16,24 @@ public class WxFan implements Serializable{
     private String wxFanOpenId;
     private Long createAt;
     private String headImgUrl;
+    private Integer wxMiniAppId;
+    private Integer wxServiceType;
+
+    public Integer getWxMiniAppId() {
+        return wxMiniAppId;
+    }
+
+    public void setWxMiniAppId(Integer wxMiniAppId) {
+        this.wxMiniAppId = wxMiniAppId;
+    }
+
+    public Integer getWxServiceType() {
+        return wxServiceType;
+    }
+
+    public void setWxServiceType(Integer wxServiceType) {
+        this.wxServiceType = wxServiceType;
+    }
 
     public Integer getId() {
         return id;

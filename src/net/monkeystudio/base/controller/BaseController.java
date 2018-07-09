@@ -17,32 +17,32 @@ public class BaseController {
 	 * @return
 	 */
 	protected Integer getUserId(){
-		
+
 		Subject subject = SecurityUtils.getSubject();
 		if ( subject == null ){
 			return null;
 		}
-		
+
 		Session session = subject.getSession();
 		if ( session == null) {
 			return null;
 		}
 
 		Integer userId =  (Integer) session.getAttribute(this.getSessionUserIdAttrName());
-		
+
 		return userId;
 	}
-	
+
 	/**
 	 * 保存userId到session
 	 * @param userId
 	 */
 	protected void saveSessionUserId(Integer userId){
-		
+
 		Subject subject = SecurityUtils.getSubject();
 		subject.getSession().setAttribute(this.getSessionUserIdAttrName(),userId);
 	}
-	
+
 	/**
 	 * Session中保存userId的属性名，不同登录子系统的子类重写使用不同的属性名。
 	 * @return

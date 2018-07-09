@@ -13,7 +13,7 @@ public interface WxFanMapper {
 
     Integer update(WxFan wxFan);
 
-    List<WxFan> select(@Param("wxPubOriginId") String wxPubOriginId , @Param("wxFanOpenId")  String wxFanOpenId);
+    List<WxFan> select(@Param("wxPubOriginId") String wxPubOriginId , @Param("wxFanOpenId")  String wxFanOpenId,@Param("wxMiniAppId")Integer wxMiniAppId);
 
     WxFan selectById(Integer id);
 
