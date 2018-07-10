@@ -31,4 +31,6 @@ public interface ChatPetMapper {
     Integer countExperienceRankList(Integer chatPetId);
 
     Integer decreaseCoin(@Param("chatPetId") Integer chatPetId,@Param("coin") Float coin);
+
+    Integer countByParentId(Integer parentId);
 }

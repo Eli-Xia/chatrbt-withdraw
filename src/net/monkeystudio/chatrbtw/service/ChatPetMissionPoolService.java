@@ -371,7 +371,7 @@ public class ChatPetMissionPoolService {
         Integer chatPetType = chatPet.getChatPetType();
 
         ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
-        if(chatPetTypeConfig.getRewardType() == ChatPetTypeConfigService.Constants.Manually_experience_coin){
+        if(chatPetTypeConfig.getRewardType() == ChatPetTypeConfigService.Constants.MANUALLY_EXPERIENCE_COIN){
             //奖励池生成奖励
             chatPetRewardService.generateRewardWhenMissionDone(chatPetPersonalMission.getId());
             //完成任务后给粉丝发送领奖tips
@@ -388,7 +388,7 @@ public class ChatPetMissionPoolService {
 
 
         //如果是仅需要领取金币，则完成任务的时候就直接添加经验
-        if(chatPetTypeConfig.getRewardType() == ChatPetTypeConfigService.Constants.Manually_only_experience){
+        if(chatPetTypeConfig.getRewardType() == ChatPetTypeConfigService.Constants.MANUALLY_ONLY_EXPERIENCE){
             chatPetRewardService.generateRewardWhenMissionDone(chatPetPersonalMission.getId());
             ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getByMissionItemId(chatPetPersonalMission.getId());
             chatPetRewardService.reward(chatPetRewardItem.getMissionItemId());
@@ -622,6 +622,7 @@ public class ChatPetMissionPoolService {
 
         this.update(cppm);
     }
+
 
 
 

@@ -37,12 +37,6 @@
     </update>
 
 
-    <update id="increaseCoin" parameterType="map">
-        update
-        e_chat_pet_type_config
-        set coin = IFNULL(coin,0) + #{coin}
-        where
-        chat_pet_type = #{chatPetTypeId}
-    </update>
+
 
 </mapper>

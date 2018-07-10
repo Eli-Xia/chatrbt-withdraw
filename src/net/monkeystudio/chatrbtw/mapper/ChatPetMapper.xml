@@ -137,4 +137,9 @@
         where
         id = #{chatPetId}
     </update>
+
+
+    <select id="countByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT count(id) FROM  e_chat_pet WHERE arent_id = #{chatPetId}
+    </select>
 </mapper>

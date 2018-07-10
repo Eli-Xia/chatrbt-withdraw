@@ -14,6 +14,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -51,6 +52,13 @@ public class ChatPetRewardService{
 
     @Autowired
     private OpLogService opLogService;
+
+    @Autowired
+    private EthnicGroupsService ethnicGroupsService;
+
+    @Autowired
+    private ChatPetTypeConfigService chatPetTypeConfigService;
+
 
     public static final Integer NOT_AWARD = 0;//未领取
     public static final Integer HAVE_AWARD = 1;//已经领取
@@ -272,6 +280,8 @@ public class ChatPetRewardService{
         item.setMissionItemId(chatPetPersonalMissionId);
         item.setCreateTime(new Date());
 
+        BigDecimal ethnicGroupsAdditionRadio = ethnicGroupsService.getEthnicGroupsAdditionRadio(chatPetId);
+
         if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
             item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
@@ -279,6 +289,7 @@ public class ChatPetRewardService{
 
             this.save(item);
         }
+
         if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
 
             item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
@@ -289,15 +300,40 @@ public class ChatPetRewardService{
 
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
 
-            item.setGoldValue(chatPetMissionEnumService.getMissionByCode(missionCode).getCoin());
+
+            ChatPetTypeConfig chatPetTypeConfig = chatPetTypeConfigService.getChatPetTypeConfig(chatPetType);
+
+            if(chatPetTypeConfig.getRewardType().equals(ChatPetTypeConfigService.Constants.MANUALLY_EXPERIENCE_COIN)){
+                Float coin = chatPetMissionEnumService.getMissionByCode(missionCode).getCoin();
+                item.setGoldValue(coin);
+                item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
+            }
+
+
+            if(chatPetTypeConfig.getRewardType().equals(ChatPetTypeConfigService.Constants.MANUALLY_ONLY_EXPERIENCE)){
+                item.setGoldValue(0F);
+
+                Float experience = chatPetMissionEnumService.getMissionByCode(missionCode).getExperience();
+                BigDecimal experienceBD = ethnicGroupsAdditionRadio.multiply(new BigDecimal(experience));
+                item.setExperience(experienceBD.floatValue());
+            }
+
+            Float coin = chatPetMissionEnumService.getMissionByCode(missionCode).getCoin();
+            item.setGoldValue(coin);
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
 
             this.save(item);
         }
 
         if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
-            item.setExperience(this.getPlayMiniGameRandomExperience());
+
+            Float playMiniGameRandomExperience = this.getPlayMiniGameRandomExperience();
+
+            //族群加成之后经验值
+            BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(playMiniGameRandomExperience));
+            item.setExperience(bd.floatValue());
             item.setGoldValue(0F);
+
             this.save(item);
         }
     }
