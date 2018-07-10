@@ -21,6 +21,8 @@ public class MiniAppLoginService {
     private RedisCacheTemplate redisCacheTemplate;
     @Autowired
     private WxFanService wxFanService;
+    @Autowired
+    private ChatPetService chatPetService;
 
     public String loginHandle(String jsCode){
         LoginVerifyInfo loginVerifyInfo = wxMiniAppHelper.fetchLoginVerifyInfo(jsCode);
@@ -39,7 +41,7 @@ public class MiniAppLoginService {
 
         redisCacheTemplate.expire(key,7200);//缓存两小时
 
-        //去数据库或cache中查找openId是否存在,存在说明不是第一次登录,如果不存在wxFanId insert unionId,openId,并把数据放入缓存之中
+        //去数据库或cache中查找openId是否存在,存在说明不是第一次登录,如果不存在wxFanId insert unionId,openId,并把数据放入缓存
         WxFan wxFan = wxFanService.getWxFan(openId, wxFanService.LUCK_CAT_MINI_APP_ID);
         if(wxFan == null){
             WxFan miniAppFan = new WxFan();
@@ -47,6 +49,9 @@ public class MiniAppLoginService {
             miniAppFan.setWxMiniAppId(wxFanService.LUCK_CAT_MINI_APP_ID);
             miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
             wxFanService.save(miniAppFan);
+
+            //生成一只宠物
+            chatPetService.generateChatPet(openId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }
 
         return token;

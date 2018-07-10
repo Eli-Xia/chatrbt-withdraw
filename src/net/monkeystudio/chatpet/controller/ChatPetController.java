@@ -31,7 +31,7 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @ResponseBody
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
     public RespBase getChatPetInfo(HttpServletRequest request,HttpServletResponse response){
         Integer fanId = getUserId();
 
@@ -39,6 +39,16 @@ public class ChatPetController extends ChatPetBaseController{
 
         return respHelper.ok(chatPetInfo);
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/generate-cat", method = RequestMethod.GET)
+    public RespBase getChatPetInfo(@RequestParam("parentId")Integer parentId){
+        Integer fanId = getUserId();
+        chatPetService.generateChatPetFromShareCard(fanId,parentId);
+        return respHelper.ok();
+    }
+
+
 
 
 
@@ -174,11 +184,7 @@ public class ChatPetController extends ChatPetBaseController{
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
 
-        Integer userId = this.getUserId();
-
-        if(userId == null){
-            return respHelper.nologin();
-        }
+        Integer userId = getUserId();
 
         ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId());
 
