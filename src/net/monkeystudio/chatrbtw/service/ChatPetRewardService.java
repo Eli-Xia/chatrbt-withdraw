@@ -227,7 +227,8 @@ public class ChatPetRewardService{
         //宠物日志
         chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
 
-        /*//邀请人
+        /*
+        //邀请人
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
 
         DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
@@ -294,6 +295,11 @@ public class ChatPetRewardService{
             this.save(item);
         }
 
+        if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
+            item.setExperience(this.getPlayMiniGameRandomExperience());
+            item.setGoldValue(0F);
+            this.save(item);
+        }
     }
 
     //获取资讯任务随机奖励经验值  1.5 ~ 2.5
@@ -309,6 +315,17 @@ public class ChatPetRewardService{
         Random random = new Random();
         int i = random.nextInt(25) + 38;
         Float f = i / 100F;
+        return f;
+    }
+
+    /**
+     * 获取小程序经验奖励
+     * 1.0 ~ 2.0
+     * @return
+     */
+    private Float getPlayMiniGameRandomExperience(){
+        Random random = new Random();
+        Float f = ( random.nextInt(10) + 10 ) / 10F;
         return f;
     }
 
@@ -390,7 +407,7 @@ public class ChatPetRewardService{
     }
 
     private String getLevelReward(){
-            return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
+        return RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "levelReward:wxFan";
     }
 
     /**
@@ -434,21 +451,20 @@ public class ChatPetRewardService{
         Integer chatPetId = chatPet.getId();
         //如果奖励超过了8个，不再分发
         List<ChatPetRewardItem> rewardItemList = this.getByChatPetAndMissionId(chatPetId,NOT_AWARD,null);
-        if(rewardItemList.size() > MAX_NOT_AWARD_COUNT.intValue()){
+        if(rewardItemList.size() >= MAX_NOT_AWARD_COUNT.intValue()){
             Log.d("more than 8 , don't generate level reward");
             return ;
         }
 
         Float levelExperience = this.calculateLevelExperience(chatPetId);
 
-        //每日可领取奖励
+        //定时等级奖励
         ChatPetRewardItem levelReward = new ChatPetRewardItem();
 
         Integer chatPetType = chatPetService.getChatPetType(chatPetId);
+
         levelReward.setChatPetType(chatPetType);
-
         levelReward.setGoldValue(levelExperience);
-
         levelReward.setRewardState(NOT_AWARD);
         levelReward.setChatPetId(chatPetId);
         levelReward.setCreateTime(new Date());
@@ -553,5 +569,14 @@ public class ChatPetRewardService{
         thread.start();
         Log.d("finished task");
 
+    }
+
+    /**
+     * 通过任务的id获取对应的奖励
+     * @param missionId
+     * @return
+     */
+    public ChatPetRewardItem getByMissionItemId(Integer missionId){
+        return chatPetRewardItemMapper.selectByMissionItemId(missionId);
     }
 }

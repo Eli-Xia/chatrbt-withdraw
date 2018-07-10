@@ -68,7 +68,7 @@ public class ChatPetAppearenceService {
 
 
     /**
-     *
+     * 从池子里面获取外观
      * @param chatPetType
      * @return
      */

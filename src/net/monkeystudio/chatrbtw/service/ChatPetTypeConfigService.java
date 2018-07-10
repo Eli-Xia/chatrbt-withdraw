@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChatPetTypeConfigService {
 
+
+
     @Autowired
     private ChatPetTypeConfigMapper chatPetTypeConfigMapper;
 
@@ -32,5 +34,15 @@ public class ChatPetTypeConfigService {
      */
     public Integer increaseCoin(Integer chaPetTypeId ,Float coin){
         return chatPetTypeConfigMapper.increaseCoin(chaPetTypeId,coin);
+    }
+
+
+
+    static class Constants{
+        //手动领取经验和金币
+        public final static Integer Manually_experience_coin = 1;
+
+        //近需要领取金币
+        public final static Integer Manually_only_experience = 2;
     }
 }

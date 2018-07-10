@@ -32,12 +32,26 @@ public class MQListener implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         //if(event.getApplicationContext().getParent() == null){
-        chatPetRewardService.comsumeLevelReward();
+
+        //监听咨询任务是否完成
         chatPetMissionPoolService.initSubscribe();
+
+        //删除无用机器人
         chatRobotService.deleteRobotInfoTask();
+
+        //重置族群接入个数
         ethnicGroupsService.resetDailyRestrictionsTask();
+
+        //消费等级消费队列
+        chatPetRewardService.comsumeLevelReward();
+
+        //删除过时任务
         chatPetRewardService.deleteMissionRewardTask();
+
+        //生成等级奖励
         chatPetRewardService.generateLevelRewardTask();
+
+        //心跳
         sqlHeartBeatService.sqlHeartBeatTask();
         //}
     }

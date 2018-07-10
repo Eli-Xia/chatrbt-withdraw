@@ -34,9 +34,9 @@
         <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"></property>
         <property name="connectionInitSqls" value="set names utf8mb4;"></property>
 
-        <property name="timeBetweenEvictionRunsMillis" value="300000" />
-        <property name="minEvictableIdleTimeMillis" value="600000" />
-        <property name="removeAbandoned" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}" />
+        <property name="removeAbandoned" value="${db.removeAbandoned}"/>
     </bean>
     <!---->
 
