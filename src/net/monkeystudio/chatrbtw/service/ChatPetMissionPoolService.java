@@ -54,14 +54,6 @@ public class ChatPetMissionPoolService {
     @Autowired
     private ChatPetRewardService chatPetRewardService;
 
-    //每天只能最多完成三次邀请任务
-    private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
-
-    //每天阅读文章只能最多十次
-    private static final Integer DAILY_SEARCH_NEWS_MISSION_MAX_TIME = 10;
-
-    //每日互动任务
-    private static final Integer DAILY_INTERACTION_MAX_TIME = 1;
     @Autowired
     private WxCustomerHelper wxCustomerHelper;
 
@@ -73,6 +65,15 @@ public class ChatPetMissionPoolService {
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    //每天只能最多完成三次邀请任务
+    private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
+
+    //每天阅读文章只能最多十次
+    private static final Integer DAILY_SEARCH_NEWS_MISSION_MAX_TIME = 10;
+
+    //每日互动任务
+    private static final Integer DAILY_INTERACTION_MAX_TIME = 1;
 
     private final static String CHAT_PET_NEWS_MISSION_REWARD_TIPS =  "\u2705任务完成 前往\ud83d\udc49<a href=\"%s\">领取奖励</a>\ud83d\udc48";
 
@@ -269,7 +270,12 @@ public class ChatPetMissionPoolService {
         return missionAd;
     }
 
-    //临时:用于判断资讯任务派发是否到达最大次数
+    /**
+     * 临时:用于判断资讯任务派发是否到达最大次数
+     * @param chatPetId
+     * @param missionCode
+     * @return
+     */
     public Boolean isReachMaxDispatchTime(Integer chatPetId,Integer missionCode){
         Boolean result = true;
         Integer count = this.countDispatchMissionAmount(chatPetId, missionCode);
