@@ -21,6 +21,8 @@ public class WxApiUrlUtil {
 
     private final static String FETCH_CREATE_TEMP_QR_CODE_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=#{accessToken}";
 
+    private static final String CODE_2_SESSION_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=#{app_id}&secret=#{secret}&js_code=#{js_code}&grant_type=authorization_code";
+
     public static String getSendMessageUrl(String accessToken){
         return SEND_MESSAGE_URL.replace("#{ACCESS_TOKEN}", accessToken);
     }
@@ -70,6 +72,21 @@ public class WxApiUrlUtil {
      */
     public static String getCreateTempQrCodeUrl(String accessToken){
         return FETCH_CREATE_TEMP_QR_CODE_URL.replace("#{accessToken}", accessToken);
+    }
+
+    /**
+     * 获取小程序登录校验信息url
+     * @param appId     :小程序appId
+     * @param secret    :小程序secret
+     * @param code      :前端传过来的code
+     * @return
+     */
+    public static String getMiniAppLoginVerifyUrl(String appId,String secret,String code){
+        String url = CODE_2_SESSION_URL;
+        url.replace("#{app_id}",appId);
+        url.replace("#{secret}",secret);
+        url.replace("#{js_code}",code);
+        return url;
     }
 
 }

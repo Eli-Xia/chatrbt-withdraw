@@ -50,6 +50,7 @@ public class WxAuthApiService {
 
     private String FETCH_AUTHORIZER_INFO_URL = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=#{componentAccessToken}";
 
+
     private final static Integer VERIFY_TICKET_PERIOD = 10 * 60;
 
     //公众号接入的状态
@@ -100,6 +101,7 @@ public class WxAuthApiService {
     private static String appSecret = null;
 
     private static String redirctUriPart = null;
+
 
 
 

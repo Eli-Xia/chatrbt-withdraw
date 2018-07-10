@@ -131,6 +131,20 @@
     </mvc:interceptors>
      -->
 
+	<!--配置chatpet登录拦截器  -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/chat-pet/pet/**" />
+			<mvc:exclude-mapping path="/chat-pet/pet/login" />
+			<mvc:exclude-mapping path="/chat-pet/pet/oauth/fan-info" />
+			<mvc:exclude-mapping path="/chat-pet/pet/home-page" />
+			<mvc:exclude-mapping path="/chat-pet/pet/login" />
+			<mvc:exclude-mapping path="/chat-pet/pet/logout" />
+			<bean class="net.monkeystudio.chatpet.controller.interceptor.ChatPetLoginCheckInteceptor"></bean>
+		</mvc:interceptor>
+
+	</mvc:interceptors>
+
 	<!--rest接口的一些公用逻辑实现，目前主要是实现了异常处理-->
 	<bean id="RestControllerAspectBean" class="net.monkeystudio.base.controller.RestControllerAspect"></bean>
 	<aop:config>

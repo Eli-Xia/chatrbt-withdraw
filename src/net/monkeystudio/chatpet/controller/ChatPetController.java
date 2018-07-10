@@ -7,7 +7,6 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
-import net.monkeystudio.wx.service.WxOauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +14,6 @@ import org.springframework.web.portlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -35,13 +31,9 @@ public class ChatPetController extends ChatPetBaseController{
 
 
     @ResponseBody
-    @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public RespBase getAdClickLogList(HttpServletRequest request,HttpServletResponse response){
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public RespBase getChatPetInfo(HttpServletRequest request,HttpServletResponse response){
         Integer fanId = getUserId();
-
-        if(fanId == null){
-            return respHelper.nologin();
-        }
 
         ChatPetInfo chatPetInfo = chatPetService.getInfoByWxFanId(fanId);
 
@@ -83,9 +75,6 @@ public class ChatPetController extends ChatPetBaseController{
             //response.sendRedirect(chatPetService.getPageRedirectUrlByUrlEncoder(pageUri));
             response.sendRedirect(chatPetService.getPageRedirectUrl(pageUri));
         }
-
-
-
         return null;
     }
 

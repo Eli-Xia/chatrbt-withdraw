@@ -5,6 +5,7 @@
         <result column="id" property="id" jdbcType="INTEGER" />
         <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+        <result column="wx_mini_app_id" property="wxMiniAppId" jdbcType="INTEGER" />
         <result column="temp_appearance" property="tempAppearence" jdbcType="INTEGER" />
         <result column="ethnic_groups_id" property="ethnicGroupsId" jdbcType="VARCHAR" />
         <result column="second_ethnic_groups_id" property="secondEthnicGroupsId" jdbcType="VARCHAR" />
@@ -17,7 +18,7 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_pub_origin_id ,wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code
+        id, wx_pub_origin_id ,wx_fan_open_id ,wx_mini_app_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code
     </sql>
 
     <select id="select" parameterType="map">
@@ -54,6 +55,9 @@
             </if>
             <if test="wxFanOpenId != null">
                 and wx_fan_open_id = #{wxFanOpenId}
+            </if>
+            <if test="wxMiniAppId != null">
+                and wx_mini_app_id = #{wxMiniAppId}
             </if>
         </where>
         limit 1

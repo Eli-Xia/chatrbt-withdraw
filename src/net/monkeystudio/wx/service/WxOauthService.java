@@ -106,13 +106,6 @@ public class WxOauthService {
         return String.format(FETCH_OAUTH_USER_INFO_URL,accessToken,openId );
     }
 
-    public static void main(String[]args){
-        String a = "恭喜你采矿成功,点击<a href=\"%s\">领取奖励</a>";
-        String format = String.format(a, "www.baidu.com");
-        System.out.println(1);
-
-    }
-
 
 }
 

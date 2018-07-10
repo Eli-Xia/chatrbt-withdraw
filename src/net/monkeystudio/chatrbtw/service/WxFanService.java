@@ -26,6 +26,12 @@ public class WxFanService {
 
     private static final Integer WX_FAN_CACHE_PERIOD = 60 * 30;
 
+    public static final Integer LUCK_CAT_MINI_APP_ID = 1;
+
+    public static final Integer WX_SERVICE_TYPE_PUB = 0;
+
+    public static final Integer WX_SERVICE_TYPE_MINI_APP = 1;
+
     @Autowired
     private WxFanMapper wxFanMapper ;
 
@@ -44,6 +50,23 @@ public class WxFanService {
         return wxFan;
     }
 
+    public WxFan getWxFan(String wxFanOpenId,Integer wxMiniAppId){
+        WxFan wxFan = this.getWxFanFromCache(null, wxFanOpenId, wxMiniAppId);
+
+        if(wxFan != null && wxFan.getId() != null){
+            return wxFan;
+        }
+
+        wxFan = this.getWxFanFromDb(null,wxFanOpenId,wxMiniAppId);
+
+        if(wxFan != null){
+            this.setWxFanCache(null,wxFanOpenId,wxMiniAppId,wxFan);
+            return wxFan;
+        }
+
+        return null;
+    }
+
     /**
      * 获取粉丝基础信息
      * @param wxPubOriginId 公众号原始Id
@@ -52,16 +75,16 @@ public class WxFanService {
      */
     public WxFan getWxFan(String wxPubOriginId ,String wxFanOpenId){
 
-        WxFan wxFan = this.getWxFanFromCache(wxPubOriginId , wxFanOpenId);
+        WxFan wxFan = this.getWxFanFromCache(wxPubOriginId , wxFanOpenId , null);
 
         if(wxFan != null && wxFan.getId() != null ){
             return wxFan;
         }
 
-        wxFan = this.getWxFanFromDb(wxPubOriginId,wxFanOpenId);
+        wxFan = this.getWxFanFromDb(wxPubOriginId,wxFanOpenId,null);
 
         if(wxFan != null){
-            this.setWxFanCache(wxPubOriginId,wxFanOpenId,wxFan);
+            this.setWxFanCache(wxPubOriginId,wxFanOpenId,null,wxFan);
             return wxFan;
         }
 
@@ -79,14 +102,14 @@ public class WxFanService {
         return wxFan;
     }
 
-    private void setWxFanCache(String wxPubOriginId ,String wxFanOpenId ,WxFan wxFan){
-        String cacheKey = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId);
+    private void setWxFanCache(String wxPubOriginId ,String wxFanOpenId ,Integer wxMiniAppId,WxFan wxFan){
+        String cacheKey = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,wxMiniAppId);
         redisCacheTemplate.setObject(cacheKey,wxFan );
         redisCacheTemplate.expire(cacheKey, WX_FAN_CACHE_PERIOD);
     }
 
-    private WxFan getWxFanFromDb(String wxPubOriginId ,String wxFanOpenId ){
-        List<WxFan> list = wxFanMapper.select(wxPubOriginId, wxFanOpenId);
+    private WxFan getWxFanFromDb(String wxPubOriginId ,String wxFanOpenId ,Integer wxMiniAppId){
+        List<WxFan> list = wxFanMapper.select(wxPubOriginId, wxFanOpenId, wxMiniAppId);
 
         if(list == null || list.size() == 0){
             return null;
@@ -95,13 +118,19 @@ public class WxFanService {
         return list.get(0);
     }
 
-    private WxFan getWxFanFromCache(String wxPubOriginId , String wxFanOpenId){
-        String key = this.getWxFanCacheKey(wxPubOriginId, wxFanOpenId);
+    private WxFan getWxFanFromCache(String wxPubOriginId , String wxFanOpenId ,Integer wxMiniAppId){
+        String key = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,wxMiniAppId);
         return redisCacheTemplate.getObject(key);
     }
 
-    private String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ){
-        String key = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "WxFan:" + wxFanOpenId + ":" +  wxPubOriginId;
+    private String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ,Integer wxMiniAppId ){
+        String key = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "WxFan:" + wxFanOpenId + ":";
+        if(wxPubOriginId != null){
+            key.concat(wxPubOriginId);
+        }
+        if(wxMiniAppId != null){
+            key.concat(wxMiniAppId.toString());
+        }
         return key;
     }
 
@@ -124,7 +153,7 @@ public class WxFanService {
             Log.e(e);
         }
 
-        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan);
+        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getWxMiniAppId(),wxFan);
         return result;
     }
 
@@ -186,16 +215,16 @@ public class WxFanService {
         this.update(wxFan);
 
         wxFan = this.getById(wxFan.getId());
-        this.setWxFanCache(wxPubOriginId, wxFanOpenId ,wxFan);
+        this.setWxFanCache(wxPubOriginId, wxFanOpenId ,null,wxFan);
     }
 
-    private Integer update(WxFan wxFan) {
+    public Integer update(WxFan wxFan) {
         return wxFanMapper.update(wxFan);
     }
 
     public boolean isFans(String wxPubOriginId ,String wxFanOpenId){
         boolean isFans = false;
-        WxFan wxFan = this.getWxFanFromDb(wxPubOriginId, wxFanOpenId);
+        WxFan wxFan = this.getWxFanFromDb(wxPubOriginId, wxFanOpenId,null);
         if(wxFan != null){
             isFans = true;
         }
