@@ -96,6 +96,30 @@ public class ChatPetService {
     private WxFanHelper wxFanHelper;
 
     /**
+     * 小程序为用户生成
+     * @param wxFanOpenId
+     * @param chatPetType
+     * @param parentId
+     * @return
+     */
+    public void generateChatPet(String wxFanOpenId,Integer chatPetType,Integer parentId){
+        chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
+
+        ChatPet chatPet = new ChatPet();
+        chatPet.setWxFanOpenId(wxFanOpenId);
+        chatPet.setCreateTime(new Date());
+        chatPet.setParentId(parentId);
+
+        this.save(chatPet);
+    }
+
+    public void generateChatPetFromShareCard(Integer fanId,Integer parentId){
+        WxFan miniAppFan = wxFanService.getById(fanId);
+        String fanOpenId = miniAppFan.getWxFanOpenId();
+        this.generateChatPet(fanOpenId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
+    }
+
+    /**
      * 生成宠物
      * @param wxPubOriginId
      * @param wxFanOpenId

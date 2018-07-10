@@ -21,10 +21,12 @@ public class MiniAppLoginService {
     private RedisCacheTemplate redisCacheTemplate;
     @Autowired
     private WxFanService wxFanService;
+    @Autowired
+    private ChatPetService chatPetService;
 
     public String loginHandle(String jsCode){
         LoginVerifyInfo loginVerifyInfo = wxMiniAppHelper.fetchLoginVerifyInfo(jsCode);
-        
+
         String openId = loginVerifyInfo.getOpneId();
 
         String sessionKey = loginVerifyInfo.getSessionKey();
@@ -49,6 +51,7 @@ public class MiniAppLoginService {
             wxFanService.save(miniAppFan);
 
             //生成一只宠物
+            chatPetService.generateChatPet(openId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }
 
         return token;

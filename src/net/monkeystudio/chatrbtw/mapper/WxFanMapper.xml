@@ -36,8 +36,8 @@
               #{wxFanOpenId,jdbcType=VARCHAR},
               #{createAt,jdbcType=INTEGER},
               #{headImgUrl,jdbcType=VARCHAR},
-              #{wx_mini_app_id,jdbcType=INTEGER},
-              #{wx_service_type,jdbcType=INTEGER}
+              #{wxMiniAppId,jdbcType=INTEGER},
+              #{wxServiceType,jdbcType=INTEGER}
             )
     </insert>
 
