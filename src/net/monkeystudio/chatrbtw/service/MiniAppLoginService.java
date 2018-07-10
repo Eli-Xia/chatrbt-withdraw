@@ -41,7 +41,7 @@ public class MiniAppLoginService {
 
         redisCacheTemplate.expire(key,7200);//缓存两小时
 
-        //去数据库或cache中查找openId是否存在,存在说明不是第一次登录,如果不存在wxFanId insert unionId,openId,并把数据放入缓存之中
+        //去数据库或cache中查找openId是否存在,存在说明不是第一次登录,如果不存在wxFanId insert unionId,openId,并把数据放入缓存
         WxFan wxFan = wxFanService.getWxFan(openId, wxFanService.LUCK_CAT_MINI_APP_ID);
         if(wxFan == null){
             WxFan miniAppFan = new WxFan();

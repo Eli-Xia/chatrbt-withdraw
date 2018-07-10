@@ -103,12 +103,13 @@ public class ChatPetService {
      * @return
      */
     public void generateChatPet(String wxFanOpenId,Integer chatPetType,Integer parentId){
-        chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
+        String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
 
         ChatPet chatPet = new ChatPet();
         chatPet.setWxFanOpenId(wxFanOpenId);
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
+        chatPet.setAppearanceCode(appearanceCode);
 
         this.save(chatPet);
     }
