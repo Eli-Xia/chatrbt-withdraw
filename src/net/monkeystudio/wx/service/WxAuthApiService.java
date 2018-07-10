@@ -12,6 +12,7 @@ import net.monkeystudio.chatrbtw.entity.WxPub;
 import net.monkeystudio.chatrbtw.entity.WxPubAuthorizerRefreshToken;
 import net.monkeystudio.chatrbtw.entity.WxPubKeywordStatus;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.ErrorInfo;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.auth.WxPubJoinStatus;
 import net.monkeystudio.wx.mp.aes.XMLParse;
@@ -206,6 +207,13 @@ public class WxAuthApiService {
         params.put("authorizer_refresh_token",wxPubAuthorizerRefreshToken.getAuthorizerRefreshToken());
 
         String response = HttpsHelper.postJson(refreshAccessTokenUrl,params);
+
+        if(response.indexOf("errcode") != -1){
+
+            ErrorInfo errorInfo = JsonUtil.readValue(response, ErrorInfo.class);
+
+            Log.e("response has something error:" + errorInfo.getErrMsg());
+        }
 
         AuthorizerRefreshTokenResp authorizerRefreshTokenResp = JsonUtil.readValue(response, AuthorizerRefreshTokenResp.class);
 

@@ -36,4 +36,6 @@ public interface ChatPetRewardItemMapper {
     List<ChatPetRewardItem> selectByChatPetAndMissionId( @Param("chatPetId")Integer chatPetId ,@Param("rewardState") Integer rewardState ,@Param("missionItemId") Integer missionItemId);
 
     Integer updateMissionRewardState(@Param("originState") Integer originState ,@Param("newState") Integer newState );
+
+    ChatPetRewardItem selectByMissionItemId(@Param("missionItemId") Integer missionItemId);
 }

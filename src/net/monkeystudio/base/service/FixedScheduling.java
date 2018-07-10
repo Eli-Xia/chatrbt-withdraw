@@ -39,9 +39,16 @@ public class FixedScheduling {
 
                 ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
 
-                ScheduledFuture scheduledFuture = service.schedule(runnable,time - currentTime, TimeUnit.MILLISECONDS);
+                try {
+                    ScheduledFuture scheduledFuture = service.schedule(runnable,time - currentTime, TimeUnit.MILLISECONDS);
+                    Log.d("scheduledFuture has been run :" + time);
+                }catch (Exception e){
+                    Log.e(e);
+                }finally {
+                    service.shutdown();
+                }
 
-                service.shutdown();
+
             }
         });
 

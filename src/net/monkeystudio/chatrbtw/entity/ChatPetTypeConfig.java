@@ -9,6 +9,8 @@ public class ChatPetTypeConfig {
     private String newsDescription;
     private String founderName;
     private String coinName;
+    private Float coin;
+    private Integer rewardType;
 
     public String getCoinName() {
         return coinName;
@@ -66,4 +68,19 @@ public class ChatPetTypeConfig {
         this.founderName = founderName;
     }
 
+    public Float getCoin() {
+        return coin;
+    }
+
+    public void setCoin(Float coin) {
+        this.coin = coin;
+    }
+
+    public Integer getRewardType() {
+        return rewardType;
+    }
+
+    public void setRewardType(Integer rewardType) {
+        this.rewardType = rewardType;
+    }
 }

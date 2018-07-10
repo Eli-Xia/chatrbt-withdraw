@@ -25,7 +25,6 @@ public class SqlHeartBeatService {
      * 每隔50S的心跳测试
      */
     public void sqlHeartBeatTask(){
-        Log.d("================== 开启心跳测试线程 ===================");
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {

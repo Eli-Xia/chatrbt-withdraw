@@ -138,6 +138,16 @@
       </if>
   </select>
 
+
+  <select id="selectByMissionItemId" resultMap="BaseResultMap" >
+    select
+        <include refid="Base_Column_List"/>
+    from
+        e_chat_pet_reward_item
+    where
+        mission_item_id = #{missionItemId}
+  </select>
+
 </mapper>
 
 
