@@ -39,4 +39,6 @@ public interface ChatPetMapper {
     Double countTotalexperience(Integer chatPetType);
 
     Integer increaseMoney(@Param("chatPetId") Integer chatPetId,@Param("additionMoney") Float additionMoney);
+
+    ChatPet selectByWxFanId(Integer wxFanId);
 }

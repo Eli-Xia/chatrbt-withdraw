@@ -32,8 +32,6 @@ public class MiniProgramChatPetService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
     @Autowired
-    private ChatPetRewardService chatPetRewardService;
-    @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
     @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
@@ -134,16 +132,21 @@ public class MiniProgramChatPetService {
 
     /**
      * 小程序为用户生成一只宠物
-     * @param wxFanOpenId
+     * @param wxFanId
      * @param chatPetType
      * @param parentId
      * @return
      */
-    public void generateChatPet(String wxFanOpenId,Integer chatPetType,Integer parentId){
+    public void generateChatPet(Integer wxFanId,Integer chatPetType,Integer parentId){
         String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
 
         ChatPet chatPet = new ChatPet();
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        String wxFanOpenId = wxFan.getWxFanOpenId();
         chatPet.setWxFanOpenId(wxFanOpenId);
+        chatPet.setWxFanId(wxFanId);
+
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
         chatPet.setAppearanceCode(appearanceCode);
@@ -158,9 +161,7 @@ public class MiniProgramChatPetService {
      * @param parentId
      */
     public void generateChatPetFromShareCard(Integer fanId,Integer parentId){
-        WxFan miniAppFan = wxFanService.getById(fanId);
-        String fanOpenId = miniAppFan.getWxFanOpenId();
-        this.generateChatPet(fanOpenId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
+        this.generateChatPet(fanId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
     }
 
 
