@@ -81,7 +81,7 @@ public class MiniProgramLoginService {
             wxFanService.save(miniAppFan);
 
             //为新用户生成招财猫,同一事务
-            chatPetService.generateChatPet(openId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
+            miniProgramChatPetService.generateChatPet(openId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }
 
         return token;

@@ -59,7 +59,7 @@ public class ChatPetController extends ChatPetBaseController{
     @RequestMapping(value = "/generate-cat", method = RequestMethod.GET)
     public RespBase getChatPetInfo(@RequestParam("parentId")Integer parentId){
         Integer fanId = getUserId();
-        chatPetService.generateChatPetFromShareCard(fanId,parentId);
+        miniProgramChatPetService.generateChatPetFromShareCard(fanId,parentId);
         return respHelper.ok();
     }
 

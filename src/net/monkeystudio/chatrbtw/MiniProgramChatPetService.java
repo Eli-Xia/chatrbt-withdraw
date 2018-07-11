@@ -12,6 +12,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +35,8 @@ public class MiniProgramChatPetService {
     private ChatPetRewardService chatPetRewardService;
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
+    @Autowired
+    private ChatPetAppearenceService chatPetAppearenceService;
 
 
     /**
@@ -127,6 +130,37 @@ public class MiniProgramChatPetService {
     public ChatPet getChatPetById(Integer chatPetId){
         ChatPet chatPet = chatPetService.getById(chatPetId);
         return chatPet;
+    }
+
+    /**
+     * 小程序为用户生成一只宠物
+     * @param wxFanOpenId
+     * @param chatPetType
+     * @param parentId
+     * @return
+     */
+    public void generateChatPet(String wxFanOpenId,Integer chatPetType,Integer parentId){
+        String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
+
+        ChatPet chatPet = new ChatPet();
+        chatPet.setWxFanOpenId(wxFanOpenId);
+        chatPet.setCreateTime(new Date());
+        chatPet.setParentId(parentId);
+        chatPet.setAppearanceCode(appearanceCode);
+        chatPet.setChatPetType(chatPetType);
+
+        chatPetService.save(chatPet);
+    }
+
+    /**
+     * 分享卡生成孩子宠物
+     * @param fanId
+     * @param parentId
+     */
+    public void generateChatPetFromShareCard(Integer fanId,Integer parentId){
+        WxFan miniAppFan = wxFanService.getById(fanId);
+        String fanOpenId = miniAppFan.getWxFanOpenId();
+        this.generateChatPet(fanOpenId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
     }
 
 
