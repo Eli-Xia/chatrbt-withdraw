@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetBackgroundService chatPetBackgroundService;
-
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
@@ -83,17 +83,14 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetRewardService chatPetRewardService;
+
     @Autowired
     private RWxPubChatPetTypeService rWxPubChatPetTypeService;
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
 
-    @Autowired
-    private ChatPetTypeService chatPetTypeService;
 
-    @Autowired
-    private WxFanHelper wxFanHelper;
 
     /**
      * 小程序为用户生成
@@ -1155,8 +1152,31 @@ public class ChatPetService {
     }
 
 
+    /**
+     * 统计有多少个孩子
+     * @param parentId
+     * @return
+     */
     public Integer countByParentId(Integer parentId){
 
         return chatPetMapper.countByParentId(parentId);
+    }
+
+    /**
+     * 根据宠物类型，获取宠物
+     * @param chatPetType
+     * @return
+     */
+    public List<ChatPet> getByChatPetType(Integer chatPetType){
+        return chatPetMapper.selectByChatPetType(chatPetType);
+    }
+
+    public Double countTotalexperience(Integer chatPetType){
+        return chatPetMapper.countTotalexperience(chatPetType);
+    }
+
+
+    public Integer increaseMoney(Integer chatPetId ,Float additionMoney){
+        return chatPetMapper.increaseMoney(chatPetId, additionMoney);
     }
 }

@@ -14,7 +14,7 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, chat_pet_type, news_cover_url, news_title, news_description, founder_name,coin_name,coin,reward_type
+        id, chat_pet_type, news_cover_url, news_title, news_description, founder_name ,coin_name ,coin, reward_type
     </sql>
 
     <select id="selectByChatPetTypeId" resultMap="baseResultMap" parameterType="map">

@@ -51,7 +51,7 @@ public class ArithmeticUtils {
             return null;
         }
 
-        BigDecimal result = divisor.divide(divide,6, BigDecimal.ROUND_HALF_UP);
+        BigDecimal result = divisor.divide(divide,10, BigDecimal.ROUND_HALF_UP);
 
 
         return result;

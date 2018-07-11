@@ -94,7 +94,7 @@
     </update>
 
     <select id="countSecondEthnicGroupsById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-          select
+        select
             count(id)
         from
             e_chat_pet
@@ -142,4 +142,27 @@
     <select id="countByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         SELECT count(id) FROM  e_chat_pet WHERE arent_id = #{chatPetId}
     </select>
+
+
+    <select id="selectByChatPetType" parameterType="java.lang.Integer"  resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"></include>
+        from
+            e_chat_pet
+        where
+            chat_pet_type = #{chatPetType}
+    </select>
+
+    <select id="countTotalexperience" parameterType="java.lang.Integer" resultType="java.lang.Double">
+        SELECT SUM(experience)  FROM e_chat_pet where chat_pet_type = #{chatPetType}
+    </select>
+
+
+    <update id="increaseMoney" parameterType="map">
+        update
+          e_chat_pet
+        set money = IFNULL(money,0) + #{additionMoney}
+        where
+            id = #{id}
+    </update>
 </mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.DividendRecordMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.DividendRecord">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="money" property="money" jdbcType="REAL" />
+        <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        `id`, `create_time`, `money` , `chat_pet_type`
+    </sql>
+
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.DividendRecord" useGeneratedKeys="true" keyProperty="id">
+        insert
+            (`create_time`, `money` ,`chat_pet_type` )
+            VALUES
+                (#{createTime} ,#{money} ,#{chatPetType})
+    </insert>
+</mapper>
