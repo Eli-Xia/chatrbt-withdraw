@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author xiaxin
  */
-public class MiniAppFanBaseInfo {
+public class MiniProgramFanBaseInfo {
     @JsonProperty("openId")
     private String openId;
     @JsonProperty("nickName")

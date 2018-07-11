@@ -48,7 +48,7 @@ public class ChatPetBaseController extends BaseController {
 
         if(token != null){
             String value = redisCacheTemplate.getString(SESSION_TOKEN_KEY_SUFFIX + token);
-            String userOpenId = value.split("\\+")[1];
+            String userOpenId = value.split("\\+")[0];
             //根据openId查询wxFanId
             WxFan wxFan = wxFanService.getWxFan(userOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
             if(wxFan != null){

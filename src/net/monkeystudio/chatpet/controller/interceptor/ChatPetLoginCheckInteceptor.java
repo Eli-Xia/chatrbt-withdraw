@@ -7,12 +7,10 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatpet.controller.ChatPetBaseController;
-import net.monkeystudio.chatrbtw.service.MiniAppLoginService;
+import net.monkeystudio.chatrbtw.service.MiniProgramLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +26,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
     private RespHelper respHelper;
 
     @Autowired
-    private MiniAppLoginService miniAppLoginService;
+    private MiniProgramLoginService miniProgramLoginService;
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
@@ -48,7 +46,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             }
         }else{
             //小程序登录
-            String sessionTokenCacheKey = miniAppLoginService.getSessionTokenCacheKey(sessionToken);
+            String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(sessionToken);
             String sessionValue = redisCacheTemplate.getString(sessionTokenCacheKey);
             if(StringUtil.isEmpty(sessionValue)){
                 returnErrorResponse(response,respHelper.nologin());

@@ -8,6 +8,15 @@ public class DispatchMissionParam {
     private Integer missionCode;
     private Integer chatPetId;
     private Integer adId;
+    private Integer wxMiniGameId;
+
+    public Integer getWxMiniGameId() {
+        return wxMiniGameId;
+    }
+
+    public void setWxMiniGameId(Integer wxMiniGameId) {
+        this.wxMiniGameId = wxMiniGameId;
+    }
 
     public Integer getMissionCode() {
         return missionCode;

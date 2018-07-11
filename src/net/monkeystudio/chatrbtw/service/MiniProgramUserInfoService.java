@@ -5,7 +5,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniAppFanBaseInfo;
+import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @author xiaxin
  */
 @Service
-public class MiniAppUserInfoService {
+public class MiniProgramUserInfoService {
 
     @Autowired
     private WxFanService wxFanService;
@@ -44,7 +44,7 @@ public class MiniAppUserInfoService {
      * @param signature
      * @throws Exception
      */
-    public void reviseMiniAppFan(Integer fanId,String rawData,String encryptedData,String iv,String signature)throws Exception{
+    public void reviseMiniProgramFan(Integer fanId,String rawData,String encryptedData,String iv,String signature)throws Exception{
         WxFan wxFan = wxFanService.getById(fanId);
 
         if(wxFan == null){
@@ -58,16 +58,16 @@ public class MiniAppUserInfoService {
 
         if(token != null){
             String value = redisCacheTemplate.getString(token);
-            String sessionKey = value.split("\\+")[0];
-            MiniAppFanBaseInfo miniAppFanBaseInfo = this.getMiniAppFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
+            String sessionKey = value.split("\\+")[1];
+            MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
 
-            wxFan.setCity(miniAppFanBaseInfo.getCity());
-            wxFan.setProvince(miniAppFanBaseInfo.getProvince());
-            wxFan.setCountry(miniAppFanBaseInfo.getCountry());
-            wxFan.setNickname(miniAppFanBaseInfo.getNickname());
-            wxFan.setHeadImgUrl(miniAppFanBaseInfo.getHeadImgUrl());
-            wxFan.setSex(miniAppFanBaseInfo.getSex());
-            wxFan.setUnionId(miniAppFanBaseInfo.getUnionId());
+            wxFan.setCity(miniProgramFanBaseInfo.getCity());
+            wxFan.setProvince(miniProgramFanBaseInfo.getProvince());
+            wxFan.setCountry(miniProgramFanBaseInfo.getCountry());
+            wxFan.setNickname(miniProgramFanBaseInfo.getNickname());
+            wxFan.setHeadImgUrl(miniProgramFanBaseInfo.getHeadImgUrl());
+            wxFan.setSex(miniProgramFanBaseInfo.getSex());
+            wxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
 
             wxFanService.update(wxFan);
         }
@@ -84,7 +84,7 @@ public class MiniAppUserInfoService {
      * @return
      * @throws Exception
      */
-    public MiniAppFanBaseInfo getMiniAppFanBaseInfo(String rawData,String encryptedData,String iv,String signature,String sessionKey)throws Exception{
+    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String rawData, String encryptedData, String iv, String signature, String sessionKey)throws Exception{
         // 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
@@ -111,7 +111,7 @@ public class MiniAppUserInfoService {
             byte[] resultByte = cipher.doFinal(dataByte);
             if (null != resultByte && resultByte.length > 0) {
                 String result = new String(resultByte, "UTF-8");
-                return JsonUtil.readValue(result, MiniAppFanBaseInfo.class);
+                return JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
             }
         } catch (Exception e) {
             Log.e(e);
@@ -119,24 +119,4 @@ public class MiniAppUserInfoService {
         return null;
     }
 
-    public static void main(String[]args){
-        Map<String,Object> map = new HashMap<>();
-        map.put("openId","OPENID");
-        map.put("nickName","NICKNAME");
-        map.put("gender",1);
-        map.put("city","CITY");
-        map.put("province","PROVINCE");
-        map.put("country","COUNTRY");
-        map.put("avatarUrl","AVATARURL");
-        map.put("unionId","UNIONID");
-        Map<String,Object> map2= new HashMap<>();
-        map2.put("appid","APPID");
-        map2.put("timestamp",new Date().getTime());
-        map.put("watermark",map2);
-
-        String s = JsonUtil.toJSon(map);
-        System.out.println(s);
-        MiniAppFanBaseInfo miniAppFanBaseInfo = JsonUtil.readValue(s, MiniAppFanBaseInfo.class);
-        System.out.println(1);
-    }
 }

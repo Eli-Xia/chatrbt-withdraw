@@ -18,7 +18,7 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_pub_origin_id ,wx_fan_open_id ,wx_mini_app_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code
+        id, wx_pub_origin_id ,wx_fan_open_id ,wx_mini_app_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code,chat_pet_type
     </sql>
 
     <select id="select" parameterType="map">
@@ -34,8 +34,8 @@
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet" keyProperty="id" useGeneratedKeys="true">
         insert into
             e_chat_pet
-                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ,appearance_code )
-        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId},#{appearanceCode})
+                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ,appearance_code ,chat_pet_type )
+        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId},#{appearanceCode},#{chatPetType})
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap" >
@@ -58,6 +58,9 @@
             </if>
             <if test="wxMiniAppId != null">
                 and wx_mini_app_id = #{wxMiniAppId}
+            </if>
+            <if test="chatPetType != null">
+                and chat_pet_type = #{chatPetType}
             </if>
         </where>
         limit 1

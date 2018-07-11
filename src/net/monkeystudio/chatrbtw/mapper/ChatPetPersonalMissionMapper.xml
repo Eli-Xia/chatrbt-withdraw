@@ -10,10 +10,11 @@
     <result column="state" property="state" jdbcType="INTEGER" />
     <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
     <result column="invitee_wx_fan_id" property="inviteeWxFanId" jdbcType="INTEGER" />
+    <result column="wx_mini_game_id" property="wxMiniGameId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, mission_code, ad_id, chat_pet_id, create_time,
-    state, finish_time,invitee_wx_fan_id
+    state, finish_time,invitee_wx_fan_id,wx_mini_game_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -28,11 +29,11 @@
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
     insert into e_chat_pet_personal_mission (id, mission_code,
       ad_id, chat_pet_id,
-      create_time, state, finish_time,invitee_wx_fan_id
+      create_time, state, finish_time,invitee_wx_fan_id,wx_mini_game_id
       )
     values (#{id,jdbcType=INTEGER}, #{missionCode,jdbcType=INTEGER},
       #{adId,jdbcType=INTEGER},#{chatPetId,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP},#{inviteeWxFanId}
+      #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{finishTime,jdbcType=TIMESTAMP},#{inviteeWxFanId},#{wxMiniGameId}
       )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission" >
@@ -68,7 +69,8 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       state = #{state,jdbcType=INTEGER},
       finish_time = #{finishTime,jdbcType=TIMESTAMP},
-      invitee_wx_fan_id = #{inviteeWxFanId}
+      invitee_wx_fan_id = #{inviteeWxFanId},
+      wx_mini_game_id = #{wxMiniGameId}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
