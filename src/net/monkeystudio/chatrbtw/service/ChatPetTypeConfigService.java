@@ -40,9 +40,9 @@ public class ChatPetTypeConfigService {
 
     static class Constants{
         //手动领取经验和金币
-        public final static Integer Manually_experience_coin = 1;
+        public final static Integer MANUALLY_EXPERIENCE_COIN = 1;
 
         //近需要领取金币
-        public final static Integer Manually_only_experience = 2;
+        public final static Integer MANUALLY_ONLY_EXPERIENCE = 2;
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -269,6 +270,21 @@ public class EthnicGroupsService {
 
         return ethnicGroupsExistingNumberKey;
 
+    }
+
+    /**
+     * 获取族群加成的比例
+     * @param chatPetId
+     * @return
+     */
+    public BigDecimal getEthnicGroupsAdditionRadio(Integer chatPetId){
+        Integer count = chatPetService.countByParentId(chatPetId);
+
+        BigDecimal bigDecimal = new BigDecimal(0.01F + Float.valueOf(count));
+
+        BigDecimal ethnicGroupsAdditionRadio = new BigDecimal(1).add(bigDecimal);
+
+        return ethnicGroupsAdditionRadio;
     }
 
     /**

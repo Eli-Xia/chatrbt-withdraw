@@ -1151,9 +1151,13 @@ public class ChatPetService {
     public Integer getChatPetType(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
         String wxPubOriginId = chatPet.getWxPubOriginId();
-
         Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
-
         return chatPetType;
+    }
+
+
+    public Integer countByParentId(Integer parentId){
+
+        return chatPetMapper.countByParentId(parentId);
     }
 }
