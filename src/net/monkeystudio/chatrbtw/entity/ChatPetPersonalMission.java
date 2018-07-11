@@ -19,7 +19,15 @@ public class ChatPetPersonalMission {
 
     private Integer inviteeWxFanId;
 
+    private Integer wxMiniGameId;
 
+    public Integer getWxMiniGameId() {
+        return wxMiniGameId;
+    }
+
+    public void setWxMiniGameId(Integer wxMiniGameId) {
+        this.wxMiniGameId = wxMiniGameId;
+    }
 
     public Integer getInviteeWxFanId() {
         return inviteeWxFanId;

@@ -5,6 +5,7 @@ import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
+import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class ChatPetController extends ChatPetBaseController{
 
     @Autowired
     private ChatPetService chatPetService;
+    @Autowired
+    private MiniProgramChatPetService miniProgramChatPetService;
 
     @Autowired
     private RespHelper respHelper;
@@ -39,6 +42,18 @@ public class ChatPetController extends ChatPetBaseController{
 
         return respHelper.ok(chatPetInfo);
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/mini-program/info", method = RequestMethod.POST)
+    public RespBase getMiniAppChatPetInfo(HttpServletRequest request,HttpServletResponse response){
+        Integer fanId = getUserId();
+
+        ChatPetInfo chatPetInfo = miniProgramChatPetService.getInfoByFanId(fanId);
+
+        return respHelper.ok(chatPetInfo);
+    }
+
+
 
     @ResponseBody
     @RequestMapping(value = "/generate-cat", method = RequestMethod.GET)

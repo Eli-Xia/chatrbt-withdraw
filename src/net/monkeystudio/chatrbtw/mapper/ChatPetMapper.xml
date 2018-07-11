@@ -59,6 +59,9 @@
             <if test="wxMiniAppId != null">
                 and wx_mini_app_id = #{wxMiniAppId}
             </if>
+            <if test="chatPetType != null">
+                and chat_pet_type = #{chatPetType}
+            </if>
         </where>
         limit 1
     </select>

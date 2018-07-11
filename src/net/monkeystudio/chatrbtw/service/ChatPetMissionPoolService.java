@@ -182,6 +182,7 @@ public class ChatPetMissionPoolService {
         }
     }
 
+
     /**
      * 派发任务
      * @param dispatchMissionParam
@@ -250,6 +251,25 @@ public class ChatPetMissionPoolService {
 
                 return ;
             }
+        }
+
+        if(chatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
+            chatPetPersonalMission.setChatPetId(chatPetId);
+            chatPetPersonalMission.setCreateTime(new Date());
+            chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+            chatPetPersonalMission.setMissionCode(missionCode);
+            chatPetPersonalMission.setWxMiniGameId(dispatchMissionParam.getWxMiniGameId());
+
+            this.save(chatPetPersonalMission);
+        }
+
+        if(chatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
+            chatPetPersonalMission.setChatPetId(chatPetId);
+            chatPetPersonalMission.setCreateTime(new Date());
+            chatPetPersonalMission.setState(MissionStateEnum.GOING_ON.getCode());
+            chatPetPersonalMission.setMissionCode(missionCode);
+
+            this.save(chatPetPersonalMission);
         }
 
     }

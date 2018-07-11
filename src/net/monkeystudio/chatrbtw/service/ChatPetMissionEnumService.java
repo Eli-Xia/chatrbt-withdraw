@@ -25,6 +25,7 @@ public class ChatPetMissionEnumService {
     public final static Integer INVITE_FRIENDS_MISSION_CODE = 3;//邀请好友code
     public final static Integer DAILY_SIGN_IN_CODE = 4;//每日签到code
     public final static Integer DAILY_PLAY_MINI_GAME_CODE = 5;//每日玩小程序code
+    public final static Integer DAILY_LOGIN_MINI_PROGRAM_CODE = 6;//每日登录任务code
 
     @PostConstruct
     private void init(){

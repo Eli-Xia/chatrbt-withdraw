@@ -110,6 +110,7 @@ public class ChatPetService {
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
         chatPet.setAppearanceCode(appearanceCode);
+        chatPet.setChatPetType(chatPetType);
 
         this.save(chatPet);
     }
@@ -153,6 +154,7 @@ public class ChatPetService {
         chatPet.setSecondEthnicGroupsId(secondEthnicGroupsId);
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
+        chatPet.setChatPetType(chatPetType);
 
         this.save(chatPet);
 
@@ -554,7 +556,7 @@ public class ChatPetService {
         return isFanOwnChatPet && isProductEnable;
     }
 
-    private String calculateGeneticCode(Long createTime){
+    public String calculateGeneticCode(Long createTime){
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(2018,1,1);
@@ -575,10 +577,10 @@ public class ChatPetService {
         return chatPetMapper.selectByParam(param);
     }
 
-    public ChatPet getChatPetByFans(String wxFanOpenId,Integer wxMiniAppId){
+    public ChatPet getChatPetByMiniAppFans(String wxFanOpenId,Integer chatPetType){
         ChatPet param = new ChatPet();
         param.setWxFanOpenId(wxFanOpenId);
-        param.setWxMiniAppId(wxMiniAppId);
+        param.setChatPetType(chatPetType);
         return chatPetMapper.selectByParam(param);
     }
 
@@ -603,7 +605,6 @@ public class ChatPetService {
 
         String wxPubOriginId = wxFan.getWxPubOriginId();
         String wxFanOpenId = wxFan.getWxFanOpenId();
-        Integer wxMiniAppId = wxFan.getWxMiniAppId();
 
         ChatPet chatPet = null;
 
@@ -612,7 +613,7 @@ public class ChatPetService {
         }
 
         if(WxFanService.WX_SERVICE_TYPE_MINI_APP.equals(wxServiceType)){
-            chatPet = this.getChatPetByFans(wxFanOpenId,wxMiniAppId);
+            chatPet = this.getChatPetByMiniAppFans(wxFanOpenId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
         }
         return chatPet;
     }
