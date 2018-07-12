@@ -368,7 +368,7 @@ public class ChatPetService {
      */
     public ChatPetRewardChangeInfo rewardHandle(Integer wxFanId,Integer rewardItemId) throws BizException{
         try {
-            ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);//粉丝的宠物
+            ChatPet chatPet = this.getByWxFanId(wxFanId);//粉丝的宠物
             ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getChatPetRewardItemById(rewardItemId);//奖励对象
 
             if(chatPet == null || chatPetRewardItem == null){

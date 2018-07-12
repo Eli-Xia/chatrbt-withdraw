@@ -456,10 +456,11 @@ public class ChatPetRewardService{
         Integer wxFanId = Integer.valueOf(wxFanIdStr);
 
         WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
+        /*String wxPubOriginId = wxFan.getWxPubOriginId();
         String wxFanOpenId = wxFan.getWxFanOpenId();
 
-        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);*/
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 
         //如果没有宠物，返回
         if(chatPet == null){

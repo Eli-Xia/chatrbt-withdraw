@@ -8,6 +8,15 @@ public class WxMiniGame {
     private String headImgUrl;
     private String nickname;
     private String qrCodeImgUrl;
+    private Integer needSign;
+
+    public Integer getNeedSign() {
+        return needSign;
+    }
+
+    public void setNeedSign(Integer needSign) {
+        this.needSign = needSign;
+    }
 
     public String getQrCodeImgUrl() {
         return qrCodeImgUrl;

@@ -11,6 +11,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -173,10 +174,24 @@ public class MiniProgramChatPetService {
      * @param fanId
      * @param parentId
      */
-    public void generateChatPetFromShareCard(Integer fanId,Integer parentId){
+    private void generateChatPetFromShareCard(Integer fanId,Integer parentId){
         this.generateChatPet(fanId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
     }
 
+    public void inviteFriendHandle(Integer fanId,Integer parentId){
+        //生成宠物
+        this.generateChatPetFromShareCard(fanId,parentId);
+
+        //父亲宠物完成邀请任务
+        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
+
+        completeMissionParam.setInviteeWxFanId(fanId);
+        completeMissionParam.setChatPetId(parentId);
+        completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+
+        chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
+
+    }
 
 
 

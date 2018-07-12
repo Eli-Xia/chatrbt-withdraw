@@ -4,6 +4,9 @@ import com.sun.org.apache.xml.internal.security.utils.Base64;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
+import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -35,21 +38,17 @@ public class MiniProgramUserInfoService {
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
+    @Autowired
+    private MiniProgramChatPetService miniProgramChatPetService;
     /**
      * 完善小程序用户信息
-     * @param fanId             小程序粉丝id
      * @param rawData
      * @param encryptedData
      * @param iv
      * @param signature
      * @throws Exception
      */
-    public void reviseMiniProgramFan(Integer fanId,String rawData,String encryptedData,String iv,String signature)throws Exception{
-        WxFan wxFan = wxFanService.getById(fanId);
-
-        if(wxFan == null){
-            return;
-        }
+    public void reviseMiniProgramFan(String rawData,String encryptedData,String iv,String signature)throws Exception{
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -58,18 +57,29 @@ public class MiniProgramUserInfoService {
 
         if(token != null){
             String value = redisCacheTemplate.getString(token);
+            String openId = value.split("\\+")[0];//会话中保存的openId
             String sessionKey = value.split("\\+")[1];
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
+            String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
+            if(userInfoOpenId.equals(openId)){
+                WxFan wxFan = new WxFan();
 
-            wxFan.setCity(miniProgramFanBaseInfo.getCity());
-            wxFan.setProvince(miniProgramFanBaseInfo.getProvince());
-            wxFan.setCountry(miniProgramFanBaseInfo.getCountry());
-            wxFan.setNickname(miniProgramFanBaseInfo.getNickname());
-            wxFan.setHeadImgUrl(miniProgramFanBaseInfo.getHeadImgUrl());
-            wxFan.setSex(miniProgramFanBaseInfo.getSex());
-            wxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
+                wxFan.setWxFanOpenId(userInfoOpenId);
+                wxFan.setCity(miniProgramFanBaseInfo.getCity());
+                wxFan.setProvince(miniProgramFanBaseInfo.getProvince());
+                wxFan.setCountry(miniProgramFanBaseInfo.getCountry());
+                wxFan.setNickname(miniProgramFanBaseInfo.getNickname());
+                wxFan.setHeadImgUrl(miniProgramFanBaseInfo.getHeadImgUrl());
+                wxFan.setSex(miniProgramFanBaseInfo.getSex());
+                wxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
+                wxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
 
-            wxFanService.update(wxFan);
+                Integer wxFanId = wxFanService.save(wxFan);
+
+                //生成宠物
+                miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
+            }
+
         }
     }
 

@@ -43,10 +43,9 @@ public class MiniProgramLoginController extends ChatPetBaseController{
     @ResponseBody
     @RequestMapping(value = "/update/fan-info", method = RequestMethod.POST)
     public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req){
-        Integer fanId = getUserId();
 
         try{
-            miniProgramUserInfoService.reviseMiniProgramFan(fanId,req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
+            miniProgramUserInfoService.reviseMiniProgramFan(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
         }catch(Exception e){
             Log.e(e);
         }
@@ -59,6 +58,8 @@ public class MiniProgramLoginController extends ChatPetBaseController{
         System.out.println(1);
         return respHelper.ok();
     }
+
+
 
 
 

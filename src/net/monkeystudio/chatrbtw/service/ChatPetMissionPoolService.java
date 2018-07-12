@@ -378,7 +378,7 @@ public class ChatPetMissionPoolService {
         }
 
 
-        if(chatPetPersonalMission == null){//查找不到任务记录,说明任务已经完成
+        if(chatPetPersonalMission == null){//查找不到任务记录,任务已经完成
             return ;
         }
 
@@ -513,7 +513,7 @@ public class ChatPetMissionPoolService {
      * @param param 查询条件
      * @return
      */
-    private ChatPetPersonalMission getPersonalMissionByParam(ChatPetPersonalMission param){
+    public ChatPetPersonalMission getPersonalMissionByParam(ChatPetPersonalMission param){
         return this.chatPetPersonalMissionMapper.selectByParam(param);
     }
 

@@ -54,7 +54,7 @@ public class BackdoorController {
                 WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
                 Integer wxFanId = wxFan.getId();
                 Integer chatPetId = chatPet.getId();
-                chatPetMapper.updateWxFanId(wxFanId,chatPetId);
+                chatPetMapper.updateWxFanId(chatPetId,wxFanId);
             }
         }
         return respHelper.ok();

@@ -6,10 +6,11 @@
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="head_img_url" jdbcType="VARCHAR" property="headImgUrl" />
     <result column="qr_code_img_url" jdbcType="VARCHAR" property="qrCodeImgUrl" />
+    <result column="need_sign" jdbcType="INTEGER" property="needSign" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, nickname ,head_img_url ,qr_code_img_url
+    id, nickname ,head_img_url ,qr_code_img_url,need_sign
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -27,13 +28,15 @@
     id,
     nickname,
     head_img_url,
-    qr_code_img_url
+    qr_code_img_url,
+    need_sign
     )
     values 
     	(#{id,jdbcType=INTEGER}, 
     	 #{nickname,jdbcType=VARCHAR},
          #{headImgUrl,jdbcType=VARCHAR},
-         #{qrCodeImgUrl,jdbcType=VARCHAR}
+         #{qrCodeImgUrl,jdbcType=VARCHAR},
+         #{needSign}
          )
   </insert>
   <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
@@ -51,6 +54,9 @@
       <if test="qrCodeImgUrl != null">
         qr_code_img_url,
       </if>
+      <if test="needSign != null">
+        need_sign,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -65,6 +71,9 @@
       <if test="qrCodeImgUrl != null">
         #{qrCodeImgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="needSign != null">
+        #{needSign,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
@@ -72,7 +81,8 @@
     set
       nickname = #{nickname,jdbcType=VARCHAR},
       head_img_url = #{headImgUrl,jdbcType=VARCHAR},
-      qr_code_img_url = #{qrCodeImgUrl}
+      qr_code_img_url = #{qrCodeImgUrl},
+      need_sign = #{needSign}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
