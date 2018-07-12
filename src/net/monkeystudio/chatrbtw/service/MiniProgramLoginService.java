@@ -39,6 +39,10 @@ public class MiniProgramLoginService {
     private WxMiniGameService wxMiniGameService;
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
+    @Autowired
+    private ChatPetRewardService chatPetRewardService;
+    @Autowired
+    private ChatPetLogService chatPetLogService;
 
     //token失效时间
     private final static Integer SESSION_TOKEN_EXPIRE = 3600 * 2 ;
@@ -83,6 +87,8 @@ public class MiniProgramLoginService {
             //为新用户生成招财猫,同一事务
             miniProgramChatPetService.generateChatPet(openId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }
+
+        this.firstLoginHandle(openId);
 
         return token;
     }
@@ -135,10 +141,6 @@ public class MiniProgramLoginService {
             completeLoginMissionParam.setChatPetId(chatPetId);
             chatPetMissionPoolService.completeChatPetMission(completeLoginMissionParam);
 
-            //领取登录任务奖励
-            ChatPetMission chatPetMission = chatPetMissionEnumService.getMissionByCode(chatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE);
-            Float addExperience = chatPetMission.getExperience();
-            chatPetService.increaseExperience(chatPetId,addExperience);
         }
 
     }

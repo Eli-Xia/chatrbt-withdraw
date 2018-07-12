@@ -519,7 +519,7 @@ public class ChatPetMissionPoolService {
      * @param param 查询条件
      * @return
      */
-    private List<ChatPetPersonalMission> getPersonalMissionListByParam(ChatPetPersonalMission param){
+    public List<ChatPetPersonalMission> getPersonalMissionListByParam(ChatPetPersonalMission param){
         return this.chatPetPersonalMissionMapper.selectListByParam(param);
     }
 

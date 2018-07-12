@@ -134,7 +134,7 @@
 	<!--配置chatpet登录拦截器  -->
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/chat-pet/pet/**" />
+			<mvc:mapping path="/chat-pet/**" />
 			<mvc:exclude-mapping path="/chat-pet/pet/login" />
 			<mvc:exclude-mapping path="/chat-pet/pet/oauth/fan-info" />
 			<mvc:exclude-mapping path="/chat-pet/pet/home-page" />
