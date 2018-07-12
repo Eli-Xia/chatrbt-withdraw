@@ -1,7 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
-import net.monkeystudio.base.SpringContextService;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;

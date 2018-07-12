@@ -33,6 +33,17 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        Boolean isLogin = this.isLogin(request);
+        if(!isLogin){
+            returnErrorResponse(response,respHelper.nologin());
+        }
+        return isLogin;
+
+    }
+
+
+    private Boolean isLogin(HttpServletRequest request){
         String sessionToken = request.getHeader("token");
         Log.i("========= session token = {?} ==========",sessionToken);
 
@@ -41,7 +52,6 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             HttpSession session = request.getSession();
             Integer userId =  (Integer) session.getAttribute(ChatPetBaseController.SESSION_ATTR_NAME_CHATPET_USERID);
             if(userId == null){
-                returnErrorResponse(response,respHelper.nologin());
                 return false;
             }
         }else{
@@ -49,7 +59,6 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(sessionToken);
             String sessionValue = redisCacheTemplate.getString(sessionTokenCacheKey);
             if(StringUtil.isEmpty(sessionValue)){
-                returnErrorResponse(response,respHelper.nologin());
                 return false;
             }
         }
