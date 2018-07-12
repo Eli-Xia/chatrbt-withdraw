@@ -10,6 +10,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
+import net.monkeystudio.chatrbtw.mapper.RMiniProgramProductMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,9 @@ public class ChatPetRewardService{
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private RMiniProgramProductMapper rMiniProgramProductMapper;
 
 
     public static final Integer NOT_AWARD = 0;//未领取
@@ -382,8 +386,9 @@ public class ChatPetRewardService{
      */
     public void generateLevelReward(){
 
+
         //开通陪聊宠的公众号
-        List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
+        /*List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
 
         for(RWxPubProduct rWxPubProduct : rWxPubProductList){
 
@@ -395,10 +400,19 @@ public class ChatPetRewardService{
             for(WxFan wxFan : wxFanList){
                 redisCacheTemplate.lpush(key,String.valueOf(wxFan.getId()));
             }
+        }*/
+
+        //开通陪聊宠的小程序
+        List<RMiniProgramProduct> rMiniProgramProductList = rMiniProgramProductMapper.selectByProductId(ProductService.CHAT_PET);
+        for(RMiniProgramProduct rWxMiniProgramProduct : rMiniProgramProductList){
+            Integer miniProgramId = rWxMiniProgramProduct.getMiniProgramId();
+
+            List<WxFan> wxFanList = wxFanService.getListByMiniProgramId(miniProgramId);
+            String key = this.getLevelReward();
+            for(WxFan wxFan : wxFanList){
+                redisCacheTemplate.lpush(key,String.valueOf(wxFan.getId()));
+            }
         }
-
-
-
     }
 
     private String getLevelReward(){

@@ -105,4 +105,13 @@
             wx_pub_origin_id = #{wxPubOriginId}
     </select>
 
+
+    <select id="selectByMiniProgramId" parameterType="java.lang.String">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_wx_fan
+        where
+            wx_mini_app_id = #{miniProgramId}
+    </select>
 </mapper>

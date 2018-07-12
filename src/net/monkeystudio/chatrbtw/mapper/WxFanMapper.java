@@ -20,4 +20,5 @@ public interface WxFanMapper {
     List<WxFan> selectListByWxPubOriginId(@Param("wxPubOriginId") String wxPubOriginId);
 
 
+    List<WxFan> selectByMiniProgramId(@Param("miniProgramId") Integer miniProgramId);
 }

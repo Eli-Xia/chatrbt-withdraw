@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface RWxMiniProgramChatPetTypeMapper {
 
-    List<RWxMiniProgramChatPetType> selectByWxMinProgramId(Integer wxMiniProgram);
+    RWxMiniProgramChatPetType selectByWxMinProgramId(Integer wxMiniProgram);
 }

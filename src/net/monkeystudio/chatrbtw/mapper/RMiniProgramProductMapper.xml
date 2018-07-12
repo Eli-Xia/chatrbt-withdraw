@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RMiniProgramProductMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RMiniProgramProduct">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="mini_program_id" property="miniProgramId" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, mini_program_id, product_id
+    </sql>
+
+    <select id="selectByProductId" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            r_mini_program_porduct
+        where
+            product_id = #{productId}
+    </select>
+
+</mapper>

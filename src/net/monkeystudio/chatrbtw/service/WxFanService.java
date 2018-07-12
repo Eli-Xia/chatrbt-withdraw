@@ -258,4 +258,14 @@ public class WxFanService {
     public List<WxFan> getListByWxPubOriginid(String wxPubOriginid){
         return wxFanMapper.selectListByWxPubOriginId(wxPubOriginid);
     }
+
+
+    /**
+     * 通过小程序id获取对应的粉丝
+     * @param miniProgramId
+     * @return
+     */
+    public List<WxFan> getListByMiniProgramId(Integer miniProgramId){
+        return wxFanMapper.selectByMiniProgramId(miniProgramId);
+    }
 }
