@@ -7,6 +7,15 @@ public class WxMiniGame {
     private Integer id;
     private String headImgUrl;
     private String nickname;
+    private String qrCodeImgUrl;
+
+    public String getQrCodeImgUrl() {
+        return qrCodeImgUrl;
+    }
+
+    public void setQrCodeImgUrl(String qrCodeImgUrl) {
+        this.qrCodeImgUrl = qrCodeImgUrl;
+    }
 
     public Integer getId() {
         return id;

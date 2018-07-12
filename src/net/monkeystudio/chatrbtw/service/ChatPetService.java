@@ -14,6 +14,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
+import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
@@ -133,7 +134,10 @@ public class ChatPetService {
 
         Integer chatPetId = chatPet.getId();
 
-        chatPetLogService.savePetBornLog(wxPubOriginId,wxFanOpenId,chatPetId);
+        SaveChatPetLogParam param = new SaveChatPetLogParam();
+        param.setChatPetId(chatPetId);
+        chatPetLogService.saveChatPetDynamic(param);
+
         return chatPetId;
     }
 

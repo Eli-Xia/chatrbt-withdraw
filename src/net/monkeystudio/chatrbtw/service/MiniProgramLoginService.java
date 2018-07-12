@@ -4,11 +4,11 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.ChatPetMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.sdk.wx.WxMiniAppHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.WxMiniProgramHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 public class MiniProgramLoginService {
     @Autowired
-    private WxMiniAppHelper wxMiniAppHelper;
+    private WxMiniProgramHelper wxMiniProgramHelper;
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
     @Autowired
@@ -39,6 +39,10 @@ public class MiniProgramLoginService {
     private WxMiniGameService wxMiniGameService;
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
+    @Autowired
+    private ChatPetRewardService chatPetRewardService;
+    @Autowired
+    private ChatPetLogService chatPetLogService;
 
     //token失效时间
     private final static Integer SESSION_TOKEN_EXPIRE = 3600 * 2 ;
@@ -46,7 +50,7 @@ public class MiniProgramLoginService {
 
     @Transactional
     public String loginHandle(String jsCode){
-        LoginVerifyInfo loginVerifyInfo = wxMiniAppHelper.fetchLoginVerifyInfo(jsCode);
+        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
 
@@ -74,6 +78,7 @@ public class MiniProgramLoginService {
         //判断openid是否存在于db,不存在则insert
         WxFan wxFan = wxFanService.getWxFan(openId, wxFanService.LUCK_CAT_MINI_APP_ID);
         if(wxFan == null){
+            Log.d("=============== 小程序登录,wxfan不存在于db,是新用户 ===============");
             WxFan miniAppFan = new WxFan();
             miniAppFan.setWxFanOpenId(openId);
             miniAppFan.setWxMiniAppId(wxFanService.LUCK_CAT_MINI_APP_ID);
@@ -81,8 +86,11 @@ public class MiniProgramLoginService {
             wxFanService.save(miniAppFan);
 
             //为新用户生成招财猫,同一事务
+            Log.d("========= 为新用户生成一只招财猫 ============");
             miniProgramChatPetService.generateChatPet(wxFan.getId(),ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }
+
+        this.firstLoginHandle(openId);
 
         return token;
     }
@@ -101,7 +109,7 @@ public class MiniProgramLoginService {
      * @param fanOpenId
      */
     private void firstLoginHandle(String fanOpenId){
-
+        Log.d(" ============ 用户首次登录处理 =============");
         String cacheKey = this.getFanDailyLoginCountCacheKey(fanOpenId);
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
@@ -135,10 +143,6 @@ public class MiniProgramLoginService {
             completeLoginMissionParam.setChatPetId(chatPetId);
             chatPetMissionPoolService.completeChatPetMission(completeLoginMissionParam);
 
-            //领取登录任务奖励
-            ChatPetMission chatPetMission = chatPetMissionEnumService.getMissionByCode(chatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE);
-            Float addExperience = chatPetMission.getExperience();
-            chatPetService.increaseExperience(chatPetId,addExperience);
         }
 
     }

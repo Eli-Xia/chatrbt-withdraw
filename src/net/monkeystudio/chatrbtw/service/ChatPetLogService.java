@@ -1,11 +1,11 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 import net.monkeystudio.chatrbtw.entity.*;
-import net.monkeystudio.chatrbtw.enums.mission.RewardMethodEnum;
 import net.monkeystudio.chatrbtw.mapper.PetLogMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
-import net.monkeystudio.chatrbtw.utils.ChatPetMissionNoUtil;
+import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +38,9 @@ public class ChatPetLogService {
 
     @Autowired
     private WxFanService wxFanService;
+
+    @Autowired
+    private ChatPetTypeConfigService chatPetTypeConfigService;
 
 
     /**
@@ -108,7 +111,165 @@ public class ChatPetLogService {
     }
 
 
-    public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+    /*public void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+        ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = item.getChatPetId();
+        Integer chatPetPersonalMissionId = item.getMissionItemId();
+
+        Float goldValue = item.getGoldValue();
+        Float experience = item.getExperience();
+
+        //金币名称
+        String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
+
+        StringBuilder missisonNameSb = new StringBuilder();
+
+        missisonNameSb.append(this.getPetLogMissionNameByChatPetPersonalMissionId(chatPetPersonalMissionId));
+        missisonNameSb.append(chatPetCoinName + "+" + goldValue + ",");
+        missisonNameSb.append("算力" + "+" + experience);
+
+        PetLog petLog1 = new PetLog();
+        petLog1.setContent(missisonNameSb.toString());
+        petLog1.setChatPetId(chatPetId);
+        petLog1.setCreateTime(new Date());
+        this.savePetLog(petLog1);
+
+        if(isUpgrade){
+            Integer level = chatPetLevelService.calculateLevel(experience);
+
+            PetLog petLog2 = new PetLog();
+            petLog2.setCreateTime(new Date());
+            petLog2.setChatPetId(chatPetId);
+            petLog2.setContent("恭喜你,升级到lv." + level + "啦");
+            this.savePetLog(petLog2);
+        }
+
+    }*/
+
+    /**
+     * 保存宠物动态
+     */
+    public void saveChatPetDynamic(SaveChatPetLogParam param){
+        Integer chatPetLogType = param.getChatPetLogType();
+        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_BORN.equals(chatPetLogType)){
+            Integer chatPetId = param.getChatPetId();
+            this.savePetBornLog(chatPetId);
+        }
+
+        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_LEVEL_REWARD.equals(chatPetLogType)){
+            Integer chatPetRewardItemId = param.getChatPetRewardItemId();
+            this.saveLevelRewardLog(chatPetRewardItemId);
+        }
+
+        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_JOIN_AUTION.equals(chatPetLogType)){
+            Integer chatPetId = param.getChatPetId();
+            this.saveJoinAuctionLog(chatPetId);
+        }
+
+        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_AUTION_SUCCESS.equals(chatPetLogType)){
+            Integer chatPetId = param.getChatPetId();
+            this.saveAuctionSuccessLog(chatPetId);
+        }
+
+        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD.equals(chatPetLogType)){
+            Integer chatPetRewardItemId = param.getChatPetRewardItemId();
+            Integer chatPetId = param.getChatPetId();
+
+            ChatPet chatPet = chatPetService.getById(chatPetId);
+            Integer chatPetType = chatPet.getChatPetType();
+
+            if(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.equals(chatPetType)){
+                this.saveLuckyCatMissionLog(chatPetRewardItemId,param.getUpgrade());
+            }else{
+                this.savePetLog4MissionReward(chatPetRewardItemId,param.getUpgrade());
+            }
+        }
+    }
+
+
+
+    /**
+     * 保存招财猫任务日志
+     * @param chatPetRewardItemId
+     * @param isUpgrade
+     */
+    private void saveLuckyCatMissionLog(Integer chatPetRewardItemId,Boolean isUpgrade){
+
+        ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = item.getChatPetId();
+        Integer chatPetPersonalMissionId = item.getMissionItemId();
+        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+        Integer missionCode = chatPetPersonalMission.getMissionCode();
+        Float experience = item.getExperience();
+
+        //经验值日志
+        PetLog addExperienceLog = new PetLog();
+        addExperienceLog.setChatPetId(chatPetId);
+
+        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            addExperienceLog.setContent("完成公众号打招呼,经验值+" + experience);
+            addExperienceLog.setCreateTime(new Date());
+            this.savePetLog(addExperienceLog);
+        }
+
+        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+            addExperienceLog.setContent("赠送一只猫六六,经验值+" + experience);
+            addExperienceLog.setCreateTime(new Date());
+            this.savePetLog(addExperienceLog);
+        }
+
+        if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
+            addExperienceLog.setContent("每日登录,经验值+" + experience);
+            addExperienceLog.setCreateTime(new Date());
+            this.savePetLog(addExperienceLog);
+        }
+
+        if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
+            addExperienceLog.setContent("体验游戏,经验值+" + experience);
+            addExperienceLog.setCreateTime(new Date());
+            this.savePetLog(addExperienceLog);
+        }
+
+        //升级日志
+        if(isUpgrade){
+            Integer level = chatPetLevelService.calculateLevel(experience);
+
+            PetLog upgradeLog = new PetLog();
+            upgradeLog.setChatPetId(chatPetId);
+            upgradeLog.setContent("恭喜你,升级到lv." + level + "啦");
+            upgradeLog.setCreateTime(new Date());
+            this.savePetLog(upgradeLog);
+        }
+
+    }
+
+    /**
+     * 参加竞标日志
+     */
+    private void saveJoinAuctionLog(Integer chatPetId){
+        PetLog joinAuctionLog = new PetLog();
+
+        joinAuctionLog.setContent("参与竞拍活动");
+        joinAuctionLog.setCreateTime(new Date());
+        joinAuctionLog.setChatPetId(chatPetId);
+
+        this.savePetLog(joinAuctionLog);
+    }
+
+    /**
+     * 竞标成功日志
+     */
+    public void saveAuctionSuccessLog(Integer chatPetId){
+        PetLog auctionSuccessLog= new PetLog();
+
+        auctionSuccessLog.setContent("恭喜你中标啦");
+        auctionSuccessLog.setCreateTime(new Date());
+        auctionSuccessLog.setChatPetId(chatPetId);
+
+        this.savePetLog(auctionSuccessLog);
+    }
+
+    private void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         Integer chatPetPersonalMissionId = item.getMissionItemId();
@@ -266,7 +427,7 @@ public class ChatPetLogService {
     }
 
     //每日可领取奖励日志
-    public void saveLevelRewardLog(Integer chatPetRewardItemId){
+    private void saveLevelRewardLog(Integer chatPetRewardItemId){
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         //金币名称
@@ -281,17 +442,14 @@ public class ChatPetLogService {
         this.savePetLog(pl);
     }
 
-    public void savePetBornLog(String wxPubOpenId,String wxFanOpenId,Integer chatPetId){
+    private void savePetBornLog(Integer chatPetId){
         PetLog pl = new PetLog();
 
-        pl.setWxPubOriginId(wxPubOpenId);
-        pl.setWxFanOpenId(wxFanOpenId);
         pl.setContent("我出生啦!!");
         pl.setCreateTime(new Date());
         pl.setChatPetId(chatPetId);
 
         this.savePetLog(pl);
-
     }
 
 

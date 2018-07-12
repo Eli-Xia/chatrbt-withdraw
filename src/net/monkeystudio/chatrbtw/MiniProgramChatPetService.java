@@ -4,11 +4,13 @@ import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.*;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.OwnerInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
+import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,8 @@ public class MiniProgramChatPetService {
     private ChatPetMissionPoolService chatPetMissionPoolService;
     @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
+    @Autowired
+    private ChatPetRewardService chatPetRewardService;
 
 
     /**
@@ -110,9 +114,18 @@ public class MiniProgramChatPetService {
         Integer chatPetLevel = chatPetLevelService.calculateLevel(experience);
         chatPetBaseInfo.setChatPetLevel(chatPetLevel);
 
-        //今日任务
-        TodayMission todayMission = chatPetMissionPoolService.getTodayMissionWall(chatPetId);
-        chatPetBaseInfo.setTodayMission(todayMission);
+        //外观
+        String appearanceCode = chatPet.getAppearanceCode();
+        LuckyCatAppearance luckyCatAppearance = chatPetAppearenceService.getAppearance(appearanceCode , LuckyCatAppearance.class);
+
+        Appearance appearance = new Appearance();
+        appearance.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+        appearance.setObject(luckyCatAppearance);
+        chatPetBaseInfo.setAppearance(appearance);
+
+        //奖励
+        List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
+        chatPetBaseInfo.setGoldItems(chatPetGoldItems);
 
         return chatPetBaseInfo;
     }

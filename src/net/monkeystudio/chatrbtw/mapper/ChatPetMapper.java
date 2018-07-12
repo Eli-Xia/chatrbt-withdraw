@@ -41,4 +41,8 @@ public interface ChatPetMapper {
     Integer increaseMoney(@Param("chatPetId") Integer chatPetId,@Param("additionMoney") Float additionMoney);
 
     ChatPet selectByWxFanId(Integer wxFanId);
+
+    List<ChatPet> selectAll();
+
+    Integer updateWxFanId(@Param("chatPetId") Integer chatPetId,@Param("wxFanId") Integer wxFanId);
 }

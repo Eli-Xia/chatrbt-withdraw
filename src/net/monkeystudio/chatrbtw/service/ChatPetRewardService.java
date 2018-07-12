@@ -12,6 +12,7 @@ import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.mapper.RMiniProgramProductMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
+import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -170,7 +171,10 @@ public class ChatPetRewardService{
         chatPetService.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
 
         //宠物日志
-        chatPetLogService.saveLevelRewardLog(chatPetRewardItemId);
+        SaveChatPetLogParam param = new SaveChatPetLogParam();
+        param.setChatPetRewardItemId(chatPetRewardItemId);
+        param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_LEVEL_REWARD);
+        chatPetLogService.saveChatPetDynamic(param);
     }
 
     /**
@@ -204,7 +208,18 @@ public class ChatPetRewardService{
         boolean isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
 
         //宠物日志
-        chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
+        SaveChatPetLogParam saveChatPetLogParam = new SaveChatPetLogParam();
+        saveChatPetLogParam.setChatPetId(chatPetId);
+        saveChatPetLogParam.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD);
+        /*Integer chatPetType = chatPet.getChatPetType();
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
+            chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
+        }
+
+        if(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.equals(chatPetType)){
+            chatPetLogService.saveLuckyCatMissionLog(chatPetRewardItemId,isUpgrade);
+        }*/
 
     }
 
@@ -290,6 +305,14 @@ public class ChatPetRewardService{
             //族群加成之后经验值
             BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(playMiniGameRandomExperience));
             item.setExperience(bd.floatValue());
+            item.setGoldValue(0F);
+
+            this.save(item);
+        }
+
+        if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
+
+            item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
             item.setGoldValue(0F);
 
             this.save(item);

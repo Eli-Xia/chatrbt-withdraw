@@ -14,6 +14,7 @@ import net.monkeystudio.chatrbtw.mapper.AuctionItemMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.auctionitem.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetautionitem.AdminAuctionItem;
+import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import net.monkeystudio.wx.service.WxAuthApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,9 @@ public class AuctionItemService {
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private ChatPetLogService chatPetLogService;
 
     //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
@@ -217,7 +221,13 @@ public class AuctionItemService {
                 chatPetTypeConfigService.increaseCoin(auctionItem.getChatPetType(), priceFloat);
 
                 //发送中标提示
-                this.sentRemindMsg(wxFanId);
+                //this.sentRemindMsg(wxFanId);
+
+                //宠物中标日志
+                SaveChatPetLogParam param = new SaveChatPetLogParam();
+                param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_AUTION_SUCCESS);
+                param.setChatPetId(chatPetId);
+                chatPetLogService.saveChatPetDynamic(param);
 
                 break;
             }
