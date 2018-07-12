@@ -235,4 +235,7 @@ public class ChatPetController extends ChatPetBaseController{
         return respHelper.ok(goldList);
     }
 
+
+
+
 }

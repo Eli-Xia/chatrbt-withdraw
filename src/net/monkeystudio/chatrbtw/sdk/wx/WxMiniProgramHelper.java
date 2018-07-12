@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author xiaxin
  */
 @Service
-public class WxMiniAppHelper {
+public class WxMiniProgramHelper {
     @Autowired
     private CfgService cfgService;
 

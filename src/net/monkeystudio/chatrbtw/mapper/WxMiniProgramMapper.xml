@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxMiniAppMapper">
-  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.WxMiniApp">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WxMiniProgramMapper">
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.WxMiniProgram">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="app_id" jdbcType="VARCHAR" property="appId" />
@@ -14,16 +14,16 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from e_wx_mini_app
+    from e_wx_mini_program
     where id = #{id,jdbcType=INTEGER}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from e_wx_mini_app
+    delete from e_wx_mini_program
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniApp">
-    insert into e_wx_mini_app (
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniProgram">
+    insert into e_wx_mini_program (
     id,
     app_id,
     nickname,
@@ -36,8 +36,8 @@
          #{headImgUrl,jdbcType=VARCHAR}
          )
   </insert>
-  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniApp">
-    insert into e_wx_mini_app
+  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniProgram">
+    insert into e_wx_mini_program
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -67,8 +67,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniApp">
-    update e_wx_mini_app
+  <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniProgram">
+    update e_wx_mini_program
     set
       nickname = #{nickname,jdbcType=VARCHAR},
       app_id = #{appId,jdbcType=VARCHAR},
@@ -80,7 +80,7 @@
   <select id="selectByAppId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
         <include refid="Base_Column_List" />
-    from e_wx_mini_app
+    from e_wx_mini_program
         where app_id = #{appId}
   </select>
 

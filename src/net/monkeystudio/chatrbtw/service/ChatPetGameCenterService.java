@@ -73,7 +73,8 @@ public class ChatPetGameCenterService {
         List<ChatPetPersonalMission> personalMissionList = chatPetMissionPoolService.getPersonalMissionListByParam(param);
 
         ChatPetCenterStallResp inviteStall = new ChatPetCenterStallResp();
-        inviteStall.setOrderNum(0);
+        inviteStall.setTitle("赠送一只猫六六");
+        inviteStall.setDescription("每日一送");
         if(ListUtil.isEmpty(personalMissionList)){
             inviteStall.setState(CENTER_STALL_STATE_NOT_FINISH);
         }else{
@@ -84,14 +85,37 @@ public class ChatPetGameCenterService {
         //每日登录
         ChatPetCenterStallResp dailyLoginStall = new ChatPetCenterStallResp();
         dailyLoginStall.setState(CENTER_STALL_STATE_FINISH);//用户进入到市中心每日登录一定是已完成
-        dailyLoginStall.setOrderNum(1);
+        dailyLoginStall.setTitle("每日登录");
+        dailyLoginStall.setDescription("+1 经验值");
         list.add(dailyLoginStall);
 
         //拍卖大堂
         ChatPetCenterStallResp autionHallInstall = new ChatPetCenterStallResp();
-        autionHallInstall.setOrderNum(2);
+        autionHallInstall.setTitle("拍卖大堂");
+        autionHallInstall.setDescription("用猫饼参与拍卖");
         autionHallInstall.setState(null);
         list.add(autionHallInstall);
+
+        //公众号打招呼
+        ChatPetCenterStallResp wxPubSayHiInstall = new ChatPetCenterStallResp();
+        wxPubSayHiInstall.setTitle("公众号打招呼");
+        wxPubSayHiInstall.setDescription("+1 经验值");
+        wxPubSayHiInstall.setState(CENTER_STALL_STATE_NOT_FINISH);
+        list.add(wxPubSayHiInstall);
+
+        //小论坛
+        ChatPetCenterStallResp smallShopInstall = new ChatPetCenterStallResp();
+        smallShopInstall.setTitle("小论坛");
+        smallShopInstall.setDescription("体验论坛获经验值");
+        smallShopInstall.setState(null);
+        list.add(smallShopInstall);
+
+        //小电商
+        ChatPetCenterStallResp smallBbcInstall = new ChatPetCenterStallResp();
+        smallBbcInstall.setTitle("公众号打招呼");
+        smallBbcInstall.setDescription("逛电商获经验值");
+        smallBbcInstall.setState(null);
+        list.add(wxPubSayHiInstall);
 
         return list;
     }

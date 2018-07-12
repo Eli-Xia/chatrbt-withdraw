@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.chatrbtw.entity.AuctionRecord;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.mapper.AuctionRecordMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class AuctionRecordService {
 
     @Autowired
     private ChatPetLogService chatPetLogService;
+
+    @Autowired
+    private ChatPetService chatPetService;
 
     /**
      * 获取最高出价的记录
@@ -85,8 +89,8 @@ public class AuctionRecordService {
         //宠物竞拍日志
         SaveChatPetLogParam param = new SaveChatPetLogParam();
 
-
-        //param.setChatPetId();
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        param.setChatPetId(chatPet.getId());
         param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD);
         chatPetLogService.saveChatPetDynamic(param);
 

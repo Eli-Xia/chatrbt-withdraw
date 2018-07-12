@@ -11,7 +11,6 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +37,8 @@ public class MiniProgramChatPetService {
     private ChatPetMissionPoolService chatPetMissionPoolService;
     @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
+    @Autowired
+    private ChatPetRewardService chatPetRewardService;
 
 
     /**

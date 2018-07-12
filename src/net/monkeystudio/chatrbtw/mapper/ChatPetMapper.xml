@@ -178,4 +178,12 @@
         where
             wx_fan_id = #{wxFanId}
     </select>
+
+    <select id="selectAll" resultMap="baseResultMap">
+        select <include refid="Base_Column_List"/> FROM  e_chat_pet
+    </select>
+    
+    <update id="updateWxFanId" parameterType="java.lang.Integer">
+        update e_chat_pet set wx_fan_id = #{wxFanId} WHERE id = #{chatPetId}
+    </update>
 </mapper>

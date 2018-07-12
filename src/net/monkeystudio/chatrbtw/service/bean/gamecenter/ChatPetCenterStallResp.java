@@ -6,7 +6,16 @@ package net.monkeystudio.chatrbtw.service.bean.gamecenter;
  */
 public class ChatPetCenterStallResp {
     private Integer state;// 0:未完成 1:完成 null:不需要状态
-    private Integer orderNum;//序号
+    private String title;//标题
+    private String description;//描述
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Integer getState() {
         return state;
@@ -16,11 +25,11 @@ public class ChatPetCenterStallResp {
         this.state = state;
     }
 
-    public Integer getOrderNum() {
-        return orderNum;
+    public String getTitle() {
+        return title;
     }
 
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
