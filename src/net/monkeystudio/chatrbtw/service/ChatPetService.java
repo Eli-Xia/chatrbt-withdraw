@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetBackgroundService chatPetBackgroundService;
-
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
@@ -84,18 +84,12 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetRewardService chatPetRewardService;
+
     @Autowired
     private RWxPubChatPetTypeService rWxPubChatPetTypeService;
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
-
-    @Autowired
-    private ChatPetTypeService chatPetTypeService;
-
-    @Autowired
-    private WxFanHelper wxFanHelper;
-
 
     /**
      * 生成宠物
@@ -131,6 +125,10 @@ public class ChatPetService {
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
         chatPet.setChatPetType(chatPetType);
+
+        //添加wxfanId
+        WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+        chatPet.setWxFanId(wxFan.getId());
 
         this.save(chatPet);
 
@@ -361,6 +359,7 @@ public class ChatPetService {
     }
 
     /**
+     * FIXME 此方法校验应该放到controller层
      * 领取奖励处理
      * @param wxFanId        粉丝id
      * @param rewardItemId  领取奖励记录id
@@ -415,8 +414,6 @@ public class ChatPetService {
         }
 
         return null;
-
-
     }
 
     /**
@@ -431,65 +428,6 @@ public class ChatPetService {
     }
 
 
-
-    /**
-     * 领取奖励后相关操作
-     * @param chatPetRewardItemId 领取奖励对象id
-     * @throws BizException
-     *//*
-        @Transactional
-        public void reward(Integer chatPetRewardItemId) throws BizException{
-
-            ChatPetRewardItem chatPetRewardItem = chatPetRewardItemService.getChatPetRewardItemById(chatPetRewardItemId);
-
-            Integer missionItemId = chatPetRewardItem.getMissionItemId();
-
-            //是否为任务类型奖励
-            Boolean isMissionReward = false;
-
-            //根据missionItemId == null 判断该奖励是否为完成任务后的奖励. 区分每日可领取奖励
-            if(missionItemId != null){
-                isMissionReward = true;
-            }
-
-            //增加金币
-            Integer chatPetId = chatPetRewardItem.getChatPetId();
-            Float incrCoin = chatPetRewardItem.getGoldValue();
-            this.increaseCoin(chatPetId,incrCoin);
-
-            //增加经验
-            //Float oldExperience = null;
-            //Float newExperience = null;
-
-            Boolean isUpgrade = false;
-            //如果是从任务来的奖励
-            if(isMissionReward){
-
-                ChatPet chatPet = this.getById(chatPetId);
-                Float oldExperience = chatPet.getExperience();
-
-                this.increaseExperience(chatPetId,incrCoin);
-
-                Float newExperience = this.getChatPetExperience(chatPetId);
-
-                isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
-
-                //更新状态
-                chatPetMissionPoolService.updateMissionWhenReward(missionItemId);
-
-                ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
-                if(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(chatPetPersonalMission.getMissionCode())){
-                    chatPetMissionPoolService.dispatchMission(chatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE,chatPetId);
-                }
-            }
-
-            //插入日志
-            if(isMissionReward){
-                chatPetLogService.savePetLog4MissionReward(missionItemId,isUpgrade);
-            }else{
-                //chatPetLogService.saveDailyFixedCoinLog(chatPetRewardItemId);
-            }
-        }*/
 
     /**
      * 点击"领取"时判断当前是否能够领取
@@ -592,7 +530,7 @@ public class ChatPetService {
         }
 
         if(WxFanService.WX_SERVICE_TYPE_MINI_APP.equals(wxServiceType)){
-            chatPet = this.getChatPetByMiniAppFans(wxFanOpenId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+            chatPet = this.getChatPetByWxFanId(fanId);
         }
         return chatPet;
     }
@@ -1135,8 +1073,74 @@ public class ChatPetService {
     }
 
 
+    /**
+     * 统计有多少个孩子
+     * @param parentId
+     * @return
+     */
     public Integer countByParentId(Integer parentId){
 
         return chatPetMapper.countByParentId(parentId);
+    }
+
+    /**
+     * 根据宠物类型，获取宠物
+     * @param chatPetType
+     * @return
+     */
+    public List<ChatPet> getByChatPetType(Integer chatPetType){
+        return chatPetMapper.selectByChatPetType(chatPetType);
+    }
+
+    public Double countTotalexperience(Integer chatPetType){
+        return chatPetMapper.countTotalexperience(chatPetType);
+    }
+
+
+    /**
+     * 粉丝id
+     * @param wxFanId
+     * @return
+     */
+    public ChatPet getByWxFanId(Integer wxFanId){
+        return chatPetMapper.selectByWxFanId(wxFanId);
+    }
+
+
+    /**
+     * 新增金钱
+     * @param chatPetId
+     * @param additionMoney
+     * @return
+     */
+    public Integer increaseMoney(Integer chatPetId ,Float additionMoney){
+        return chatPetMapper.increaseMoney(chatPetId, additionMoney);
+    }
+
+    public MyInfo getMyInfo(Integer wxFanId){
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+
+        MyInfo myInfo = new MyInfo();
+
+        ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
+
+        Float coin = chatPet.getCoin();
+        myInfo.setCoin(coin);
+
+        Float money = chatPet.getMoney();
+        myInfo.setMoney(money);
+
+        String wxFanOpenId = wxFan.getWxFanOpenId();
+        String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+        myInfo.setOwerId(owerId);
+
+        String geneticCode = this.calculateGeneticCode(chatPet.getCreateTime().getTime());
+        myInfo.setGeneticCode(geneticCode);
+
+        myInfo.setHeadImgUrl(wxFan.getHeadImgUrl());
+        myInfo.setNickname(wxFan.getNickname());
+
+        return myInfo;
     }
 }

@@ -19,6 +19,8 @@ public class ChatPet {
     private Float coin;
     private String appearanceCode;
     private Integer chatPetType;
+    private Float money;
+    private Integer wxFanId;
 
     public Integer getWxMiniAppId() {
         return wxMiniAppId;
@@ -122,5 +124,21 @@ public class ChatPet {
 
     public void setChatPetType(Integer chatPetType) {
         this.chatPetType = chatPetType;
+    }
+
+    public Float getMoney() {
+        return money;
+    }
+
+    public void setMoney(Float money) {
+        this.money = money;
+    }
+
+    public Integer getWxFanId() {
+        return wxFanId;
+    }
+
+    public void setWxFanId(Integer wxFanId) {
+        this.wxFanId = wxFanId;
     }
 }

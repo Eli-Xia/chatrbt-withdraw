@@ -15,10 +15,12 @@
         <result column="coin" property="coin" jdbcType="REAL" />
         <result column="appearance_code" property="appearanceCode" jdbcType="VARCHAR" />
         <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
+        <result column="money" property="money" jdbcType="REAL" />
+        <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_pub_origin_id ,wx_fan_open_id ,wx_mini_app_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code,chat_pet_type
+        id, wx_pub_origin_id ,wx_fan_open_id ,wx_mini_app_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id,experience,coin,appearance_code,chat_pet_type,money,wx_fan_id
     </sql>
 
     <select id="select" parameterType="map">
@@ -34,8 +36,8 @@
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet" keyProperty="id" useGeneratedKeys="true">
         insert into
             e_chat_pet
-                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ,appearance_code ,chat_pet_type )
-        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId},#{appearanceCode},#{chatPetType})
+                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ,appearance_code ,chat_pet_type ,wx_fan_id)
+        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId},#{appearanceCode},#{chatPetType} ,#{wxFanId})
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap" >
@@ -97,7 +99,7 @@
     </update>
 
     <select id="countSecondEthnicGroupsById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-          select
+        select
             count(id)
         from
             e_chat_pet
@@ -143,6 +145,37 @@
 
 
     <select id="countByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        SELECT count(id) FROM  e_chat_pet WHERE arent_id = #{chatPetId}
+        SELECT count(id) FROM  e_chat_pet WHERE parent_id = #{chatPetId}
+    </select>
+
+
+    <select id="selectByChatPetType" parameterType="java.lang.Integer"  resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"></include>
+        from
+            e_chat_pet
+        where
+            chat_pet_type = #{chatPetType}
+    </select>
+
+    <select id="countTotalexperience" parameterType="java.lang.Integer" resultType="java.lang.Double">
+        SELECT SUM(experience)  FROM e_chat_pet where chat_pet_type = #{chatPetType}
+    </select>
+
+
+    <update id="increaseMoney" parameterType="map">
+        update
+          e_chat_pet
+        set money = IFNULL(money,0) + #{additionMoney}
+        where
+            id = #{id}
+    </update>
+
+    <select id="selectByWxFanId" parameterType="java.lang.Integer">
+        select
+            <include refid="Base_Column_List"/>
+        from e_chat_pet
+        where
+            wx_fan_id = #{wxFanId}
     </select>
 </mapper>

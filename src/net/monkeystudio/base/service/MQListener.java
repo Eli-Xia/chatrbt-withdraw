@@ -28,6 +28,9 @@ public class MQListener implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private SqlHeartBeatService sqlHeartBeatService;
 
+    @Autowired
+    private DividendRecordService dividendRecordService;
+
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -53,6 +56,10 @@ public class MQListener implements ApplicationListener<ContextRefreshedEvent> {
 
         //心跳
         sqlHeartBeatService.sqlHeartBeatTask();
+
+        //派发分红队列监听
+        dividendRecordService.listenDividendQuque();
+
         //}
     }
 }

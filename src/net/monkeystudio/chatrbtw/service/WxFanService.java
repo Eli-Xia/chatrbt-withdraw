@@ -4,6 +4,7 @@ import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.BeanUtils;
+import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.WxFan;
@@ -229,6 +230,23 @@ public class WxFanService {
             isFans = true;
         }
         return isFans;
+    }
+
+
+    /**
+     * FIXME 应该加上小程序id
+     * 根据小程序id和用户openId获取粉丝
+     * @param wxFanOpenId
+     * @return
+     */
+    public WxFan getByMiniAppIdAndOpenId(String wxFanOpenId){
+        List<WxFan> wxFanList = wxFanMapper.select(null, wxFanOpenId, null);
+
+        if(ListUtil.isEmpty(wxFanList)){
+            return null;
+        }
+
+        return wxFanList.get(0);
     }
 
 

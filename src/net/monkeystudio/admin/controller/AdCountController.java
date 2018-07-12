@@ -1,5 +1,6 @@
 package net.monkeystudio.admin.controller;
 
+import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.base.utils.TimeUtil;
@@ -21,7 +22,7 @@ import java.util.Date;
  */
 @RequestMapping(value = "/admin/ad-count")
 @Controller
-public class AdCountController {
+public class AdCountController extends BaseController{
 
     @Autowired
     private AdCountService adCountService;
@@ -33,6 +34,11 @@ public class AdCountController {
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
     public RespBase getAdDailyCount(@RequestBody AdCountDailyReq adCountDailyReq){
+
+        Integer userId = getUserId();
+        if ( userId == null ){
+            return respHelper.nologin();
+        }
 
         Date startDate = adCountDailyReq.getStartDate();
         startDate = TimeUtil.getStartDate(startDate);
