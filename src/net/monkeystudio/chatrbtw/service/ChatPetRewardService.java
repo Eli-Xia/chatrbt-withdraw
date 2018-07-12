@@ -85,39 +85,6 @@ public class ChatPetRewardService{
         chatPetRewardItemMapper.updateByPrimaryKey(item);
     }
 
-    /**
-     * 添加每日等级奖励
-     * @param chatPetId
-     */
-    /*public void createInitRewardItems(Integer chatPetId) {
-        String initRewardItemCountKey = this.getInitRewardItemCountKey(chatPetId);
-        Long count = redisCacheTemplate.incr(initRewardItemCountKey);
-
-        if(count.intValue() == 1){
-            redisCacheTemplate.expire(initRewardItemCountKey, DateUtils.getCacheSeconds());
-        }else{
-            return ;
-        }
-
-        //每日可领取奖励
-        ChatPetRewardItem fixedItem = new ChatPetRewardItem();
-
-        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
-        fixedItem.setChatPetType(chatPetType);
-
-        //根据宠物等级获取每日可领取奖励值
-        Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
-        //每日可领取奖励 = (宠物等级 + 1) * 0.12F
-        fixedItem.setGoldValue( (chatPetLevel + 1) * 0.12F );
-
-        fixedItem.setRewardState(NOT_AWARD);
-        fixedItem.setChatPetId(chatPetId);
-        fixedItem.setCreateTime(new Date());
-
-        this.save(fixedItem);
-
-    }*/
-
 
     /**
      * 获取宠物奖励展示
@@ -235,19 +202,6 @@ public class ChatPetRewardService{
         //宠物日志
         chatPetLogService.savePetLog4MissionReward(chatPetRewardItemId,isUpgrade);
 
-        /*
-        //邀请人
-        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
-
-        DispatchMissionParam dispatchMissionParam = new DispatchMissionParam();
-        dispatchMissionParam.setChatPetId(chatPetId);
-        dispatchMissionParam.setMissionCode(chatPetPersonalMission.getMissionCode());
-
-        try {
-            chatPetMissionPoolService.dispatchMission(dispatchMissionParam);
-        } catch (Exception e) {
-            Log.e(e);
-        }*/
     }
 
     /**
@@ -272,8 +226,8 @@ public class ChatPetRewardService{
 
         ChatPetRewardItem item = new ChatPetRewardItem();
 
-        Integer chatPetType = chatPetService.getChatPetType(chatPetId);
-        item.setChatPetType(chatPetType);
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+        Integer chatPetType = chatPet.getChatPetType();
 
         item.setChatPetId(chatPetId);
         item.setRewardState(NOT_AWARD);
@@ -427,6 +381,8 @@ public class ChatPetRewardService{
      * 获取所有的开通陪聊宠公众号的粉丝，把粉丝塞入队列
      */
     public void generateLevelReward(){
+
+        //开通陪聊宠的公众号
         List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
 
         for(RWxPubProduct rWxPubProduct : rWxPubProductList){
@@ -440,6 +396,9 @@ public class ChatPetRewardService{
                 redisCacheTemplate.lpush(key,String.valueOf(wxFan.getId()));
             }
         }
+
+
+
     }
 
     private String getLevelReward(){

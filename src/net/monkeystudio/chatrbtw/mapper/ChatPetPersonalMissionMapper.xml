@@ -118,6 +118,9 @@
       <if test="adId != null">
         and ad_id = #{adId}
       </if>
+      <if test="wxMiniGameId != null">
+        and wx_mini_game_id = #{wxMiniGameId}
+      </if>
     </where>
   </select>
 

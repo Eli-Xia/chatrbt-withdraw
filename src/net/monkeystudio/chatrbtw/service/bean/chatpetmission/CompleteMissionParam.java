@@ -9,6 +9,7 @@ public class CompleteMissionParam {
     private Integer missionCode;//任务类型
     private Integer adId;//资讯任务对应广告id
     private Integer inviteeWxFanId;//被邀请人微信粉丝id
+    private Integer personalMissionId; //任务id
 
     public Integer getChatPetId() {
         return chatPetId;
@@ -40,5 +41,13 @@ public class CompleteMissionParam {
 
     public void setInviteeWxFanId(Integer inviteeWxFanId) {
         this.inviteeWxFanId = inviteeWxFanId;
+    }
+
+    public Integer getPersonalMissionId() {
+        return personalMissionId;
+    }
+
+    public void setPersonalMissionId(Integer personalMissionId) {
+        this.personalMissionId = personalMissionId;
     }
 }
