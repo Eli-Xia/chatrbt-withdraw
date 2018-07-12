@@ -469,11 +469,7 @@ public class ChatPetRewardService{
 
         Integer wxFanId = Integer.valueOf(wxFanIdStr);
 
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        String wxFanOpenId = wxFan.getWxFanOpenId();
-
-        ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
 
         //如果没有宠物，返回
         if(chatPet == null){
@@ -481,10 +477,10 @@ public class ChatPetRewardService{
         }
 
         Integer chatPetId = chatPet.getId();
-        //如果奖励超过了8个，不再分发
+        //如果奖励超过了指定个数，不再分发
         List<ChatPetRewardItem> rewardItemList = this.getByChatPetAndMissionId(chatPetId,NOT_AWARD,null);
         if(rewardItemList.size() >= MAX_NOT_AWARD_COUNT.intValue()){
-            Log.d("more than 8 , don't generate level reward");
+            Log.d("more than max count , don't generate level reward");
             return ;
         }
 
@@ -511,7 +507,6 @@ public class ChatPetRewardService{
         Float levelExperience = (chatPetLevel + 1) * 0.01F;
 
         return levelExperience;
-
     }
 
     /**

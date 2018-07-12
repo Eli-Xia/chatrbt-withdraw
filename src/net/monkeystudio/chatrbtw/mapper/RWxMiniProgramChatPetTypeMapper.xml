@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper">
-    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RWxMiniProgramChatPetType">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RMiniProgramChatPetType">
         <result column="id" property="id" jdbcType="INTEGER" />
-        <result column="wx_mini_program_id" property="wxMiniProgramId" jdbcType="INTEGER" />
+        <result column="mini_program_id" property="miniProgramId" jdbcType="INTEGER" />
         <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, wx_mini_program_id, chat_pet_type
+        id, mini_program_id, chat_pet_type
     </sql>
 
 
@@ -18,7 +18,7 @@
         from
             r_mini_program_chat_pet_type
         where
-            wx_mini_program_id = #{wxMiniProgramId}
+            mini_program_id = #{wxMiniProgramId}
     </select>
 
 </mapper>

@@ -106,7 +106,7 @@
     </select>
 
 
-    <select id="selectByMiniProgramId" parameterType="java.lang.String">
+    <select id="selectByMiniProgramId" parameterType="java.lang.Integer" resultMap="baseResultMap">
         select
             <include refid="Base_Column_List"/>
         from
@@ -114,4 +114,5 @@
         where
             wx_mini_app_id = #{miniProgramId}
     </select>
+
 </mapper>

@@ -8,6 +8,7 @@ import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
+import net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
@@ -90,6 +91,9 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private RMiniProgramChatPetTypeService rMiniProgramChatPetTypeService;
 
     /**
      * 生成宠物
@@ -513,26 +517,11 @@ public class ChatPetService {
 
     /**
      * 根据wxFanId获取宠物对象
-     * @param fanId
+     * @param wxFanId
      * @return
      */
-    public ChatPet getChatPetByWxFanId(Integer fanId){
-        WxFan wxFan = wxFanService.getById(fanId);
-        Integer wxServiceType = wxFan.getWxServiceType();
-
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        String wxFanOpenId = wxFan.getWxFanOpenId();
-
-        ChatPet chatPet = null;
-
-        if(WxFanService.WX_SERVICE_TYPE_PUB.equals(wxServiceType)){
-            chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
-        }
-
-        if(WxFanService.WX_SERVICE_TYPE_MINI_APP.equals(wxServiceType)){
-            chatPet = this.getChatPetByWxFanId(fanId);
-        }
-        return chatPet;
+    public ChatPet getChatPetByWxFanId(Integer wxFanId){
+        return chatPetMapper.selectByWxFanId(wxFanId);
     }
 
 
@@ -1067,8 +1056,10 @@ public class ChatPetService {
      */
     public Integer getChatPetType(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
-        String wxPubOriginId = chatPet.getWxPubOriginId();
-        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+        //String wxPubOriginId = chatPet.getWxPubOriginId();
+        //Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(chatPet.getWxMiniAppId());
         return chatPetType;
     }
 

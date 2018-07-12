@@ -1,6 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.chatrbtw.entity.RWxMiniProgramChatPetType;
+import net.monkeystudio.chatrbtw.entity.RMiniProgramChatPetType;
 import net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,19 @@ public class RMiniProgramChatPetTypeService {
     private RWxMiniProgramChatPetTypeMapper rWxMiniProgramChatPetTypeMapper;
 
 
+
+    private RMiniProgramChatPetType getEntityByMiniProgramId(Integer miniProgramId){
+        return rWxMiniProgramChatPetTypeMapper.selectByWxMinProgramId(miniProgramId);
+    }
+
     /**
      * 通过小程序获取对应宠物类型
      * @param miniProgramId
      * @return
      */
-    public RWxMiniProgramChatPetType getByMiniProgramId(Integer miniProgramId){
-        return rWxMiniProgramChatPetTypeMapper.selectByWxMinProgramId(miniProgramId);
-    }
+    public Integer getByMiniProgramId(Integer miniProgramId){
+        RMiniProgramChatPetType rWxMiniProgramChatPetType = this.getEntityByMiniProgramId(miniProgramId);
 
+        return rWxMiniProgramChatPetType.getChatPetType();
+    }
 }
