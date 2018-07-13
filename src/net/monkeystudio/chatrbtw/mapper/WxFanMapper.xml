@@ -13,16 +13,17 @@
         <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
         <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR" />
-        <result column="wx_mini_program_id" property="wxMiniProgramId" jdbcType="INTEGER" />
+        <result column="mini_program_id" property="miniProgramId" jdbcType="INTEGER" />
         <result column="wx_service_type" property="wxServiceType" jdbcType="INTEGER" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,wx_mini_program_id,wx_service_type
+        id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,mini_program_id,wx_service_type
     </sql>
 
+
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxFan" keyProperty="id" useGeneratedKeys="true" >
-        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,wx_mini_program_id,wx_service_type)
+        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,mini_program_id,wx_service_type)
             values (
               #{id,jdbcType=INTEGER},
               #{nickname,jdbcType=VARCHAR},
@@ -36,7 +37,7 @@
               #{wxFanOpenId,jdbcType=VARCHAR},
               #{createAt,jdbcType=INTEGER},
               #{headImgUrl,jdbcType=VARCHAR},
-              #{wxMiniProgramId,jdbcType=INTEGER},
+              #{miniProgramId,jdbcType=INTEGER},
               #{wxServiceType,jdbcType=INTEGER}
             )
     </insert>
@@ -53,8 +54,8 @@
             <if test="wxFanOpenId != null">
                 and wx_fan_open_id = #{wxFanOpenId}
             </if>
-            <if test="wxMiniProgramId != null">
-                and wx_mini_program_id = #{wxMiniProgramId}
+            <if test="miniProgramId != null">
+                and mini_program_id = #{miniProgramId}
             </if>
         </where>
     </select>
@@ -80,7 +81,7 @@
             wx_pub_origin_id = #{ wxPubOriginId},
             wx_fan_open_id = #{wxFanOpenId},
             head_img_url = #{headImgUrl},
-            wx_mini_program_id = #{wxMiniProgramId},
+            mini_program_id = #{miniProgramId},
             wx_service_type = #{wxServiceType}
         <where>
             <if test="wxPubOriginId != null">
@@ -89,8 +90,8 @@
             <if test="wxFanOpenId != null">
                 and wx_fan_open_id = #{wxFanOpenId}
             </if>
-            <if test="wxMiniProgramId != null">
-                and wx_mini_program_id = #{wxMiniProgramId}
+            <if test="miniProgramId != null">
+                and mini_program_id = #{miniProgramId}
             </if>
         </where>
     </update>
@@ -112,7 +113,7 @@
         from
             e_wx_fan
         where
-            wx_mini_program_id = #{miniProgramId}
+            mini_program_id = #{miniProgramId}
     </select>
 
 </mapper>

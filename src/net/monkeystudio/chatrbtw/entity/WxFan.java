@@ -16,6 +16,7 @@ public class WxFan implements Serializable{
     private String wxFanOpenId;
     private Long createAt;
     private String headImgUrl;
+<<<<<<< HEAD
     private Integer wxMiniProgramId;
     private Integer wxServiceType;
 
@@ -26,6 +27,11 @@ public class WxFan implements Serializable{
     public void setWxMiniProgramId(Integer wxMiniProgramId) {
         this.wxMiniProgramId = wxMiniProgramId;
     }
+=======
+    private Integer miniProgramId;
+    private Integer wxServiceType;
+
+>>>>>>> 5865b1ec39e3c9fbc72ce31c9c461ef048c2d416
 
     public Integer getWxServiceType() {
         return wxServiceType;
@@ -132,20 +138,11 @@ public class WxFan implements Serializable{
         this.headImgUrl = headImgUrl;
     }
 
-    @Override
-    public String toString() {
-        return "WxFan{" +
-                "id=" + id +
-                ", nickname='" + nickname + '\'' +
-                ", sex=" + sex +
-                ", city='" + city + '\'' +
-                ", country='" + country + '\'' +
-                ", province='" + province + '\'' +
-                ", unionId=" + unionId +
-                ", subscribeTime=" + subscribeTime +
-                ", wxPubOriginId='" + wxPubOriginId + '\'' +
-                ", wxFanOpenId='" + wxFanOpenId + '\'' +
-                ", createAt=" + createAt +
-                '}';
+    public Integer getMiniProgramId() {
+        return miniProgramId;
+    }
+
+    public void setMiniProgramId(Integer miniProgramId) {
+        this.miniProgramId = miniProgramId;
     }
 }

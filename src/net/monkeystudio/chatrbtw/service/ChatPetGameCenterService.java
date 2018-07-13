@@ -37,14 +37,14 @@ public class ChatPetGameCenterService {
 
     /**
      * 根据fanid获取游戏中心信息
-     * @param fanId
+     * @param wxFanId
      * @return
      */
-    public ChatPetGameCenterResp getGameCenterResp(Integer fanId){
+    public ChatPetGameCenterResp getGameCenterResp(Integer wxFanId){
 
         ChatPetGameCenterResp resp = new ChatPetGameCenterResp();
 
-        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         Integer chatPetId = chatPet.getId();
 
         List<ChatPetCenterStallResp> chatPetCenterStallInfoList = this.getChatPetCenterStallInfoList(chatPetId);
