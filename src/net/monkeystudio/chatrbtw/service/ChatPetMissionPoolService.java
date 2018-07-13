@@ -419,7 +419,7 @@ public class ChatPetMissionPoolService {
         if(chatPetTypeConfig.getRewardType() == ChatPetTypeConfigService.Constants.MANUALLY_ONLY_EXPERIENCE){
             chatPetRewardService.generateRewardWhenMissionDone(chatPetPersonalMission.getId());
             ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getByMissionItemId(chatPetPersonalMission.getId());
-            chatPetRewardService.reward(chatPetRewardItem.getMissionItemId());
+            chatPetRewardService.reward(chatPetRewardItem.getId());
         }
     }
 
