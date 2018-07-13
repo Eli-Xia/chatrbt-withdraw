@@ -136,19 +136,21 @@ public class MiniProgramChatPetService {
      * @return
      */
     public Integer generateChatPet(Integer wxFanId,Integer chatPetType,Integer parentId){
-        String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
-
         ChatPet chatPet = new ChatPet();
+        String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
+        chatPet.setAppearanceCode(appearanceCode);
 
         WxFan wxFan = wxFanService.getById(wxFanId);
         String wxFanOpenId = wxFan.getWxFanOpenId();
         chatPet.setWxFanOpenId(wxFanOpenId);
         chatPet.setWxFanId(wxFanId);
-        chatPet.setWxMiniAppId(WxFanService.LUCK_CAT_MINI_APP_ID);
+
+        Integer miniProgramId = wxFan.getMiniProgramId();
+        chatPet.setMiniProgramId(miniProgramId);
 
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);
-        chatPet.setAppearanceCode(appearanceCode);
+
         chatPet.setChatPetType(chatPetType);
 
         return chatPetService.save(chatPet);

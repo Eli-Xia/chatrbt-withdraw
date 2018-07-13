@@ -8,8 +8,6 @@ import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
-import net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper;
-import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
@@ -25,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -832,11 +829,8 @@ public class ChatPetService {
      * @return
      */
     public ChatPetExperinceRank getChatPetExperinceRankByWxFan(Integer wxFanId , Integer pageSize){
-        WxFan wxFan = wxFanService.getById(wxFanId);
-        String wxFanOpenId = wxFan.getWxFanOpenId();
-        String wxPubOriginId = wxFan.getWxPubOriginId();
 
-        ChatPet chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+        ChatPet chatPet = this.getChatPetByWxFanId(wxFanId);
 
         if(chatPet == null){
             return null;
