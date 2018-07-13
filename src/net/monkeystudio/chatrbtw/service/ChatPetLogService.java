@@ -231,7 +231,7 @@ public class ChatPetLogService {
         }
 
         //升级日志
-        if(isUpgrade){
+        if(isUpgrade!=null && isUpgrade){
             Integer level = chatPetLevelService.calculateLevel(experience);
 
             PetLog upgradeLog = new PetLog();

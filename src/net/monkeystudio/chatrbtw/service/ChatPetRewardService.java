@@ -210,7 +210,9 @@ public class ChatPetRewardService{
         saveChatPetLogParam.setChatPetId(chatPetId);
         saveChatPetLogParam.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD);
         saveChatPetLogParam.setChatPetRewardItemId(chatPetRewardItemId);
+        saveChatPetLogParam.setUpgrade(isUpgrade);
         chatPetLogService.saveChatPetDynamic(saveChatPetLogParam);
+
         /*Integer chatPetType = chatPet.getChatPetType();
 
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){
