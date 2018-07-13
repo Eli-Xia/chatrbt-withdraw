@@ -103,14 +103,14 @@ public class WxFanService {
         return wxFan;
     }
 
-    private void setWxFanCache(String wxPubOriginId ,String wxFanOpenId ,Integer WxMiniProgramId,WxFan wxFan){
-        String cacheKey = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,WxMiniProgramId);
+    private void setWxFanCache(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId,WxFan wxFan){
+        String cacheKey = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,miniProgramId);
         redisCacheTemplate.setObject(cacheKey,wxFan );
         redisCacheTemplate.expire(cacheKey, WX_FAN_CACHE_PERIOD);
     }
 
-    private WxFan getWxFanFromDb(String wxPubOriginId ,String wxFanOpenId ,Integer WxMiniProgramId){
-        List<WxFan> list = wxFanMapper.select(wxPubOriginId, wxFanOpenId, WxMiniProgramId);
+    private WxFan getWxFanFromDb(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId){
+        List<WxFan> list = wxFanMapper.select(wxPubOriginId, wxFanOpenId, miniProgramId);
 
         if(list == null || list.size() == 0){
             return null;
@@ -119,18 +119,18 @@ public class WxFanService {
         return list.get(0);
     }
 
-    private WxFan getWxFanFromCache(String wxPubOriginId , String wxFanOpenId ,Integer WxMiniProgramId){
-        String key = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,WxMiniProgramId);
+    private WxFan getWxFanFromCache(String wxPubOriginId , String wxFanOpenId ,Integer miniProgramId){
+        String key = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,miniProgramId);
         return redisCacheTemplate.getObject(key);
     }
 
-    private String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ,Integer WxMiniProgramId ){
+    private String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId ){
         String key = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "WxFan:" + wxFanOpenId + ":";
         if(wxPubOriginId != null){
             key.concat(wxPubOriginId);
         }
-        if(WxMiniProgramId != null){
-            key.concat(WxMiniProgramId.toString());
+        if(miniProgramId != null){
+            key.concat(miniProgramId.toString());
         }
         return key;
     }
