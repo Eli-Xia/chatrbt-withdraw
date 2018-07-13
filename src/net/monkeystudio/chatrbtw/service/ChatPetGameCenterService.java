@@ -5,7 +5,6 @@ import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
-import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.ChatPetCenterStallResp;
@@ -30,6 +29,8 @@ public class ChatPetGameCenterService {
     private MiniProgramChatPetService miniProgramChatPetService;
     @Autowired
     private WxFanService wxFanService;
+    @Autowired
+    private ChatPetService chatPetService;
 
     private final static Integer CENTER_STALL_STATE_NOT_FINISH = 0;//摊位状态 未完成
     private final static Integer CENTER_STALL_STATE_FINISH = 1;//摊位状态 已完成
@@ -43,8 +44,7 @@ public class ChatPetGameCenterService {
 
         ChatPetGameCenterResp resp = new ChatPetGameCenterResp();
 
-        WxFan wxFan = wxFanService.getById(fanId);
-        ChatPet chatPet = miniProgramChatPetService.getChatPetByMiniProgramFanId(wxFan.getWxFanOpenId());
+        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
         Integer chatPetId = chatPet.getId();
 
         List<ChatPetCenterStallResp> chatPetCenterStallInfoList = this.getChatPetCenterStallInfoList(chatPetId);

@@ -45,9 +45,6 @@ public class ChatPetService {
     private final static Integer MAX_APPERANCE_RANGE = 9;
 
     @Autowired
-    private ChatPetBackgroundService chatPetBackgroundService;
-
-    @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
 
     @Autowired
