@@ -278,7 +278,7 @@ public class ChatPetLogService {
         Float experience = item.getExperience();
 
         //金币名称
-        String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
+        String chatPetCoinName = "猫饼";
 
         StringBuilder missisonNameSb = new StringBuilder();
 
@@ -431,7 +431,7 @@ public class ChatPetLogService {
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         //金币名称
-        String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
+        String chatPetCoinName = "猫饼";
 
         PetLog pl = new PetLog();
 
