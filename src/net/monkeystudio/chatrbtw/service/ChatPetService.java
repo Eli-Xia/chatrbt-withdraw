@@ -1056,7 +1056,7 @@ public class ChatPetService {
         //String wxPubOriginId = chatPet.getWxPubOriginId();
         //Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
-        Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(chatPet.getWxMiniAppId());
+        Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(chatPet.getMiniProgramId());
         return chatPetType;
     }
 

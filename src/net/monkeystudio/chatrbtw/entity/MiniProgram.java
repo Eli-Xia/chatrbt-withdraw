@@ -3,7 +3,7 @@ package net.monkeystudio.chatrbtw.entity;
 /**
  * @author xiaxin
  */
-public class WxMiniProgram {
+public class MiniProgram {
     private Integer id;
     private String appId;
     private String nickname;

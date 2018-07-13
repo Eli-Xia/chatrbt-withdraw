@@ -6,11 +6,12 @@ import java.util.Date;
  * Created by bint on 2018/4/16.
  */
 public class ChatPet {
+
     private Integer id;
     private Integer tempAppearence;
     private String wxPubOriginId;
     private String wxFanOpenId;
-    private Integer wxMiniAppId;
+    private Integer miniProgramId;
     private Integer ethnicGroupsId;
     private Integer secondEthnicGroupsId;
     private Date createTime;
@@ -21,14 +22,6 @@ public class ChatPet {
     private Integer chatPetType;
     private Float money;
     private Integer wxFanId;
-
-    public Integer getWxMiniAppId() {
-        return wxMiniAppId;
-    }
-
-    public void setWxMiniAppId(Integer wxMiniAppId) {
-        this.wxMiniAppId = wxMiniAppId;
-    }
 
     public Float getCoin() {
         return coin;
@@ -140,5 +133,13 @@ public class ChatPet {
 
     public void setWxFanId(Integer wxFanId) {
         this.wxFanId = wxFanId;
+    }
+
+    public Integer getMiniProgramId() {
+        return miniProgramId;
+    }
+
+    public void setMiniProgramId(Integer miniProgramId) {
+        this.miniProgramId = miniProgramId;
     }
 }

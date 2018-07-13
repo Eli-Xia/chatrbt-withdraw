@@ -459,7 +459,7 @@ public class ChatPetRewardService{
     }
 
 
-    private void levelRewardHanle(){
+    public void levelRewardHanle(){
         String key = this.getLevelReward();
 
         List<String> list = redisCacheTemplate.brpop(0,key);
