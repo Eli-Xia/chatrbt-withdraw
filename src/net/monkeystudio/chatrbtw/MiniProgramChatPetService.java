@@ -165,18 +165,24 @@ public class MiniProgramChatPetService {
         this.generateChatPet(fanId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
     }
 
-    public void inviteFriendHandle(Integer fanId,Integer parentFanId){
+    public void inviteFriendHandle(Integer wxFanId,Integer parentFanId){
 
         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
         Integer parentId = parentChatPet.getId();
 
+        //如果已经有宠物，则不生成奖励
+        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
+        if(chatPet != null){
+            return ;
+        }
+
         //生成宠物
-        this.generateChatPetFromShareCard(fanId,parentId);
+        this.generateChatPetFromShareCard(wxFanId,parentId);
 
         //父亲宠物完成邀请任务
         CompleteMissionParam completeMissionParam = new CompleteMissionParam();
 
-        completeMissionParam.setInviteeWxFanId(fanId);
+        completeMissionParam.setInviteeWxFanId(wxFanId);
         completeMissionParam.setChatPetId(parentId);
         completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
