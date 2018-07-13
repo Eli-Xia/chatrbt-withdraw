@@ -144,7 +144,7 @@ public class MiniProgramChatPetService {
         String wxFanOpenId = wxFan.getWxFanOpenId();
         chatPet.setWxFanOpenId(wxFanOpenId);
         chatPet.setWxFanId(wxFanId);
-        chatPet.setWxMiniAppId(WxFanService.LUCK_CAT_MINI_APP_ID);
+        chatPet.setMiniProgramId(WxFanService.LUCK_CAT_MINI_APP_ID);
 
         chatPet.setCreateTime(new Date());
         chatPet.setParentId(parentId);

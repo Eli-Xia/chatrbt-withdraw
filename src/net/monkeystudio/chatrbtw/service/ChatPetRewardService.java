@@ -250,6 +250,7 @@ public class ChatPetRewardService{
         item.setRewardState(NOT_AWARD);
         item.setMissionItemId(chatPetPersonalMissionId);
         item.setCreateTime(new Date());
+        item.setChatPetType(chatPetType);
 
         BigDecimal ethnicGroupsAdditionRadio = ethnicGroupsService.getEthnicGroupsAdditionRadio(chatPetId);
 
