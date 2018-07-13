@@ -34,8 +34,6 @@ public class MiniProgramChatPetService {
     @Autowired
     private ChatPetLevelService chatPetLevelService;
     @Autowired
-    private ChatPetMissionPoolService chatPetMissionPoolService;
-    @Autowired
     private ChatPetAppearenceService chatPetAppearenceService;
     @Autowired
     private ChatPetRewardService chatPetRewardService;
@@ -48,11 +46,7 @@ public class MiniProgramChatPetService {
      */
     public ChatPetInfo getInfoByFanId(Integer wxFanId){
 
-        WxFan wxFan = wxFanService.getById(wxFanId);
-
-        String wxFanOpenId = wxFan.getWxFanOpenId();
-
-        ChatPet chatPet = this.getChatPetByMiniProgramFanId(wxFanOpenId);
+        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
 
         if(chatPet == null){
             return null;
@@ -130,18 +124,6 @@ public class MiniProgramChatPetService {
         return chatPetBaseInfo;
     }
 
-    public ChatPet getChatPetByMiniProgramFanId(String fanOpenId){
-        ChatPet param = new ChatPet();
-        param.setWxFanOpenId(fanOpenId);
-        param.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
-        ChatPet chatPet = chatPetMapper.selectByParam(param);
-        return chatPet;
-    }
-
-    public ChatPet getChatPetById(Integer chatPetId){
-        ChatPet chatPet = chatPetService.getById(chatPetId);
-        return chatPet;
-    }
 
     /**
      * 小程序为用户生成一只宠物
@@ -176,8 +158,4 @@ public class MiniProgramChatPetService {
     public void generateChatPetFromShareCard(Integer fanId,Integer parentId){
         this.generateChatPet(fanId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
     }
-
-
-
-
 }
