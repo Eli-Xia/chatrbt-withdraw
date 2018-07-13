@@ -51,17 +51,17 @@ public class WxFanService {
         return wxFan;
     }
 
-    public WxFan getWxFan(String wxFanOpenId,Integer WxMiniProgramId){
-        WxFan wxFan = this.getWxFanFromCache(null, wxFanOpenId, WxMiniProgramId);
+    public WxFan getWxFan(String wxFanOpenId,Integer miniProgramId){
+        WxFan wxFan = this.getWxFanFromCache(null, wxFanOpenId, miniProgramId);
 
         if(wxFan != null && wxFan.getId() != null){
             return wxFan;
         }
 
-        wxFan = this.getWxFanFromDb(null,wxFanOpenId,WxMiniProgramId);
+        wxFan = this.getWxFanFromDb(null,wxFanOpenId,miniProgramId);
 
         if(wxFan != null){
-            this.setWxFanCache(null,wxFanOpenId,WxMiniProgramId,wxFan);
+            this.setWxFanCache(null,wxFanOpenId,miniProgramId,wxFan);
             return wxFan;
         }
 

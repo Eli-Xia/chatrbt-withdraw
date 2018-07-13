@@ -58,8 +58,8 @@
             <if test="wxFanOpenId != null">
                 and wx_fan_open_id = #{wxFanOpenId}
             </if>
-            <if test="WxMiniProgramId != null">
-                and wx_mini_app_id = #{WxMiniProgramId}
+            <if test="miniProgramId != null">
+                and wx_mini_app_id = #{miniProgramId}
             </if>
             <if test="chatPetType != null">
                 and chat_pet_type = #{chatPetType}

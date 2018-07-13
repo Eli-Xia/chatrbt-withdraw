@@ -199,9 +199,9 @@ public class ChatPetController extends ChatPetBaseController{
     @RequestMapping(value = "/mission/reward", method = RequestMethod.POST)
     public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
 
-        Integer userId = getUserId();
+        Integer wxFanId = getUserId();
 
-        ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(userId, req.getRewardItemId());
+        ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(wxFanId, req.getRewardItemId());
 
         return respHelper.ok(changeInfo);
     }
