@@ -219,13 +219,13 @@ public class ChatPetLogService {
         }
 
         if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
-            addExperienceLog.setContent("每日登录,经验值+" + experience);
+            addExperienceLog.setContent("体验游戏,经验值+" + experience);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
         if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
-            addExperienceLog.setContent("体验游戏,经验值+" + experience);
+            addExperienceLog.setContent("每日登录,经验值+" + experience);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
@@ -419,6 +419,7 @@ public class ChatPetLogService {
 
 
     /**
+     * TODO
      * 保存宠物日志
      * @param petLog
      */
@@ -431,13 +432,13 @@ public class ChatPetLogService {
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         //金币名称
-        String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
+        //String chatPetCoinName = chatPetService.getChatPetCoinName(chatPetId);
 
         PetLog pl = new PetLog();
 
         pl.setChatPetId(chatPetId);
         pl.setCreateTime(new Date());
-        pl.setContent("算力等级奖励," + chatPetCoinName + "+" + item.getGoldValue());
+        pl.setContent("等级奖励," + "猫饼" + "+" + item.getGoldValue());
 
         this.savePetLog(pl);
     }

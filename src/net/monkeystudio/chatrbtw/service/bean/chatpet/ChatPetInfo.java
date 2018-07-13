@@ -11,7 +11,7 @@ import java.util.List;
  * Created by bint on 2018/4/19.
  */
 public class ChatPetInfo {
-
+    private Integer owerWxFanId;
     private Integer tempAppearance;
     private String appearanceUrl;
     private OwnerInfo ownerInfo;
@@ -39,6 +39,14 @@ public class ChatPetInfo {
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
 
     private MagicCoinCount magicCoinCount;
+
+    public Integer getOwerWxFanId() {
+        return owerWxFanId;
+    }
+
+    public void setOwerWxFanId(Integer owerWxFanId) {
+        this.owerWxFanId = owerWxFanId;
+    }
 
     public MagicCoinCount getMagicCoinCount() {
         return magicCoinCount;

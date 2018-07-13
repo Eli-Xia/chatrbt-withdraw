@@ -55,7 +55,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             returnErrorResponse(response,respHelper.failed("user does not have a lucky cat !"));
         }
 
-        return isLogin;
+        return true;
 
     }
 

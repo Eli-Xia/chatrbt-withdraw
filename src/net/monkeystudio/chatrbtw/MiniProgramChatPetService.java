@@ -87,6 +87,13 @@ public class MiniProgramChatPetService {
 
         chatPetBaseInfo.setOwnerInfo(ownerInfo);
 
+        String owerId = wxFanOpenId.substring(wxFanOpenId.length() - 6, wxFanOpenId.length() - 1);
+        chatPetBaseInfo.setOwnerId(owerId);
+
+        //wxFanId
+        Integer wxFanId = chatPet.getWxFanId();
+        chatPetBaseInfo.setOwerWxFanId(wxFanId);
+
         //宠物基因
         String geneticCode = chatPetService.calculateGeneticCode(chatPet.getCreateTime().getTime());
         chatPetBaseInfo.setGeneticCode(geneticCode);
