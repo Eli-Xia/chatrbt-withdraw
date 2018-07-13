@@ -5,7 +5,11 @@
         <result column="id" property="id" jdbcType="INTEGER" />
         <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
+<<<<<<< HEAD
         <result column="wx_mini_app_id" property="WxMiniProgramId" jdbcType="INTEGER" />
+=======
+        <result column="wx_mini_app_id" property="miniProgramId" jdbcType="INTEGER" />
+>>>>>>> cb0f10aea3232ec34b517a055e6f39c91c2d9d84
         <result column="temp_appearance" property="tempAppearence" jdbcType="INTEGER" />
         <result column="ethnic_groups_id" property="ethnicGroupsId" jdbcType="VARCHAR" />
         <result column="second_ethnic_groups_id" property="secondEthnicGroupsId" jdbcType="VARCHAR" />

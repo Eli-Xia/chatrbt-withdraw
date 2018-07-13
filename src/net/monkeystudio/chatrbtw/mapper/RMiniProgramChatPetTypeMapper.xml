@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper">
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RMiniProgramChatPetTypeMapper">
     <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.RMiniProgramChatPetType">
         <result column="id" property="id" jdbcType="INTEGER" />
         <result column="mini_program_id" property="miniProgramId" jdbcType="INTEGER" />

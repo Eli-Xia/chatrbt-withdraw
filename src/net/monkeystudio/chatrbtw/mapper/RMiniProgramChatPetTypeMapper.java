@@ -6,7 +6,7 @@ import net.monkeystudio.chatrbtw.entity.RMiniProgramChatPetType;
 /**
  * Created by bint on 2018/7/11.
  */
-public interface RWxMiniProgramChatPetTypeMapper {
+public interface RMiniProgramChatPetTypeMapper {
 
-    RMiniProgramChatPetType selectByWxMinProgramId(Integer wxMiniProgram);
+    RMiniProgramChatPetType selectByWxMinProgramId(Integer miniProgram);
 }

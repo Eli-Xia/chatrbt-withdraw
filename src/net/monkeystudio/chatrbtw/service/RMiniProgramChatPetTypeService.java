@@ -1,7 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.chatrbtw.entity.RMiniProgramChatPetType;
-import net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper;
+import net.monkeystudio.chatrbtw.mapper.RMiniProgramChatPetTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 public class RMiniProgramChatPetTypeService {
 
     @Autowired
-    private RWxMiniProgramChatPetTypeMapper rWxMiniProgramChatPetTypeMapper;
+    private RMiniProgramChatPetTypeMapper rMiniProgramChatPetTypeMapper;
 
 
 
     private RMiniProgramChatPetType getEntityByMiniProgramId(Integer miniProgramId){
-        return rWxMiniProgramChatPetTypeMapper.selectByWxMinProgramId(miniProgramId);
+        return rMiniProgramChatPetTypeMapper.selectByWxMinProgramId(miniProgramId);
     }
 
     /**
