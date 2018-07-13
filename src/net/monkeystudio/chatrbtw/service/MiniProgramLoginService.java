@@ -48,7 +48,12 @@ public class MiniProgramLoginService {
     private final static Integer SESSION_TOKEN_EXPIRE = 3600 * 2 ;
 
 
-
+    /**
+     * 登陆处理
+     * @param appSign
+     * @param jsCode
+     * @return
+     */
     public String loginHandle(String appSign,String jsCode){
         /*if(appSign == null){
 
@@ -107,6 +112,7 @@ public class MiniProgramLoginService {
     private String getFanDailyLoginCountCacheKey(Integer chatPetId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
+
     @Transactional
     public void dailyFirstLoginHandle(String fanOpenId){
         WxFan wxFan = wxFanService.getWxFan(fanOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
