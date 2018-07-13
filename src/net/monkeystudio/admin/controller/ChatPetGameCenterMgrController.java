@@ -7,10 +7,7 @@ import net.monkeystudio.chatrbtw.service.ChatPetGameCenterService;
 import net.monkeystudio.chatrbtw.service.WxMiniGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,28 +25,32 @@ public class ChatPetGameCenterMgrController extends BaseController{
     @Autowired
     private WxMiniGameService wxMiniGameService;
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase add(@RequestParam("headImg")MultipartFile headImg,@RequestParam("qrCodeImg")MultipartFile qrCodeImg,@RequestParam("nickname")String nickname){
+    public RespBase add(@RequestParam("headImg")MultipartFile headImg,@RequestParam("qrCodeImg")MultipartFile qrCodeImg,
+                        @RequestParam("nickname")String nickname,@RequestParam("needSign")Integer needSign){
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
         }
 
-        return respHelper.ok(null);
+        wxMiniGameService.save(headImg,qrCodeImg,nickname,needSign);
+
+        return respHelper.ok();
     }
 
     @RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase update(HttpServletRequest request ){
+    public RespBase update(HttpServletRequest request, @PathVariable("id")Integer id){
 
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
         }
 
+        wxMiniGameService.delete(id);
 
-        return respHelper.ok(null);
+        return respHelper.ok();
     }
 
 }

@@ -19,4 +19,6 @@ public interface WxMiniGameMapper {
 
     List<WxMiniGame> selectAll();
 
+    Integer delete(Integer id);
+
 }

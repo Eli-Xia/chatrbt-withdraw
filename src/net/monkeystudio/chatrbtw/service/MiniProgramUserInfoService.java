@@ -1,15 +1,14 @@
 package net.monkeystudio.chatrbtw.service;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
-import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +38,9 @@ public class MiniProgramUserInfoService {
 
     @Autowired
     private MiniProgramChatPetService miniProgramChatPetService;
+
+    @Autowired
+    private MiniProgramLoginService miniProgramLoginService;
     /**
      * 获取用户信息及注册
      * @param rawData
@@ -55,9 +56,11 @@ public class MiniProgramUserInfoService {
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         String token = request.getHeader("token");
+        Log.d("============== getUserInfo : token = {?} ===================",token);
 
         if(token != null){
-            String value = redisCacheTemplate.getString(token);
+            String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(token);
+            String value = redisCacheTemplate.getString(sessionTokenCacheKey);
             String openId = value.split("\\+")[0];//会话中保存的openId
             String sessionKey = value.split("\\+")[1];
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
@@ -149,6 +152,7 @@ public class MiniProgramUserInfoService {
             byte[] resultByte = cipher.doFinal(dataByte);
             if (null != resultByte && resultByte.length > 0) {
                 String result = new String(resultByte, "UTF-8");
+                System.out.println(result);
                 return JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
             }
         } catch (Exception e) {

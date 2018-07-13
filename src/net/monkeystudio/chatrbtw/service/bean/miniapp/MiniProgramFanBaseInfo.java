@@ -12,6 +12,8 @@ public class MiniProgramFanBaseInfo {
     private String nickname;
     @JsonProperty("gender")
     private Integer sex;
+    @JsonProperty("language")
+    private String language;
     @JsonProperty("city")
     private String city;
     @JsonProperty("province")
@@ -24,6 +26,14 @@ public class MiniProgramFanBaseInfo {
     private String unionId;
     @JsonProperty("watermark")
     private Watermark watermark;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public String getOpenId() {
         return openId;

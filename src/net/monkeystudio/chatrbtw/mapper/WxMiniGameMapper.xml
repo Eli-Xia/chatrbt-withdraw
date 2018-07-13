@@ -89,6 +89,10 @@
   <select id="selectAll" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game
   </select>
+    
+    <delete id="delete" >
+        DELETE  FROM  e_wx_mini_game WHERE id = #{id}
+    </delete>
 
 
 </mapper>

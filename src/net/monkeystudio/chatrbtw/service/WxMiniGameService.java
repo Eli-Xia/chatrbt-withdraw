@@ -34,12 +34,25 @@ public class WxMiniGameService {
         return ids;
     }
 
-    public void save(MultipartFile headImg,MultipartFile qrCodeImg,String nickname){
+    public void save(MultipartFile headImg,MultipartFile qrCodeImg,String nickname,Integer needSign){
 
-        //uploadFileService
+        String headImgFileName = headImg.getOriginalFilename();
+        String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
+
+        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
+        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+
+        WxMiniGame wxMiniGame = new WxMiniGame();
+
+        wxMiniGame.setHeadImgUrl(headImgUploadUrl);
+        wxMiniGame.setQrCodeImgUrl(qrCodeImgUploadUrl);
+        wxMiniGame.setNickname(nickname);
+        wxMiniGame.setNeedSign(needSign);
+
+        wxMiniGameMapper.insert(wxMiniGame);
     }
 
-    public void delete(){
-
+    public void delete(Integer wxMiniGameId){
+        wxMiniGameMapper.delete(wxMiniGameId);
     }
 }

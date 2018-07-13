@@ -384,11 +384,11 @@ public class ChatPetMissionPoolService {
 
         //校验
         //FIXME 校验无效，有问题依然继续运行
-        try{
+        /*try{
             this.completeMissionCheck(chatPetPersonalMission.getId());
         }catch(BizException e){
             Log.e(e);
-        }
+        }*/
 
 
         //更新状态

@@ -178,7 +178,11 @@ public class MiniProgramChatPetService {
         this.generateChatPet(fanId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
     }
 
-    public void inviteFriendHandle(Integer fanId,Integer parentId){
+    public void inviteFriendHandle(Integer fanId,Integer parentFanId){
+
+        ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
+        Integer parentId = parentChatPet.getId();
+
         //生成宠物
         this.generateChatPetFromShareCard(fanId,parentId);
 

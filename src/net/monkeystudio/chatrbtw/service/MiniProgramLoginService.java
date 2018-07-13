@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +50,7 @@ public class MiniProgramLoginService {
 
 
     public String loginHandle(String jsCode){
+        Log.d(" ================ miniProgram login =============");
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
@@ -98,21 +98,35 @@ public class MiniProgramLoginService {
 
     /**
      * 获取小程序用户每天登录次数缓存key
-     * @param fanOpenId
+     * @param chatPetId
      * @return
      */
-    private String getFanDailyLoginCountCacheKey(String fanOpenId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + fanOpenId;
+    private String getFanDailyLoginCountCacheKey(Integer chatPetId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
 
     /**
-     * 用户首次登录处理
+     * 前提:有宠物
+     * 用户每天首次登录处理
      * @param fanOpenId
      */
     @Transactional
     public void dailyFirstLoginHandle(String fanOpenId){
-        Log.d(" ============ 用户首次登录处理 =============");
-        String cacheKey = this.getFanDailyLoginCountCacheKey(fanOpenId);
+        WxFan wxFan = wxFanService.getWxFan(fanOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
+
+        if(wxFan == null){
+            return;//注册流程不处理
+        }
+
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFan.getId());
+        if(chatPet == null){
+            return;//没有宠物不处理
+        }
+
+        Integer chatPetId = chatPet.getId();
+
+        Log.d(" ============ 宠物当天首次登录处理 =============");
+        String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
 
@@ -120,9 +134,6 @@ public class MiniProgramLoginService {
             redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
             List<Integer> wxMiniGameIds = wxMiniGameService.getWxMiniGameIds();
-
-            ChatPet chatPet = miniProgramChatPetService.getChatPetByMiniProgramFanId(fanOpenId);
-            Integer chatPetId = chatPet.getId();
 
             for (Integer id:wxMiniGameIds){
 

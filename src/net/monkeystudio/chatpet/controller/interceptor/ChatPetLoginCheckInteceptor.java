@@ -52,7 +52,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
         Integer wxFanId = this.getWxFanIdByRequest(request);
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         if(chatPet == null){
-            returnErrorResponse(response,respHelper.failed("user has not a lucky cat !"));
+            returnErrorResponse(response,respHelper.failed("user does not have a lucky cat !"));
         }
 
         return isLogin;
