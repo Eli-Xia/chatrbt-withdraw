@@ -31,20 +31,23 @@ public class ChatPetGameCenterService {
     @Autowired
     private WxFanService wxFanService;
 
+    @Autowired
+    private ChatPetService chatPetService;
+
+
     private final static Integer CENTER_STALL_STATE_NOT_FINISH = 0;//摊位状态 未完成
     private final static Integer CENTER_STALL_STATE_FINISH = 1;//摊位状态 已完成
 
     /**
      * 根据fanid获取游戏中心信息
-     * @param fanId
+     * @param wxFanId
      * @return
      */
-    public ChatPetGameCenterResp getGameCenterResp(Integer fanId){
+    public ChatPetGameCenterResp getGameCenterResp(Integer wxFanId){
 
         ChatPetGameCenterResp resp = new ChatPetGameCenterResp();
 
-        WxFan wxFan = wxFanService.getById(fanId);
-        ChatPet chatPet = miniProgramChatPetService.getChatPetByMiniProgramFanId(wxFan.getWxFanOpenId());
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         Integer chatPetId = chatPet.getId();
 
         List<ChatPetCenterStallResp> chatPetCenterStallInfoList = this.getChatPetCenterStallInfoList(chatPetId);

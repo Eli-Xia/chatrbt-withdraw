@@ -154,7 +154,7 @@ public class WxFanService {
             Log.e(e);
         }
 
-        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getWxMiniAppId(),wxFan);
+        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
         return result;
     }
 

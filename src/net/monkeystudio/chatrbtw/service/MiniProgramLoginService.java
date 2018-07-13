@@ -81,7 +81,7 @@ public class MiniProgramLoginService {
             Log.d("=============== 小程序登录,wxfan不存在于db,是新用户 ===============");
             WxFan miniAppFan = new WxFan();
             miniAppFan.setWxFanOpenId(openId);
-            miniAppFan.setWxMiniAppId(wxFanService.LUCK_CAT_MINI_APP_ID);
+            miniAppFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
             miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
             wxFanService.save(miniAppFan);
 
@@ -90,27 +90,27 @@ public class MiniProgramLoginService {
             miniProgramChatPetService.generateChatPet(wxFan.getId(),ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }
 
-        this.firstLoginHandle(openId);
+        this.firstLoginHandle(wxFan.getId());
 
         return token;
     }
 
     /**
      * 获取小程序用户每天登录次数缓存key
-     * @param fanOpenId
+     * @param wxFanId
      * @return
      */
-    private String getFanDailyLoginCountCacheKey(String fanOpenId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + fanOpenId;
+    private String getFanDailyLoginCountCacheKey(Integer wxFanId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + wxFanId;
     }
 
     /**
      * 用户首次登录处理
-     * @param fanOpenId
+     * @param wxFanId
      */
-    private void firstLoginHandle(String fanOpenId){
+    private void firstLoginHandle(Integer wxFanId){
         Log.d(" ============ 用户首次登录处理 =============");
-        String cacheKey = this.getFanDailyLoginCountCacheKey(fanOpenId);
+        String cacheKey = this.getFanDailyLoginCountCacheKey(wxFanId);
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
 
@@ -118,7 +118,7 @@ public class MiniProgramLoginService {
             //派发小游戏点击任务
             List<Integer> wxMiniGameIds = wxMiniGameService.getWxMiniGameIds();
 
-            ChatPet chatPet = miniProgramChatPetService.getChatPetByMiniProgramFanId(fanOpenId);
+            ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
             Integer chatPetId = chatPet.getId();
 
             for (Integer id:wxMiniGameIds){
