@@ -63,8 +63,8 @@ public class MiniProgramUserInfoService {
         if(token != null){
             String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(token);
             String value = redisCacheTemplate.getString(sessionTokenCacheKey);
-            String openId = value.split("\\+")[0];//会话中保存的openId
-            String sessionKey = value.split("\\+")[1];
+            String openId = value.split(":")[0];//会话中保存的openId
+            String sessionKey = value.split(":")[1];
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
             if(userInfoOpenId.equals(openId)){
