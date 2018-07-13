@@ -7,7 +7,11 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.chatpet.controller.ChatPetBaseController;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.MiniProgramLoginService;
+import net.monkeystudio.chatrbtw.service.WxFanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,8 +35,48 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
+    @Autowired
+    private WxFanService wxFanService;
+
+    @Autowired
+    private ChatPetService chatPetService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        Boolean isLogin = this.isLogin(request);
+        if(!isLogin){
+            returnErrorResponse(response,respHelper.nologin());
+        }
+
+        Integer wxFanId = this.getWxFanIdByRequest(request);
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        if(chatPet == null){
+            returnErrorResponse(response,respHelper.failed("user has not a lucky cat !"));
+        }
+
+        return isLogin;
+
+    }
+
+    private Integer getWxFanIdByRequest(HttpServletRequest request){
+        Integer userId = null;
+        String sessionToken = request.getHeader("token");
+
+        if(StringUtil.isEmpty(sessionToken)){
+            HttpSession session = request.getSession();
+            userId =  (Integer) session.getAttribute(ChatPetBaseController.SESSION_ATTR_NAME_CHATPET_USERID);
+        }else{
+            String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(sessionToken);
+            String sessionValue = redisCacheTemplate.getString(sessionTokenCacheKey);
+            String userOpenId = sessionValue.split("\\+")[0];
+            WxFan wxFan = wxFanService.getWxFan(userOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
+            userId = wxFan.getId();
+        }
+        return userId;
+    }
+
+    private Boolean isLogin(HttpServletRequest request){
         String sessionToken = request.getHeader("token");
         Log.i("========= session token = {?} ==========",sessionToken);
 
@@ -41,7 +85,6 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             HttpSession session = request.getSession();
             Integer userId =  (Integer) session.getAttribute(ChatPetBaseController.SESSION_ATTR_NAME_CHATPET_USERID);
             if(userId == null){
-                returnErrorResponse(response,respHelper.nologin());
                 return false;
             }
         }else{
@@ -49,12 +92,19 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(sessionToken);
             String sessionValue = redisCacheTemplate.getString(sessionTokenCacheKey);
             if(StringUtil.isEmpty(sessionValue)){
-                returnErrorResponse(response,respHelper.nologin());
                 return false;
             }
+            /*String userOpenId = sessionValue.split("\\+")[0];
+            //根据openId查询wxFanId
+            WxFan wxFan = wxFanService.getWxFan(userOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
+            if(wxFan != null){
+                ChatPet chatPet = chatPetService.getByWxFanId(wxFan.getId());
+                if(chatPet.)
+            }*/
         }
         return true;
     }
+
 
     //token校验失败,把nologin的Respbase写出去.
     public void returnErrorResponse(HttpServletResponse response, RespBase result)

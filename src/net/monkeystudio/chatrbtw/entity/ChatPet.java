@@ -10,7 +10,7 @@ public class ChatPet {
     private Integer tempAppearence;
     private String wxPubOriginId;
     private String wxFanOpenId;
-    private Integer wxMiniAppId;
+    private Integer WxMiniProgramId;
     private Integer ethnicGroupsId;
     private Integer secondEthnicGroupsId;
     private Date createTime;
@@ -23,11 +23,11 @@ public class ChatPet {
     private Integer wxFanId;
 
     public Integer getWxMiniAppId() {
-        return wxMiniAppId;
+        return WxMiniProgramId;
     }
 
-    public void setWxMiniAppId(Integer wxMiniAppId) {
-        this.wxMiniAppId = wxMiniAppId;
+    public void setWxMiniAppId(Integer WxMiniProgramId) {
+        this.WxMiniProgramId = WxMiniProgramId;
     }
 
     public Float getCoin() {

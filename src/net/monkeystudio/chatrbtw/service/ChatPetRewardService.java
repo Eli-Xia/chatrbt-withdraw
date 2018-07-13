@@ -1,7 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
-import net.monkeystudio.base.SpringContextService;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
@@ -10,6 +8,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
+import net.monkeystudio.chatrbtw.mapper.RMiniProgramProductMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +58,9 @@ public class ChatPetRewardService{
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private RMiniProgramProductMapper rMiniProgramProductMapper;
 
 
     public static final Integer NOT_AWARD = 0;//未领取
@@ -405,8 +407,9 @@ public class ChatPetRewardService{
      */
     public void generateLevelReward(){
 
+
         //开通陪聊宠的公众号
-        List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
+        /*List<RWxPubProduct> rWxPubProductList = rWxPubProductService.getWxPubListByProduct(ProductService.CHAT_PET);
 
         for(RWxPubProduct rWxPubProduct : rWxPubProductList){
 
@@ -418,10 +421,19 @@ public class ChatPetRewardService{
             for(WxFan wxFan : wxFanList){
                 redisCacheTemplate.lpush(key,String.valueOf(wxFan.getId()));
             }
+        }*/
+
+        //开通陪聊宠的小程序
+        List<RMiniProgramProduct> rMiniProgramProductList = rMiniProgramProductMapper.selectByProductId(ProductService.CHAT_PET);
+        for(RMiniProgramProduct rWxMiniProgramProduct : rMiniProgramProductList){
+            Integer miniProgramId = rWxMiniProgramProduct.getMiniProgramId();
+
+            List<WxFan> wxFanList = wxFanService.getListByMiniProgramId(miniProgramId);
+            String key = this.getLevelReward();
+            for(WxFan wxFan : wxFanList){
+                redisCacheTemplate.lpush(key,String.valueOf(wxFan.getId()));
+            }
         }
-
-
-
     }
 
     private String getLevelReward(){
@@ -455,7 +467,6 @@ public class ChatPetRewardService{
 
         Integer wxFanId = Integer.valueOf(wxFanIdStr);
 
-        WxFan wxFan = wxFanService.getById(wxFanId);
         /*String wxPubOriginId = wxFan.getWxPubOriginId();
         String wxFanOpenId = wxFan.getWxFanOpenId();
 
@@ -468,10 +479,10 @@ public class ChatPetRewardService{
         }
 
         Integer chatPetId = chatPet.getId();
-        //如果奖励超过了8个，不再分发
+        //如果奖励超过了指定个数，不再分发
         List<ChatPetRewardItem> rewardItemList = this.getByChatPetAndMissionId(chatPetId,NOT_AWARD,null);
         if(rewardItemList.size() >= MAX_NOT_AWARD_COUNT.intValue()){
-            Log.d("more than 8 , don't generate level reward");
+            Log.d("more than max count , don't generate level reward");
             return ;
         }
 
@@ -498,7 +509,6 @@ public class ChatPetRewardService{
         Float levelExperience = (chatPetLevel + 1) * 0.01F;
 
         return levelExperience;
-
     }
 
     /**

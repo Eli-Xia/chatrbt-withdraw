@@ -3,7 +3,7 @@ package net.monkeystudio.chatrbtw.entity;
 /**
  * Created by bint on 2018/7/11.
  */
-public class RWxMiniProgramChatPetType {
+public class RMiniProgramChatPetType {
 
     private Integer id;
     private Integer miniProgramId;

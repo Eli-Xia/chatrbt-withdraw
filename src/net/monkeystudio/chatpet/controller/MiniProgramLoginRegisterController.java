@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping(value = "/mini-app")
-public class MiniProgramLoginController extends ChatPetBaseController{
+public class MiniProgramLoginRegisterController extends ChatPetBaseController{
 
     @Autowired
     private RespHelper respHelper;
@@ -42,26 +42,22 @@ public class MiniProgramLoginController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/update/fan-info", method = RequestMethod.POST)
-    public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req){
+    public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        try{
-            miniProgramUserInfoService.reviseMiniProgramFan(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
-        }catch(Exception e){
-            Log.e(e);
-        }
+        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
 
-        return respHelper.ok();
+        return respHelper.ok(ret);
     }
+
+    //注册接口代替上面
     @ResponseBody
-    @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public RespBase miniAppUserInfoss(){
-        System.out.println(1);
-        return respHelper.ok();
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public RespBase register(@RequestBody MiniAppUserInfoReq req) throws Exception{
+
+        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
+
+        return respHelper.ok(ret);
     }
-
-
-
-
 
 
 }

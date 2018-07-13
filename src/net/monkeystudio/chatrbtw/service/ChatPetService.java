@@ -8,6 +8,7 @@ import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
+import net.monkeystudio.chatrbtw.mapper.RWxMiniProgramChatPetTypeMapper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxFanHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
@@ -90,6 +91,9 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private RMiniProgramChatPetTypeService rMiniProgramChatPetTypeService;
 
     /**
      * 生成宠物
@@ -328,7 +332,7 @@ public class ChatPetService {
      * @param chatPetId
      * @return
      */
-    public ChatPetRewardChangeInfo getInfoAfterReward(Integer wxFanId,Integer chatPetId){
+    public ChatPetRewardChangeInfo getInfoAfterReward(Integer chatPetId){
 
         ChatPet chatPet = this.getById(chatPetId);
 
@@ -336,9 +340,24 @@ public class ChatPetService {
             return null;
         }
 
-        ChatPetInfo info = this.getInfo(chatPetId);
-
         ChatPetRewardChangeInfo changeInfo = new ChatPetRewardChangeInfo();
+
+        //领取奖励(等级奖励,不加经验)后会发生改变的数据如下
+        //今日宠物日志
+        List<PetLogResp> resps = chatPetLogService.getDailyPetLogList(chatPetId);
+        changeInfo.setPetLogs(resps);
+
+        //粉丝拥有代币
+        Float fansTotalCoin = this.getChatPetTotalCoin(chatPetId);
+        changeInfo.setFanTotalCoin(fansTotalCoin);
+
+        //奖励
+        List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
+        changeInfo.setGoldItems(chatPetGoldItems);
+
+        //============================================================================
+        /*ChatPetInfo info = this.getInfo(chatPetId);
+
         changeInfo.setChatPetLevel(info.getChatPetLevel());
         changeInfo.setExperience(info.getExperience());
         changeInfo.setExperienceProgressRate(info.getExperienceProgressRate());
@@ -352,10 +371,9 @@ public class ChatPetService {
         changeInfo.setMagicCoinCount(info.getMagicCoinCount());
 
         List<ChatPetGoldItem> chatPetGoldItems = chatPetRewardService.getChatPetGoldItems(chatPetId);
-        changeInfo.setGoldItems(chatPetGoldItems);
+        changeInfo.setGoldItems(chatPetGoldItems);*/
 
         return changeInfo;
-
     }
 
     /**
@@ -403,11 +421,11 @@ public class ChatPetService {
                 }
             }
 
-            //领取奖励
+            //领取奖励(当前只有等级奖励)
             chatPetRewardService.reward(rewardItemId);
 
             Integer chatPetId = chatPet.getId();
-            ChatPetRewardChangeInfo info = this.getInfoAfterReward(wxFanId,chatPetId);
+            ChatPetRewardChangeInfo info = this.getInfoAfterReward(chatPetId);
             return info;
         }catch(Exception e){
             Log.e(e);
@@ -513,26 +531,11 @@ public class ChatPetService {
 
     /**
      * 根据wxFanId获取宠物对象
-     * @param fanId
+     * @param wxFanId
      * @return
      */
-    public ChatPet getChatPetByWxFanId(Integer fanId){
-        WxFan wxFan = wxFanService.getById(fanId);
-        Integer wxServiceType = wxFan.getWxServiceType();
-
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        String wxFanOpenId = wxFan.getWxFanOpenId();
-
-        ChatPet chatPet = null;
-
-        if(WxFanService.WX_SERVICE_TYPE_PUB.equals(wxServiceType)){
-            chatPet = this.getChatPetByFans(wxPubOriginId, wxFanOpenId);
-        }
-
-        if(WxFanService.WX_SERVICE_TYPE_MINI_APP.equals(wxServiceType)){
-            chatPet = this.getChatPetByWxFanId(fanId);
-        }
-        return chatPet;
+    public ChatPet getChatPetByWxFanId(Integer wxFanId){
+        return chatPetMapper.selectByWxFanId(wxFanId);
     }
 
 
@@ -621,7 +624,7 @@ public class ChatPetService {
             return null;
         }
 
-        Log.d("================= 网页授权response = {?} ===================",response);
+        Log.d("================= wxoauth response = {?} ===================",response);
 
         WxOauthAccessToken wxOauthAccessToken = JsonUtil.readValue(response, WxOauthAccessToken.class);
 
@@ -798,13 +801,6 @@ public class ChatPetService {
      */
     public void increaseExperience(Integer chatPetId ,Float experience){
         chatPetMapper.increaseExperience(chatPetId,experience);
-    }
-
-    public static void main(String[]args)throws Exception{
-        String str = "/static/chat-pet/#/activity?id=253";
-        String ret = URLEncoder.encode(str, "utf-8");
-        System.out.println(ret);
-        System.out.println(1);
     }
 
     /**
@@ -1067,8 +1063,10 @@ public class ChatPetService {
      */
     public Integer getChatPetType(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
-        String wxPubOriginId = chatPet.getWxPubOriginId();
-        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+        //String wxPubOriginId = chatPet.getWxPubOriginId();
+        //Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(chatPet.getWxMiniAppId());
         return chatPetType;
     }
 

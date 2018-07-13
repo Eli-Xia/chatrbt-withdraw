@@ -41,14 +41,15 @@ public class MiniProgramUserInfoService {
     @Autowired
     private MiniProgramChatPetService miniProgramChatPetService;
     /**
-     * 完善小程序用户信息
+     * 获取用户信息及注册
      * @param rawData
      * @param encryptedData
      * @param iv
      * @param signature
      * @throws Exception
      */
-    public void reviseMiniProgramFan(String rawData,String encryptedData,String iv,String signature)throws Exception{
+    public Map getUserInfoAndRegister(String rawData,String encryptedData,String iv,String signature)throws Exception{
+        Map<String,Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -62,25 +63,52 @@ public class MiniProgramUserInfoService {
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
             if(userInfoOpenId.equals(openId)){
-                WxFan wxFan = new WxFan();
+                //通过openId判断是否存在于数据库中,如果存在update
+                Log.d("=========== miniprogram  already register -->revise userinfo  ==============");
+                WxFan dbWxFan = wxFanService.getWxFan(userInfoOpenId, WxFanService.LUCK_CAT_MINI_APP_ID);
+                if(dbWxFan != null){
+                    //更新老数据
+                    dbWxFan.setCity(miniProgramFanBaseInfo.getCity());
+                    dbWxFan.setProvince(miniProgramFanBaseInfo.getProvince());
+                    dbWxFan.setCountry(miniProgramFanBaseInfo.getCountry());
+                    dbWxFan.setNickname(miniProgramFanBaseInfo.getNickname());
+                    dbWxFan.setHeadImgUrl(miniProgramFanBaseInfo.getHeadImgUrl());
+                    dbWxFan.setSex(miniProgramFanBaseInfo.getSex());
+                    dbWxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
+                    dbWxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
+                    dbWxFan.setWxMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
+                    dbWxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
-                wxFan.setWxFanOpenId(userInfoOpenId);
-                wxFan.setCity(miniProgramFanBaseInfo.getCity());
-                wxFan.setProvince(miniProgramFanBaseInfo.getProvince());
-                wxFan.setCountry(miniProgramFanBaseInfo.getCountry());
-                wxFan.setNickname(miniProgramFanBaseInfo.getNickname());
-                wxFan.setHeadImgUrl(miniProgramFanBaseInfo.getHeadImgUrl());
-                wxFan.setSex(miniProgramFanBaseInfo.getSex());
-                wxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
-                wxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
+                    wxFanService.update(dbWxFan);
 
-                Integer wxFanId = wxFanService.save(wxFan);
+                    ret.put("wxFanId",dbWxFan.getId());
+                }else{
+                    Log.d("==================== miniprogram not register , new user ===============");
+                    //新增用户
+                    WxFan wxFan = new WxFan();
 
-                //生成宠物
-                miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
+                    wxFan.setWxFanOpenId(userInfoOpenId);
+                    wxFan.setCity(miniProgramFanBaseInfo.getCity());
+                    wxFan.setProvince(miniProgramFanBaseInfo.getProvince());
+                    wxFan.setCountry(miniProgramFanBaseInfo.getCountry());
+                    wxFan.setNickname(miniProgramFanBaseInfo.getNickname());
+                    wxFan.setHeadImgUrl(miniProgramFanBaseInfo.getHeadImgUrl());
+                    wxFan.setSex(miniProgramFanBaseInfo.getSex());
+                    wxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
+                    wxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
+                    wxFan.setWxMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
+                    wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
+
+                    Integer wxFanId = wxFanService.save(wxFan);
+
+                    //生成宠物
+                    Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+                    ret.put("chatPetId",chatPetId);
+                    ret.put("wxFanId",wxFanId);
+                }
             }
-
         }
+        return ret;
     }
 
 

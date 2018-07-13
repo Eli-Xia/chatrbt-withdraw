@@ -29,6 +29,6 @@ public class RetCode {
 		codeMsgMap.put(FAILED, Msg.text("common.api.failed"));
 		codeMsgMap.put(NO_LOGIN, Msg.text("common.user.nologin"));
 		codeMsgMap.put(AUTH_FAILED, Msg.text("common.user.authfailed"));
-	}	
+	}
 	
 }

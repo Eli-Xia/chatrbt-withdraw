@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class MiniProgramLoginService {
     private final static Integer SESSION_TOKEN_EXPIRE = 3600 * 2 ;
 
 
-    @Transactional
+
     public String loginHandle(String jsCode){
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(jsCode);
 
@@ -76,21 +77,21 @@ public class MiniProgramLoginService {
         redisCacheTemplate.expire(key,cacheSecond);
 
         //判断openid是否存在于db,不存在则insert
-        WxFan wxFan = wxFanService.getWxFan(openId, wxFanService.LUCK_CAT_MINI_APP_ID);
+        /*WxFan wxFan = wxFanService.getWxFan(openId, wxFanService.LUCK_CAT_MINI_APP_ID);
         if(wxFan == null){
             Log.d("=============== 小程序登录,wxfan不存在于db,是新用户 ===============");
             WxFan miniAppFan = new WxFan();
             miniAppFan.setWxFanOpenId(openId);
-            miniAppFan.setWxMiniAppId(wxFanService.LUCK_CAT_MINI_APP_ID);
+            miniAppFan.setWxMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
             miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
             wxFanService.save(miniAppFan);
 
             //为新用户生成招财猫,同一事务
             Log.d("========= 为新用户生成一只招财猫 ============");
             miniProgramChatPetService.generateChatPet(wxFan.getId(),ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
-        }
+        }*/
 
-        this.firstLoginHandle(openId);
+        this.dailyFirstLoginHandle(openId);
 
         return token;
     }
@@ -108,13 +109,15 @@ public class MiniProgramLoginService {
      * 用户首次登录处理
      * @param fanOpenId
      */
-    private void firstLoginHandle(String fanOpenId){
+    @Transactional
+    public void dailyFirstLoginHandle(String fanOpenId){
         Log.d(" ============ 用户首次登录处理 =============");
         String cacheKey = this.getFanDailyLoginCountCacheKey(fanOpenId);
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
 
         if(loginCount.intValue() == 1){
+            redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
             List<Integer> wxMiniGameIds = wxMiniGameService.getWxMiniGameIds();
 

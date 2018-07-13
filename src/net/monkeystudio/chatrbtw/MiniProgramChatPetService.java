@@ -151,7 +151,7 @@ public class MiniProgramChatPetService {
      * @param parentId
      * @return
      */
-    public void generateChatPet(Integer wxFanId,Integer chatPetType,Integer parentId){
+    public Integer generateChatPet(Integer wxFanId,Integer chatPetType,Integer parentId){
         String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
 
         ChatPet chatPet = new ChatPet();
@@ -166,7 +166,7 @@ public class MiniProgramChatPetService {
         chatPet.setAppearanceCode(appearanceCode);
         chatPet.setChatPetType(chatPetType);
 
-        chatPetService.save(chatPet);
+        return chatPetService.save(chatPet);
     }
 
     /**

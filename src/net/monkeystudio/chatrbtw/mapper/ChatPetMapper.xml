@@ -5,7 +5,7 @@
         <result column="id" property="id" jdbcType="INTEGER" />
         <result column="wx_pub_origin_id" property="wxPubOriginId" jdbcType="VARCHAR" />
         <result column="wx_fan_open_id" property="wxFanOpenId" jdbcType="VARCHAR" />
-        <result column="wx_mini_app_id" property="wxMiniAppId" jdbcType="INTEGER" />
+        <result column="wx_mini_app_id" property="WxMiniProgramId" jdbcType="INTEGER" />
         <result column="temp_appearance" property="tempAppearence" jdbcType="INTEGER" />
         <result column="ethnic_groups_id" property="ethnicGroupsId" jdbcType="VARCHAR" />
         <result column="second_ethnic_groups_id" property="secondEthnicGroupsId" jdbcType="VARCHAR" />
@@ -58,8 +58,8 @@
             <if test="wxFanOpenId != null">
                 and wx_fan_open_id = #{wxFanOpenId}
             </if>
-            <if test="wxMiniAppId != null">
-                and wx_mini_app_id = #{wxMiniAppId}
+            <if test="WxMiniProgramId != null">
+                and wx_mini_app_id = #{WxMiniProgramId}
             </if>
             <if test="chatPetType != null">
                 and chat_pet_type = #{chatPetType}
@@ -171,7 +171,7 @@
             id = #{id}
     </update>
 
-    <select id="selectByWxFanId" parameterType="java.lang.Integer">
+    <select id="selectByWxFanId" parameterType="java.lang.Integer" resultMap="baseResultMap">
         select
             <include refid="Base_Column_List"/>
         from e_chat_pet
