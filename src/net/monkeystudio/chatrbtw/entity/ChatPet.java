@@ -23,6 +23,8 @@ public class ChatPet {
     private Float money;
     private Integer wxFanId;
 
+
+
     public Float getCoin() {
         return coin;
     }

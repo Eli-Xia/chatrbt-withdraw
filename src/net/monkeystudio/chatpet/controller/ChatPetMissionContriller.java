@@ -10,6 +10,7 @@ import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionEnumService;
 import net.monkeystudio.chatrbtw.service.ChatPetMissionPoolService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
+import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetRewardChangeInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,8 +25,8 @@ import java.util.Date;
  * Created by bint on 2018/7/11.
  */
 @Controller
-@RequestMapping(value = "/chat-pet/personal-mission")
-public class ChatPetMissionContriller extends BaseController{
+@RequestMapping(value = "/chat-pett/personal-mission")
+public class ChatPetMissionContriller extends ChatPetBaseController{
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
@@ -71,7 +72,9 @@ public class ChatPetMissionContriller extends BaseController{
 
         chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
 
-        return respHelper.ok();
+        ChatPetRewardChangeInfo infoAfterReward = chatPetService.getInfoAfterReward(chatPetId);
+
+        return respHelper.ok(infoAfterReward);
     }
 
 }

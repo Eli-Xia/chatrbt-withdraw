@@ -44,6 +44,7 @@ public class MiniProgramUserInfoService {
 
     /**
      * 获取用户信息及注册
+     * 注册完成之后也就是当天的第一次登录
      * @param rawData
      * @param encryptedData
      * @param iv
@@ -107,8 +108,14 @@ public class MiniProgramUserInfoService {
 
                     //生成宠物
                     Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+
+                    //第一次登录任务数据准备
+                    miniProgramLoginService.dailyFirstLoginHandle(userInfoOpenId);
+
                     ret.put("chatPetId",chatPetId);
                     ret.put("wxFanId",wxFanId);
+
+
                 }
             }
         }
