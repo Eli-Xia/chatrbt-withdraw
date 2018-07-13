@@ -161,7 +161,7 @@ public class ChatPetRewardService{
 
         //修改奖励对象的领取状态为已领取
         Integer updateCount = this.updateRewardState(chatPetRewardItemId);
-        if(updateCount <= 0){
+        if(updateCount.intValue() <= 0){
             return;
         }
 
@@ -314,6 +314,11 @@ public class ChatPetRewardService{
         if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
 
             item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
+
+            //每日登陆的奖励为1
+            BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(1));
+            item.setExperience(bd.floatValue());
+
             item.setGoldValue(0F);
 
             this.save(item);

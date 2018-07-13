@@ -41,6 +41,7 @@ public class MiniProgramUserInfoService {
 
     @Autowired
     private MiniProgramLoginService miniProgramLoginService;
+
     /**
      * 获取用户信息及注册
      * 注册完成之后也就是当天的第一次登录
