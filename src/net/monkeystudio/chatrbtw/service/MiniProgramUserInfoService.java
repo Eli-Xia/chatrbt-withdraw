@@ -103,7 +103,9 @@ public class MiniProgramUserInfoService {
                     wxFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
                     wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
-                    Integer wxFanId = wxFanService.save(wxFan);
+                    wxFanService.save(wxFan);
+                    Integer wxFanId = wxFan.getId();
+                    Log.d("================ minipro userinfo : wxFanId = {?}==============",wxFanId.toString());
 
                     //生成宠物
                     Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);

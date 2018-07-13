@@ -47,26 +47,28 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
         Boolean isLogin = this.isLogin(request);
         if(!isLogin){
             returnErrorResponse(response,respHelper.nologin());
+            return false;
         }
 
         Integer wxFanId = this.getWxFanIdByRequest(request);
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         if(chatPet == null){
             returnErrorResponse(response,respHelper.failed("user does not have a lucky cat !"));
+            return false;
         }
 
         return true;
 
-    }
+        }
 
-    private Integer getWxFanIdByRequest(HttpServletRequest request){
-        Integer userId = null;
-        String sessionToken = request.getHeader("token");
+        private Integer getWxFanIdByRequest(HttpServletRequest request){
+            Integer userId = null;
+            String sessionToken = request.getHeader("token");
 
-        if(StringUtil.isEmpty(sessionToken)){
-            HttpSession session = request.getSession();
-            userId =  (Integer) session.getAttribute(ChatPetBaseController.SESSION_ATTR_NAME_CHATPET_USERID);
-        }else{
+            if(StringUtil.isEmpty(sessionToken)){
+                HttpSession session = request.getSession();
+                userId =  (Integer) session.getAttribute(ChatPetBaseController.SESSION_ATTR_NAME_CHATPET_USERID);
+            }else{
             String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(sessionToken);
             String sessionValue = redisCacheTemplate.getString(sessionTokenCacheKey);
             String userOpenId = sessionValue.split("\\+")[0];

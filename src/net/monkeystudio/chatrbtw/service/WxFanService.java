@@ -103,7 +103,7 @@ public class WxFanService {
         return wxFan;
     }
 
-    private void setWxFanCache(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId,WxFan wxFan){
+    public void setWxFanCache(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId,WxFan wxFan){
         String cacheKey = this.getWxFanCacheKey(wxPubOriginId,wxFanOpenId,miniProgramId);
         redisCacheTemplate.setObject(cacheKey,wxFan );
         redisCacheTemplate.expire(cacheKey, WX_FAN_CACHE_PERIOD);
@@ -124,7 +124,7 @@ public class WxFanService {
         return redisCacheTemplate.getObject(key);
     }
 
-    private String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId ){
+    public String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId ){
         String key = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "WxFan:" + wxFanOpenId + ":";
         if(wxPubOriginId != null){
             key.concat(wxPubOriginId);
