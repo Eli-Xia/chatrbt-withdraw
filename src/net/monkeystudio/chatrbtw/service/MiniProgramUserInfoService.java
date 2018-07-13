@@ -79,7 +79,7 @@ public class MiniProgramUserInfoService {
                     dbWxFan.setSex(miniProgramFanBaseInfo.getSex());
                     dbWxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
                     dbWxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
-                    dbWxFan.setWxMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
+                    dbWxFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
                     dbWxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
                     wxFanService.update(dbWxFan);
@@ -99,7 +99,7 @@ public class MiniProgramUserInfoService {
                     wxFan.setSex(miniProgramFanBaseInfo.getSex());
                     wxFan.setUnionId(miniProgramFanBaseInfo.getUnionId());
                     wxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
-                    wxFan.setWxMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
+                    wxFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
                     wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
                     Integer wxFanId = wxFanService.save(wxFan);

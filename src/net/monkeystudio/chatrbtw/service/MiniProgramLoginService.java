@@ -49,7 +49,10 @@ public class MiniProgramLoginService {
 
 
 
-    public String loginHandle(String jsCode){
+    public String loginHandle(String appSign,String jsCode){
+        /*if(appSign == null){
+
+        }*/
         Log.d(" ================ miniProgram login =============");
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(jsCode);
 
@@ -82,11 +85,7 @@ public class MiniProgramLoginService {
             Log.d("=============== 小程序登录,wxfan不存在于db,是新用户 ===============");
             WxFan miniAppFan = new WxFan();
             miniAppFan.setWxFanOpenId(openId);
-<<<<<<< HEAD
-            miniAppFan.setWxMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
-=======
             miniAppFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
->>>>>>> 5865b1ec39e3c9fbc72ce31c9c461ef048c2d416
             miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
             wxFanService.save(miniAppFan);
 
@@ -95,30 +94,19 @@ public class MiniProgramLoginService {
             miniProgramChatPetService.generateChatPet(wxFan.getId(),ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
         }*/
 
-<<<<<<< HEAD
         this.dailyFirstLoginHandle(openId);
-=======
-        this.firstLoginHandle(wxFan.getId());
->>>>>>> 5865b1ec39e3c9fbc72ce31c9c461ef048c2d416
 
         return token;
     }
 
     /**
      * 获取小程序用户每天登录次数缓存key
-<<<<<<< HEAD
      * @param chatPetId
      * @return
      */
     private String getFanDailyLoginCountCacheKey(Integer chatPetId){
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
-
-    /**
-     * 前提:有宠物
-     * 用户每天首次登录处理
-     * @param fanOpenId
-     */
     @Transactional
     public void dailyFirstLoginHandle(String fanOpenId){
         WxFan wxFan = wxFanService.getWxFan(fanOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
@@ -136,22 +124,6 @@ public class MiniProgramLoginService {
 
         Log.d(" ============ 宠物当天首次登录处理 =============");
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
-=======
-     * @param wxFanId
-     * @return
-     */
-    private String getFanDailyLoginCountCacheKey(Integer wxFanId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + wxFanId;
-    }
-
-    /**
-     * 用户首次登录处理
-     * @param wxFanId
-     */
-    private void firstLoginHandle(Integer wxFanId){
-        Log.d(" ============ 用户首次登录处理 =============");
-        String cacheKey = this.getFanDailyLoginCountCacheKey(wxFanId);
->>>>>>> 5865b1ec39e3c9fbc72ce31c9c461ef048c2d416
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
 
@@ -160,12 +132,6 @@ public class MiniProgramLoginService {
             //派发小游戏点击任务
             List<Integer> wxMiniGameIds = wxMiniGameService.getWxMiniGameIds();
 
-<<<<<<< HEAD
-=======
-            ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
-            Integer chatPetId = chatPet.getId();
-
->>>>>>> 5865b1ec39e3c9fbc72ce31c9c461ef048c2d416
             for (Integer id:wxMiniGameIds){
 
                 DispatchMissionParam diapatchMiniGameMissionParam = new DispatchMissionParam();
@@ -201,14 +167,5 @@ public class MiniProgramLoginService {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppSessionToken:" + token;
     }
 
-    /**
-     * 获取redis session中的openId
-     * @param cacheKey
-     * @return
-     */
-    public String getOpenIdFromRedisSession(String cacheKey){
-        String value = redisCacheTemplate.getString(cacheKey);
-        return value.split("\\+")[0];
-    }
 
 }

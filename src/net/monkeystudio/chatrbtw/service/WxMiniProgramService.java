@@ -19,4 +19,5 @@ public class WxMiniProgramService {
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
+    public static final Integer LUCKY_CAT_MINI_PROGRAM_ID = 1;
 }
