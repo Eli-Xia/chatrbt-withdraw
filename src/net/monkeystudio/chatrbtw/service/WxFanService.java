@@ -109,7 +109,7 @@ public class WxFanService {
         redisCacheTemplate.expire(cacheKey, WX_FAN_CACHE_PERIOD);
     }
 
-    private WxFan getWxFanFromDb(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId){
+    public WxFan getWxFanFromDb(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId){
         List<WxFan> list = wxFanMapper.select(wxPubOriginId, wxFanOpenId, miniProgramId);
 
         if(list == null || list.size() == 0){

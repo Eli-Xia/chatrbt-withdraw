@@ -160,6 +160,12 @@ public class MiniProgramLoginService {
             completeLoginMissionParam.setChatPetId(chatPetId);
             chatPetMissionPoolService.completeChatPetMission(completeLoginMissionParam);
 
+            //派发邀请任务
+            DispatchMissionParam dispatchInviteMissionParam = new DispatchMissionParam();
+            dispatchInviteMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+            dispatchInviteMissionParam.setChatPetId(chatPetId);
+            chatPetMissionPoolService.dispatchMission(dispatchInviteMissionParam);
+
         }
     }
 

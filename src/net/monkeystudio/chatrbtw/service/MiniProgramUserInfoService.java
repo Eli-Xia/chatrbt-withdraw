@@ -51,7 +51,7 @@ public class MiniProgramUserInfoService {
      * @param signature
      * @throws Exception
      */
-    public Map getUserInfoAndRegister(String rawData,String encryptedData,String iv,String signature)throws Exception{
+    public Map getUserInfoAndRegister(String rawData,String encryptedData,String iv,String signature) throws Exception{
         Map<String,Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
         HttpServletRequest request =
@@ -70,7 +70,8 @@ public class MiniProgramUserInfoService {
             if(userInfoOpenId.equals(openId)){
                 //通过openId判断是否存在于数据库中,如果存在update
                 Log.d("=========== miniprogram  already register -->revise userinfo  ==============");
-                WxFan dbWxFan = wxFanService.getWxFan(userInfoOpenId, WxFanService.LUCK_CAT_MINI_APP_ID);
+                //WxFan dbWxFan = wxFanService.getWxFan(userInfoOpenId, WxFanService.LUCK_CAT_MINI_APP_ID);
+                WxFan dbWxFan = wxFanService.getWxFanFromDb(null,userInfoOpenId,null);
                 if(dbWxFan != null){
                     //更新老数据
                     dbWxFan.setCity(miniProgramFanBaseInfo.getCity());
