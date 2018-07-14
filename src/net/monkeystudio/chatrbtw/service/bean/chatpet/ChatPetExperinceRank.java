@@ -10,6 +10,8 @@ public class ChatPetExperinceRank {
 
     private Integer total;
 
+    private Integer experienceAddition;
+
     public List<ChatPetExperinceRankItem> getChatPetExperinceRankItemList() {
         return chatPetExperinceRankItemList;
     }
@@ -24,5 +26,13 @@ public class ChatPetExperinceRank {
 
     public void setTotal(Integer total) {
         this.total = total;
+    }
+
+    public Integer getExperienceAddition() {
+        return experienceAddition;
+    }
+
+    public void setExperienceAddition(Integer experienceAddition) {
+        this.experienceAddition = experienceAddition;
     }
 }

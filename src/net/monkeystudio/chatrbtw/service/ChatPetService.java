@@ -850,6 +850,9 @@ public class ChatPetService {
         Integer count = this.countExperienceRankChatPetAmount(chatPetId);
         chatPetExperinceRank.setTotal(count);
 
+        Integer experienceAddition = this.countByParentId(chatPetId);
+        chatPetExperinceRank.setExperienceAddition(experienceAddition);
+
         return chatPetExperinceRank;
     }
 
@@ -893,11 +896,11 @@ public class ChatPetService {
 
     private List<ChatPet> getExperienceRankList(Integer parentId,Integer chatPetId ,Integer pageSize) {
         Integer startIndex = 0;
-        return this.chatPetMapper.selectExperienceRankList(parentId,chatPetId ,startIndex, pageSize);
+        return chatPetMapper.selectExperienceRankList(parentId,chatPetId ,startIndex, pageSize);
     }
 
     private Integer countExperienceRankChatPetAmount(Integer chatPetId){
-        return this.chatPetMapper.countExperienceRankList(chatPetId);
+        return chatPetMapper.countExperienceRankList(chatPetId);
     }
 
 

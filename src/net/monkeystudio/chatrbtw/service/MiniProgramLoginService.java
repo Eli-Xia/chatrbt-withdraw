@@ -161,7 +161,6 @@ public class MiniProgramLoginService {
             chatPetMissionPoolService.completeChatPetMission(completeLoginMissionParam);
 
         }
-
     }
 
     /**
