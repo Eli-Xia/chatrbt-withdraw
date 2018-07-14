@@ -25,7 +25,7 @@ import java.util.Date;
  * Created by bint on 2018/7/11.
  */
 @Controller
-@RequestMapping(value = "/chat-pett/personal-mission")
+@RequestMapping(value = "/chat-pet/personal-mission")
 public class ChatPetMissionContriller extends ChatPetBaseController{
 
     @Autowired

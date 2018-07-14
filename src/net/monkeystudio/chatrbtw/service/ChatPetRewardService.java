@@ -202,6 +202,7 @@ public class ChatPetRewardService{
         chatPetService.increaseExperience(chatPetId,chatPetRewardItem.getExperience());
 
         //是否升级
+        chatPet = chatPetService.getById(chatPetId);
         Float newExperience = chatPet.getExperience();
         boolean isUpgrade = chatPetLevelService.isUpgrade(oldExperience, newExperience);
 

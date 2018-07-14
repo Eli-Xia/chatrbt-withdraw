@@ -58,8 +58,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
         }
 
         return true;
-
-        }
+    }
 
         private Integer getWxFanIdByRequest(HttpServletRequest request){
             Integer userId = null;
