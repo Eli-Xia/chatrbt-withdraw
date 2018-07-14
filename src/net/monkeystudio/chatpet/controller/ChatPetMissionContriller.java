@@ -72,9 +72,9 @@ public class ChatPetMissionContriller extends ChatPetBaseController{
 
         chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
 
-        ChatPetRewardChangeInfo infoAfterReward = chatPetService.getInfoAfterReward(chatPetId);
+        //ChatPetRewardChangeInfo infoAfterReward = chatPetService.getInfoAfterReward(chatPetId);
 
-        return respHelper.ok(infoAfterReward);
+        return respHelper.ok();
     }
 
 }
