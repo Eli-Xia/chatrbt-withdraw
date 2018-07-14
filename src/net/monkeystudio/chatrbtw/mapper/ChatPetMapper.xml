@@ -36,8 +36,8 @@
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet" keyProperty="id" useGeneratedKeys="true">
         insert into
             e_chat_pet
-                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ,appearance_code ,chat_pet_type ,wx_fan_id)
-        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId},#{appearanceCode},#{chatPetType} ,#{wxFanId})
+                (wx_pub_origin_id, wx_fan_open_id ,temp_appearance ,ethnic_groups_id ,second_ethnic_groups_id ,create_time,parent_id ,appearance_code ,chat_pet_type ,wx_fan_id,wx_mini_app_id)
+        values (#{wxPubOriginId} , #{wxFanOpenId}  , #{tempAppearence} , #{ethnicGroupsId} ,#{secondEthnicGroupsId} ,#{createTime} ,#{parentId},#{appearanceCode},#{chatPetType} ,#{wxFanId},#{miniProgramId})
     </insert>
 
     <select id="selectById" parameterType="java.lang.Integer" resultMap="baseResultMap" >
