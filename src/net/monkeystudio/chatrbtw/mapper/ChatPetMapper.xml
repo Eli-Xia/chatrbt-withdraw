@@ -189,7 +189,7 @@
 
 
     <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet">
-        update e_chat_pet SET 
+        update e_chat_pet SET
         wx_fan_open_id = #{wxFanOpenId},
         wx_mini_app_id = #{miniProgramId},
         temp_appearance = #{tempAppearence},
@@ -202,6 +202,6 @@
         chat_pet_type = #{chatPetType},
         money = #{money},
         wx_fan_id = #{wxFanId}
-        WHERE id = {id}
+        WHERE id = #{id}
     </update>
 </mapper>
