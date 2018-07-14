@@ -1138,4 +1138,8 @@ public class ChatPetService {
 
         return myInfo;
     }
+
+    public void update(ChatPet chatPet){
+        chatPetMapper.update(chatPet);
+    }
 }

@@ -696,7 +696,7 @@ public class ChatPetMissionPoolService {
     }
 
 
-    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId){
+    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         Integer chatPetId = chatPet.getId();
         //通过fanId + gameId 找到
@@ -715,5 +715,4 @@ public class ChatPetMissionPoolService {
         this.completeChatPetMission(completeMissionParam);
 
     }
-
 }

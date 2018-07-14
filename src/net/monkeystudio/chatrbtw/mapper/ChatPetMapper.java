@@ -45,4 +45,6 @@ public interface ChatPetMapper {
     List<ChatPet> selectAll();
 
     Integer updateWxFanId(@Param("chatPetId") Integer chatPetId,@Param("wxFanId") Integer wxFanId);
+
+    Integer update(ChatPet record);
 }

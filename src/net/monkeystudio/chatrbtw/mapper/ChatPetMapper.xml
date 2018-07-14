@@ -186,4 +186,22 @@
     <update id="updateWxFanId" parameterType="java.lang.Integer">
         update e_chat_pet set wx_fan_id = #{wxFanId} WHERE id = #{chatPetId}
     </update>
+
+
+    <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.ChatPet">
+        update e_chat_pet SET
+        wx_fan_open_id = #{wxFanOpenId},
+        wx_mini_app_id = #{miniProgramId},
+        temp_appearance = #{tempAppearence},
+        ethnic_groups_id = #{ethnicGroupsId},
+        second_ethnic_groups_id = #{secondEthnicGroupsId},
+        parent_id = #{parentId},
+        experience = #{experience},
+        coin = #{coin},
+        appearance_code = #{appearanceCode},
+        chat_pet_type = #{chatPetType},
+        money = #{money},
+        wx_fan_id = #{wxFanId}
+        WHERE id = #{id}
+    </update>
 </mapper>

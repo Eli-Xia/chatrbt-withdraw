@@ -177,14 +177,10 @@ public class MiniProgramChatPetService {
         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
         Integer parentId = parentChatPet.getId();
 
-        //如果已经有宠物，则不生成奖励
-        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
-        if(chatPet != null){
-            return ;
-        }
-
-        //生成宠物
-        this.generateChatPetFromShareCard(wxFanId,parentId);
+        //获取孩子宠物,并设置父亲宠物id
+        ChatPet childChatPet = chatPetService.getByWxFanId(wxFanId);
+        childChatPet.setParentId(parentId);
+        chatPetService.update(childChatPet);
 
         //父亲宠物完成邀请任务
         CompleteMissionParam completeMissionParam = new CompleteMissionParam();
