@@ -58,8 +58,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
         }
 
         return true;
-
-        }
+    }
 
         private Integer getWxFanIdByRequest(HttpServletRequest request){
             Integer userId = null;
@@ -71,7 +70,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
             }else{
             String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(sessionToken);
             String sessionValue = redisCacheTemplate.getString(sessionTokenCacheKey);
-            String userOpenId = sessionValue.split("\\+")[0];
+            String userOpenId = sessionValue.split(":")[0];
             WxFan wxFan = wxFanService.getWxFan(userOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
             userId = wxFan.getId();
         }

@@ -69,7 +69,7 @@ public class MiniProgramLoginService {
 
         String key = this.getSessionTokenCacheKey(token);
 
-        String value = openId + "+" + sessionKey;
+        String value = openId + ":" + sessionKey;
 
         Integer remainSecond = DateUtils.getCacheSeconds();//距离第二天凌晨多少秒
 
