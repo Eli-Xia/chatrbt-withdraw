@@ -443,7 +443,7 @@ public class ChatPetLogService {
         pl.setCreateTime(new Date());
         pl.setContent("等级奖励," + "猫饼" + "+" + item.getGoldValue());
 
-        this.savePetLog(pl);
+        //this.savePetLog(pl);
     }
 
     private void savePetBornLog(Integer chatPetId){
