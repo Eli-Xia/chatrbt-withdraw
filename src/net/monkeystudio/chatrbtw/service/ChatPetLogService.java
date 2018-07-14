@@ -180,9 +180,9 @@ public class ChatPetLogService {
 
             if(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.equals(chatPetType)){
                 this.saveLuckyCatMissionLog(chatPetRewardItemId,param.getUpgrade());
-            }else{
+            }/*else{
                 this.savePetLog4MissionReward(chatPetRewardItemId,param.getUpgrade());
-            }
+            }*/
         }
     }
 
