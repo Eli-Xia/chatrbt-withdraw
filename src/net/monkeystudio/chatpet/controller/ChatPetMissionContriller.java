@@ -2,6 +2,7 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
@@ -66,7 +67,9 @@ public class ChatPetMissionContriller extends ChatPetBaseController{
         chatPetPersonalMissionParam.setChatPetId(chatPetId);
 
         ChatPetPersonalMission miniGameMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
-
+        if(miniGameMission == null){
+            respHelper.failed("game mission has finished");
+        }
         CompleteMissionParam completeMissionParam = new CompleteMissionParam();
         completeMissionParam.setPersonalMissionId(miniGameMission.getId());
 
