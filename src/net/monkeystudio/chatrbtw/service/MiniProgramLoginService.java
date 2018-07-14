@@ -49,6 +49,8 @@ public class MiniProgramLoginService {
 
 
     /**
+     * key: token
+     * value:   miniprogramId:openId:sessionKey
      * 登陆处理
      * @param appSign
      * @param jsCode
