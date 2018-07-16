@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
+import net.monkeystudio.chatrbtw.utils.WxCryptUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +142,9 @@ public class MiniProgramUserInfoService {
      * @throws Exception
      */
     public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String rawData, String encryptedData, String iv, String signature, String sessionKey)throws Exception{
-        // 被加密的数据
+        String json = WxCryptUtils.decrypt(encryptedData, iv, sessionKey);
+        return JsonUtil.readValue(json,MiniProgramFanBaseInfo.class);
+        /*// 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
         byte[] keyByte = Base64.decode(sessionKey);
@@ -173,7 +176,7 @@ public class MiniProgramUserInfoService {
         } catch (Exception e) {
             Log.e(e);
         }
-        return null;
+        return null;*/
     }
 
 }

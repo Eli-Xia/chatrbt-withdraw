@@ -57,28 +57,14 @@ public class WxCryptUtils {
 
     public static void main(String[] args) throws Exception {
         // 微信 小程序的 测试数据
-        String encrypt = "CiyLU1Aw2KjvrjMdj8YKliAjtP4gsMZM\n" +
-                "                QmRzooG2xrDcvSnxIMXFufNstNGTyaGS\n" +
-                "                9uT5geRa0W4oTOb1WT7fJlAC+oNPdbB+\n" +
-                "                3hVbJSRgv+4lGOETKUQz6OYStslQ142d\n" +
-                "                NCuabNPGBzlooOmB231qMM85d2/fV6Ch\n" +
-                "                evvXvQP8Hkue1poOFtnEtpyxVLW1zAo6\n" +
-                "                /1Xx1COxFvrc2d7UL/lmHInNlxuacJXw\n" +
-                "                u0fjpXfz/YqYzBIBzD6WUfTIF9GRHpOn\n" +
-                "                /Hz7saL8xz+W//FRAUid1OksQaQx4CMs\n" +
-                "                8LOddcQhULW4ucetDf96JcR3g0gfRK4P\n" +
-                "                C7E/r7Z6xNrXd2UIeorGj5Ef7b1pJAYB\n" +
-                "                6Y5anaHqZ9J6nKEBvB4DnNLIVWSgARns\n" +
-                "                /8wR2SiRS7MNACwTyrGvt9ts8p12PKFd\n" +
-                "                lqYTopNHR1Vf7XjfhQlVsAJdNiKdYmYV\n" +
-                "                oKlaRv85IfVunYzO0IKXsyl7JCUjCpoG\n" +
-                "                20f0a04COwfneQAGGwd5oa+T8yO5hzuy\n" +
-                "                Db/XcxxmK01EpqOyuxINew==";
+        String encrypt = "AvCgniraqHy4wo4/PVvdn48yTQSJClKdjkbdGyEdpUhBWR5Sitpb/tg4Vdpk6Sh8TOn8eyrsKPcItGYtaYPKwMNEAHnpE/Kj0SwWWW0zjHBx/0ZukLnQdsFPTTStkVzI8qPKzyNRsSUgAI6M1+4z2hsmJpfCJlOcyeqkoAdcSYtJmoG1Kdnasn8m5HGRK3b1J6hF/Qpcf7mXSv6NMKQw223o/JL1gj8xvGuag4qXt9mNV3cKEW51GUehaUypafZavV76L+EVR0dMcK4IMhio407QYIgNVFLAADkFrvvAG2oJflCdhmtfs+ovZ8Rn8PxbsP8FR3tDbG/1XVLDCg8UL9uJwxYceIZns1+UBwmIwTSnC2ZR74s80mZDCBLqbynNLEito2AIt0Xv2Zj/wW8br5qhWj43jj9jDKHLpf6FTRMUb7jkNBHJnAmp2iZwDH/ZpSLblIB/TpSpjQHg4VT5pE/UoIoICHS4slRZ7M4QBhA=";
 
-        String sessionKey = "tiihtNczf5v6AKRyjwEUhQ==";
-        String iv = "r7BXXKkLb8qrSNn05n0qiA==";
+        String sessionKey = "dG1npZSgP81BIN7iK3cPAQ==";
+        String iv = "bVTZUIkUtOF1n5BttqkGVw==";
+
 
         String decrypt = WxCryptUtils.decrypt(encrypt, iv, sessionKey);
         System.out.println(decrypt);
+        System.out.println(1);
     }
 }
