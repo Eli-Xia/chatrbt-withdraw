@@ -142,9 +142,9 @@ public class MiniProgramUserInfoService {
      * @throws Exception
      */
     public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String rawData, String encryptedData, String iv, String signature, String sessionKey)throws Exception{
-        String json = WxCryptUtils.decrypt(encryptedData, iv, sessionKey);
-        return JsonUtil.readValue(json,MiniProgramFanBaseInfo.class);
-        /*// 被加密的数据
+        /*String json = WxCryptUtils.decrypt(encryptedData, iv, sessionKey);
+        return JsonUtil.readValue(json,MiniProgramFanBaseInfo.class);*/
+        // 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
         byte[] keyByte = Base64.decode(sessionKey);
@@ -162,7 +162,7 @@ public class MiniProgramUserInfoService {
             }
             // 初始化
             Security.addProvider(new BouncyCastleProvider());
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding","BC");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding","BC");
             SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
             AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
             parameters.init(new IvParameterSpec(ivByte));
@@ -176,7 +176,7 @@ public class MiniProgramUserInfoService {
         } catch (Exception e) {
             Log.e(e);
         }
-        return null;*/
+        return null;
     }
 
 }
