@@ -282,7 +282,6 @@ public class ChatPetRewardService{
                 item.setExperience(chatPetMissionEnumService.getMissionByCode(missionCode).getExperience());
             }
 
-
             if(chatPetTypeConfig.getRewardType().equals(ChatPetTypeConfigService.Constants.MANUALLY_ONLY_EXPERIENCE)){
                 item.setGoldValue(0F);
 
