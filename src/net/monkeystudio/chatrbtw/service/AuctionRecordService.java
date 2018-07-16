@@ -25,6 +25,9 @@ public class AuctionRecordService {
     @Autowired
     private ChatPetService chatPetService;
 
+    @Autowired
+    private ChatPetCoinFlowService chatPetCoinFlowService;
+
     /**
      * 获取最高出价的记录
      * @param auctionItemId
@@ -93,6 +96,9 @@ public class AuctionRecordService {
         param.setChatPetId(chatPet.getId());
         param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD);
         chatPetLogService.saveChatPetDynamic(param);
+
+        //参与竞拍猫饼流水
+        chatPetCoinFlowService.auctionFlow(chatPet.getId(),price);
 
         return recordId;
     }

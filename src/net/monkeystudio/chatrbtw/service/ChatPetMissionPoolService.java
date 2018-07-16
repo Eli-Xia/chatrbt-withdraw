@@ -420,6 +420,7 @@ public class ChatPetMissionPoolService {
             chatPetRewardService.generateRewardWhenMissionDone(chatPetPersonalMission.getId());
             ChatPetRewardItem chatPetRewardItem = chatPetRewardService.getByMissionItemId(chatPetPersonalMission.getId());
             chatPetRewardService.reward(chatPetRewardItem.getId());
+
         }
     }
 

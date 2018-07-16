@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.FixedScheduling;
+import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.ListUtil;
@@ -58,6 +59,12 @@ public class AuctionItemService {
 
     @Autowired
     private ChatPetLogService chatPetLogService;
+
+    @Autowired
+    private ChatPetCoinFlowService chatPetCoinFlowService;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
 
     //竞拍品的状态
     public final static Integer HAS_NOT_STARTED = 0; //未开始
@@ -179,10 +186,28 @@ public class AuctionItemService {
     }
 
     /**
+     * 竞标
+     * @param failAuctionRecordList
+     */
+    public void failAuctionFlowHandle(List<AuctionRecord> failAuctionRecordList){
+        taskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                for(AuctionRecord record:failAuctionRecordList){
+                    Integer wxFanId = record.getWxFanId();
+                    ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+                    Integer chatPetId = chatPet.getId();
+                    chatPetCoinFlowService.auctionFailFlow(chatPetId,null);
+                }
+            }
+        });
+    }
+
+    /**
      * 把竞拍品从进行中状态专程已经结束状态
      * @param auctionItemId
      */
-    public void processing2haveFinished(Integer auctionItemId){
+    /*public void processing2haveFinished(Integer auctionItemId){
         Log.i("It is time to run perform fixed tasks , auctionItemId :" + auctionItemId);
 
         List<AuctionRecord> maxPriceAuctionItemList = auctionRecordService.getMaxPriceAuctionItemList(auctionItemId);
@@ -241,7 +266,85 @@ public class AuctionItemService {
             Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
             return ;
         }
+    }*/
+
+
+    /**
+     * 把竞拍品从进行中状态专程已经结束状态
+     * @param auctionItemId
+     */
+    public void processing2haveFinished(Integer auctionItemId){
+        Log.i("It is time to run perform fixed tasks , auctionItemId :" + auctionItemId);
+
+        List<AuctionRecord> maxPriceAuctionItemList = auctionRecordService.getMaxPriceAuctionItemList(auctionItemId);
+
+        //如果没人竞价,设置竞拍品状态为无人竞拍
+        if(ListUtil.isEmpty(maxPriceAuctionItemList)){
+            Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
+            return ;
+        }
+
+        Boolean hasOwner = false;
+        Iterator<AuctionRecord> iter = maxPriceAuctionItemList.iterator();
+        while(iter.hasNext()){
+            AuctionRecord maxPriceAuctionItem = iter.next();
+
+            Integer wxFanId = maxPriceAuctionItem.getWxFanId();
+            ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
+
+            //如果所拥有的钱,比出价高
+            Float priceFloat = maxPriceAuctionItem.getPrice();
+            if(priceFloat.floatValue() <= chatPet.getCoin().floatValue()){
+
+                //修改状态为已经结束和填充获得人
+                Integer result = translateStatus(auctionItemId , PROCESSING , HAVE_FINISHED , wxFanId);
+
+                //如果已经处理，则返回
+                if(result == null || result.intValue() == 0){
+                    return ;
+                }
+
+                //减去所得者的金币
+                Integer chatPetId = chatPet.getId();
+                chatPetService.decreaseCoin(chatPetId , priceFloat);
+                hasOwner = true;
+
+                //减少的金币放到改种宠物的池子中
+                AuctionItem auctionItem = this.getById(auctionItemId);
+                chatPetTypeConfigService.increaseCoin(auctionItem.getChatPetType(), priceFloat);
+
+                //发送中标提示
+                //this.sentRemindMsg(wxFanId);
+
+                //宠物中标日志
+                SaveChatPetLogParam param = new SaveChatPetLogParam();
+                param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_AUTION_SUCCESS);
+                param.setChatPetId(chatPetId);
+                chatPetLogService.saveChatPetDynamic(param);
+
+                //把中标item从List中移除
+                iter.remove();
+
+                break;
+            }
+        }
+
+        //线程从map里面删除
+        threadMap.remove(auctionItemId);
+
+        //如果所有出价的人都没有对应的金币,则流拍
+        if(!hasOwner){
+            Integer result = translateStatus(auctionItemId , PROCESSING , UNCLAIMED , null);
+            //return ;
+        }
+
+        //竞标失败
+        failAuctionFlowHandle(maxPriceAuctionItemList);
     }
+
+
+
+
 
     private Integer translateStatus(Integer id , Integer originState ,Integer taregetState ,Integer wxFanId){
         return auctionItemMapper.updateStateAndWxFanId(id, originState, taregetState, wxFanId);
@@ -540,5 +643,6 @@ public class AuctionItemService {
             processing2haveFinished(auctionItemId);
         }
     }
+
 
 }

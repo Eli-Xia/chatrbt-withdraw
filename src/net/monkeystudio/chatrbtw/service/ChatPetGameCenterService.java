@@ -9,6 +9,8 @@ import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.ChatPetCenterStallResp;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.ChatPetGameCenterResp;
+import net.monkeystudio.chatrbtw.service.bean.gamecenter.ChatPetMiniGameResp;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,9 @@ public class ChatPetGameCenterService {
     private final static Integer CENTER_STALL_STATE_NOT_FINISH = 0;//摊位状态 未完成
     private final static Integer CENTER_STALL_STATE_FINISH = 1;//摊位状态 已完成
 
+    private final static Integer MINI_GAME_MISSION_STATE_NOT_FINISH = 0;//小游戏任务完成状态 未完成
+    private final static Integer MINI_GAME_MISSION_STATE_FINISH = 1;//已完成
+
     /**
      * 根据fanid获取游戏中心信息
      * @param wxFanId
@@ -50,8 +55,36 @@ public class ChatPetGameCenterService {
         List<ChatPetCenterStallResp> chatPetCenterStallInfoList = this.getChatPetCenterStallInfoList(chatPetId);
         resp.setChatPetCenterStallList(chatPetCenterStallInfoList);
 
+        List<ChatPetMiniGameResp> chatPetMiniGameRespList = new ArrayList<>();
+
         List<WxMiniGame> miniGameInfoList = this.getMiniGameInfoList();
-        resp.setMiniGameList(miniGameInfoList);
+        for (WxMiniGame item : miniGameInfoList){
+            ChatPetMiniGameResp chatPetMiniGameResp = new ChatPetMiniGameResp();
+            BeanUtils.copyProperties(item,chatPetMiniGameResp);
+
+            Integer miniGameId = item.getId();
+            //查询今天该游戏任务是否完成
+            ChatPetPersonalMission param = new ChatPetPersonalMission();
+
+            param.setChatPetId(chatPetId);
+            param.setCreateTime(DateUtils.getBeginDate(new Date()));
+            param.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
+            param.setWxMiniGameId(miniGameId);
+
+            ChatPetPersonalMission miniGameMission = chatPetMissionPoolService.getPersonalMissionByParam(param);
+
+            Integer state = miniGameMission.getState();
+
+            if(MissionStateEnum.GOING_ON.getCode().equals(state)){
+                chatPetMiniGameResp.setState(MINI_GAME_MISSION_STATE_NOT_FINISH);
+            }else{
+                chatPetMiniGameResp.setState(MINI_GAME_MISSION_STATE_FINISH);
+            }
+
+            chatPetMiniGameRespList.add(chatPetMiniGameResp);
+
+        }
+        resp.setMiniGameList(chatPetMiniGameRespList);
 
         return resp;
     }

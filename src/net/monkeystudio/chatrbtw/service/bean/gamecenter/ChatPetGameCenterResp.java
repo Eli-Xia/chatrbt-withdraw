@@ -1,7 +1,5 @@
 package net.monkeystudio.chatrbtw.service.bean.gamecenter;
 
-import net.monkeystudio.chatrbtw.entity.WxMiniGame;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +8,7 @@ import java.util.List;
  */
 public class ChatPetGameCenterResp {
     private List<ChatPetCenterStallResp> chatPetCenterStallList = new ArrayList<>();
-    private List<WxMiniGame> miniGameList = new ArrayList<>();
+    private List<ChatPetMiniGameResp> miniGameList = new ArrayList<>();
 
     public List<ChatPetCenterStallResp> getChatPetCenterStallList() {
         return chatPetCenterStallList;
@@ -20,11 +18,11 @@ public class ChatPetGameCenterResp {
         this.chatPetCenterStallList = chatPetCenterStallList;
     }
 
-    public List<WxMiniGame> getMiniGameList() {
+    public List<ChatPetMiniGameResp> getMiniGameList() {
         return miniGameList;
     }
 
-    public void setMiniGameList(List<WxMiniGame> miniGameList) {
+    public void setMiniGameList(List<ChatPetMiniGameResp> miniGameList) {
         this.miniGameList = miniGameList;
     }
 }

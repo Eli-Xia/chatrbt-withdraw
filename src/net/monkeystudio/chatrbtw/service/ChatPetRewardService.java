@@ -62,6 +62,12 @@ public class ChatPetRewardService{
     @Autowired
     private RMiniProgramProductMapper rMiniProgramProductMapper;
 
+    @Autowired
+    private ChatPetExpFlowService chatPetExpFlowService;
+
+    @Autowired
+    private ChatPetCoinFlowService chatPetCoinFlowService;
+
 
     public static final Integer NOT_AWARD = 0;//未领取
     public static final Integer HAVE_AWARD = 1;//已经领取
@@ -166,13 +172,18 @@ public class ChatPetRewardService{
         }
 
         //加金币
-        chatPetService.increaseCoin(chatPetId,chatPetRewardItem.getGoldValue());
+        Float addGoldValue = chatPetRewardItem.getGoldValue();//新增金币值
+        chatPetService.increaseCoin(chatPetId,addGoldValue);
 
         //宠物日志
         SaveChatPetLogParam param = new SaveChatPetLogParam();
         param.setChatPetRewardItemId(chatPetRewardItemId);
         param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_LEVEL_REWARD);
         chatPetLogService.saveChatPetDynamic(param);
+
+        //日常领取等级奖励猫饼流水
+        chatPetCoinFlowService.dailyRewardFlow(chatPetId,addGoldValue);
+
     }
 
     /**
@@ -199,7 +210,9 @@ public class ChatPetRewardService{
         //加经验
         ChatPet chatPet = chatPetService.getById(chatPetId);
         Float oldExperience = chatPet.getExperience();
-        chatPetService.increaseExperience(chatPetId,chatPetRewardItem.getExperience());
+        //增加经验值
+        Float addExperience = chatPetRewardItem.getExperience();
+        chatPetService.increaseExperience(chatPetId,addExperience);
 
         //是否升级
         chatPet = chatPetService.getById(chatPetId);
@@ -214,6 +227,21 @@ public class ChatPetRewardService{
         saveChatPetLogParam.setUpgrade(isUpgrade);
         chatPetLogService.saveChatPetDynamic(saveChatPetLogParam);
 
+        //经验值流水
+        ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(missionItemId);
+        Integer missionCode = chatPetPersonalMission.getMissionCode();
+        if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
+            chatPetExpFlowService.playGameFlow(chatPetId,addExperience);
+        }
+        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+            chatPetExpFlowService.wxPubSayHiFlow(chatPetId,addExperience);
+        }
+        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+            chatPetExpFlowService.presentCatFlow(chatPetId,addExperience);
+        }
+        if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
+            chatPetExpFlowService.dailyLoginFlow(chatPetId,addExperience);
+        }
         /*Integer chatPetType = chatPet.getChatPetType();
 
         if(ChatPetTypeService.CHAT_PET_TYPE_ZOMBIES_CAT.equals(chatPetType)){

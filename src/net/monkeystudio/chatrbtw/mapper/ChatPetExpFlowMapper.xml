@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.ChatPetExpFlowMapper" >
+  <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.ChatPetExpFlow" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
+    <result column="exp_action_type" property="expActionType" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.ChatPetExpFlow" extends="BaseResultMap" >
+    <result column="note" property="note" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, chat_pet_id, exp_action_type
+  </sql>
+  <sql id="Blob_Column_List" >
+    note
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from e_chat_pet_exp_flow
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetExpFlow" >
+    insert into e_chat_pet_exp_flow (id, create_time,chat_pet_id, exp_action_type,note)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{exp_action_type,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR})
+  </insert>
+
+
+
+</mapper>

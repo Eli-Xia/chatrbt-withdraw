@@ -40,14 +40,7 @@ public class MiniProgramLoginService {
     @Autowired
     private WxMiniGameService wxMiniGameService;
     @Autowired
-    private ChatPetMissionEnumService chatPetMissionEnumService;
-    @Autowired
-    private ChatPetRewardService chatPetRewardService;
-    @Autowired
-    private ChatPetLogService chatPetLogService;
-
-    //token失效时间
-    private final static Integer SESSION_TOKEN_EXPIRE = 3600 * 2 ;
+    private ChatPetExpFlowService chatPetExpFlowService;
 
 
     /**
@@ -133,6 +126,7 @@ public class MiniProgramLoginService {
             completeLoginMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE);
             completeLoginMissionParam.setChatPetId(chatPetId);
             chatPetMissionPoolService.completeChatPetMission(completeLoginMissionParam);
+
 
             //派发邀请任务
             DispatchMissionParam dispatchInviteMissionParam = new DispatchMissionParam();
