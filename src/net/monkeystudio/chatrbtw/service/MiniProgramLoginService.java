@@ -24,6 +24,8 @@ import java.util.List;
 @Service
 public class MiniProgramLoginService {
     @Autowired
+    private SessionTokenService sessionTokenService;
+    @Autowired
     private WxMiniProgramHelper wxMiniProgramHelper;
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
@@ -52,16 +54,16 @@ public class MiniProgramLoginService {
      * key: token
      * value:   miniprogramId:openId:sessionKey
      * 登陆处理
-     * @param appSign
+     * @param miniProgramId : 小程序id
      * @param jsCode
      * @return
      */
-    public String loginHandle(String appSign,String jsCode){
-        /*if(appSign == null){
-
-        }*/
+    public String loginHandle(Integer miniProgramId,String jsCode){
+        if(miniProgramId == null){
+            miniProgramId = 1;
+        }
         Log.d(" ================ miniProgram login =============");
-        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(jsCode);
+        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId,jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
 
@@ -69,37 +71,7 @@ public class MiniProgramLoginService {
 
         String token = CommonUtils.randomUUID();
 
-        String key = this.getSessionTokenCacheKey(token);
-
-        String value = openId + ":" + sessionKey;
-
-        Integer remainSecond = DateUtils.getCacheSeconds();//距离第二天凌晨多少秒
-
-        Integer cacheSecond = SESSION_TOKEN_EXPIRE;
-
-        redisCacheTemplate.setString(key,value);
-
-        //如果距离第二天凌晨小于2小时,token失效时间为距离凌晨的时间,保证每天都会刷新token,用于判断用户每天第一登录.
-        if(remainSecond.intValue() < cacheSecond.intValue()){
-            cacheSecond = remainSecond;
-        }
-
-        redisCacheTemplate.expire(key,cacheSecond);
-
-        //判断openid是否存在于db,不存在则insert
-        /*WxFan wxFan = wxFanService.getWxFan(openId, wxFanService.LUCK_CAT_MINI_APP_ID);
-        if(wxFan == null){
-            Log.d("=============== 小程序登录,wxfan不存在于db,是新用户 ===============");
-            WxFan miniAppFan = new WxFan();
-            miniAppFan.setWxFanOpenId(openId);
-            miniAppFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
-            miniAppFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
-            wxFanService.save(miniAppFan);
-
-            //为新用户生成招财猫,同一事务
-            Log.d("========= 为新用户生成一只招财猫 ============");
-            miniProgramChatPetService.generateChatPet(wxFan.getId(),ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,null);
-        }*/
+        sessionTokenService.saveToken(token,miniProgramId,openId,sessionKey);
 
         this.dailyFirstLoginHandle(openId);
 

@@ -50,6 +50,12 @@ public class SessionTokenService {
         redisCacheTemplate.expire(key,cacheSecond);
     }
 
+    public String getTokenValue(String token){
+        String sessionTokenCacheKey = this.getSessionTokenCacheKey(token);
+        String value = redisCacheTemplate.getString(sessionTokenCacheKey);
+        return value;
+    }
+
     public String getSessionKeyFromTokenVal(String token){
         String sessionTokenCacheKey = this.getSessionTokenCacheKey(token);
         String value = redisCacheTemplate.getString(sessionTokenCacheKey);
@@ -73,12 +79,11 @@ public class SessionTokenService {
         Integer miniProgramId = this.getMiniProgramIdFromTokenVal(token);
         String wxFanOpenId = this.getOpenIdFromTokenVal(token);
         WxFan wxFan = wxFanService.getWxFan(wxFanOpenId, miniProgramId);
-        if(wxFan == null){
-            //throw new BizException("");
+        if(wxFan != null){
+            return wxFan.getId();
         }
         return null;
     }
-
 
 
 

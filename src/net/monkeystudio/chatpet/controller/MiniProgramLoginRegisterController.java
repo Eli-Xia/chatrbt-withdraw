@@ -31,8 +31,8 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public RespBase miniAppLogin(@RequestParam(value = "appSign",required = false)String appSign,@RequestParam("code")String code){
-        String token = miniProgramLoginService.loginHandle(appSign,code);
+    public RespBase miniAppLogin(@RequestParam(value = "programId",required = false)Integer miniProgramId,@RequestParam("code")String code){
+        String token = miniProgramLoginService.loginHandle(miniProgramId,code);
 
         Map<String,String> result = new HashMap<>();
         result.put("token",token);

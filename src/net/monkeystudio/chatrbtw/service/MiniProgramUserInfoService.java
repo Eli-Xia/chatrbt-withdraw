@@ -42,6 +42,9 @@ public class MiniProgramUserInfoService {
     @Autowired
     private MiniProgramLoginService miniProgramLoginService;
 
+    @Autowired
+    private SessionTokenService sessionTokenService;
+
     /**
      * 获取用户信息及注册
      * 注册完成之后也就是当天的第一次登录
@@ -61,17 +64,17 @@ public class MiniProgramUserInfoService {
         Log.d("============== getUserInfo : token = {?} ===================",token);
 
         if(token != null){
-            String sessionTokenCacheKey = miniProgramLoginService.getSessionTokenCacheKey(token);
-            String value = redisCacheTemplate.getString(sessionTokenCacheKey);
-            String openId = value.split(":")[0];//会话中保存的openId
-            String sessionKey = value.split(":")[1];
+            String openId = sessionTokenService.getOpenIdFromTokenVal(token);
+            String sessionKey = sessionTokenService.getSessionTokenCacheKey(token);
+            Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
+
             if(userInfoOpenId.equals(openId)){
                 //通过openId判断是否存在于数据库中,如果存在update
                 Log.d("=========== miniprogram  already register -->revise userinfo  ==============");
                 //WxFan dbWxFan = wxFanService.getWxFan(userInfoOpenId, WxFanService.LUCK_CAT_MINI_APP_ID);
-                WxFan dbWxFan = wxFanService.getWxFanFromDb(null,userInfoOpenId,null);
+                WxFan dbWxFan = wxFanService.getWxFanFromDb(null,userInfoOpenId,miniProgramId);
                 if(dbWxFan != null){
                     //更新老数据
                     dbWxFan.setCity(miniProgramFanBaseInfo.getCity());

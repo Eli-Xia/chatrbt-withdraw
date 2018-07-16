@@ -5,7 +5,9 @@ import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.chatrbtw.entity.MiniProgram;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
+import net.monkeystudio.chatrbtw.service.MiniProgramService;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,18 +20,18 @@ public class WxMiniProgramHelper {
     @Autowired
     private CfgService cfgService;
 
+    @Autowired
+    private MiniProgramService miniProgramService;
+
 
     /**
      * 小程序用户登录,通过code获取openId,unionId,session_key
      * @param jsCode
      * @return
      */
-    public String getfetchLoginVerifyUrl(String jsCode){
-        String appId = cfgService.get(GlobalConfigConstants.MINI_APP_APP_ID);
+    public String getfetchLoginVerifyUrl(String appId,String appSecret,String jsCode){
 
-        String secrect = cfgService.get(GlobalConfigConstants.MINI_APP_APP_SECRET);
-
-        String url =  WxApiUrlUtil.getMiniAppLoginVerifyUrl(appId,secrect,jsCode);
+        String url =  WxApiUrlUtil.getMiniAppLoginVerifyUrl(appId,appSecret,jsCode);
 
         return url;
     }
@@ -37,11 +39,16 @@ public class WxMiniProgramHelper {
     /**
      * 小程序登录校验信息
      * @param jsCode
+     * @param miniProgramId
      * @return
      */
-    public LoginVerifyInfo fetchLoginVerifyInfo(String jsCode){
+    public LoginVerifyInfo fetchLoginVerifyInfo(Integer miniProgramId,String jsCode){
         Log.d("================= jsCode = {?} =================",jsCode);
-        String fetchLoginVerifyInfoUrl = this.getfetchLoginVerifyUrl(jsCode);
+        MiniProgram miniProgram = miniProgramService.getById(miniProgramId);
+        String appId = miniProgram.getAppId();
+        String appSecret = miniProgram.getAppSecret();
+
+        String fetchLoginVerifyInfoUrl = this.getfetchLoginVerifyUrl(appId,appSecret,jsCode);
 
         String response = HttpsHelper.get(fetchLoginVerifyInfoUrl);
 

@@ -6,8 +6,17 @@ package net.monkeystudio.chatrbtw.entity;
 public class MiniProgram {
     private Integer id;
     private String appId;
+    private String appSecret;
     private String nickname;
     private String headImgUrl;
+
+    public String getAppSecret() {
+        return appSecret;
+    }
+
+    public void setAppSecret(String appSecret) {
+        this.appSecret = appSecret;
+    }
 
     public Integer getId() {
         return id;
