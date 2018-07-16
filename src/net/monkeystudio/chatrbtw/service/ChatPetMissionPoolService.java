@@ -670,5 +670,49 @@ public class ChatPetMissionPoolService {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatPetDailyMission:" + chatPetId;
     }
 
+    /**
+     * 判断游戏任务是否已经完成
+     * @param wxFanId
+     * @param wxMiniGameId
+     * @return
+     */
+    public Boolean missionIsFinished(Integer wxFanId ,Integer wxMiniGameId){
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+        //通过fanId + gameId 找到
+        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
+        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        chatPetPersonalMissionParam.setWxMiniGameId(wxMiniGameId);
+        chatPetPersonalMissionParam.setChatPetId(chatPetId);
 
+        ChatPetPersonalMission miniGameMission = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
+        if(miniGameMission == null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+        //通过fanId + gameId 找到
+        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
+        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        chatPetPersonalMissionParam.setWxMiniGameId(wxMiniGameId);
+        chatPetPersonalMissionParam.setChatPetId(chatPetId);
+
+        ChatPetPersonalMission miniGameMission = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
+
+        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
+        completeMissionParam.setPersonalMissionId(miniGameMission.getId());
+
+        this.completeChatPetMission(completeMissionParam);
+
+    }
 }

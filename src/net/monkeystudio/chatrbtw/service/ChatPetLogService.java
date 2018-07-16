@@ -180,9 +180,9 @@ public class ChatPetLogService {
 
             if(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.equals(chatPetType)){
                 this.saveLuckyCatMissionLog(chatPetRewardItemId,param.getUpgrade());
-            }else{
+            }/*else{
                 this.savePetLog4MissionReward(chatPetRewardItemId,param.getUpgrade());
-            }
+            }*/
         }
     }
 
@@ -193,7 +193,7 @@ public class ChatPetLogService {
      * @param chatPetRewardItemId
      * @param isUpgrade
      */
-    private void saveLuckyCatMissionLog(Integer chatPetRewardItemId,Boolean isUpgrade){
+    public void saveLuckyCatMissionLog(Integer chatPetRewardItemId,Boolean isUpgrade){
 
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
@@ -232,7 +232,9 @@ public class ChatPetLogService {
 
         //升级日志
         if(isUpgrade!=null && isUpgrade){
-            Integer level = chatPetLevelService.calculateLevel(experience);
+
+            ChatPet chatPet = chatPetService.getById(chatPetId);
+            Integer level = chatPetLevelService.calculateLevel(chatPet.getExperience());
 
             PetLog upgradeLog = new PetLog();
             upgradeLog.setChatPetId(chatPetId);
@@ -441,7 +443,7 @@ public class ChatPetLogService {
         pl.setCreateTime(new Date());
         pl.setContent("等级奖励," + "猫饼" + "+" + item.getGoldValue());
 
-        this.savePetLog(pl);
+        //this.savePetLog(pl);
     }
 
     private void savePetBornLog(Integer chatPetId){

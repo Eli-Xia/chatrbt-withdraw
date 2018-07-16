@@ -1,7 +1,10 @@
 package net.monkeystudio.chatrbtw;
 
+import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
@@ -177,14 +180,22 @@ public class MiniProgramChatPetService {
         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
         Integer parentId = parentChatPet.getId();
 
-        //如果已经有宠物，则不生成奖励
-        ChatPet chatPet = chatPetService.getChatPetByWxFanId(wxFanId);
-        if(chatPet != null){
-            return ;
-        }
+        //获取孩子宠物,并设置父亲宠物id
+        ChatPet childChatPet = chatPetService.getByWxFanId(wxFanId);
+        childChatPet.setParentId(parentId);
+        chatPetService.update(childChatPet);
 
-        //生成宠物
-        this.generateChatPetFromShareCard(wxFanId,parentId);
+        //如果已经完成过任务了就return
+        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        chatPetPersonalMissionParam.setChatPetId(parentId);
+
+        ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
+        if(inviteMission == null){
+            return;
+        }
 
         //父亲宠物完成邀请任务
         CompleteMissionParam completeMissionParam = new CompleteMissionParam();

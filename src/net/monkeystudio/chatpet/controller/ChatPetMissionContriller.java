@@ -56,24 +56,11 @@ public class ChatPetMissionContriller extends ChatPetBaseController{
             return respHelper.nologin();
         }
 
-        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
-        Integer chatPetId = chatPet.getId();
-        //通过fanId + gameId 找到
-        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
-        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
-        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
-        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
-        chatPetPersonalMissionParam.setWxMiniGameId(wxMiniGameId);
-        chatPetPersonalMissionParam.setChatPetId(chatPetId);
-
-        ChatPetPersonalMission miniGameMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
-        if(miniGameMission == null){
-            respHelper.failed("game mission has finished");
+        if(chatPetMissionPoolService.missionIsFinished(wxFanId,wxMiniGameId)){
+            return respHelper.failed("game mission has finished");
         }
-        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
-        completeMissionParam.setPersonalMissionId(miniGameMission.getId());
 
-        chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
+        chatPetMissionPoolService.finishDailyMiniGameMission(wxFanId , wxMiniGameId);
 
         //ChatPetRewardChangeInfo infoAfterReward = chatPetService.getInfoAfterReward(chatPetId);
 
