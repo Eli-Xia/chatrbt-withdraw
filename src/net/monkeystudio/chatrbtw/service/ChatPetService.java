@@ -1112,6 +1112,12 @@ public class ChatPetService {
         return chatPetMapper.increaseMoney(chatPetId, additionMoney);
     }
 
+
+    /**
+     * 得到"我的"信息
+     * @param wxFanId
+     * @return
+     */
     public MyInfo getMyInfo(Integer wxFanId){
 
         WxFan wxFan = wxFanService.getById(wxFanId);
