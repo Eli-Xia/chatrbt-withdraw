@@ -57,10 +57,9 @@ public class WxCryptUtils {
 
     public static void main(String[] args) throws Exception {
         // 微信 小程序的 测试数据
-        String encrypt = "AvCgniraqHy4wo4/PVvdn48yTQSJClKdjkbdGyEdpUhBWR5Sitpb/tg4Vdpk6Sh8TOn8eyrsKPcItGYtaYPKwMNEAHnpE/Kj0SwWWW0zjHBx/0ZukLnQdsFPTTStkVzI8qPKzyNRsSUgAI6M1+4z2hsmJpfCJlOcyeqkoAdcSYtJmoG1Kdnasn8m5HGRK3b1J6hF/Qpcf7mXSv6NMKQw223o/JL1gj8xvGuag4qXt9mNV3cKEW51GUehaUypafZavV76L+EVR0dMcK4IMhio407QYIgNVFLAADkFrvvAG2oJflCdhmtfs+ovZ8Rn8PxbsP8FR3tDbG/1XVLDCg8UL9uJwxYceIZns1+UBwmIwTSnC2ZR74s80mZDCBLqbynNLEito2AIt0Xv2Zj/wW8br5qhWj43jj9jDKHLpf6FTRMUb7jkNBHJnAmp2iZwDH/ZpSLblIB/TpSpjQHg4VT5pE/UoIoICHS4slRZ7M4QBhA=";
-
-        String sessionKey = "dG1npZSgP81BIN7iK3cPAQ==";
-        String iv = "bVTZUIkUtOF1n5BttqkGVw==";
+        String encrypt = "cNDm95j7Zafm51C3JWEuVvXPhnAVw9fo1Uv3NqeF/zz9FuyfHE6Xs2CmWrOlJPkWWwCyaACUq+nBZldhimjrQGR9L4dLGljRi+SfX2u3xi8GJBIQqPCcv0LHlTwsf1XGvT/xMzEwyLm7hyRhUCxh68szwZ29sipJ77+fzp7gFwb73EmMkW8+ekyi3oVP83UldwH7usUcSTk8bRH2KXJriiDhJ18fy3ABJD8KoV18xka7zf1X40MF1FVDuiyVnHC3+Qn0zgTjDaFbHO2q9mG3wG4GZ1+xTkIZS5scvEVJ9Q3KWfFzeWmHQLYRNCugS5C36zxdd2enLC9KOJ+vngxRkZsV4jiIZ2U83ii5h2Cq+jMAdgcxC84I/gAOUhLemsoZm05j1rmzh5GlyITWiie3yarkDRb3A3mzkz/w3mE+Dkr+I3J+XJ2qqMO5KAimQTWAfRrrLfg/NJUUE0xYUzAStl+xGhtxYf8wLwXqi74elB0=";
+        String sessionKey = "9qMz5/+ss+GCtg7OdMrVDw==";
+        String iv = "fOWCLUI72Vw1U7mEwiyGUw==";
 
 
         String decrypt = WxCryptUtils.decrypt(encrypt, iv, sessionKey);
