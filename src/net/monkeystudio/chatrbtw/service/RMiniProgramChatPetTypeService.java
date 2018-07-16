@@ -14,8 +14,6 @@ public class RMiniProgramChatPetTypeService {
     @Autowired
     private RMiniProgramChatPetTypeMapper rMiniProgramChatPetTypeMapper;
 
-
-
     private RMiniProgramChatPetType getEntityByMiniProgramId(Integer miniProgramId){
         return rMiniProgramChatPetTypeMapper.selectByWxMinProgramId(miniProgramId);
     }
@@ -27,7 +25,6 @@ public class RMiniProgramChatPetTypeService {
      */
     public Integer getByMiniProgramId(Integer miniProgramId){
         RMiniProgramChatPetType rWxMiniProgramChatPetType = this.getEntityByMiniProgramId(miniProgramId);
-
         return rWxMiniProgramChatPetType.getChatPetType();
     }
 }

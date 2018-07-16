@@ -280,7 +280,7 @@ public class EthnicGroupsService {
     public BigDecimal getEthnicGroupsAdditionRadio(Integer chatPetId){
         Integer count = chatPetService.countByParentId(chatPetId);
 
-        BigDecimal bigDecimal = new BigDecimal(0.01F + Float.valueOf(count));
+        BigDecimal bigDecimal = new BigDecimal(0.01F * Float.valueOf(count));
 
         BigDecimal ethnicGroupsAdditionRadio = new BigDecimal(1).add(bigDecimal);
 

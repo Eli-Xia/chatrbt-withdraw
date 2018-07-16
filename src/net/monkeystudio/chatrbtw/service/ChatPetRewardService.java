@@ -137,13 +137,9 @@ public class ChatPetRewardService{
         Boolean isMissionReward = missionItemId != null;
 
         if(isMissionReward){
-
             this.missionRewardHandle(chatPetRewardItemId);
-
         }else{
-
             this.levelRewardHandle(chatPetRewardItemId);
-
         }
     }
 
