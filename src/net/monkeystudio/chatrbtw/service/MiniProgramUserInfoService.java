@@ -55,6 +55,7 @@ public class MiniProgramUserInfoService {
      * @throws Exception
      */
     public Map getUserInfoAndRegister(String rawData,String encryptedData,String iv,String signature) throws Exception{
+        Log.d("================== encryptedData = {?} , iv = {?} =================",encryptedData,iv);
         Map<String,Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
         HttpServletRequest request =
