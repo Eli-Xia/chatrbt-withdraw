@@ -182,10 +182,17 @@ public class MiniProgramChatPetService {
 
         //获取孩子宠物,并设置父亲宠物id
         ChatPet childChatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer childParentId = childChatPet.getParentId();
+
+        //宠物已经有父亲,父亲宠物不应该再次领取奖励,应reutrn
+        if(childParentId != null){
+            return;
+        }
         childChatPet.setParentId(parentId);
         chatPetService.update(childChatPet);
 
-        //如果已经完成过任务了就return
+
+        //如果父亲宠物当天邀请任务已完成,return
         ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
         chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
         chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
