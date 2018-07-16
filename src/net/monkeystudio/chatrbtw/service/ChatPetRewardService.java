@@ -67,7 +67,7 @@ public class ChatPetRewardService{
     public static final Integer HAVE_AWARD = 1;//已经领取
     public static final Integer EXPIRED_AWARD = 2;//已经过期
 
-    private static final Integer MAX_NOT_AWARD_COUNT = 8;//等级奖励最大个数
+    private static final Integer MAX_NOT_AWARD_COUNT = 12;//等级奖励最大个数
 
     //定时产生等级奖励队列key
     private final static String LEVEL_REWARD_MESSAGE_KEY = "generate_level_reward_task";
@@ -492,7 +492,7 @@ public class ChatPetRewardService{
             return ;
         }
 
-        Float levelExperience = this.calculateLevelExperience(chatPetId);
+        Float levelCoin = this.calculateLevelCoin(chatPetId);
 
         //定时等级奖励
         ChatPetRewardItem levelReward = new ChatPetRewardItem();
@@ -500,7 +500,7 @@ public class ChatPetRewardService{
         Integer chatPetType = chatPetService.getChatPetType(chatPetId);
 
         levelReward.setChatPetType(chatPetType);
-        levelReward.setGoldValue(levelExperience);
+        levelReward.setGoldValue(levelCoin);
         levelReward.setRewardState(NOT_AWARD);
         levelReward.setChatPetId(chatPetId);
         levelReward.setCreateTime(new Date());
@@ -508,11 +508,12 @@ public class ChatPetRewardService{
         this.save(levelReward);
     }
 
-    private Float calculateLevelExperience(Integer chatPetId){
+    private Float calculateLevelCoin(Integer chatPetId){
 
-        Integer chatPetLevel = chatPetService.getChatPetLevel(chatPetId);
 
-        Float levelExperience = (chatPetLevel + 1) * 0.01F;
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+
+        Float levelExperience = chatPet.getExperience() * 0.01F;
 
         return levelExperience;
     }
