@@ -4,7 +4,7 @@ import net.monkeystudio.admin.controller.req.dividend.Dividend;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
-import net.monkeystudio.chatrbtw.service.DividendRecordService;
+import net.monkeystudio.chatrbtw.service.DividendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DividendRecordController extends BaseController {
 
     @Autowired
-    private DividendRecordService dividendRecordService;
+    private DividendService dividendService;
 
     @Autowired
     private RespHelper respHelper;
@@ -29,7 +29,14 @@ public class DividendRecordController extends BaseController {
     @RequestMapping(value = "/dividend", method = RequestMethod.POST)
     @ResponseBody
     public RespBase dividend (@RequestBody Dividend dividend){
-        dividendRecordService.dividend(dividend.getTotalMoney(),dividend.getChatPetTpye());
+
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
+        dividendService.dividend(dividend.getTotalMoney(),dividend.getChatPetTpye());
         return respHelper.ok();
     }
 

@@ -702,7 +702,7 @@ public class RedisCacheTemplate {
 
     public void lpush(String key ,String message) {
 
-        Log.d("lpush key : [?] , message : [?] '" , key , message);
+        Log.d("lpush key : [?] , message : [?] " , key , message);
 
         Jedis redis = getPool().getResource();
 

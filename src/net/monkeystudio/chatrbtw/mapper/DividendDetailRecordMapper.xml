@@ -15,6 +15,6 @@
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.DividendDetailRecord">
         insert into e_dividend_detail_record ( `chat_pet_id`, `create_time`, `dividend_id` , `money`)
             values
-                (#{chat_pet_id}, #{createTime}, #{dividendId}, #{money}
+                (#{chatPetId}, #{createTime}, #{dividendId}, #{money})
     </insert>
 </mapper>

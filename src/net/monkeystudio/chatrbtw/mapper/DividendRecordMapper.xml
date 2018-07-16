@@ -14,6 +14,7 @@
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.DividendRecord" useGeneratedKeys="true" keyProperty="id">
         insert
+            INTO  e_dividend_record
             (`create_time`, `money` ,`chat_pet_type` )
             VALUES
                 (#{createTime} ,#{money} ,#{chatPetType})
