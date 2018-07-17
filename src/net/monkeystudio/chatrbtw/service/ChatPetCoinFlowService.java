@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetCoinFlowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class ChatPetCoinFlowService {
      * 参与竞拍流水,猫饼-XX
      */
     public void auctionFlow(Integer chaPetId,Float coin){
-        String note = "参与竞拍,猫饼-" + coin;
+        String note = "参与竞拍,猫饼-" + ArithmeticUtils.keep2DecimalPlace(coin);
         this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.JOIN_AUCTION,note);
     }
 
@@ -55,7 +56,7 @@ public class ChatPetCoinFlowService {
      * 日常领取流水,猫饼+XX
      */
     public void dailyRewardFlow(Integer chaPetId,Float coin){
-        String note = "日常领取,猫饼+" + coin;
+        String note = "日常领取,猫饼+" + ArithmeticUtils.keep2DecimalPlace(coin);
         this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note);
     }
 }

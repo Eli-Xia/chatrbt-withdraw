@@ -1,6 +1,7 @@
 package net.monkeystudio.base.utils;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,4 +81,9 @@ public class ArithmeticUtils {
         return max;
     }
 
+    public static String keep2DecimalPlace(Float value){
+        DecimalFormat df = new DecimalFormat("#.00");
+        String format = df.format(value);
+        return format;
+    }
 }

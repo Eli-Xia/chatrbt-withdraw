@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetExpFlowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class ChatPetExpFlowService {
      * 体验游戏流水,经验值+XX
      */
     public void playGameFlow(Integer chaPetId,Float experience){
-        String note = "体验游戏,经验值+" + experience;
+        String note = "体验游戏,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
         this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.PLAY_GAME,note);
     }
 
@@ -43,7 +44,7 @@ public class ChatPetExpFlowService {
      * 公众号打招呼流水,经验值+XX
      */
     public void wxPubSayHiFlow(Integer chaPetId,Float experience){
-        String note = "完成公众号打招呼,经验值+" + experience;
+        String note = "完成公众号打招呼,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
         this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.WX_PUB_SAY_HI,note);
     }
 
@@ -51,7 +52,7 @@ public class ChatPetExpFlowService {
      * 赠送猫六六流水,经验值+XX
      */
     public void presentCatFlow(Integer chaPetId,Float experience){
-        String note = "赠送一只猫六六" + experience;
+        String note = "赠送一只猫六六" + ArithmeticUtils.keep2DecimalPlace(experience);
         this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.PRESENT_A_LUCKY_CAT,note);
     }
 
@@ -59,7 +60,7 @@ public class ChatPetExpFlowService {
      * 每日登录流水,经验值+XX
      */
     public void dailyLoginFlow(Integer chaPetId,Float experience){
-        String note = "每日登录" + experience;
+        String note = "每日登录" + ArithmeticUtils.keep2DecimalPlace(experience);
         this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.DAILY_LOGIN,note);
     }
 
