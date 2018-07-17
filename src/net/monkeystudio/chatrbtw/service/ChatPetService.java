@@ -4,10 +4,7 @@ import com.google.zxing.WriterException;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
-import net.monkeystudio.base.utils.HttpsHelper;
-import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.base.utils.StringUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
@@ -491,10 +488,11 @@ public class ChatPetService {
     public String calculateGeneticCode(Long createTime){
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2018,1,1);
+        calendar.set(2018,1,1, 0 , 0,0);
         Date date = calendar.getTime();
+        Long dateTime = TimeUtil.getCurrentTimestamp(date) * 1000;
 
-        Long cusTimestamp = createTime - date.getTime();
+        Long cusTimestamp = (createTime - dateTime)/1000;
         String geneticCode = String.valueOf(cusTimestamp);
 
         return geneticCode;
