@@ -374,7 +374,7 @@ public class ChatPetRewardService{
      */
     private Float getPlayMiniGameRandomExperience(){
         Random random = new Random();
-        Float f = ( random.nextInt(10) + 10 ) / 10F;
+        Float f = ( random.nextInt(100) + 100 ) / 100F;
         return f;
     }
 
@@ -643,4 +643,13 @@ public class ChatPetRewardService{
     public ChatPetRewardItem getByMissionItemId(Integer missionId){
         return chatPetRewardItemMapper.selectByMissionItemId(missionId);
     }
+
+    /*public static void main(String[] args) {
+        ChatPetRewardService chatPetRewardService = new ChatPetRewardService();
+
+        Float experience = chatPetRewardService.getPlayMiniGameRandomExperience();
+        System.out.println(experience);
+    }*/
+
+
 }
