@@ -61,6 +61,7 @@ public class MiniProgramLoginService {
         String openId = loginVerifyInfo.getOpneId();
 
         String sessionKey = loginVerifyInfo.getSessionKey();
+        Log.d("=========== mini login sessionKey = {?}===========",sessionKey);
 
         String token = CommonUtils.randomUUID();
 

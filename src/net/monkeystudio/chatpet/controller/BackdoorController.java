@@ -1,3 +1,4 @@
+/*
 package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
@@ -7,7 +8,6 @@ import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.WxFanService;
-import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+*/
 /**
  * @author xiaxin
- */
+ *//*
+
 @Controller
 @RequestMapping(value = "/backdoor")
 public class BackdoorController {
@@ -35,12 +37,14 @@ public class BackdoorController {
     @Autowired
     private ChatPetMapper chatPetMapper;
 
-    /**
+    */
+/**
      *
      * @param request
      * @param response
      * @return
-     */
+     *//*
+
     @ResponseBody
     @RequestMapping(value = "/revise-data", method = RequestMethod.GET)
     public RespBase getChatPetInfo(HttpServletRequest request, HttpServletResponse response){
@@ -60,3 +64,4 @@ public class BackdoorController {
         return respHelper.ok();
     }
 }
+*/

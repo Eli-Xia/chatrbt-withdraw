@@ -1,18 +1,17 @@
 package net.monkeystudio.base.service;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.GlobalConfig;
 import net.monkeystudio.chatrbtw.mapper.GlobalConfigMapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 /**

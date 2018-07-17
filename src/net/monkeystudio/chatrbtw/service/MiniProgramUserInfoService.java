@@ -7,7 +7,6 @@ import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
-import net.monkeystudio.chatrbtw.utils.WxCryptUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,8 @@ public class MiniProgramUserInfoService {
 
         if(token != null){
             String openId = sessionTokenService.getOpenIdFromTokenVal(token);
-            String sessionKey = sessionTokenService.getSessionTokenCacheKey(token);
+            String sessionKey = sessionTokenService.getSessionKeyFromTokenVal(token);
+            Log.d("mini user info : sessionkey = {?}============",sessionKey);
             Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
@@ -141,9 +141,7 @@ public class MiniProgramUserInfoService {
      * @return
      * @throws Exception
      */
-    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String rawData, String encryptedData, String iv, String signature, String sessionKey)throws Exception{
-        /*String json = WxCryptUtils.decrypt(encryptedData, iv, sessionKey);
-        return JsonUtil.readValue(json,MiniProgramFanBaseInfo.class);*/
+    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String rawData, String encryptedData, String iv, String signature, String sessionKey)throws Exception {
         // 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
@@ -162,7 +160,7 @@ public class MiniProgramUserInfoService {
             }
             // 初始化
             Security.addProvider(new BouncyCastleProvider());
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding","BC");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
             SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
             AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
             parameters.init(new IvParameterSpec(ivByte));
