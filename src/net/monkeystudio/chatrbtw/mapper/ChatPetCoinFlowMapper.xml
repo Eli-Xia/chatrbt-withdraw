@@ -27,7 +27,7 @@
 
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow" >
     insert into e_chat_pet_coin_flow (id, create_time,chat_pet_id, coin_action_type,note)
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{coin_action_type,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR})
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{coinActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR})
   </insert>
 
 

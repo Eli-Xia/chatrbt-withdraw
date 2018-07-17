@@ -13,6 +13,7 @@ public class ChatPetExpFlow {
     private String note;//流水说明
     private Integer expActionType;//经验值变化类型 什么原因导致经验值变化
 
+
     public Integer getId() {
         return id;
     }
