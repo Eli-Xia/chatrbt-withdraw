@@ -103,16 +103,17 @@ public class ChatPetGameCenterService {
         param.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
         param.setState(MissionStateEnum.GOING_ON.getCode());
 
-        List<ChatPetPersonalMission> personalMissionList = chatPetMissionPoolService.getPersonalMissionListByParam(param);
+        ChatPetPersonalMission presentCatMission = chatPetMissionPoolService.getPersonalMissionByParam(param);
 
         ChatPetCenterStallResp inviteStall = new ChatPetCenterStallResp();
         inviteStall.setTitle("赠送一只猫六六");
         inviteStall.setDescription("每日一送");
-        if(ListUtil.isEmpty(personalMissionList)){
+        if(presentCatMission != null){
             inviteStall.setState(CENTER_STALL_STATE_NOT_FINISH);
         }else{
             inviteStall.setState(CENTER_STALL_STATE_FINISH);
         }
+
         list.add(inviteStall);
 
         //每日登录

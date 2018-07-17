@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 import net.monkeystudio.chatrbtw.entity.*;
@@ -201,31 +202,32 @@ public class ChatPetLogService {
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
         Integer missionCode = chatPetPersonalMission.getMissionCode();
         Float experience = item.getExperience();
+        String displayExpStr = ArithmeticUtils.keep2DecimalPlace(experience);
 
         //经验值日志
         PetLog addExperienceLog = new PetLog();
         addExperienceLog.setChatPetId(chatPetId);
 
         if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
-            addExperienceLog.setContent("完成公众号打招呼,经验值+" + experience);
+            addExperienceLog.setContent("完成公众号打招呼,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
         if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
-            addExperienceLog.setContent("赠送一只猫六六,经验值+" + experience);
+            addExperienceLog.setContent("赠送一只猫六六,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
         if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
-            addExperienceLog.setContent("体验游戏,经验值+" + experience);
+            addExperienceLog.setContent("体验游戏,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
         if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
-            addExperienceLog.setContent("每日登录,经验值+" + experience);
+            addExperienceLog.setContent("每日登录,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
@@ -441,7 +443,7 @@ public class ChatPetLogService {
 
         pl.setChatPetId(chatPetId);
         pl.setCreateTime(new Date());
-        pl.setContent("等级奖励," + "猫饼" + "+" + item.getGoldValue());
+        pl.setContent("等级奖励," + "猫饼" + "+" + ArithmeticUtils.keep2DecimalPlace(item.getGoldValue()));
 
         //this.savePetLog(pl);
     }
