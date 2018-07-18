@@ -80,9 +80,11 @@ public class MiniProgramUserInfoService {
 
         if(token != null){
             String openId = sessionTokenService.getOpenIdFromTokenVal(token);
+            Log.i("mini user info : openId = {?}============",openId);
             String sessionKey = sessionTokenService.getSessionKeyFromTokenVal(token);
-            Log.d("mini user info : sessionkey = {?}============",sessionKey);
+            Log.i("mini user info : sessionkey = {?}============",sessionKey);
             Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
+            Log.i("mini user info : miniprogramId = {?}============",miniProgramId==null?"":miniProgramId.toString());
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(encryptedData, iv,sessionKey);
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
 
@@ -129,28 +131,35 @@ public class MiniProgramUserInfoService {
                     Log.d("================ minipro userinfo : wxFanId = {?}==============",wxFanId.toString());
 
                     //生成宠物
-                    Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentFanId);
                     //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
-                    ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
-                    Integer parentId = parentChatPet.getId();
+                    Integer chatPetId = null;
+                    if(parentFanId == null){
+                        chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+                    }else{
 
-                    //如果父亲宠物当天邀请任务未完成
-                    ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
-                    chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
-                    chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-                    chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
-                    chatPetPersonalMissionParam.setChatPetId(parentId);
+                        ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
+                        Integer parentId = parentChatPet.getId();
 
-                    ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
-                    if(inviteMission != null){
-                        //父亲宠物完成邀请任务
-                        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
+                        chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentId);
 
-                        completeMissionParam.setInviteeWxFanId(wxFanId);
-                        completeMissionParam.setChatPetId(parentId);
-                        completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                        //如果父亲宠物当天邀请任务未完成
+                        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+                        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+                        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+                        chatPetPersonalMissionParam.setChatPetId(parentId);
 
-                        chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
+                        ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
+                        if(inviteMission != null){
+                            //父亲宠物完成邀请任务
+                            CompleteMissionParam completeMissionParam = new CompleteMissionParam();
+
+                            completeMissionParam.setInviteeWxFanId(wxFanId);
+                            completeMissionParam.setChatPetId(parentId);
+                            completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+
+                            chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
+                        }
                     }
 
                     //第一次登录任务数据准备
