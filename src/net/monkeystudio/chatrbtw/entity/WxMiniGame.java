@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.entity;
 
+import java.util.Date;
+
 /**
  * @author xiaxin
  */
@@ -9,6 +11,42 @@ public class WxMiniGame {
     private String nickname;
     private String qrCodeImgUrl;
     private Integer needSign;
+    private Integer openType;//打开类型 长按跳转 直接跳转
+    private Date onlineTime;//上线时间
+    private Date createTime;
+    private Integer shelveState;//上下架状态
+
+    public Integer getShelveState() {
+        return shelveState;
+    }
+
+    public void setShelveState(Integer shelveState) {
+        this.shelveState = shelveState;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getOnlineTime() {
+        return onlineTime;
+    }
+
+    public void setOnlineTime(Date onlineTime) {
+        this.onlineTime = onlineTime;
+    }
+
+    public Integer getOpenType() {
+        return openType;
+    }
+
+    public void setOpenType(Integer openType) {
+        this.openType = openType;
+    }
 
     public Integer getNeedSign() {
         return needSign;

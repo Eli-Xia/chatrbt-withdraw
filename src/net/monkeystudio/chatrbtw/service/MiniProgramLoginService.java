@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMiniProgramHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +43,8 @@ public class MiniProgramLoginService {
     private WxMiniGameService wxMiniGameService;
     @Autowired
     private ChatPetExpFlowService chatPetExpFlowService;
+    @Autowired
+    private ChatPetLoginLogService chatPetLoginLogService;
 
 
     /**
@@ -67,7 +71,21 @@ public class MiniProgramLoginService {
 
         sessionTokenService.saveToken(token,miniProgramId,openId,sessionKey);
 
-        this.dailyFirstLoginHandle(openId);
+        //非注册登录
+        WxFan wxFan = wxFanService.getWxFan(openId, miniProgramId);
+        if(wxFan != null){
+            ChatPet chatPet = chatPetService.getByWxFanId(wxFan.getId());
+            if(chatPet != null){
+                //宠物第一次登录处理
+                this.dailyFirstLoginHandle(chatPet.getId());
+
+                //登录记录
+                ChatPetLoginLog chatPetLoginLog = new ChatPetLoginLog();
+                chatPetLoginLog.setLoginTime(new Date());
+                chatPetLoginLog.setWxFanId(wxFan.getId());
+                chatPetLoginLogService.save(chatPetLoginLog);
+            }
+        }
 
         return token;
     }
@@ -81,20 +99,12 @@ public class MiniProgramLoginService {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
 
+    /**
+     * 宠物每天第一次登录处理
+     * @param chatPetId
+     */
     @Transactional
-    public void dailyFirstLoginHandle(String fanOpenId){
-        WxFan wxFan = wxFanService.getWxFan(fanOpenId, wxFanService.LUCK_CAT_MINI_APP_ID);
-
-        if(wxFan == null){
-            return;//注册流程不处理
-        }
-
-        ChatPet chatPet = chatPetService.getByWxFanId(wxFan.getId());
-        if(chatPet == null){
-            return;//没有宠物不处理
-        }
-
-        Integer chatPetId = chatPet.getId();
+    public void dailyFirstLoginHandle(Integer chatPetId){
 
         Log.d(" ============ 宠物当天首次登录处理 =============");
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);

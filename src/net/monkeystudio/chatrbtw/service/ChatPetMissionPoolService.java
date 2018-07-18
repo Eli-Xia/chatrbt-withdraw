@@ -716,4 +716,13 @@ public class ChatPetMissionPoolService {
         this.completeChatPetMission(completeMissionParam);
 
     }
+
+    /**
+     * 统计小游戏被玩次数
+     * @param miniGameId
+     * @return
+     */
+    public Long getMiniGamePlayerNum(Integer miniGameId){
+        return chatPetPersonalMissionMapper.countMiniGameFinishAmount(miniGameId,ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE,MissionStateEnum.FINISH_AND_AWARD.getCode());
+    }
 }

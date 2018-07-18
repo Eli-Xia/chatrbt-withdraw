@@ -24,4 +24,6 @@ public interface ChatPetPersonalMissionMapper {
     Integer countByChatPetIdAndAdId(@Param("chatPetId")Integer chatPetId,@Param("adId")Integer adId);
 
     Integer countDispatchMissionAmountByMissionCode(@Param("chatPetId")Integer chatPetId,@Param("missionCode")Integer missionCode,@Param("createTime")Date createTime);
+
+    Long countMiniGameFinishAmount(@Param("miniGameId") Integer miniGameId,@Param("missionCode")Integer missionCode,@Param("state")Integer state);
 }

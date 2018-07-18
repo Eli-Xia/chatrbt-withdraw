@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
@@ -56,6 +57,9 @@ public class MiniProgramUserInfoService {
 
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
+
+    @Autowired
+    private ChatPetLoginLogService chatPetLoginLogService;
 
     /**
      * 点击分享卡注册,携带parentFanId
@@ -150,11 +154,16 @@ public class MiniProgramUserInfoService {
                     }
 
                     //第一次登录任务数据准备
-                    miniProgramLoginService.dailyFirstLoginHandle(userInfoOpenId);
+                    miniProgramLoginService.dailyFirstLoginHandle(chatPetId);
+
+                    //登录记录
+                    ChatPetLoginLog chatPetLoginLog = new ChatPetLoginLog();
+                    chatPetLoginLog.setLoginTime(new Date());
+                    chatPetLoginLog.setWxFanId(wxFan.getId());
+                    chatPetLoginLogService.save(chatPetLoginLog);
 
                     ret.put("chatPetId",chatPetId);
                     ret.put("wxFanId",wxFanId);
-
 
                 }
             }

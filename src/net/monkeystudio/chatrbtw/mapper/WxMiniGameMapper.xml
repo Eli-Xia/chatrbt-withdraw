@@ -7,10 +7,13 @@
     <result column="head_img_url" jdbcType="VARCHAR" property="headImgUrl" />
     <result column="qr_code_img_url" jdbcType="VARCHAR" property="qrCodeImgUrl" />
     <result column="need_sign" jdbcType="INTEGER" property="needSign" />
+    <result column="open_type" jdbcType="INTEGER" property="openType" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="online_time" property="onlineTime" jdbcType="TIMESTAMP" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, nickname ,head_img_url ,qr_code_img_url,need_sign
+    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -29,52 +32,21 @@
     nickname,
     head_img_url,
     qr_code_img_url,
-    need_sign
+    need_sign,
+    open_type,
+    create_time,
+    online_time
     )
     values 
     	(#{id,jdbcType=INTEGER}, 
     	 #{nickname,jdbcType=VARCHAR},
          #{headImgUrl,jdbcType=VARCHAR},
          #{qrCodeImgUrl,jdbcType=VARCHAR},
-         #{needSign}
+         #{needSign},
+         #{openType},
+         #{createTime},
+         #{onlineTime}
          )
-  </insert>
-  <insert id="insertSelective" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
-    insert into e_wx_mini_game
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="nickname != null">
-        nickname,
-      </if>
-      <if test="headImgUrl != null">
-        head_img_url,
-      </if>
-      <if test="qrCodeImgUrl != null">
-        qr_code_img_url,
-      </if>
-      <if test="needSign != null">
-        need_sign,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="nickname != null">
-        #{nickname,jdbcType=VARCHAR},
-      </if>
-      <if test="headImgUrl != null">
-        #{headImgUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="qrCodeImgUrl != null">
-        #{qrCodeImgUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="needSign != null">
-        #{needSign,jdbcType=INTEGER},
-      </if>
-    </trim>
   </insert>
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
     update e_wx_mini_game
@@ -82,7 +54,10 @@
       nickname = #{nickname,jdbcType=VARCHAR},
       head_img_url = #{headImgUrl,jdbcType=VARCHAR},
       qr_code_img_url = #{qrCodeImgUrl},
-      need_sign = #{needSign}
+      need_sign = #{needSign},
+      open_type = #{openType},
+      create_time = #{createTime},
+      online_time = #{onlineTime}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
