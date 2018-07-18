@@ -10,10 +10,11 @@
     <result column="open_type" jdbcType="INTEGER" property="openType" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="online_time" property="onlineTime" jdbcType="TIMESTAMP" />
+    <result column="shelve_state" jdbcType="INTEGER" property="shelveState" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time
+    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time,shelve_state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -35,7 +36,8 @@
     need_sign,
     open_type,
     create_time,
-    online_time
+    online_time,
+    shelve_state
     )
     values 
     	(#{id,jdbcType=INTEGER}, 
@@ -45,7 +47,8 @@
          #{needSign},
          #{openType},
          #{createTime},
-         #{onlineTime}
+         #{onlineTime},
+         #{shelveState}
          )
   </insert>
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
@@ -57,7 +60,8 @@
       need_sign = #{needSign},
       open_type = #{openType},
       create_time = #{createTime},
-      online_time = #{onlineTime}
+      online_time = #{onlineTime},
+      shelve_state = #{shelveState}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
