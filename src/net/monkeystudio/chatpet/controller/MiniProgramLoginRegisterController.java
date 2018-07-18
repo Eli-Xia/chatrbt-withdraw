@@ -1,7 +1,6 @@
 package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.MiniAppUserInfoReq;
 import net.monkeystudio.chatrbtw.service.MiniProgramLoginService;
@@ -44,7 +43,7 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/update/fan-info", method = RequestMethod.POST)
     public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
+        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
         return respHelper.ok(ret);
     }
@@ -54,7 +53,7 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public RespBase register(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
+        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
         return respHelper.ok(ret);
     }

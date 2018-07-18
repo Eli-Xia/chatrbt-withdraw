@@ -8,6 +8,15 @@ public class MiniAppUserInfoReq {
     private String encryptedData;
     private String iv;
     private String signature;
+    private Integer parentFanId;
+
+    public Integer getParentFanId() {
+        return parentFanId;
+    }
+
+    public void setParentFanId(Integer parentFanId) {
+        this.parentFanId = parentFanId;
+    }
 
     public String getRawData() {
         return rawData;

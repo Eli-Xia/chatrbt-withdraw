@@ -1,11 +1,16 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
@@ -21,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,16 +51,20 @@ public class MiniProgramUserInfoService {
     @Autowired
     private SessionTokenService sessionTokenService;
 
+    @Autowired
+    private ChatPetService chatPetService;
+
+    @Autowired
+    private ChatPetMissionPoolService chatPetMissionPoolService;
+
     /**
+     * 点击分享卡注册,携带parentFanId
      * 获取用户信息及注册
      * 注册完成之后也就是当天的第一次登录
-     * @param rawData
-     * @param encryptedData
      * @param iv
-     * @param signature
      * @throws Exception
      */
-    public Map getUserInfoAndRegister(String rawData,String encryptedData,String iv,String signature) throws Exception{
+    public Map getUserInfoAndRegister(Integer parentFanId,String encryptedData,String iv) throws Exception{
         Log.d("================== encryptedData = {?} , iv = {?} =================",encryptedData,iv);
         Map<String,Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
@@ -69,7 +79,7 @@ public class MiniProgramUserInfoService {
             String sessionKey = sessionTokenService.getSessionKeyFromTokenVal(token);
             Log.d("mini user info : sessionkey = {?}============",sessionKey);
             Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
-            MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(rawData, encryptedData, iv, signature, sessionKey);
+            MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(encryptedData, iv,sessionKey);
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
 
             if(userInfoOpenId.equals(openId)){
@@ -115,7 +125,29 @@ public class MiniProgramUserInfoService {
                     Log.d("================ minipro userinfo : wxFanId = {?}==============",wxFanId.toString());
 
                     //生成宠物
-                    Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+                    Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentFanId);
+                    //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
+                    ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
+                    Integer parentId = parentChatPet.getId();
+
+                    //如果父亲宠物当天邀请任务未完成
+                    ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+                    chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+                    chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+                    chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+                    chatPetPersonalMissionParam.setChatPetId(parentId);
+
+                    ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
+                    if(inviteMission != null){
+                        //父亲宠物完成邀请任务
+                        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
+
+                        completeMissionParam.setInviteeWxFanId(wxFanId);
+                        completeMissionParam.setChatPetId(parentId);
+                        completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+
+                        chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
+                    }
 
                     //第一次登录任务数据准备
                     miniProgramLoginService.dailyFirstLoginHandle(userInfoOpenId);
@@ -133,15 +165,13 @@ public class MiniProgramUserInfoService {
 
     /**
      * 解密小程序用户信息
-     * @param rawData
      * @param encryptedData
      * @param iv
-     * @param signature
      * @param sessionKey
      * @return
      * @throws Exception
      */
-    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String rawData, String encryptedData, String iv, String signature, String sessionKey)throws Exception {
+    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String encryptedData, String iv, String sessionKey)throws Exception {
         // 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
@@ -175,43 +205,6 @@ public class MiniProgramUserInfoService {
             Log.e(e);
         }
         return null;
-    }
-
-    public static void main(String[]args){
-        String encryptedData = "mgsB15ZtpuiO/kuz/8/jI4cEo++jGTGabRrZRqNrsoDgzbR8ewXHQFyq+CG0cIGJ0KY828MUdwDL0JmeafxThZONkToKIm+TbeUR22pGvN5xHeChPowHSlo78P3eVX5bVND1q0Hx10bIanHdEV35jtDdgZvVR6Uvr8NTo9agxNIdIVNS7V5pnLBmmmzBodiFm7+aoEGvtZhQSeAbjzAnYOUsSAL1YdeN+SWgJ38iRj58oGnxwZ+0nsFsrrKFp/pq1Qx5jXSMAzc7CmWBaRUp0O9wI4ZX+xy0POrTAjP6c6J+TY/m8hHfnoKoYfadrtzUFX7fijeXph1ECCQ23BoMQljgzh8RxG95BPh6Htt4f7t490/x91+gJAjbycHwl7jE5FBVyWENV4Y3Wu9kb/Ci0quchsYJYmg4BrzlwcKSoSLNPB3NGGv3eQmXNbEV/mVKcTCTj0ZS/ZRB3kAvw74WzqFfp9+d8+AvTRRcp+JLx7A=";
-        String sessionKey = "lchZvcP8G6FVRRv9lEd6qA==";
-        String iv = "IXNnoJMSHrOs+7iZogeZZA==";
-        byte[] dataByte = Base64.decode(encryptedData);
-        // 加密秘钥
-        byte[] keyByte = Base64.decode(sessionKey);
-        // 偏移量
-        byte[] ivByte = Base64.decode(iv);
-        try {
-            // 如果密钥不足16位，那么就补足.  这个if 中的内容很重要
-            int base = 16;
-            if (keyByte.length % base != 0) {
-                int groups = keyByte.length / base + (keyByte.length % base != 0 ? 1 : 0);
-                byte[] temp = new byte[groups * base];
-                Arrays.fill(temp, (byte) 0);
-                System.arraycopy(keyByte, 0, temp, 0, keyByte.length);
-                keyByte = temp;
-            }
-            // 初始化
-            Security.addProvider(new BouncyCastleProvider());
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding","BC");
-            SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
-            AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
-            parameters.init(new IvParameterSpec(ivByte));
-            cipher.init(Cipher.DECRYPT_MODE, spec, parameters);// 初始化
-            byte[] resultByte = cipher.doFinal(dataByte);
-            if (null != resultByte && resultByte.length > 0) {
-                String result = new String(resultByte, "UTF-8");
-                System.out.println(result);
-                MiniProgramFanBaseInfo miniProgramFanBaseInfo =  JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
-            }
-        } catch (Exception e) {
-            Log.e(e);
-        }
     }
 
 }

@@ -55,13 +55,13 @@ public class ChatPetController extends ChatPetBaseController{
 
 
 
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping(value = "/generate-cat", method = RequestMethod.GET)
     public RespBase getChatPetInfo(@RequestParam("parentFanId")Integer parentFanId){
         Integer fanId = getUserId();
         miniProgramChatPetService.inviteFriendHandle(fanId,parentFanId);
         return respHelper.ok();
-    }
+    }*/
 
 
 
