@@ -36,6 +36,10 @@ public class ChatPetAuctionItemController extends ChatPetBaseController{
     @Autowired
     private RespHelper respHelper;
 
+    @Autowired
+    private RMiniProgramChatPetTypeService rMiniProgramChatPetTypeService;
+
+
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
@@ -56,7 +60,9 @@ public class ChatPetAuctionItemController extends ChatPetBaseController{
 
         WxFan wxFan = wxFanService.getById(wxFanId);
 
-        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxFan.getWxPubOriginId());
+        //Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxFan.getWxPubOriginId());
+
+        Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(wxFan.getMiniProgramId());
 
         ChatPetAuctionItemResp chatPetAuctionItemResp = auctionItemService.getAuctionItemListByChatPetType(chatPetType , page , pageSize ,wxFanId);
 

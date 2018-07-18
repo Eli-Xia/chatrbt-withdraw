@@ -82,6 +82,10 @@ public class ChatPetAuctionRecordController extends ChatPetBaseController{
             return respHelper.failed("出价的价格不能高于所拥有的价格");
         }
 
+        if(price.floatValue()  < 0F){
+            return respHelper.failed("出价的价格不能小于0");
+        }
+
         Integer result = auctionRecordService.addAuctionRecord(wxFanId, price, auctionItemId);
 
         return respHelper.ok(result);
