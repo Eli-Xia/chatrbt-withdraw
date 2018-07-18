@@ -78,7 +78,6 @@ public class AuctionItemService {
 
     private final static String DIRCTORY_NAME = "/chat_pet/auction_item";
 
-
     private Map<Integer,Thread> threadMap = new HashMap<>();
 
 
@@ -114,6 +113,16 @@ public class AuctionItemService {
 
         if(state.intValue() ==  PROCESSING.intValue()){
             date = auctionItem.getEndTime();
+        }
+
+        //如果竞拍品已经完成，则不需要设置定时器
+        if(state.intValue() == HAVE_FINISHED.intValue()){
+            return ;
+        }
+
+        //如果竞拍品已经流拍，则不需要设置定时器
+        if(state.intValue() == UNCLAIMED.intValue()){
+            return ;
         }
 
         Thread thread = fixedScheduling.createFixedScheduling(date ,runnable);
