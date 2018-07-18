@@ -127,11 +127,16 @@ public class MiniProgramUserInfoService {
                     Log.d("================ minipro userinfo : wxFanId = {?}==============",wxFanId.toString());
 
                     //生成宠物
-                    Integer chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentFanId);
                     //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
-                    if(parentFanId != null){
+                    Integer chatPetId = null;
+                    if(parentFanId == null){
+                        chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+                    }else{
+
                         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
                         Integer parentId = parentChatPet.getId();
+
+                        chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentId);
 
                         //如果父亲宠物当天邀请任务未完成
                         ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
