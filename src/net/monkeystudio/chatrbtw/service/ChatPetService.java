@@ -1058,8 +1058,6 @@ public class ChatPetService {
      */
     public Integer getChatPetType(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
-        //String wxPubOriginId = chatPet.getWxPubOriginId();
-        //Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
         Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(chatPet.getMiniProgramId());
         return chatPetType;

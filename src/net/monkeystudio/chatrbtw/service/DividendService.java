@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.base.utils.Log;
@@ -28,7 +29,6 @@ public class DividendService {
 
     @Autowired
     private DividendDetailRecordService dividendDetailRecordService;
-
 
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
@@ -87,7 +87,7 @@ public class DividendService {
 
 
     private String getDividendQuqueKey(){
-        String key = "dividend-quque";
+        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "dividend-quque";
         return key;
     }
 
@@ -151,25 +151,26 @@ public class DividendService {
      */
     public void dividend(Float totalMoney ,Integer chatPetType){
 
-        Double totalCoin = chatPetService.countTotalCoin(chatPetType);
-
         //保存分红记录
         DividendRecord dividendRecord = new DividendRecord();
         dividendRecord.setCreateTime(new Date());
         dividendRecord.setMoney(totalMoney);
         dividendRecord.setChatPetType(chatPetType);
 
-        dividendRecordService.save(dividendRecord);
+        List<ChatPet> chatPetList = chatPetService.getByChatPetType(chatPetType);
+        dividendRecord.setTotalWxfanNumber(chatPetList.size());
 
-        Integer dividendRecordId = dividendRecord.getId();
+        Double totalCoin = chatPetService.countTotalCoin(chatPetType);
+        dividendRecord.setTotalCoin(totalCoin);
+
+        dividendRecordService.save(dividendRecord);
 
         taskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                List<ChatPet> chatPetList = chatPetService.getByChatPetType(chatPetType);
+
                 String key = getDividendQuqueKey();
-
-
+                Integer dividendRecordId = dividendRecord.getId();
 
                 for(ChatPet chatPet : chatPetList){
                     String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getCoin() , totalCoin,dividendRecordId);
