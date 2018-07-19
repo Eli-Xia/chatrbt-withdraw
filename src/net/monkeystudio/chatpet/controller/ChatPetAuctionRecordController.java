@@ -33,7 +33,7 @@ public class ChatPetAuctionRecordController extends ChatPetBaseController{
     private RespHelper respHelper;
 
     @Autowired
-    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
+    private RMiniProgramChatPetTypeService rMiniProgramChatPetTypeService;
 
     @Autowired
     private WxFanService wxFanService;
@@ -65,8 +65,8 @@ public class ChatPetAuctionRecordController extends ChatPetBaseController{
             return respHelper.failed("竞拍品有误");
         }
 
-        String wxPubOriginId = wxFan.getWxPubOriginId();
-        Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
+
+        Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(wxFan.getMiniProgramId());
         if(auctionItem.getChatPetType() != chatPetType.intValue()){
             return respHelper.failed("竞拍品的宠物类型有误");
         }
