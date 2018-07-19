@@ -94,7 +94,7 @@ public class AuctionRecordService {
 
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         param.setChatPetId(chatPet.getId());
-        param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD);
+        param.setChatPetLogType(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_JOIN_AUTION);
         chatPetLogService.saveChatPetDynamic(param);
 
         //参与竞拍猫饼流水

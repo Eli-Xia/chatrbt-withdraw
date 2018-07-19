@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.base.utils.Log;
@@ -29,7 +30,6 @@ public class DividendService {
     @Autowired
     private DividendDetailRecordService dividendDetailRecordService;
 
-
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
 
@@ -53,15 +53,15 @@ public class DividendService {
 
         DividendQueueValueVO dividendQueueValueVO = this.paraseDividendQuqueValue(dividendQuqueValue);
 
-        Double totalExperience = dividendQueueValueVO.getTotalExperience();
-        BigDecimal totalExperienceBD = new BigDecimal(totalExperience);
+        Double totalCoin = dividendQueueValueVO.getTotalCoin();
+        BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
 
         Float totalMoney = dividendQueueValueVO.getTotalMoney();
         BigDecimal totalMoneyBD = new BigDecimal(totalMoney);
 
         BigDecimal ratio = ArithmeticUtils.divide(totalMoneyBD, totalExperienceBD);
 
-        Float experience = dividendQueueValueVO.getExperience();
+        Float experience = dividendQueueValueVO.getCoin();
         BigDecimal experienceBD = new BigDecimal(experience);
         BigDecimal moneyBD = experienceBD.multiply(ratio);
 
@@ -87,7 +87,7 @@ public class DividendService {
 
 
     private String getDividendQuqueKey(){
-        String key = "dividend-quque";
+        String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "dividend-quque";
         return key;
     }
 
@@ -129,11 +129,11 @@ public class DividendService {
         Integer chatPetId = Integer.valueOf(valueArray[2]);
         dividendQueueValueVO.setChatPetId(chatPetId);
 
-        Float experience = Float.valueOf(valueArray[3]);
-        dividendQueueValueVO.setExperience(experience);
+        Float coin = Float.valueOf(valueArray[3]);
+        dividendQueueValueVO.setCoin(coin);
 
         Double totalExperience = Double.valueOf(valueArray[4]);
-        dividendQueueValueVO.setTotalExperience(totalExperience);
+        dividendQueueValueVO.setTotalCoin(totalExperience);
 
         Integer DividendRecordId = Integer.valueOf(valueArray[5]);
         dividendQueueValueVO.setDividendRecordId(DividendRecordId);
@@ -157,20 +157,23 @@ public class DividendService {
         dividendRecord.setMoney(totalMoney);
         dividendRecord.setChatPetType(chatPetType);
 
-        dividendRecordService.save(dividendRecord);
+        List<ChatPet> chatPetList = chatPetService.getByChatPetType(chatPetType);
+        dividendRecord.setTotalWxfanNumber(chatPetList.size());
 
-        Integer dividendRecordId = dividendRecord.getId();
+        Double totalCoin = chatPetService.countTotalCoin(chatPetType);
+        dividendRecord.setTotalCoin(totalCoin);
+
+        dividendRecordService.save(dividendRecord);
 
         taskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                List<ChatPet> chatPetList = chatPetService.getByChatPetType(chatPetType);
-                String key = getDividendQuqueKey();
 
-                Double totalExperience = chatPetService.countTotalexperience(chatPetType);
+                String key = getDividendQuqueKey();
+                Integer dividendRecordId = dividendRecord.getId();
 
                 for(ChatPet chatPet : chatPetList){
-                    String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getExperience() ,totalExperience ,dividendRecordId);
+                    String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getCoin() , totalCoin,dividendRecordId);
                     redisCacheTemplate.lpush(key,value);
                 }
             }
@@ -178,15 +181,17 @@ public class DividendService {
     }
 
 
-    private String getDividendQuqueValue(Float totalMoney,Integer chatPetType , Integer chatPetId ,Float experience , Double totalExperience ,Integer dividendRecordId){
+    private String getDividendQuqueValue(Float totalMoney,Integer chatPetType , Integer chatPetId ,Float experience , Double totalCoin ,Integer dividendRecordId){
 
         String moneyStr = String.valueOf(totalMoney);
 
         String experienceStr = String.valueOf(experience);
 
-        String value = chatPetType + ":" + moneyStr + ":" + chatPetId + ":" + experienceStr + ":" + totalExperience + ":" + dividendRecordId;
+        String value = chatPetType + ":" + moneyStr + ":" + chatPetId + ":" + experienceStr + ":" + totalCoin + ":" + dividendRecordId;
 
         return value;
 
     }
+
+
 }
