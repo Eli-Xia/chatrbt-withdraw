@@ -134,7 +134,7 @@
     chat_pet_id = #{chatPetId} AND create_time &gt;= #{createTime} AND  mission_code = #{missionCode}
   </select>
 
-  <select id="countMiniGameFinishAmount" resultMap="java.lang.Long">
+  <select id="countMiniGameFinishAmount" resultType ="java.lang.Long">
     SELECT count(id) FROM  e_chat_pet_personal_mission WHERE mission_code = #{missionCode} AND state = #{state}
   </select>
 </mapper>
