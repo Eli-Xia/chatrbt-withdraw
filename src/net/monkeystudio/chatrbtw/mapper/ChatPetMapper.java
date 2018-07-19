@@ -36,7 +36,7 @@ public interface ChatPetMapper {
 
     List<ChatPet> selectByChatPetType(Integer chatPetType);
 
-    Double countTotalexperience(Integer chatPetType);
+    Double countTotalCoin(Integer chatPetType);
 
     Integer increaseMoney(@Param("id") Integer chatPetId,@Param("additionMoney") Float additionMoney);
 

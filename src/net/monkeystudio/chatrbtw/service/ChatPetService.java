@@ -1058,8 +1058,6 @@ public class ChatPetService {
      */
     public Integer getChatPetType(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
-        //String wxPubOriginId = chatPet.getWxPubOriginId();
-        //Integer chatPetType = rWxPubChatPetTypeService.getChatPetType(wxPubOriginId);
 
         Integer chatPetType = rMiniProgramChatPetTypeService.getByMiniProgramId(chatPet.getMiniProgramId());
         return chatPetType;
@@ -1085,8 +1083,8 @@ public class ChatPetService {
         return chatPetMapper.selectByChatPetType(chatPetType);
     }
 
-    public Double countTotalexperience(Integer chatPetType){
-        return chatPetMapper.countTotalexperience(chatPetType);
+    public Double countTotalCoin(Integer chatPetType){
+        return chatPetMapper.countTotalCoin(chatPetType);
     }
 
 
