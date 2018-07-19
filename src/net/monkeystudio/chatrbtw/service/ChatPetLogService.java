@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 import net.monkeystudio.chatrbtw.entity.*;
@@ -10,9 +11,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author xiaxin
@@ -109,6 +108,21 @@ public class ChatPetLogService {
         }
 
         return resps;
+    }
+
+    public Map<String,List<PetLog>> getDailyPetLogList2(Integer chatPetId){
+        List<PetLog> petLogs = petLogMapper.selectPetLog(0, 10, chatPetId);
+        Map<String,List<PetLog>> dataMap = new HashMap<>();
+        for (PetLog item:petLogs){
+            String dateStr = CommonUtils.dateFormat(item.getCreateTime(), "MM-dd");
+            if(dataMap.containsKey(dateStr)){
+                List<PetLog> dateLogs = dataMap.get(dateStr);
+                dateLogs.add(item);
+            }else{
+                dataMap.put(dateStr,Collections.EMPTY_LIST);
+            }
+        }
+        return dataMap;
     }
 
 

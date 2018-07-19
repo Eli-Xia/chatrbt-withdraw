@@ -114,6 +114,12 @@
       (#{item.createTime}, #{item.chatPetId},#{item.wxPubOriginId},#{item.wxFanOpenId},#{item.taskCode},#{item.rewardType},#{item.content},#{item.rewardItemId})
     </foreach>
   </insert>
+  
+  <select id="selectPetLog" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> FROM e_pet_log WHERE chat_pet_id = #{chatPetId}
+    order by create_time desc
+    limit #{startIndex}, #{pageSize}
+  </select>
 
 
 </mapper>
