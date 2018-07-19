@@ -1085,8 +1085,8 @@ public class ChatPetService {
         return chatPetMapper.selectByChatPetType(chatPetType);
     }
 
-    public Double countTotalexperience(Integer chatPetType){
-        return chatPetMapper.countTotalexperience(chatPetType);
+    public Double countTotalCoin(Integer chatPetType){
+        return chatPetMapper.countTotalCoin(chatPetType);
     }
 
 
