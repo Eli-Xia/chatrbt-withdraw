@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.sdk.wx;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.HttpsHelper;
@@ -42,7 +43,7 @@ public class WxMiniProgramHelper {
      * @param miniProgramId
      * @return
      */
-    public LoginVerifyInfo fetchLoginVerifyInfo(Integer miniProgramId,String jsCode){
+    public LoginVerifyInfo fetchLoginVerifyInfo(Integer miniProgramId,String jsCode) throws BizException{
         Log.d("================= jsCode = {?} =================",jsCode);
         MiniProgram miniProgram = miniProgramService.getById(miniProgramId);
         String appId = miniProgram.getAppId();
@@ -53,7 +54,7 @@ public class WxMiniProgramHelper {
         String response = HttpsHelper.get(fetchLoginVerifyInfoUrl);
 
         if(response == null || response.indexOf("errorcode") != -1){
-            return null;
+            throw new BizException("小程序登录校验失败");
         }
 
         Log.d("================= fetchMiniAppLoginVerifyInfo response = {?} ===================",response);

@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.CommonUtils;
@@ -55,7 +56,7 @@ public class MiniProgramLoginService {
      * @param jsCode
      * @return
      */
-    public String loginHandle(Integer miniProgramId,String jsCode){
+    public String loginHandle(Integer miniProgramId,String jsCode) throws BizException{
         if(miniProgramId == null){
             miniProgramId = 1;
         }

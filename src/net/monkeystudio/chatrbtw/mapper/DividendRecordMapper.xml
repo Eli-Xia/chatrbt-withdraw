@@ -6,17 +6,19 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="money" property="money" jdbcType="REAL" />
         <result column="chat_pet_type" property="chatPetType" jdbcType="INTEGER" />
+        <result column="total_coin" property="totalCoin" jdbcType="INTEGER" />
+        <result column="total_wx_fan_Number" property="totalWxfanNumber" jdbcType="INTEGER" />
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `create_time`, `money` , `chat_pet_type`
+        `id`, `create_time`, `money` , `chat_pet_type` ,`total_coin`
     </sql>
 
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.DividendRecord" useGeneratedKeys="true" keyProperty="id">
         insert
             INTO  e_dividend_record
-            (`create_time`, `money` ,`chat_pet_type` )
+            (`create_time`, `money` ,`chat_pet_type` ,`total_coin` , `total_wx_fan_Number`)
             VALUES
-                (#{createTime} ,#{money} ,#{chatPetType})
+                (#{createTime} ,#{money} ,#{chatPetType} , #{totalCoin} , #{totalWxfanNumber} )
     </insert>
 </mapper>

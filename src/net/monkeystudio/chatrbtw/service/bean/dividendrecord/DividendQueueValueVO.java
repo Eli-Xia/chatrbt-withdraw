@@ -10,8 +10,8 @@ public class DividendQueueValueVO {
     private Integer chatPetType;
     private Float totalMoney;
     private Integer chatPetId;
-    private Float experience;
-    private Double totalExperience;
+    private Float coin;
+    private Double totalCoin;
     private Float money;
     private Integer dividendRecordId;
 
@@ -39,20 +39,20 @@ public class DividendQueueValueVO {
         this.chatPetId = chatPetId;
     }
 
-    public Float getExperience() {
-        return experience;
+    public Float getCoin() {
+        return coin;
     }
 
-    public void setExperience(Float experience) {
-        this.experience = experience;
+    public void setCoin(Float coin) {
+        this.coin = coin;
     }
 
-    public Double getTotalExperience() {
-        return totalExperience;
+    public Double getTotalCoin() {
+        return totalCoin;
     }
 
-    public void setTotalExperience(Double totalExperience) {
-        this.totalExperience = totalExperience;
+    public void setTotalCoin(Double totalCoin) {
+        this.totalCoin = totalCoin;
     }
 
     public Float getMoney() {

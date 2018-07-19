@@ -361,7 +361,6 @@ public class ChatPetMissionPoolService {
      */
     public void completeChatPetMission(CompleteMissionParam completeMissionParam){
         //查询当前任务记录查询对象
-
         ChatPetPersonalMission chatPetPersonalMission = null;
 
         if(completeMissionParam.getPersonalMissionId() != null){

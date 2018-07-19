@@ -158,8 +158,8 @@
             chat_pet_type = #{chatPetType}
     </select>
 
-    <select id="countTotalexperience" parameterType="java.lang.Integer" resultType="java.lang.Double">
-        SELECT SUM(experience)  FROM e_chat_pet where chat_pet_type = #{chatPetType}
+    <select id="countTotalCoin" parameterType="java.lang.Integer" resultType="java.lang.Double">
+        SELECT SUM(coin)  FROM e_chat_pet where chat_pet_type = #{chatPetType}
     </select>
 
 

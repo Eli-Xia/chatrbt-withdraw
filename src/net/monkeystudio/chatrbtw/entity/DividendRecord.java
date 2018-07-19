@@ -11,7 +11,8 @@ public class DividendRecord {
     private Date createTime;
     private Float money;
     private Integer chatPetType;
-
+    private Double totalCoin;
+    private Integer totalWxfanNumber;
 
     public Integer getId() {
         return id;
@@ -43,5 +44,21 @@ public class DividendRecord {
 
     public void setChatPetType(Integer chatPetType) {
         this.chatPetType = chatPetType;
+    }
+
+    public Double getTotalCoin() {
+        return totalCoin;
+    }
+
+    public void setTotalCoin(Double totalCoin) {
+        this.totalCoin = totalCoin;
+    }
+
+    public Integer getTotalWxfanNumber() {
+        return totalWxfanNumber;
+    }
+
+    public void setTotalWxfanNumber(Integer totalWxfanNumber) {
+        this.totalWxfanNumber = totalWxfanNumber;
     }
 }
