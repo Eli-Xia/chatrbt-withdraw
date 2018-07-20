@@ -55,6 +55,12 @@ public class DividendRecordController extends BaseController {
     @ResponseBody
     public RespBase getPageList (@RequestBody DividendPageReq dividendPageReq){
 
+        Integer userId = this.getUserId();
+
+        if(userId == null){
+            return respHelper.nologin();
+        }
+
         Integer page = dividendPageReq.getPage();
         Integer pageSize = dividendPageReq.getPageSize();
         List<DividendRecordResp> dividendRecordRespList = dividendRecordService.getDividendRecordRespList(page, pageSize);
