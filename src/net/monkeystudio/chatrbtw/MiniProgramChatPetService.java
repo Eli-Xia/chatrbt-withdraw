@@ -163,7 +163,9 @@ public class MiniProgramChatPetService {
 
         chatPet.setChatPetType(chatPetType);
 
-        return chatPetService.save(chatPet);
+        chatPetService.save(chatPet);
+
+        return chatPet.getId();
     }
 
     /**
