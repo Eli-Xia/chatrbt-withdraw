@@ -5,15 +5,15 @@ package net.monkeystudio.admin.controller.req.dividend;
  */
 public class Dividend {
 
-    private Integer chatPetTpye;
+    private Integer chatPetType;
     private Float totalMoney;
 
-    public Integer getChatPetTpye() {
-        return chatPetTpye;
+    public Integer getChatPetType() {
+        return chatPetType;
     }
 
-    public void setChatPetTpye(Integer chatPetTpye) {
-        this.chatPetTpye = chatPetTpye;
+    public void setChatPetType(Integer chatPetType) {
+        this.chatPetType = chatPetType;
     }
 
     public Float getTotalMoney() {
