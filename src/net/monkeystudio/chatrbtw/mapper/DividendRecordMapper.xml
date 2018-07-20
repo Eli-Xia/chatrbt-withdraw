@@ -10,7 +10,7 @@
         <result column="total_wx_fan_Number" property="totalWxfanNumber" jdbcType="INTEGER" />
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `create_time`, `money` , `chat_pet_type` ,`total_coin`
+        `id`, `create_time`, `money` , `chat_pet_type` ,`total_coin` ,`total_wx_fan_Number`
     </sql>
 
 
@@ -21,4 +21,15 @@
             VALUES
                 (#{createTime} ,#{money} ,#{chatPetType} , #{totalCoin} , #{totalWxfanNumber} )
     </insert>
+
+    <select id="selectByPage" resultMap="baseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List" />
+        from
+            e_dividend_record
+        order by create_time desc
+            limit #{startIndex} , #{pageSize};
+    </select>
+    
+    
 </mapper>
