@@ -28,9 +28,6 @@ public class ChatPetAuctionItemController extends ChatPetBaseController{
     private AuctionItemService auctionItemService;
 
     @Autowired
-    private RWxPubChatPetTypeService rWxPubChatPetTypeService;
-
-    @Autowired
     private WxFanService wxFanService;
 
     @Autowired
