@@ -1,16 +1,21 @@
 package net.monkeystudio.admin.controller;
 
 import net.monkeystudio.admin.controller.req.dividend.Dividend;
+import net.monkeystudio.admin.controller.req.dividend.DividendPageReq;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.service.DividendRecordService;
 import net.monkeystudio.chatrbtw.service.DividendService;
+import net.monkeystudio.chatrbtw.service.bean.dividendrecord.DividendRecordResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * Created by bint on 2018/7/10.
@@ -22,6 +27,10 @@ public class DividendRecordController extends BaseController {
 
     @Autowired
     private DividendService dividendService;
+
+
+    @Autowired
+    private DividendRecordService dividendRecordService;
 
     @Autowired
     private RespHelper respHelper;
@@ -40,4 +49,16 @@ public class DividendRecordController extends BaseController {
         return respHelper.ok();
     }
 
+
+
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @ResponseBody
+    public RespBase getPageList (@RequestBody DividendPageReq dividendPageReq){
+
+        Integer page = dividendPageReq.getPage();
+        Integer pageSize = dividendPageReq.getPageSize();
+        List<DividendRecordResp> dividendRecordRespList = dividendRecordService.getDividendRecordRespList(page, pageSize);
+
+        return respHelper.ok(dividendRecordRespList);
+    }
 }
