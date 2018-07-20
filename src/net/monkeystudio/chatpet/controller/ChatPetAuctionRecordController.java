@@ -25,7 +25,6 @@ public class ChatPetAuctionRecordController extends ChatPetBaseController{
     @Autowired
     private AuctionRecordService auctionRecordService;
 
-
     @Autowired
     private AuctionItemService auctionItemService;
 

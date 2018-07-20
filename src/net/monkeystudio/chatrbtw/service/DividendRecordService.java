@@ -1,9 +1,15 @@
 package net.monkeystudio.chatrbtw.service;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
+import net.monkeystudio.base.utils.BeanUtils;
 import net.monkeystudio.chatrbtw.entity.DividendRecord;
 import net.monkeystudio.chatrbtw.mapper.DividendRecordMapper;
+import net.monkeystudio.chatrbtw.service.bean.dividendrecord.DividendRecordResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -20,4 +26,24 @@ public class DividendRecordService {
     }
 
 
+    public List<DividendRecordResp> getDividendRecordRespList(Integer page , Integer pageSize ){
+
+        Integer startIndex = (page - 1) * pageSize;
+        List<DividendRecord> dividendRecordList = dividendRecordMapper.selectByPage(startIndex, pageSize);
+
+        List<DividendRecordResp> dividendRecordRespList = new ArrayList<>();
+
+        for(DividendRecord dividendRecord : dividendRecordList){
+
+            DividendRecordResp dividendRecordResp = BeanUtils.copyBean(dividendRecord,DividendRecordResp.class);
+
+            dividendRecordResp.setUserCount(dividendRecord.getTotalWxfanNumber());
+
+            dividendRecordResp.setTotalMoney(dividendRecord.getMoney());
+
+            dividendRecordRespList.add(dividendRecordResp);
+        }
+
+        return dividendRecordRespList;
+    }
 }
