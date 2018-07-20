@@ -1,6 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
@@ -31,6 +30,13 @@ public class SessionTokenService {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniProgramSessionToken:" + token;
     }
 
+    /**
+     * 登录时保存session token
+     * @param token              随机数
+     * @param miniProgramId     小程序id
+     * @param wxFanOpenId       粉丝openId
+     * @param sessionKey        会话秘钥
+     */
     public void saveToken(String token,Integer miniProgramId,String wxFanOpenId,String sessionKey){
         String key = this.getSessionTokenCacheKey(token);
 
@@ -50,41 +56,77 @@ public class SessionTokenService {
         redisCacheTemplate.expire(key,cacheSecond);
     }
 
+    /**
+     * 获取缓存中token对应的value值
+     * @param token
+     * @return
+     */
     public String getTokenValue(String token){
         String sessionTokenCacheKey = this.getSessionTokenCacheKey(token);
+
         String value = redisCacheTemplate.getString(sessionTokenCacheKey);
+
         return value;
     }
 
+    /**
+     * 从session中获取sessionKey
+     * @param token
+     * @return
+     */
     public String getSessionKeyFromTokenVal(String token){
         String sessionTokenCacheKey = this.getSessionTokenCacheKey(token);
+
         String value = redisCacheTemplate.getString(sessionTokenCacheKey);
+
         return value.split(":")[2];
     }
 
+    /**
+     * 从session中获取粉丝openId
+     * @param token
+     * @return
+     */
     public String getOpenIdFromTokenVal(String token){
         String sessionTokenCacheKey = this.getSessionTokenCacheKey(token);
+
         String value = redisCacheTemplate.getString(sessionTokenCacheKey);
+
         return value.split(":")[1];
     }
 
+    /**
+     * 从session中获取小程序id
+     * @param token
+     * @return
+     */
     public Integer getMiniProgramIdFromTokenVal(String token){
         String sessionTokenCacheKey = this.getSessionTokenCacheKey(token);
+
         String value = redisCacheTemplate.getString(sessionTokenCacheKey);
+
         String miniProgramIdStr = value.split(":")[0];
+
         return Integer.parseInt(miniProgramIdStr);
     }
 
+    /**
+     * 从session中获取wxFanId
+     * @param token
+     * @return
+     */
     public Integer getWxFanIdByToken(String token){
         Integer miniProgramId = this.getMiniProgramIdFromTokenVal(token);
+
         String wxFanOpenId = this.getOpenIdFromTokenVal(token);
+
         WxFan wxFan = wxFanService.getWxFan(wxFanOpenId, miniProgramId);
+
         if(wxFan != null){
             return wxFan.getId();
         }
+
         return null;
     }
-
-
 
 }

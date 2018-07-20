@@ -5,8 +5,6 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
-import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
 import net.monkeystudio.chatrbtw.entity.WxFan;
@@ -26,24 +24,28 @@ import java.util.List;
  */
 @Service
 public class MiniProgramLoginService {
+
     @Autowired
     private SessionTokenService sessionTokenService;
+
     @Autowired
     private WxMiniProgramHelper wxMiniProgramHelper;
+
     @Autowired
     private RedisCacheTemplate redisCacheTemplate;
+
     @Autowired
     private WxFanService wxFanService;
+
     @Autowired
     private ChatPetService chatPetService;
-    @Autowired
-    private MiniProgramChatPetService miniProgramChatPetService;
+
     @Autowired
     private ChatPetMissionPoolService chatPetMissionPoolService;
+
     @Autowired
     private WxMiniGameService wxMiniGameService;
-    @Autowired
-    private ChatPetExpFlowService chatPetExpFlowService;
+
     @Autowired
     private ChatPetLoginLogService chatPetLoginLogService;
 
@@ -60,13 +62,12 @@ public class MiniProgramLoginService {
         if(miniProgramId == null){
             miniProgramId = 1;
         }
-        Log.d(" ================ miniProgram login =============");
+
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId,jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
 
         String sessionKey = loginVerifyInfo.getSessionKey();
-        Log.d("=========== mini login sessionKey = {?}===========",sessionKey);
 
         String token = CommonUtils.randomUUID();
 
@@ -74,10 +75,11 @@ public class MiniProgramLoginService {
 
         //非注册登录
         WxFan wxFan = wxFanService.getWxFan(openId, miniProgramId);
+
         if(wxFan != null){
             ChatPet chatPet = chatPetService.getByWxFanId(wxFan.getId());
+
             if(chatPet != null){
-                //宠物第一次登录处理
                 this.dailyFirstLoginHandle(chatPet.getId());
 
                 //登录记录
@@ -107,12 +109,12 @@ public class MiniProgramLoginService {
     @Transactional
     public void dailyFirstLoginHandle(Integer chatPetId){
 
-        Log.d(" ============ 宠物当天首次登录处理 =============");
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
 
         if(loginCount.intValue() == 1){
+
             redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
             List<Integer> wxMiniGameIds = wxMiniGameService.getWxMiniGameIds();

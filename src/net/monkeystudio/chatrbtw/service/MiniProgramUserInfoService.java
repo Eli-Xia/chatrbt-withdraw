@@ -41,9 +41,6 @@ public class MiniProgramUserInfoService {
     private WxFanService wxFanService;
 
     @Autowired
-    private RedisCacheTemplate redisCacheTemplate;
-
-    @Autowired
     private MiniProgramChatPetService miniProgramChatPetService;
 
     @Autowired
@@ -69,30 +66,33 @@ public class MiniProgramUserInfoService {
      * @throws Exception
      */
     public Map getUserInfoAndRegister(Integer parentFanId,String encryptedData,String iv) throws Exception{
-        Log.d("================== encryptedData = {?} , iv = {?} =================",encryptedData,iv);
+        Log.i("================== encryptedData = {?} , iv = {?} =================",encryptedData,iv);
+
         Map<String,Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         String token = request.getHeader("token");
-        Log.d("============== getUserInfo : token = {?} ===================",token);
 
         if(token != null){
             String openId = sessionTokenService.getOpenIdFromTokenVal(token);
-            Log.i("mini user info : openId = {?}============",openId);
+
             String sessionKey = sessionTokenService.getSessionKeyFromTokenVal(token);
-            Log.i("mini user info : sessionkey = {?}============",sessionKey);
+
             Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
-            Log.i("mini user info : miniprogramId = {?}============",miniProgramId==null?"":miniProgramId.toString());
+
+            Log.i("mini user info : openId = {?} , sessionKey = {?} , miniProgramId = {?}",openId,sessionKey,miniProgramId.toString());
+
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(encryptedData, iv,sessionKey);
+
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
 
             if(userInfoOpenId.equals(openId)){
+
                 //通过openId判断是否存在于数据库中,如果存在update
-                Log.d("=========== miniprogram  already register -->revise userinfo  ==============");
-                //WxFan dbWxFan = wxFanService.getWxFan(userInfoOpenId, WxFanService.LUCK_CAT_MINI_APP_ID);
                 WxFan dbWxFan = wxFanService.getWxFanFromDb(null,userInfoOpenId,miniProgramId);
+
                 if(dbWxFan != null){
                     //更新老数据
                     dbWxFan.setCity(miniProgramFanBaseInfo.getCity());
@@ -110,7 +110,6 @@ public class MiniProgramUserInfoService {
 
                     ret.put("wxFanId",dbWxFan.getId());
                 }else{
-                    Log.d("==================== miniprogram not register , new user ===============");
                     //新增用户
                     WxFan wxFan = new WxFan();
 
@@ -127,17 +126,21 @@ public class MiniProgramUserInfoService {
                     wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
                     wxFanService.save(wxFan);
+
                     Integer wxFanId = wxFan.getId();
-                    Log.d("================ minipro userinfo : wxFanId = {?}==============",wxFanId.toString());
 
                     //生成宠物
                     //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
                     Integer chatPetId = null;
+
                     if(parentFanId == null){
+
                         chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+
                     }else{
 
                         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
+
                         Integer parentId = parentChatPet.getId();
 
                         chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentId);
@@ -150,6 +153,7 @@ public class MiniProgramUserInfoService {
                         chatPetPersonalMissionParam.setChatPetId(parentId);
 
                         ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
+
                         if(inviteMission != null){
                             //父亲宠物完成邀请任务
                             CompleteMissionParam completeMissionParam = new CompleteMissionParam();
@@ -196,6 +200,7 @@ public class MiniProgramUserInfoService {
         byte[] keyByte = Base64.decode(sessionKey);
         // 偏移量
         byte[] ivByte = Base64.decode(iv);
+
         try {
             // 如果密钥不足16位，那么就补足.  这个if 中的内容很重要
             int base = 16;
