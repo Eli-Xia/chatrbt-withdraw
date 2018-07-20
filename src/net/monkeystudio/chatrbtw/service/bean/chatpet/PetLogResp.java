@@ -6,9 +6,19 @@ import java.util.Date;
  * @author xiaxin
  */
 public class PetLogResp {
+    private Integer id;
+
     private Date createTime;
 
     private String content;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Date getCreateTime() {
         return createTime;

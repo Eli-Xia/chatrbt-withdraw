@@ -111,7 +111,7 @@ public class ChatPetLogService {
     }
 
     public Map<String,List<PetLog>> getDailyPetLogList2(Integer chatPetId){
-        List<PetLog> petLogs = petLogMapper.selectPetLog(0, 10, chatPetId);
+        List<PetLog> petLogs = petLogMapper.selectPetLog(0, 100, chatPetId);
         Map<String,List<PetLog>> dataMap = new HashMap<>();
         for (PetLog item:petLogs){
             String dateStr = CommonUtils.dateFormat(item.getCreateTime(), "MM-dd");
@@ -123,6 +123,18 @@ public class ChatPetLogService {
             }
         }
         return dataMap;
+    }
+    public List<PetLogResp> getDailyPetLogList3(Integer chatPetId){
+        List<PetLog> petLogs = petLogMapper.selectPetLog(0, 100, chatPetId);
+        List<PetLogResp> resps = new ArrayList<>();
+        for(int i = 0; i < petLogs.size(); i++){
+            PetLogResp resp = new PetLogResp();
+            resp.setContent(petLogs.get(i).getContent());
+            resp.setCreateTime(petLogs.get(i).getCreateTime());
+            resp.setId(i + 1);
+            resps.add(resp);
+        }
+        return resps;
     }
 
 

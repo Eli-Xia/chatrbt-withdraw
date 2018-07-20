@@ -2,11 +2,16 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
+import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetExpFlowMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetExpFlowResp;
+import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetExpFlowResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 宠物经验值流水
@@ -62,6 +67,19 @@ public class ChatPetExpFlowService {
     public void dailyLoginFlow(Integer chaPetId,Float experience){
         String note = "每日登录" + ArithmeticUtils.keep2DecimalPlace(experience);
         this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.DAILY_LOGIN,note);
+    }
+
+    public List<ChatPetExpFlowResp> getChatPetExpFlowList(Integer chatPetId){
+        List<ChatPetExpFlow> list = this.chatPetExpFlowMapper.selectExpFlow(chatPetId, 0, 100);
+        List<ChatPetExpFlowResp> resps = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++){
+            ChatPetExpFlowResp resp = new ChatPetExpFlowResp();
+            resp.setCreateTime(list.get(i).getCreateTime());
+            resp.setNote(list.get(i).getNote());
+            resp.setId(i + 1);
+            resps.add(resp);
+        }
+        return resps;
     }
 
 }

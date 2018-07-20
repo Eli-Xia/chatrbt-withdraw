@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetCoinFlowMapper;
+import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetCoinFlowResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +59,18 @@ public class ChatPetCoinFlowService {
     public void dailyRewardFlow(Integer chaPetId,Float coin){
         String note = "日常领取,猫饼+" + ArithmeticUtils.keep2DecimalPlace(coin);
         this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note);
+    }
+
+    public List<ChatPetCoinFlowResp> getChatPetCoinFlowList(Integer chatPetId){
+        List<ChatPetCoinFlow> list = this.chatPetCoinFlowMapper.selectCoinFlow(chatPetId, 0, 100);
+        List<ChatPetCoinFlowResp> resps = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++){
+            ChatPetCoinFlowResp resp = new ChatPetCoinFlowResp();
+            resp.setCreateTime(list.get(i).getCreateTime());
+            resp.setNote(list.get(i).getNote());
+            resp.setId(i + 1);
+            resps.add(resp);
+        }
+        return resps;
     }
 }
