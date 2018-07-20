@@ -143,7 +143,7 @@ public class WxMiniGameService {
             Integer shelveState = item.getShelveState();
 
             //如果小游戏还未上线或者已经下架,则不展示
-            if(nowTime.intValue() < onlineTime || WX_MINI_GAME_UNSHELVE_STATE.equals(shelveState)){
+            if(nowTime.intValue() < onlineTime.intValue() || WX_MINI_GAME_UNSHELVE_STATE.equals(shelveState)){
                 iterator.remove();
             }
         }

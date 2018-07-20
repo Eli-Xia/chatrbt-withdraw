@@ -291,7 +291,6 @@ public class ChatPetMissionPoolService {
     }
 
     /**
-     * 临时:用于判断资讯任务派发是否到达最大次数
      * @param chatPetId
      * @param missionCode
      * @return
@@ -351,6 +350,11 @@ public class ChatPetMissionPoolService {
         cppm.setAdId(adId);
 
         this.save(cppm);
+    }
+
+
+    public void completeChatPetMission(Integer chatPetPersonalMissionId){
+
     }
 
 
