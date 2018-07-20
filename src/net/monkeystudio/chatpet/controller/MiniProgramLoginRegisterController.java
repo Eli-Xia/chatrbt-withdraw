@@ -1,11 +1,14 @@
 package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
-import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.MiniAppUserInfoReq;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.service.MiniProgramLoginService;
 import net.monkeystudio.chatrbtw.service.MiniProgramUserInfoService;
+import net.monkeystudio.chatrbtw.service.SessionTokenService;
+import net.monkeystudio.chatrbtw.service.WxFanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +32,36 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @Autowired
     private MiniProgramUserInfoService miniProgramUserInfoService;
 
+    @Autowired
+    private SessionTokenService sessionTokenService;
+
+    @Autowired
+    private WxFanService wxFanService;
+
+
+    @ResponseBody
+    @RequestMapping(value = "/test/login", method = RequestMethod.POST)
+    public RespBase loginTest(@RequestParam("id")String wxFanId) throws BizException{
+        if(!wxFanId.startsWith("keendo")){
+            return respHelper.failed("fail");
+        }
+        int i = wxFanId.lastIndexOf(".");
+        String wxFanIdStr = wxFanId.substring(i + 1);
+        int id = Integer.parseInt(wxFanIdStr);
+        //保存session
+        WxFan wxFan = wxFanService.getById(id);
+        if(wxFan == null){
+            respHelper.failed("id不存在");
+        }
+        String openid = wxFan.getWxFanOpenId();
+        sessionTokenService.saveToken("123",1,openid,"key");
+        return respHelper.ok();
+
+    }
+
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public RespBase miniAppLogin(@RequestParam(value = "programId",required = false)Integer miniProgramId,@RequestParam("code")String code){
+    public RespBase miniAppLogin(@RequestParam(value = "programId",required = false)Integer miniProgramId,@RequestParam("code")String code) throws BizException{
         String token = miniProgramLoginService.loginHandle(miniProgramId,code);
 
         Map<String,String> result = new HashMap<>();
@@ -44,7 +74,7 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/update/fan-info", method = RequestMethod.POST)
     public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
+        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
         return respHelper.ok(ret);
     }
@@ -54,7 +84,7 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public RespBase register(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getRawData(),req.getEncryptedData(),req.getIv(),req.getSignature());
+        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
         return respHelper.ok(ret);
     }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,7 +58,7 @@ public class ChatPetGameCenterService {
 
         List<ChatPetMiniGameResp> chatPetMiniGameRespList = new ArrayList<>();
 
-        List<WxMiniGame> miniGameInfoList = this.getMiniGameInfoList();
+        List<WxMiniGame> miniGameInfoList = wxMiniGameService.getMiniGameInfoList();
         for (WxMiniGame item : miniGameInfoList){
             ChatPetMiniGameResp chatPetMiniGameResp = new ChatPetMiniGameResp();
             BeanUtils.copyProperties(item,chatPetMiniGameResp);
@@ -154,7 +155,4 @@ public class ChatPetGameCenterService {
         return list;
     }
 
-    private List<WxMiniGame> getMiniGameInfoList(){
-        return wxMiniGameService.getWxMiniGameList();
-    }
 }
