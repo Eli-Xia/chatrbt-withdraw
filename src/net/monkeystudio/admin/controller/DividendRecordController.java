@@ -5,6 +5,7 @@ import net.monkeystudio.admin.controller.req.dividend.DividendPageReq;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.service.ChatPetTypeService;
 import net.monkeystudio.chatrbtw.service.DividendRecordService;
 import net.monkeystudio.chatrbtw.service.DividendService;
 import net.monkeystudio.chatrbtw.service.bean.dividendrecord.DividendRecordResp;
@@ -45,7 +46,11 @@ public class DividendRecordController extends BaseController {
             return respHelper.nologin();
         }
 
-        dividendService.dividend(dividend.getTotalMoney(),dividend.getChatPetTpye());
+        if(dividend.getChatPetType().intValue() != ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.intValue()){
+            return respHelper.failed("该宠物类型不支持分红");
+        }
+
+        dividendService.dividend(dividend.getTotalMoney(),dividend.getChatPetType());
         return respHelper.ok();
     }
 
