@@ -844,9 +844,7 @@ public class ChatPetService {
         //获取排行
         List<ChatPetExperinceRankItem> chatPetExperienceRank = this.getChatPetExperienceRank(chatPetId, pageSize);
         chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperienceRank);
-
-        Integer count = this.countExperienceRankChatPetAmount(chatPetId);
-        chatPetExperinceRank.setTotal(count);
+        chatPetExperinceRank.setTotal(chatPetExperienceRank.size());
 
         Integer experienceAddition = this.countByParentId(chatPetId);
         chatPetExperinceRank.setExperienceAddition(experienceAddition);
@@ -898,7 +896,16 @@ public class ChatPetService {
     }
 
     private Integer countExperienceRankChatPetAmount(Integer chatPetId){
-        return chatPetMapper.countExperienceRankList(chatPetId);
+        Integer count = chatPetMapper.countExperienceRankList(chatPetId);
+
+        ChatPet chatPet = this.getById(chatPetId);
+
+        if(chatPet.getParentId() != null){
+            count = count + 1;
+        }
+
+        return count;
+
     }
 
 
