@@ -43,6 +43,19 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
+        if(req.getHeadImg() == null){
+            respHelper.failed("小游戏头像不能为空");
+        }
+        if(req.getQrCodeImg() == null){
+            respHelper.failed("小游戏二维码不能为空");
+        }
+        if(req.getNickname() == null){
+            respHelper.failed("小游戏名称不能为空");
+        }
+        if(req.getOnlineTime() == null){
+            respHelper.failed("需要填写小游戏上线时间");
+        }
+
         AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
         BeanUtils.copyProperties(req,adminMiniGameAdd);
 
@@ -72,6 +85,19 @@ public class ChatPetGameCenterMgrController extends BaseController{
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
+        }
+
+        if(updateMiniGameReq.getHeadImg() == null){
+            respHelper.failed("小游戏头像不能为空");
+        }
+        if(updateMiniGameReq.getQrCodeImg() == null){
+            respHelper.failed("小游戏二维码不能为空");
+        }
+        if(updateMiniGameReq.getNickname() == null){
+            respHelper.failed("小游戏名称不能为空");
+        }
+        if(updateMiniGameReq.getOnlineTime() == null){
+            respHelper.failed("需要填写小游戏上线时间");
         }
 
         AdminMiniGameUpdate adminMiniGameUpdate = new AdminMiniGameUpdate();
