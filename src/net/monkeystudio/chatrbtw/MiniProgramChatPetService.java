@@ -1,10 +1,7 @@
 package net.monkeystudio.chatrbtw;
 
-import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
-import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMapper;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.ChatPetGoldItem;
@@ -14,7 +11,6 @@ import net.monkeystudio.chatrbtw.service.bean.chatpet.PetLogResp;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.Appearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearance;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -166,54 +162,6 @@ public class MiniProgramChatPetService {
         return chatPetService.save(chatPet);
     }
 
-    /**
-     * 分享卡生成孩子宠物
-     * @param fanId
-     * @param parentId
-     */
-    private void generateChatPetFromShareCard(Integer fanId,Integer parentId){
-        this.generateChatPet(fanId,ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT,parentId);
-    }
-
-    public void inviteFriendHandle(Integer wxFanId,Integer parentFanId){
-
-        ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
-        Integer parentId = parentChatPet.getId();
-
-        //获取孩子宠物,并设置父亲宠物id
-        ChatPet childChatPet = chatPetService.getByWxFanId(wxFanId);
-        Integer childParentId = childChatPet.getParentId();
-
-        //宠物已经有父亲,父亲宠物不应该再次领取奖励,应reutrn
-        if(childParentId != null){
-            return;
-        }
-        childChatPet.setParentId(parentId);
-        chatPetService.update(childChatPet);
-
-
-        //如果父亲宠物当天邀请任务已完成,return
-        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
-        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
-        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
-        chatPetPersonalMissionParam.setChatPetId(parentId);
-
-        ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
-        if(inviteMission == null){
-            return;
-        }
-
-        //父亲宠物完成邀请任务
-        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
-
-        completeMissionParam.setInviteeWxFanId(wxFanId);
-        completeMissionParam.setChatPetId(parentId);
-        completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-
-        chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
-
-    }
 
 
 }
