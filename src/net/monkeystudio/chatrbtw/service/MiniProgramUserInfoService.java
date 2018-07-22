@@ -133,8 +133,11 @@ public class MiniProgramUserInfoService {
                     //生成宠物
                     //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
                     Integer chatPetId = null;
+
                     if(parentFanId == null){
+
                         chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+
                     }else{
 
                         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
