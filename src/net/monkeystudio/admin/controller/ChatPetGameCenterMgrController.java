@@ -87,12 +87,6 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
-        if(updateMiniGameReq.getHeadImg() == null){
-            respHelper.failed("小游戏头像不能为空");
-        }
-        if(updateMiniGameReq.getQrCodeImg() == null){
-            respHelper.failed("小游戏二维码不能为空");
-        }
         if(updateMiniGameReq.getNickname() == null){
             respHelper.failed("小游戏名称不能为空");
         }
