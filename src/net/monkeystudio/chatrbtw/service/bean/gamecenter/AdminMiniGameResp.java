@@ -13,6 +13,15 @@ public class AdminMiniGameResp {
     private Integer needSign;
     private Integer shelveState;
     private Long playerNum;
+    private String nickname;
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public Integer getId() {
         return id;
