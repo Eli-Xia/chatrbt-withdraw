@@ -156,13 +156,7 @@ public class MiniProgramUserInfoService {
 
                         if(inviteMission != null){
                             //父亲宠物完成邀请任务
-                            CompleteMissionParam completeMissionParam = new CompleteMissionParam();
-
-                            completeMissionParam.setInviteeWxFanId(wxFanId);
-                            completeMissionParam.setChatPetId(parentId);
-                            completeMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-
-                            chatPetMissionPoolService.completeChatPetMission(completeMissionParam);
+                            chatPetMissionPoolService.completeChatPetMission(wxFanId,inviteMission.getId());
                         }
                     }
 

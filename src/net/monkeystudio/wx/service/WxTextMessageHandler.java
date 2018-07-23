@@ -503,7 +503,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
         }
 
         //获取给粉丝派发的资讯任务
-        ChatPetPersonalMission ongoingSearchNewMission = chatPetMissionPoolService.getOngoingMissionByMissionCodeAndChatPetId(chatPetId, ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+        ChatPetPersonalMission ongoingSearchNewMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(chatPetId,ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
         if(ongoingSearchNewMission == null){
             return;
         }

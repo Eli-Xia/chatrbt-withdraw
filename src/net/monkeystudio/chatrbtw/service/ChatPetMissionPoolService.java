@@ -98,17 +98,12 @@ public class ChatPetMissionPoolService {
                     }
 
                     if(validatedWxFan(wxFanId,wxFanOpenId)){
-                        WxFan wxFan = wxFanService.getById(wxFanId);
+                        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 
-                        CompleteMissionParam param = new CompleteMissionParam();
-
-                        ChatPet chatPet = chatPetService.getChatPetByFans(wxFan.getWxPubOriginId(), wxFan.getWxFanOpenId());
-                        param.setAdId(adId);
-                        param.setChatPetId(chatPet.getId());
-                        param.setMissionCode(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
+                        ChatPetPersonalMission searchMission = getChatPetOngoingMissionByMissionType(chatPet.getId(), ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
                         try {
-                            completeChatPetMission(param);
+                            completeChatPetMission(adId,null,searchMission.getId());
                         }catch (Exception e){
                             Log.e(e);
                         }
@@ -330,8 +325,8 @@ public class ChatPetMissionPoolService {
 
 
     /**
-     * 分享卡邀请任务专用
-     * 完成宠物任务
+     * 场景:用于完成分享卡邀请任务
+     * 功能:完成宠物任务
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
@@ -340,6 +335,26 @@ public class ChatPetMissionPoolService {
         if(chatPetPersonalMission == null) return;
 
         //update 被邀请人wxFanId
+        chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
+        this.update(chatPetPersonalMission);
+
+        this.completeChatPetMission(chatPetPersonalMissionId);
+    }
+
+    /**
+     * 场景:用于完成阅读资讯任务,邀请人任务
+     * 功能:完成宠物任务
+     * 使用方法:阅读任务时inviteeWxFanId传入null,邀请任务时adId传入null
+     * @param adId    :咨询任务广告id
+     * @param inviteeWxFanId    :被邀请人wxFanId
+     * @param chatPetPersonalMissionId  :任务记录id
+     */
+    public void completeChatPetMission(Integer adId,Integer inviteeWxFanId,Integer chatPetPersonalMissionId){
+        ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
+        if(chatPetPersonalMission == null) return;
+
+        //update
+        chatPetPersonalMission.setAdId(adId);
         chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
         this.update(chatPetPersonalMission);
 
@@ -521,21 +536,6 @@ public class ChatPetMissionPoolService {
         return this.chatPetPersonalMissionMapper.countByChatPetIdAndAdId(chatPetId,adId);
     }
 
-    /**
-     * 根据任务类型获取当前正在进行中的任务 (1条)
-     * @param missionCode  任务类型
-     * @param chatPetId    宠物id
-     * @return
-     */
-    public ChatPetPersonalMission getOngoingMissionByMissionCodeAndChatPetId(Integer chatPetId,Integer missionCode){
-        ChatPetPersonalMission param = new ChatPetPersonalMission();
-        param.setChatPetId(chatPetId);
-        param.setMissionCode(missionCode);
-        param.setCreateTime(DateUtils.getBeginDate(new Date()));
-        param.setState(MissionStateEnum.GOING_ON.getCode());
-
-        return this.getPersonalMissionByParam(param);
-    }
 
     /**
      * 查询任务池记录
@@ -617,14 +617,14 @@ public class ChatPetMissionPoolService {
 
     public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+
         Integer chatPetId = chatPet.getId();
 
         ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
 
-        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
-        completeMissionParam.setPersonalMissionId(miniGameMission.getId());
-
-        this.completeChatPetMission(completeMissionParam);
+        if(miniGameMission != null){
+            this.completeChatPetMission(miniGameMission.getId());
+        }
     }
 
     /**
@@ -676,9 +676,6 @@ public class ChatPetMissionPoolService {
 
         return record;
     }
-
-
-
 
 
 

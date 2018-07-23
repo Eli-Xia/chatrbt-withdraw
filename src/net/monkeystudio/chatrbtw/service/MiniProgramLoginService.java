@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
+import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMiniProgramHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
@@ -93,14 +94,6 @@ public class MiniProgramLoginService {
         return token;
     }
 
-    /**
-     * 获取小程序用户每天登录次数缓存key
-     * @param chatPetId
-     * @return
-     */
-    private String getFanDailyLoginCountCacheKey(Integer chatPetId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
-    }
 
     /**
      * 宠物每天第一次登录处理
@@ -136,10 +129,8 @@ public class MiniProgramLoginService {
             chatPetMissionPoolService.dispatchMission(dispatchLoginMisionParam);
 
             //登录任务完成
-            CompleteMissionParam completeLoginMissionParam = new CompleteMissionParam();
-            completeLoginMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE);
-            completeLoginMissionParam.setChatPetId(chatPetId);
-            chatPetMissionPoolService.completeChatPetMission(completeLoginMissionParam);
+            ChatPetPersonalMission loginMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE);
+            chatPetMissionPoolService.completeChatPetMission(loginMission.getId());
 
 
             //派发邀请任务
@@ -152,12 +143,12 @@ public class MiniProgramLoginService {
     }
 
     /**
-     * 获取redis sesion的key值
-     * @param token
+     * 获取小程序用户每天登录次数缓存key
+     * @param chatPetId
      * @return
      */
-    public String getSessionTokenCacheKey(String token){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppSessionToken:" + token;
+    private String getFanDailyLoginCountCacheKey(Integer chatPetId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
 
 

@@ -151,6 +151,7 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
+
         List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespList();
 
         return respHelper.ok(resps);
