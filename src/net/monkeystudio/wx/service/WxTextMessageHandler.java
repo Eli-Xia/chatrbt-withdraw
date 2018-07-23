@@ -176,13 +176,12 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
                 //完成陪聊宠每日签到任务
                 ChatPet chatPet = chatPetService.getChatPetByFans(wxPubOriginId, wxFanOpenId);
+                Integer chatPetId = chatPet.getId();
 
-                CompleteMissionParam param = new CompleteMissionParam();
-                param.setMissionCode(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE);
-                param.setChatPetId(chatPet.getId());
-
-                chatPetMissionPoolService.completeChatPetMission(param);
-
+                ChatPetPersonalMission signInMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_SIGN_IN_CODE);
+                if(signInMission != null){
+                    chatPetMissionPoolService.completeChatPetMission(signInMission.getId());
+                }
 
                 //资讯任务广告推送
                 taskExecutor.execute(new Runnable() {

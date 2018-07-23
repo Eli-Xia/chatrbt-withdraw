@@ -102,12 +102,24 @@
     reward_state = 1
   </select>
 
+  <select id="countDayExpByChatPetType" resultType="java.lang.Float">
+    SELECT IFNULL(sum(exp),0) FROM e_chat_pet_reward_item
+    WHERE
+    chat_pet_type = #{chatPetType}
+    AND
+    create_time &gt;= #{beginTime}
+    AND
+    create_time &lt;= #{endTime}
+    AND
+    reward_state = 1
+  </select>
+
   <select id="countTotalGoldByChatPetType" resultType="java.lang.Float">
     SELECT IFNULL(sum(gold_value),0) FROM e_chat_pet_reward_item
     WHERE
     chat_pet_type = #{chatPetType} AND  reward_state = 1
   </select>
-
+  
 
   <update id="updateMissionRewardState" parameterType="map" >
       update

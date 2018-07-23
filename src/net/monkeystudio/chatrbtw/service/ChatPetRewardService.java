@@ -2,6 +2,7 @@ package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
@@ -567,6 +568,20 @@ public class ChatPetRewardService{
         Date endDate = DateUtils.getEndDate(yesterday);
 
         return chatPetRewardItemMapper.countDayGoldByChatPetType(beginDate,endDate,chatPetType);
+    }
+
+
+
+    /**
+     * 根据宠物类型获取昨日经验值总产值
+     * @param chatPetType
+     * @return
+     */
+    public Float getYesterExpAmountByChatPetType(Integer chatPetType){
+        Date yesterday = CommonUtils.dateOffset(new Date(), -1);
+        Date beginDate = CommonUtils.dateStartTime(yesterday);
+        Date endDate = CommonUtils.dateEndTime(yesterday);
+        return chatPetRewardItemMapper.countDayExpByChatPetType(beginDate,endDate,chatPetType);
     }
 
     /**

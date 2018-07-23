@@ -121,16 +121,13 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             Integer secondEthnicGroupsId = parentChatPet.getSecondEthnicGroupsId();
                             Integer ethnicGroupsId = parentChatPet.getEthnicGroupsId();
                             chatPetId = chatPetService.generateChatPet(wxPubOriginId, wxFanOpenId, ethnicGroupsId, secondEthnicGroupsId ,parentId);
+                            ChatPet childChatPet = chatPetService.getById(chatPetId);
 
+                            ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(parentId, ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
-                            CompleteMissionParam param = new CompleteMissionParam();
-
-                            param.setChatPetId(parentId);
-                            param.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
-                            param.setInviteeWxFanId(wxFan.getId());
-
-                            chatPetMissionPoolService.completeChatPetMission(param);//完成宠物邀请人任务
-
+                            if(inviteMission != null){
+                                chatPetMissionPoolService.completeChatPetMission(childChatPet.getWxFanId(),inviteMission.getId());
+                            }
                         }
 
                         CustomerNewsItem customerNewsItem = chatPetService.getChatNewsItem(chatPetId);

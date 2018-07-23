@@ -21,6 +21,11 @@
     values
     (#{id,jdbcType=INTEGER}, #{loginTime,jdbcType=TIMESTAMP},#{wxFanId,jdbcType=INTEGER})
   </insert>
+  
+  <select id="countLoginNum" resultType="java.lang.Integer">
+    select COUNT(DISTINCT wx_fan_id) from e_chat_pet_login_log
+    where login_time  &gt;= #{beginTime} AND login_time &lt;= #{endTime}
+  </select>
 
 
 </mapper>

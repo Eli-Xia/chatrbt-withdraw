@@ -26,4 +26,8 @@ public interface ChatPetPersonalMissionMapper {
     Integer countDispatchMissionAmountByMissionCode(@Param("chatPetId")Integer chatPetId,@Param("missionCode")Integer missionCode,@Param("createTime")Date createTime);
 
     Long countMiniGameFinishAmount(@Param("miniGameId") Integer miniGameId,@Param("missionCode")Integer missionCode,@Param("state")Integer state);
+
+    Integer countDayPlayGamePeople(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);//根据开始结束时间查询玩游戏人数
+
+    Integer countDayPlayGameTotalAmount(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);//根据开始结束时间查询玩游戏总次数
 }

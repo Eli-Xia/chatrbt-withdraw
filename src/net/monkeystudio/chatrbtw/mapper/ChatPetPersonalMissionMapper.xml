@@ -137,4 +137,15 @@
   <select id="countMiniGameFinishAmount" resultType ="java.lang.Long">
     SELECT count(id) FROM  e_chat_pet_personal_mission WHERE mission_code = #{missionCode} AND state = #{state}
   </select>
+
+  <select id="countDayPlayGamePeople" resultType="java.lang.Integer">
+    select count(DISTINCT chat_pet_id) from e_chat_pet_personal_mission where mission_code = 5 AND state = 3
+    AND create_time &gt;= #{beginTime} AND create_time &lt;= #{endTime}
+
+  </select>
+
+  <select id="countDayPlayGameTotalAmount" resultType="java.lang.Integer">
+    select count(id) from e_chat_pet_personal_mission where mission_code = 5 AND state = 3
+    AND create_time &gt;= #{beginTime} AND create_time &lt;= #{endTime}
+  </select>
 </mapper>
