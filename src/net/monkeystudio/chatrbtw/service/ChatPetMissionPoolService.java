@@ -328,29 +328,6 @@ public class ChatPetMissionPoolService {
         return chatPetPersonalMissionMapper.insert(cppm);
     }
 
-    /**
-     * 派发资讯任务
-     * @param adId
-     * @param wxfanId
-     */
-    public void saveMissionRecordWhenPushChatPetAd(Integer adId,Integer wxfanId){
-        //获取fanopenid
-        WxFan wxfan = wxFanService.getById(wxfanId);
-        String wxFanOpenId = wxfan.getWxFanOpenId();
-        String wxPubOriginId = wxfan.getWxPubOriginId();
-
-        Integer chatPetId = chatPetService.getChatPetIdByFans(wxPubOriginId,wxFanOpenId);
-
-        ChatPetPersonalMission cppm = new ChatPetPersonalMission();
-        cppm.setState(MissionStateEnum.GOING_ON.getCode());
-        cppm.setChatPetId(chatPetId);
-        cppm.setCreateTime(new Date());
-
-        cppm.setMissionCode(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
-        cppm.setAdId(adId);
-
-        this.save(cppm);
-    }
 
     /**
      * 分享卡邀请任务专用
@@ -580,6 +557,142 @@ public class ChatPetMissionPoolService {
     }
 
 
+
+
+
+    /**
+     * 领取奖励后更新任务池记录
+     * @param itemId
+     */
+    public void updateMissionWhenReward(Integer itemId){
+        ChatPetPersonalMission cppm = this.getById(itemId);
+        cppm.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
+        cppm.setFinishTime(new Date());
+
+        this.update(cppm);
+    }
+
+
+
+
+    public ChatPetPersonalMission getById(Integer id){
+        return chatPetPersonalMissionMapper.selectByPrimaryKey(id);
+    }
+
+
+
+    public void update(ChatPetPersonalMission chatPetPersonalMission){
+        chatPetPersonalMissionMapper.updateByPrimaryKey(chatPetPersonalMission);
+    }
+
+
+    public String getCreateDailyMissionCountCacheKey(Integer chatPetId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatPetDailyMission:" + chatPetId;
+    }
+
+    /**
+     * 判断游戏任务是否已经完成
+     * @param wxFanId
+     * @param wxMiniGameId
+     * @return
+     */
+    public Boolean missionIsFinished(Integer wxFanId ,Integer wxMiniGameId){
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+        //通过fanId + gameId 找到
+        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
+        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        chatPetPersonalMissionParam.setWxMiniGameId(wxMiniGameId);
+        chatPetPersonalMissionParam.setChatPetId(chatPetId);
+
+        ChatPetPersonalMission miniGameMission = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
+        if(miniGameMission == null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+
+        ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
+
+        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
+        completeMissionParam.setPersonalMissionId(miniGameMission.getId());
+
+        this.completeChatPetMission(completeMissionParam);
+    }
+
+    /**
+     * 统计小游戏被玩次数
+     * @param miniGameId
+     * @return
+     */
+    public Long getMiniGamePlayerNum(Integer miniGameId){
+        return chatPetPersonalMissionMapper.countMiniGameFinishAmount(miniGameId,ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE,MissionStateEnum.FINISH_AND_AWARD.getCode());
+    }
+
+
+    /**
+     * 根据宠物id,任务类型获取宠物当前处于未完成(正在进行中)状态的任务记录
+     * @param chatPetId:宠物id
+     * @param missionCode:任务类型code
+     * @return:宠物任务记录
+     */
+    public ChatPetPersonalMission getChatPetOngoingMissionByMissionType(Integer chatPetId,Integer missionCode){
+        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+
+        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMissionParam.setMissionCode(missionCode);
+        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        chatPetPersonalMissionParam.setChatPetId(chatPetId);
+
+        ChatPetPersonalMission record = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
+
+        return record;
+    }
+
+    /**
+     * 使用场景:用于玩小游戏任务
+     * 功能:根据宠物id,任务类型,小程序id获取宠物当前处于未完成(正在进行中)状态的任务记录
+     * @param chatPetId:宠物id
+     * @param missionCode:任务类型code
+     * @return:宠物任务记录
+     */
+    public ChatPetPersonalMission getChatPetOngoingMissionByMissionType(Integer chatPetId,Integer missionCode,Integer miniGameId){
+        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+
+        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+        chatPetPersonalMissionParam.setMissionCode(missionCode);
+        chatPetPersonalMissionParam.setWxMiniGameId(miniGameId);
+        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+        chatPetPersonalMissionParam.setChatPetId(chatPetId);
+
+        ChatPetPersonalMission record = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
+
+        return record;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 任务墙
      * @return
@@ -693,91 +806,15 @@ public class ChatPetMissionPoolService {
     }
 
 
-    /**
-     * 领取奖励后更新任务池记录
-     * @param itemId
-     */
-    public void updateMissionWhenReward(Integer itemId){
-        ChatPetPersonalMission cppm = this.getById(itemId);
-        cppm.setState(MissionStateEnum.FINISH_AND_AWARD.getCode());
-        cppm.setFinishTime(new Date());
-
-        this.update(cppm);
-    }
 
 
 
 
-    public ChatPetPersonalMission getById(Integer id){
-        return chatPetPersonalMissionMapper.selectByPrimaryKey(id);
-    }
 
 
 
-    public void update(ChatPetPersonalMission chatPetPersonalMission){
-        chatPetPersonalMissionMapper.updateByPrimaryKey(chatPetPersonalMission);
-    }
 
 
-    public String getCreateDailyMissionCountCacheKey(Integer chatPetId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "chatPetDailyMission:" + chatPetId;
-    }
-
-    /**
-     * 判断游戏任务是否已经完成
-     * @param wxFanId
-     * @param wxMiniGameId
-     * @return
-     */
-    public Boolean missionIsFinished(Integer wxFanId ,Integer wxMiniGameId){
-        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
-        Integer chatPetId = chatPet.getId();
-        //通过fanId + gameId 找到
-        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
-        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
-        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
-        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
-        chatPetPersonalMissionParam.setWxMiniGameId(wxMiniGameId);
-        chatPetPersonalMissionParam.setChatPetId(chatPetId);
-
-        ChatPetPersonalMission miniGameMission = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
-        if(miniGameMission == null){
-            return true;
-        }else {
-            return false;
-        }
-    }
-
-    //根据指定的任务类型获取宠物当前的一条正在进行中的任务
-    //public ChatPetPersonalMission
 
 
-    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
-        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
-        Integer chatPetId = chatPet.getId();
-        //通过fanId + gameId 找到
-        ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
-        chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
-        chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE);
-        chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
-        chatPetPersonalMissionParam.setWxMiniGameId(wxMiniGameId);
-        chatPetPersonalMissionParam.setChatPetId(chatPetId);
-
-        ChatPetPersonalMission miniGameMission = this.getPersonalMissionByParam(chatPetPersonalMissionParam);
-
-        CompleteMissionParam completeMissionParam = new CompleteMissionParam();
-        completeMissionParam.setPersonalMissionId(miniGameMission.getId());
-
-        this.completeChatPetMission(completeMissionParam);
-
-    }
-
-    /**
-     * 统计小游戏被玩次数
-     * @param miniGameId
-     * @return
-     */
-    public Long getMiniGamePlayerNum(Integer miniGameId){
-        return chatPetPersonalMissionMapper.countMiniGameFinishAmount(miniGameId,ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE,MissionStateEnum.FINISH_AND_AWARD.getCode());
-    }
 }
