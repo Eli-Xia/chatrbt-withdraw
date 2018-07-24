@@ -28,8 +28,13 @@
 
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetExpFlow" >
     insert into e_chat_pet_exp_flow (id, create_time,chat_pet_id, exp_action_type,note,amount)
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{expActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR}#{amount})
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{expActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR}
+    ,IFNULL(#{amount},0))
   </insert>
+
+  <update id="update">
+    update e_chat_pet_coin_flow set amount = IFNULL(#{amount},0) where id = #{id}
+  </update>
 
   <select id="selectExpFlow" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM e_chat_pet_exp_flow WHERE chat_pet_id = #{chatPetId}

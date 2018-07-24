@@ -26,13 +26,15 @@ public class ChatPetCoinFlowService {
      * @param chatPetId     宠物id
      * @param actionType    产生流水的动作类型
      * @param note           流水信息
+     * @param amount         变化的数额
      */
-    private void createBaseFlow(Integer chatPetId,Integer actionType,String note){
+    private void createBaseFlow(Integer chatPetId,Integer actionType,String note,Float amount){
         ChatPetCoinFlow chatPetCoinFlow = new ChatPetCoinFlow();
         chatPetCoinFlow.setNote(note);
         chatPetCoinFlow.setChatPetId(chatPetId);
         chatPetCoinFlow.setCoinActionType(actionType);
         chatPetCoinFlow.setCreateTime(new Date());
+        chatPetCoinFlow.setAmount(amount);
         chatPetCoinFlowMapper.insert(chatPetCoinFlow);
     }
 
@@ -41,7 +43,7 @@ public class ChatPetCoinFlowService {
      */
     public void auctionFlow(Integer chaPetId,Float coin){
         String note = "参与竞拍,猫饼-" + ArithmeticUtils.keep2DecimalPlace(coin);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.JOIN_AUCTION,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.JOIN_AUCTION,note,-coin);
     }
 
     /**
@@ -50,7 +52,7 @@ public class ChatPetCoinFlowService {
     public void auctionFailFlow(Integer chaPetId,Float coin){
         //String note = "竞拍未中标,退还猫饼+" + coin;
         String note = "竞拍未中标";
-        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.FAIL_AUCTION,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.FAIL_AUCTION,note,null);
     }
 
     /**
@@ -58,7 +60,7 @@ public class ChatPetCoinFlowService {
      */
     public void dailyRewardFlow(Integer chaPetId,Float coin){
         String note = "日常领取,猫饼+" + ArithmeticUtils.keep2DecimalPlace(coin);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note,coin);
     }
 
     public List<ChatPetCoinFlowResp> getChatPetCoinFlowList(Integer chatPetId){

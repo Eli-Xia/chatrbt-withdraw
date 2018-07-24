@@ -13,4 +13,8 @@ public interface ChatPetCoinFlowMapper {
     ChatPetCoinFlow selectByPrimaryKey(Integer id);
 
     List<ChatPetCoinFlow> selectCoinFlow(@Param("chatPetId")Integer chatPetId,@Param("startIndex")Integer startIndex,@Param("pageSize")Integer pageSize);
+
+    int update(Float amount,Integer id);
+
+    List<ChatPetCoinFlow> selectAll();
 }

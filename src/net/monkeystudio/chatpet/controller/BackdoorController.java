@@ -1,4 +1,4 @@
-/*
+
 package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-*/
+
 /**
  * @author xiaxin
- *//*
+ */
 
 @Controller
 @RequestMapping(value = "/backdoor")
@@ -37,31 +37,59 @@ public class BackdoorController {
     @Autowired
     private ChatPetMapper chatPetMapper;
 
-    */
-/**
-     *
+
+    /**
      * @param request
      * @param response
      * @return
-     *//*
-
+     */
     @ResponseBody
-    @RequestMapping(value = "/revise-data", method = RequestMethod.GET)
-    public RespBase getChatPetInfo(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/revise-coin", method = RequestMethod.GET)
+    public RespBase reviseCoin(HttpServletRequest request, HttpServletResponse response){
+        /*
+        1,获取之前的所有数据
+        * */
 
-        List<ChatPet> chatPets = chatPetMapper.selectAll();
-        for(ChatPet chatPet: chatPets){
-            if(chatPet.getWxPubOriginId() != null){
-                String wxPubOriginId = chatPet.getWxPubOriginId();
-                String wxFanOpenId = chatPet.getWxFanOpenId();
-
-                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
-                Integer wxFanId = wxFan.getId();
-                Integer chatPetId = chatPet.getId();
-                chatPetMapper.updateWxFanId(chatPetId,wxFanId);
-            }
-        }
         return respHelper.ok();
     }
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/revise-exp", method = RequestMethod.GET)
+    public RespBase reviseExp(HttpServletRequest request, HttpServletResponse response){
+        /*
+        1,获取之前的所有数据
+        * */
+
+        return respHelper.ok();
+    }
+
+    /**
+     * @param request
+     * @param response
+     * @return
+     */
+//    @ResponseBody
+//    @RequestMapping(value = "/revise-data", method = RequestMethod.GET)
+//    public RespBase getChatPetInfo(HttpServletRequest request, HttpServletResponse response){
+//
+//        List<ChatPet> chatPets = chatPetMapper.selectAll();
+//        for(ChatPet chatPet: chatPets){
+//            if(chatPet.getWxPubOriginId() != null){
+//                String wxPubOriginId = chatPet.getWxPubOriginId();
+//                String wxFanOpenId = chatPet.getWxFanOpenId();
+//
+//                WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+//                Integer wxFanId = wxFan.getId();
+//                Integer chatPetId = chatPet.getId();
+//                chatPetMapper.updateWxFanId(chatPetId,wxFanId);
+//            }
+//        }
+//        return respHelper.ok();
+//    }
+
 }
-*/

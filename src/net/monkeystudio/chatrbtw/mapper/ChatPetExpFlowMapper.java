@@ -14,5 +14,6 @@ public interface ChatPetExpFlowMapper {
 
     List<ChatPetExpFlow> selectExpFlow(@Param("chatPetId")Integer chatPetId, @Param("startIndex")Integer startIndex, @Param("pageSize")Integer pageSize);
 
+    int update(Float amount,Integer id);
 
 }
