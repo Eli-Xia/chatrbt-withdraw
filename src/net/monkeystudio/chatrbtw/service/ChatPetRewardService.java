@@ -529,7 +529,7 @@ public class ChatPetRewardService{
      * 给指定宠物生成等级奖励
      * @param chatPetId
      */
-    public void generateLevelReward(Integer chatPetId){
+    private void generateLevelReward(Integer chatPetId){
         Float levelCoin = this.calculateLevelCoin(chatPetId);
 
         //定时等级奖励
