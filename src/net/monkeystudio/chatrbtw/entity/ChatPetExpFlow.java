@@ -12,6 +12,15 @@ public class ChatPetExpFlow {
     private Date createTime;
     private String note;//流水说明
     private Integer expActionType;//经验值变化类型 什么原因导致经验值变化
+    private Float amount ;//此次流水经验值改变数额
+
+    public Float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
 
 
     public Integer getId() {

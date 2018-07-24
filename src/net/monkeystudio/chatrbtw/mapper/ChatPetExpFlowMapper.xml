@@ -6,12 +6,13 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
     <result column="exp_action_type" property="expActionType" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="REAL" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.ChatPetExpFlow" extends="BaseResultMap" >
     <result column="note" property="note" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, chat_pet_id, exp_action_type
+    id, create_time, chat_pet_id, exp_action_type,amount
   </sql>
   <sql id="Blob_Column_List" >
     note
@@ -26,8 +27,8 @@
   </select>
 
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetExpFlow" >
-    insert into e_chat_pet_exp_flow (id, create_time,chat_pet_id, exp_action_type,note)
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{expActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR})
+    insert into e_chat_pet_exp_flow (id, create_time,chat_pet_id, exp_action_type,note,amount)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{expActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR}#{amount})
   </insert>
 
   <select id="selectExpFlow" resultMap="BaseResultMap">

@@ -12,6 +12,15 @@ public class ChatPetCoinFlow {
     private Integer chatPetId;
     private String note;
     private Integer coinActionType;//猫饼变化类型 什么原因导致猫饼数量变化
+    private Float amount ;//此次流水猫饼改变数额
+
+    public Float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
 
     public Integer getCoinActionType() {
         return coinActionType;
