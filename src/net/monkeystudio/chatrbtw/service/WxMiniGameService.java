@@ -75,23 +75,27 @@ public class WxMiniGameService {
     }
 
     public void update(AdminMiniGameUpdate adminMiniGameUpdate){
+        WxMiniGame wxMiniGameById = this.getById(adminMiniGameUpdate.getId());
+
+        BeanUtils.copyProperties(adminMiniGameUpdate,wxMiniGameById);
+
         MultipartFile headImg = adminMiniGameUpdate.getHeadImg();
         MultipartFile qrCodeImg = adminMiniGameUpdate.getQrCodeImg();
 
-        String headImgFileName = headImg.getOriginalFilename();
-        String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
+        if(headImg != null){
+            String headImgFileName = headImg.getOriginalFilename();
+            String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
+            wxMiniGameById.setHeadImgUrl(headImgUploadUrl);
 
-        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
-        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+        }
+        if(qrCodeImg != null){
+            String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
+            String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+            wxMiniGameById.setQrCodeImgUrl(qrCodeImgUploadUrl);
 
-        WxMiniGame wxMiniGame = new WxMiniGame();
+        }
 
-        wxMiniGame.setHeadImgUrl(headImgUploadUrl);
-        wxMiniGame.setQrCodeImgUrl(qrCodeImgUploadUrl);
-
-        BeanUtils.copyProperties(adminMiniGameUpdate,wxMiniGame);
-
-        wxMiniGameMapper.updateByPrimaryKey(wxMiniGame);
+        wxMiniGameMapper.updateByPrimaryKey(wxMiniGameById);
     }
 
     public WxMiniGame getById(Integer miniGameId){
