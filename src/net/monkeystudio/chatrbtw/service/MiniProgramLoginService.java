@@ -60,15 +60,16 @@ public class MiniProgramLoginService {
         if(miniProgramId == null){
             miniProgramId = 1;
         }
-        Log.d(" ================ miniProgram login =============");
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId,jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
+        Log.i("========== mini login openid = {?} ============",openId);
 
         String sessionKey = loginVerifyInfo.getSessionKey();
-        Log.d("=========== mini login sessionKey = {?}===========",sessionKey);
+        Log.i("=========== mini login sessionKey = {?}===========",sessionKey);
 
         String token = CommonUtils.randomUUID();
+        Log.i("=========== mini login generate token = {?}===========",token);
 
         sessionTokenService.saveToken(token,miniProgramId,openId,sessionKey);
 
