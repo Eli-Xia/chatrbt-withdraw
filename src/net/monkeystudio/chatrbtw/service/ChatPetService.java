@@ -507,12 +507,12 @@ public class ChatPetService {
         return chatPetMapper.selectByParam(param);
     }
 
-    public ChatPet getChatPetByMiniAppFans(String wxFanOpenId,Integer chatPetType){
+    /*public ChatPet getChatPetByMiniAppFans(String wxFanOpenId,Integer chatPetType){
         ChatPet param = new ChatPet();
         param.setWxFanOpenId(wxFanOpenId);
         param.setChatPetType(chatPetType);
         return chatPetMapper.selectByParam(param);
-    }
+    }*/
 
     public Integer getChatPetIdByFans(String wxPubOriginId,String wxFanOpenId){
         Integer ret = null;
@@ -800,11 +800,11 @@ public class ChatPetService {
 
     /**
      * 获得宠物的经验
-     * @param chatPetid
+     * @param chatPetId
      * @return
      */
-    public Float getChatPetExperience(Integer chatPetid ){
-        ChatPet chatPet = this.getById(chatPetid);
+    public Float getChatPetExperience(Integer chatPetId ){
+        ChatPet chatPet = this.getById(chatPetId);
 
         return chatPet.getExperience();
     }
@@ -816,12 +816,12 @@ public class ChatPetService {
      * @param pageSize
      * @return
      */
-    private List<ChatPet> getListByExperience(Integer secondEthnicGroupsId ,Integer page,Integer pageSize){
+    /*private List<ChatPet> getListByExperience(Integer secondEthnicGroupsId ,Integer page,Integer pageSize){
 
         Integer startIndex = (page - 1) * pageSize;
 
         return chatPetMapper.selectListByExperience(secondEthnicGroupsId,startIndex,pageSize);
-    }
+    }*/
 
     /**
      * 通过微信粉丝id获取二级族群排行
@@ -844,7 +844,12 @@ public class ChatPetService {
         //获取排行
         List<ChatPetExperinceRankItem> chatPetExperienceRank = this.getChatPetExperienceRank(chatPetId, pageSize);
         chatPetExperinceRank.setChatPetExperinceRankItemList(chatPetExperienceRank);
-        chatPetExperinceRank.setTotal(chatPetExperienceRank.size());
+
+
+        //族群总人数
+        Integer amount = countExperienceRankChatPetAmount(chatPetId);
+        chatPetExperinceRank.setTotal(amount);
+
 
         Integer experienceAddition = this.countByParentId(chatPetId);
         chatPetExperinceRank.setExperienceAddition(experienceAddition);
@@ -900,6 +905,7 @@ public class ChatPetService {
 
         ChatPet chatPet = this.getById(chatPetId);
 
+        //如果宠物有父亲，则总数加1
         if(chatPet.getParentId() != null){
             count = count + 1;
         }
@@ -914,18 +920,18 @@ public class ChatPetService {
      * @param chatPetId
      * @return
      */
-    public Integer getChatPetLevel(Integer chatPetId){
+    /*public Integer getChatPetLevel(Integer chatPetId){
         ChatPet chatPet = this.getById(chatPetId);
         Float experience = chatPet.getExperience();
         Integer level = chatPetLevelService.calculateLevel(experience);
         return level;
-    }
+    }*/
 
 
 
-    private Integer countSecondEthnicGroupsById(Integer secondEthnicGroupsId){
+    /*private Integer countSecondEthnicGroupsById(Integer secondEthnicGroupsId){
         return chatPetMapper.countSecondEthnicGroupsById(secondEthnicGroupsId);
-    }
+    }*/
 
     /**
      * 获取创世海报url

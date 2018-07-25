@@ -1,11 +1,13 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetExpFlowMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetExpFlowResp;
 import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetExpFlowResp;
+import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetExpFlowVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,9 @@ import java.util.List;
 public class ChatPetExpFlowService {
     @Autowired
     private ChatPetExpFlowMapper chatPetExpFlowMapper;
+
+    @Autowired
+    private ChatPetService chatPetService;
 
     /**
      * 生成流水基础方法
@@ -82,6 +87,21 @@ public class ChatPetExpFlowService {
             resps.add(resp);
         }
         return resps;
+    }
+
+    public ChatPetExpFlowVO getExpFlowVO(Integer wxFanId){
+        ChatPetExpFlowVO vo = new ChatPetExpFlowVO();
+
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+
+        Float experience = chatPet.getExperience();
+        vo.setExperience(experience);
+
+        List<ChatPetExpFlowResp> chatPetExpFlowList = this.getChatPetExpFlowList(chatPetId);
+        vo.setFlows(chatPetExpFlowList);
+
+        return vo;
     }
 
 }
