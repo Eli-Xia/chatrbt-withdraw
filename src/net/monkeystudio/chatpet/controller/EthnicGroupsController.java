@@ -46,7 +46,7 @@ public class EthnicGroupsController extends ChatPetBaseController{
             return respHelper.failed("参数有误");
         }
 
-        if (pageSize > 10){
+        if (pageSize > 100){
             pageSize = 10;
         }
 

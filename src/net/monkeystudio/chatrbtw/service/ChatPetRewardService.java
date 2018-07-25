@@ -284,7 +284,7 @@ public class ChatPetRewardService{
 
         BigDecimal ethnicGroupsAdditionRadio = ethnicGroupsService.getEthnicGroupsAdditionRadio(chatPetId);
 
-        if(chatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+        if(ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
 
             item.setExperience(this.getSearchNewMissionRandomExperience());//1.5 ~ 2.5
             item.setGoldValue(this.getSearchNewMissionRandomCoin());//0.38 ~ 0.63
