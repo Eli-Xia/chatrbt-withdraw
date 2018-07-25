@@ -1,15 +1,16 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetCoinFlowMapper;
 import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetCoinFlowResp;
+import net.monkeystudio.chatrbtw.service.bean.chatpetflow.ChatPetCoinFlowVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,6 +22,8 @@ public class ChatPetCoinFlowService {
     @Autowired
     private ChatPetCoinFlowMapper chatPetCoinFlowMapper;
 
+    @Autowired
+    private ChatPetService chatPetService;
     /**
      * 生成流水基础方法
      * @param chatPetId     宠物id
@@ -72,5 +75,21 @@ public class ChatPetCoinFlowService {
             resps.add(resp);
         }
         return resps;
+    }
+
+    public ChatPetCoinFlowVO getCoinFlowVO(Integer wxFanId){
+
+        ChatPetCoinFlowVO vo = new ChatPetCoinFlowVO();
+
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+
+        Float coin = chatPet.getCoin();
+        vo.setCoin(coin);
+
+        List<ChatPetCoinFlowResp> chatPetCoinFlowList = this.getChatPetCoinFlowList(chatPetId);
+        vo.setFlows(chatPetCoinFlowList);
+
+        return vo;
     }
 }

@@ -90,7 +90,7 @@ public class ChatPetLogService {
      * @param chatPetId 宠物id
      * @return
      */
-    public List<PetLogResp> getDailyPetLogList(Integer chatPetId){
+    /*public List<PetLogResp> getDailyPetLogList(Integer chatPetId){
         Date date = new Date();
         Date beginDate = DateUtils.getBeginDate(date);
         Date endDate = DateUtils.getEndDate(date);
@@ -108,23 +108,10 @@ public class ChatPetLogService {
         }
 
         return resps;
-    }
+    }*/
 
-    public Map<String,List<PetLog>> getDailyPetLogList2(Integer chatPetId){
-        List<PetLog> petLogs = petLogMapper.selectPetLog(0, 100, chatPetId);
-        Map<String,List<PetLog>> dataMap = new HashMap<>();
-        for (PetLog item:petLogs){
-            String dateStr = CommonUtils.dateFormat(item.getCreateTime(), "MM-dd");
-            if(dataMap.containsKey(dateStr)){
-                List<PetLog> dateLogs = dataMap.get(dateStr);
-                dateLogs.add(item);
-            }else{
-                dataMap.put(dateStr,Collections.EMPTY_LIST);
-            }
-        }
-        return dataMap;
-    }
-    public List<PetLogResp> getDailyPetLogList3(Integer chatPetId){
+
+    public List<PetLogResp> getDailyPetLogList(Integer chatPetId){
         List<PetLog> petLogs = petLogMapper.selectPetLog(0, 100, chatPetId);
         List<PetLogResp> resps = new ArrayList<>();
         for(int i = 0; i < petLogs.size(); i++){

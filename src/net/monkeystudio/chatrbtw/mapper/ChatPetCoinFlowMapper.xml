@@ -5,7 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
-    <result column="coin_action_type" property="expActionType" jdbcType="INTEGER" />
+    <result column="coin_action_type" property="coinActionType" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow" extends="BaseResultMap" >
     <result column="note" property="note" jdbcType="LONGVARCHAR" />
