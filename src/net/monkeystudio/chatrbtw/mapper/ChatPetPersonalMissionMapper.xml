@@ -135,6 +135,6 @@
   </select>
 
   <select id="countMiniGameFinishAmount" resultType ="java.lang.Long">
-    SELECT count(id) FROM  e_chat_pet_personal_mission WHERE mission_code = #{missionCode} AND state = #{state}
+    SELECT count(id) FROM  e_chat_pet_personal_mission WHERE mission_code = #{missionCode} AND state = #{state} AND wx_mini_game_id = #{miniGameId}
   </select>
 </mapper>
