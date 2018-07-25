@@ -4,6 +4,8 @@ import net.monkeystudio.admin.controller.req.minigame.AddMiniGameReq;
 import net.monkeystudio.admin.controller.req.minigame.UpdateMiniGameReq;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.utils.CommonUtils;
+import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.service.ChatPetGameCenterService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,6 +58,9 @@ public class ChatPetGameCenterMgrController extends BaseController{
         if(req.getOnlineTime() == null){
             respHelper.failed("需要填写小游戏上线时间");
         }
+        if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
+            respHelper.failed("上线时间不可为设置当天,至少明天");
+        }
 
         AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
         BeanUtils.copyProperties(req,adminMiniGameAdd);
@@ -87,12 +93,6 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
-        if(updateMiniGameReq.getHeadImg() == null){
-            respHelper.failed("小游戏头像不能为空");
-        }
-        if(updateMiniGameReq.getQrCodeImg() == null){
-            respHelper.failed("小游戏二维码不能为空");
-        }
         if(updateMiniGameReq.getNickname() == null){
             respHelper.failed("小游戏名称不能为空");
         }

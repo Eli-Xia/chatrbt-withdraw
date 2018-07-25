@@ -4,6 +4,7 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatpet.controller.req.MoreLogReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
@@ -32,6 +33,15 @@ public class ChatPetController extends ChatPetBaseController{
     @Autowired
     private RespHelper respHelper;
 
+    @ResponseBody
+    @RequestMapping(value = "/more-log", method = RequestMethod.POST)
+    public RespBase getMoreLog(@RequestBody MoreLogReq moreLogReq){
+        Integer fanId = getUserId();
+
+        List<PetLogResp> list = chatPetService.getChatPetLogAfterMore(fanId, moreLogReq.getPageSize());
+
+        return respHelper.ok(list);
+    }
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)

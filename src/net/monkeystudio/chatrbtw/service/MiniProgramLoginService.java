@@ -5,13 +5,13 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMiniProgramHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,14 +63,16 @@ public class MiniProgramLoginService {
         if(miniProgramId == null){
             miniProgramId = 1;
         }
-
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId,jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
+        Log.i("========== mini login openid = {?} ============",openId);
 
         String sessionKey = loginVerifyInfo.getSessionKey();
+        Log.i("=========== mini login sessionKey = {?}===========",sessionKey);
 
         String token = CommonUtils.randomUUID();
+        Log.i("=========== mini login generate token = {?}===========",token);
 
         sessionTokenService.saveToken(token,miniProgramId,openId,sessionKey);
 

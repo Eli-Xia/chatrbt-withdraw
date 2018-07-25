@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.mapper.WxMiniGameMapper;
@@ -42,8 +43,12 @@ public class WxMiniGameService {
         return wxMiniGameMapper.selectAll();
     }
 
+    /**
+     * 获取已上线,上架小游戏id list
+     * @return
+     */
     public List<Integer> getWxMiniGameIds(){
-        List<WxMiniGame> wxMiniGameList = this.getWxMiniGameList();
+        List<WxMiniGame> wxMiniGameList = this.getMiniGameInfoList();
         List<Integer> ids = wxMiniGameList.stream().map(obj -> obj.getId()).collect(Collectors.toList());
         return ids;
     }
@@ -75,23 +80,27 @@ public class WxMiniGameService {
     }
 
     public void update(AdminMiniGameUpdate adminMiniGameUpdate){
+        WxMiniGame wxMiniGameById = this.getById(adminMiniGameUpdate.getId());
+
+        BeanUtils.copyProperties(adminMiniGameUpdate,wxMiniGameById);
+
         MultipartFile headImg = adminMiniGameUpdate.getHeadImg();
         MultipartFile qrCodeImg = adminMiniGameUpdate.getQrCodeImg();
 
-        String headImgFileName = headImg.getOriginalFilename();
-        String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
+        if(headImg != null){
+            String headImgFileName = headImg.getOriginalFilename();
+            String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
+            wxMiniGameById.setHeadImgUrl(headImgUploadUrl);
 
-        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
-        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+        }
+        if(qrCodeImg != null){
+            String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
+            String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+            wxMiniGameById.setQrCodeImgUrl(qrCodeImgUploadUrl);
 
-        WxMiniGame wxMiniGame = new WxMiniGame();
+        }
 
-        wxMiniGame.setHeadImgUrl(headImgUploadUrl);
-        wxMiniGame.setQrCodeImgUrl(qrCodeImgUploadUrl);
-
-        BeanUtils.copyProperties(adminMiniGameUpdate,wxMiniGame);
-
-        wxMiniGameMapper.updateByPrimaryKey(wxMiniGame);
+        wxMiniGameMapper.updateByPrimaryKey(wxMiniGameById);
     }
 
     public WxMiniGame getById(Integer miniGameId){
@@ -149,5 +158,28 @@ public class WxMiniGameService {
         }
         return wxMiniGameList;
 
+    }
+
+    /**
+     * 判断上线时间是否正确,
+     * @param onlineTime
+     * @return
+     */
+    public Boolean isOnlineTimeValid(Date onlineTime){
+        Boolean ret = false;
+
+        //上线当天0点
+        Date online = DateUtils.getBeginDate(onlineTime);
+        long onlineTimeStamp = online.getTime();
+
+        //设置当天23点59分59秒
+        Date todayEndTime = DateUtils.getEndDate(new Date());
+        long todayTimeStamp = todayEndTime.getTime();
+
+        if(onlineTimeStamp > todayTimeStamp){
+            ret = true;
+        }
+
+        return ret;
     }
 }
