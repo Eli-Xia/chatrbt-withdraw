@@ -1154,6 +1154,21 @@ public class ChatPetService {
         return myInfo;
     }
 
+    /**
+     * 动态"更多",返回指定条数记录
+     * @param pageSize  :返回条数
+     * @param wxFanId   :粉丝id
+     * @return
+     */
+    public List<PetLogResp> getChatPetLogAfterMore(Integer pageSize,Integer wxFanId){
+        ChatPet chatPet = this.getByWxFanId(wxFanId);
+        Integer chatPetId = chatPet.getId();
+
+        List<PetLogResp> moreLogList = chatPetLogService.getMoreLogList(chatPetId, pageSize);
+
+        return moreLogList;
+    }
+
     public void update(ChatPet chatPet){
         chatPetMapper.update(chatPet);
     }
