@@ -136,13 +136,12 @@ public class MiniProgramChatPetService {
 
 
     /**
-     * 小程序为用户生成一只宠物
+     * 生成一只招财猫宠物
      * @param wxFanId
      * @param chatPetType
      * @param parentId
      * @return
      */
-    @Transactional
     public Integer generateChatPet(Integer wxFanId,Integer chatPetType,Integer parentId){
         ChatPet chatPet = new ChatPet();
         String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);
@@ -157,6 +156,7 @@ public class MiniProgramChatPetService {
         chatPet.setMiniProgramId(miniProgramId);
 
         chatPet.setCreateTime(new Date());
+
         chatPet.setParentId(parentId);
 
         chatPet.setChatPetType(chatPetType);
