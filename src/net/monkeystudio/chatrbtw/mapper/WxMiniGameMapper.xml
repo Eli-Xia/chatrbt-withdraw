@@ -66,7 +66,7 @@
   </update>
 
   <select id="selectAll" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game
+    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY create_time DESC
   </select>
     
     <delete id="delete" >
