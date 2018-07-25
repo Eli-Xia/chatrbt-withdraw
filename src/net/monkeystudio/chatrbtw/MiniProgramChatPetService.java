@@ -13,6 +13,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.LuckyCatAppearan
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -141,6 +142,7 @@ public class MiniProgramChatPetService {
      * @param parentId
      * @return
      */
+    @Transactional
     public Integer generateChatPet(Integer wxFanId,Integer chatPetType,Integer parentId){
         ChatPet chatPet = new ChatPet();
         String appearanceCode = chatPetAppearenceService.getAppearanceCodeFromPool(chatPetType);

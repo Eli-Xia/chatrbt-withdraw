@@ -59,6 +59,7 @@ public class MiniProgramLoginService {
      * @param jsCode
      * @return
      */
+    @Transactional
     public String loginHandle(Integer miniProgramId,String jsCode) throws BizException{
         if(miniProgramId == null){
             miniProgramId = 1;

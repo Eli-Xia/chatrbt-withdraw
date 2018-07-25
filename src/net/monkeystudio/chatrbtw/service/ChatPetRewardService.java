@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.AppConstants;
+import net.monkeystudio.chatrbtw.annotation.chatpet.ChatPetType;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.mapper.ChatPetRewardItemMapper;
 import net.monkeystudio.chatrbtw.mapper.RMiniProgramProductMapper;
@@ -659,12 +660,23 @@ public class ChatPetRewardService{
         return chatPetRewardItemMapper.selectByMissionItemId(missionId);
     }
 
-    /*public static void main(String[] args) {
-        ChatPetRewardService chatPetRewardService = new ChatPetRewardService();
+    /**
+     * 新注册用户生成0.01的金币奖励
+     * @param chatPetId
+     */
+    public void generateRegisterReward(Integer chatPetId){
+        ChatPetRewardItem registerReward = new ChatPetRewardItem();
 
-        Float experience = chatPetRewardService.getPlayMiniGameRandomExperience();
-        System.out.println(experience);
-    }*/
+        registerReward.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+        registerReward.setGoldValue(0.01F);
+        registerReward.setChatPetId(chatPetId);
+        registerReward.setRewardState(NOT_AWARD);
+        registerReward.setCreateTime(new Date());
+
+        this.save(registerReward);
+
+    }
+
 
 
 }

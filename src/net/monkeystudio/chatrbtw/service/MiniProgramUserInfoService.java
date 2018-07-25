@@ -17,6 +17,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -41,6 +42,9 @@ public class MiniProgramUserInfoService {
     private WxFanService wxFanService;
 
     @Autowired
+    private ChatPetRewardService chatPetRewardService;
+
+    @Autowired
     private MiniProgramChatPetService miniProgramChatPetService;
 
     @Autowired
@@ -48,6 +52,9 @@ public class MiniProgramUserInfoService {
 
     @Autowired
     private SessionTokenService sessionTokenService;
+
+    @Autowired
+    private ChatPetCoinFlowService chatPetCoinFlowService;
 
     @Autowired
     private ChatPetService chatPetService;
@@ -65,6 +72,7 @@ public class MiniProgramUserInfoService {
      * @param iv
      * @throws Exception
      */
+    @Transactional
     public Map getUserInfoAndRegister(Integer parentFanId,String encryptedData,String iv) throws Exception{
         Log.i("================== encryptedData = {?} , iv = {?} =================",encryptedData,iv);
 
@@ -159,6 +167,12 @@ public class MiniProgramUserInfoService {
                             chatPetMissionPoolService.completeChatPetMission(wxFanId,inviteMission.getId());
                         }
                     }
+
+                    //新注册用户生成0.01猫币奖励
+                    chatPetRewardService.generateRegisterReward(chatPetId);
+
+                    //猫饼记录
+                    chatPetCoinFlowService.registerRewardFlow(chatPetId);
 
                     //第一次登录任务数据准备
                     miniProgramLoginService.dailyFirstLoginHandle(chatPetId);

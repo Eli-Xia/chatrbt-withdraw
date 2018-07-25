@@ -63,6 +63,15 @@ public class ChatPetCoinFlowService {
         this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note,coin);
     }
 
+    /**
+     * 注册奖励
+     * @param chatPetId
+     */
+    public void registerRewardFlow(Integer chatPetId){
+        String note = "日常领取,猫饼+" + 0.01;
+        this.createBaseFlow(chatPetId,FlowActionTypeService.CoinConsts.REGISTER_REWARD,note,0.01F);
+    }
+
     public List<ChatPetCoinFlowResp> getChatPetCoinFlowList(Integer chatPetId){
         List<ChatPetCoinFlow> list = this.chatPetCoinFlowMapper.selectCoinFlow(chatPetId, 0, 100);
         List<ChatPetCoinFlowResp> resps = new ArrayList<>();
