@@ -521,6 +521,15 @@ public class ChatPetRewardService{
             return ;
         }
 
+        this.generateLevelReward(chatPetId);
+    }
+
+
+    /**
+     * 给指定宠物生成等级奖励
+     * @param chatPetId
+     */
+    private void generateLevelReward(Integer chatPetId){
         Float levelCoin = this.calculateLevelCoin(chatPetId);
 
         //定时等级奖励
@@ -536,6 +545,7 @@ public class ChatPetRewardService{
 
         this.save(levelReward);
     }
+
 
     private Float calculateLevelCoin(Integer chatPetId){
 
