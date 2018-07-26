@@ -44,6 +44,14 @@ public class ChatPetCoinFlowService {
     /**
      * 参与竞拍流水,猫饼-XX
      */
+    public void auctionSuccessFlow(Integer chaPetId,Float coin){
+        String note = "恭喜竞拍中标,消费猫饼-" + ArithmeticUtils.keep2DecimalPlace(coin);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.SUCCESS_AUCTION,note,-coin);
+    }
+
+    /**
+     * 竞拍中标,猫饼-XX
+     */
     public void auctionFlow(Integer chaPetId,Float coin){
         String note = "参与竞拍,猫饼-" + ArithmeticUtils.keep2DecimalPlace(coin);
         this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.JOIN_AUCTION,note,-coin);

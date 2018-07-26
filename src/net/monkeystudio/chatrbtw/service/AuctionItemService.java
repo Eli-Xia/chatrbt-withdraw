@@ -331,6 +331,9 @@ public class AuctionItemService {
                 param.setChatPetId(chatPetId);
                 chatPetLogService.saveChatPetDynamic(param);
 
+                //竞拍中标流水
+                chatPetCoinFlowService.auctionSuccessFlow(chatPetId,priceFloat);
+
                 //把中标item从List中移除
                 iter.remove();
 
@@ -348,7 +351,7 @@ public class AuctionItemService {
         }
 
         //竞标失败
-        failAuctionFlowHandle(maxPriceAuctionItemList);
+        //failAuctionFlowHandle(maxPriceAuctionItemList);
     }
 
 
