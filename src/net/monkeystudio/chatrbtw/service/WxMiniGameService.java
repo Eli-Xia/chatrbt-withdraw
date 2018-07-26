@@ -1,6 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.mapper.WxMiniGameMapper;
@@ -38,6 +37,9 @@ public class WxMiniGameService {
 
     private final static Integer WX_MINI_GAME_SHELVE_STATE = 1;//小游戏上架状态
     private final static Integer WX_MINI_GAME_UNSHELVE_STATE = 0;//小游戏下架状态
+
+    public final static Integer WX_MINI_GAME_NO_SIGN = 0;//小游戏没有new
+    public final static Integer WX_MINI_GAME_NEED_SIGN = 1;//小游戏有new
 
     public List<WxMiniGame> getWxMiniGameList(){
         return wxMiniGameMapper.selectAll();
