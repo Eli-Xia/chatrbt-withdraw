@@ -1,15 +1,10 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.redis.RedisCacheTemplate;
-import net.monkeystudio.base.service.TaskExecutor;
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.ChatPetMission;
-import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.ChatPetMissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
