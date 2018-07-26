@@ -331,11 +331,24 @@ public class ChatPetRewardService{
         }
 
         if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
+            ChatPetPersonalMission miniGameMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+            Integer miniGameId = miniGameMission.getWxMiniGameId();
 
-            Float playMiniGameRandomExperience = this.getPlayMiniGameRandomExperience();
+            WxMiniGame miniGame = wxMiniGameService.getById(miniGameId);
+            Integer needSign = miniGame.getNeedSign();
+
+            Float playMiniGameExperience = 0F;
+
+            if(WxMiniGameService.WX_MINI_GAME_NEED_SIGN.equals(needSign)){
+                playMiniGameExperience = this.getPlayNewMiniGameExperience();
+            }
+
+            if(WxMiniGameService.WX_MINI_GAME_NO_SIGN.equals(needSign)){
+                playMiniGameExperience = this.getPlayOldMiniGameExperience();
+            }
 
             //族群加成之后经验值
-            BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(playMiniGameRandomExperience));
+            BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(playMiniGameExperience));
             item.setExperience(bd.floatValue());
             item.setGoldValue(0F);
 
@@ -373,13 +386,22 @@ public class ChatPetRewardService{
     }
 
     /**
-     * 获取小程序经验奖励
-     * 1.0 ~ 2.0
+     * 获取NEW小游戏经验值
+     * 1.0 ~ 2.0随机
      * @return
      */
-    private Float getPlayMiniGameRandomExperience(){
+    private Float getPlayNewMiniGameExperience(){
         Random random = new Random();
         Float f = ( random.nextInt(100) + 100 ) / 100F;
+        return f;
+    }
+
+    /**
+     * 获取没有NEW小游戏经验值
+     * @return
+     */
+    private Float getPlayOldMiniGameExperience(){
+        Float f = 0.2F;
         return f;
     }
 
