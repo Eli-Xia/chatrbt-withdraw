@@ -69,6 +69,9 @@ public class ChatPetRewardService{
     @Autowired
     private ChatPetCoinFlowService chatPetCoinFlowService;
 
+    @Autowired
+    private WxMiniGameService wxMiniGameService;
+
 
     public static final Integer NOT_AWARD = 0;//未领取
     public static final Integer HAVE_AWARD = 1;//已经领取
@@ -328,10 +331,23 @@ public class ChatPetRewardService{
 
         if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
 
-            Float playMiniGameRandomExperience = this.getPlayMiniGameRandomExperience();
+            ChatPetPersonalMission miniGameMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
+            Integer wxMiniGameId = miniGameMission.getWxMiniGameId();
+
+            WxMiniGame miniGame = wxMiniGameService.getById(wxMiniGameId);
+            Integer needSign = miniGame.getNeedSign();
+
+            Float playMiniGameExperience = 0F;
+
+            if(WxMiniGameService.WX_MINI_GAME_NO_SIGN.equals(needSign)){
+                playMiniGameExperience = this.getPlayMiniGameExperience4Old();
+            }
+            if(WxMiniGameService.WX_MINI_GAME_NEED_SIGN.equals(needSign)){
+                playMiniGameExperience = this.getPlayMiniGameRandomExperience4New();
+            }
 
             //族群加成之后经验值
-            BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(playMiniGameRandomExperience));
+            BigDecimal bd = ethnicGroupsAdditionRadio.multiply(new BigDecimal(playMiniGameExperience));
             item.setExperience(bd.floatValue());
             item.setGoldValue(0F);
 
@@ -369,13 +385,23 @@ public class ChatPetRewardService{
     }
 
     /**
+     * NEW
      * 获取小程序经验奖励
      * 1.0 ~ 2.0
      * @return
      */
-    private Float getPlayMiniGameRandomExperience(){
+    private Float getPlayMiniGameRandomExperience4New(){
         Random random = new Random();
         Float f = ( random.nextInt(100) + 100 ) / 100F;
+        return f;
+    }
+
+    /**
+     * 获取OLD小游戏经验值
+     * @return
+     */
+    private Float getPlayMiniGameExperience4Old(){
+        Float f = 0.2F;
         return f;
     }
 
