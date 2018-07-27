@@ -172,7 +172,7 @@ public class MiniProgramUserInfoService {
                     chatPetRewardService.generateRegisterReward(chatPetId);
 
                     //猫饼记录
-                    chatPetCoinFlowService.registerRewardFlow(chatPetId);
+                    //chatPetCoinFlowService.registerRewardFlow(chatPetId);
 
                     //第一次登录任务数据准备
                     miniProgramLoginService.dailyFirstLoginHandle(chatPetId);
