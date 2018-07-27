@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.mapper.WxMiniGameMapper;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameAdd;
@@ -46,6 +47,15 @@ public class WxMiniGameService {
     }
 
     /**
+     *  年月日時分秒-"originFileName"
+     * @param originFileName  文件原來的名字
+     * @return
+     */
+    private String generateFileName(String originFileName){
+        return TimeUtil.getCurrentTimestamp() + "-" + originFileName;
+    }
+
+    /**
      * 获取已上线,上架小游戏id list
      * @return
      */
@@ -63,8 +73,8 @@ public class WxMiniGameService {
         String headImgFileName = headImg.getOriginalFilename();
         String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
 
-        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
-        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, this.generateFileName(headImgFileName));
+        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, this.generateFileName(qrCodeImgFileName));
 
         WxMiniGame wxMiniGame = new WxMiniGame();
 
@@ -91,13 +101,13 @@ public class WxMiniGameService {
 
         if(headImg != null){
             String headImgFileName = headImg.getOriginalFilename();
-            String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
+            String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, this.generateFileName(headImgFileName));
             wxMiniGameById.setHeadImgUrl(headImgUploadUrl);
 
         }
         if(qrCodeImg != null){
             String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
-            String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+            String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, this.generateFileName(qrCodeImgFileName));
             wxMiniGameById.setQrCodeImgUrl(qrCodeImgUploadUrl);
 
         }
