@@ -152,9 +152,13 @@ public class ChatPetRewardService{
         Boolean isMissionReward = missionItemId != null;
 
         if(isMissionReward){
+
             this.missionRewardHandle(chatPetRewardItemId);
+
         }else{
+
             this.levelRewardHandle(chatPetRewardItemId);
+
         }
     }
 
@@ -777,6 +781,26 @@ public class ChatPetRewardService{
 
     }
 
+    /**
+     * 检查奖励是否为可领取状态
+     * @param chatPetRewardItemId
+     * @return
+     */
+    public boolean checkRewardState(Integer chatPetRewardItemId){
+        ChatPetRewardItem reward = this.getChatPetRewardItemById(chatPetRewardItemId);
+        return NOT_AWARD.equals(reward.getRewardState());
+    }
 
-
+    /**
+     * 检查奖励所有者
+     * @param wxFanId
+     * @param chatPetRewardItemId
+     * @return
+     */
+    public boolean checkRewardOwner(Integer wxFanId,Integer chatPetRewardItemId){
+        ChatPetRewardItem reward = this.getChatPetRewardItemById(chatPetRewardItemId);
+        Integer chatPetId = reward.getChatPetId();
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+        return wxFanId.equals(chatPet.getWxFanId());
+    }
 }

@@ -7,6 +7,7 @@ import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatpet.controller.req.MoreLogReq;
 import net.monkeystudio.chatpet.controller.req.chatpetmission.ChatPetRewardReq;
 import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
+import net.monkeystudio.chatrbtw.service.ChatPetRewardService;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class ChatPetController extends ChatPetBaseController{
     private ChatPetService chatPetService;
     @Autowired
     private MiniProgramChatPetService miniProgramChatPetService;
-
+    @Autowired
+    private ChatPetRewardService chatPetRewardService;
     @Autowired
     private RespHelper respHelper;
 
@@ -210,6 +212,14 @@ public class ChatPetController extends ChatPetBaseController{
     public RespBase rewardAfterCompleteMission(@RequestBody ChatPetRewardReq req) throws BizException {
 
         Integer wxFanId = getUserId();
+
+        if(!chatPetRewardService.checkRewardState(req.getRewardItemId())){
+            return respHelper.failed("奖励已领取");
+        }
+
+        if(!chatPetRewardService.checkRewardOwner(wxFanId,req.getRewardItemId())){
+            return respHelper.failed("无法领取");
+        }
 
         ChatPetRewardChangeInfo changeInfo = chatPetService.rewardHandle(wxFanId, req.getRewardItemId());
 
