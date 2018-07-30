@@ -133,7 +133,8 @@ public class MiniProgramUserInfoService {
                     wxFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
                     wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
-                    wxFanService.save(wxFan);
+                    //当不存在于数据库时保存
+                    wxFanService.saveIfNotExist(wxFan);
 
                     Integer wxFanId = wxFan.getId();
 
