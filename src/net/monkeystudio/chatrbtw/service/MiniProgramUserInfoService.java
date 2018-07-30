@@ -1,6 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.redis.RedisCacheTemplate;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
@@ -11,10 +11,10 @@ import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,39 +69,40 @@ public class MiniProgramUserInfoService {
      * 点击分享卡注册,携带parentFanId
      * 获取用户信息及注册
      * 注册完成之后也就是当天的第一次登录
+     *
      * @param iv
      * @throws Exception
      */
     @Transactional
-    public Map getUserInfoAndRegister(Integer parentFanId,String encryptedData,String iv) throws Exception{
-        Log.i("================== encryptedData = {?} , iv = {?} =================",encryptedData,iv);
+    public Map getUserInfoAndRegister(Integer parentFanId, String encryptedData, String iv) throws Exception {
+        Log.i("================== encryptedData = {?} , iv = {?} =================", encryptedData, iv);
 
-        Map<String,Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
+        Map<String, Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         String token = request.getHeader("token");
 
-        if(token != null){
+        if (token != null) {
             String openId = sessionTokenService.getOpenIdFromTokenVal(token);
 
             String sessionKey = sessionTokenService.getSessionKeyFromTokenVal(token);
 
             Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
 
-            Log.i("mini user info : openId = {?} , sessionKey = {?} , miniProgramId = {?}",openId,sessionKey,miniProgramId.toString());
+            Log.i("mini user info : openId = {?} , sessionKey = {?} , miniProgramId = {?}", openId, sessionKey, miniProgramId.toString());
 
-            MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(encryptedData, iv,sessionKey);
+            MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(encryptedData, iv, sessionKey);
 
             String userInfoOpenId = miniProgramFanBaseInfo.getOpenId();
 
-            if(userInfoOpenId.equals(openId)){
+            if (userInfoOpenId.equals(openId)) {
 
                 //通过openId判断是否存在于数据库中,如果存在update
-                WxFan dbWxFan = wxFanService.getWxFanFromDb(null,userInfoOpenId,miniProgramId);
+                WxFan dbWxFan = wxFanService.getWxFanFromDb(null, userInfoOpenId, miniProgramId);
 
-                if(dbWxFan != null){
+                if (dbWxFan != null) {
                     //更新老数据
                     dbWxFan.setCity(miniProgramFanBaseInfo.getCity());
                     dbWxFan.setProvince(miniProgramFanBaseInfo.getProvince());
@@ -116,8 +117,8 @@ public class MiniProgramUserInfoService {
 
                     wxFanService.update(dbWxFan);
 
-                    ret.put("wxFanId",dbWxFan.getId());
-                }else{
+                    ret.put("wxFanId", dbWxFan.getId());
+                } else {
                     //新增用户
                     WxFan wxFan = new WxFan();
 
@@ -142,11 +143,11 @@ public class MiniProgramUserInfoService {
                     //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
                     Integer chatPetId = null;
 
-                    if(parentFanId == null){
+                    if (parentFanId == null) {
 
                         chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
 
-                    }else{
+                    } else {
 
                         ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
 
@@ -163,9 +164,9 @@ public class MiniProgramUserInfoService {
 
                         ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
 
-                        if(inviteMission != null){
+                        if (inviteMission != null) {
                             //父亲宠物完成邀请任务
-                            chatPetMissionPoolService.completeChatPetMission(wxFanId,inviteMission.getId());
+                            chatPetMissionPoolService.completeChatPetMission(wxFanId, inviteMission.getId());
                         }
                     }
 
@@ -184,8 +185,8 @@ public class MiniProgramUserInfoService {
                     chatPetLoginLog.setWxFanId(wxFan.getId());
                     chatPetLoginLogService.save(chatPetLoginLog);
 
-                    ret.put("chatPetId",chatPetId);
-                    ret.put("wxFanId",wxFanId);
+                    ret.put("chatPetId", chatPetId);
+                    ret.put("wxFanId", wxFanId);
 
                 }
             }
@@ -196,13 +197,14 @@ public class MiniProgramUserInfoService {
 
     /**
      * 解密小程序用户信息
+     *
      * @param encryptedData
      * @param iv
      * @param sessionKey
      * @return
      * @throws Exception
      */
-    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String encryptedData, String iv, String sessionKey)throws Exception {
+    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String encryptedData, String iv, String sessionKey) throws Exception {
         // 被加密的数据
         byte[] dataByte = Base64.decode(encryptedData);
         // 加密秘钥
@@ -238,5 +240,6 @@ public class MiniProgramUserInfoService {
         }
         return null;
     }
+
 
 }
