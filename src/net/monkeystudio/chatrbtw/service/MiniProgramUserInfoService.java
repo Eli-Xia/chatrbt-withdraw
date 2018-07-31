@@ -74,10 +74,9 @@ public class MiniProgramUserInfoService {
      * @throws Exception
      */
     @Transactional
-    public Map getUserInfoAndRegister(Integer parentFanId, String encryptedData, String iv) throws Exception {
+    public void getUserInfoAndRegister(Integer parentFanId, String encryptedData, String iv) throws Exception {
         Log.i("================== encryptedData = {?} , iv = {?} =================", encryptedData, iv);
-
-        Map<String, Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
+        //Map<String, Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -117,7 +116,7 @@ public class MiniProgramUserInfoService {
 
                     wxFanService.update(dbWxFan);
 
-                    ret.put("wxFanId", dbWxFan.getId());
+                    //ret.put("wxFanId", dbWxFan.getId());
                 } else {
                     //新增用户
                     WxFan wxFan = new WxFan();
@@ -135,7 +134,10 @@ public class MiniProgramUserInfoService {
                     wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
 
                     //当不存在于数据库时保存
-                    wxFanService.saveIfNotExist(wxFan);
+                    Integer count = wxFanService.saveIfNotExist(wxFan);
+                    if(count == 0){
+                        return;
+                    }
 
                     Integer wxFanId = wxFan.getId();
 
@@ -173,9 +175,6 @@ public class MiniProgramUserInfoService {
                     //新注册用户生成0.01猫币奖励
                     chatPetRewardService.generateRegisterReward(chatPetId);
 
-                    //猫饼记录
-                    //chatPetCoinFlowService.registerRewardFlow(chatPetId);
-
                     //第一次登录任务数据准备
                     miniProgramLoginService.dailyFirstLoginHandle(chatPetId);
 
@@ -185,13 +184,12 @@ public class MiniProgramUserInfoService {
                     chatPetLoginLog.setWxFanId(wxFan.getId());
                     chatPetLoginLogService.save(chatPetLoginLog);
 
-                    ret.put("chatPetId", chatPetId);
-                    ret.put("wxFanId", wxFanId);
+                    //ret.put("chatPetId", chatPetId);
+                    //ret.put("wxFanId", wxFanId);
 
                 }
             }
         }
-        return ret;
     }
 
 

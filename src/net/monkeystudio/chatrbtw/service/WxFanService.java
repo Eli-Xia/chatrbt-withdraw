@@ -281,13 +281,9 @@ public class WxFanService {
 
     /**
      * 当wxFan不存在即wxOpenId和miniProgramId都不存在时保存
-     * 若已存在抛出异常
-     * @throws BizException
      */
-    public void saveIfNotExist(WxFan wxFan) throws BizException{
+    public Integer saveIfNotExist(WxFan wxFan) {
         Integer count = wxFanMapper.insertIfNotExist(wxFan);
-        if(count == 0){
-            throw new BizException("该用户已注册");
-        }
+        return count;
     }
 }
