@@ -28,6 +28,9 @@ public class ChatPetExpFlowService {
     @Autowired
     private ChatPetService chatPetService;
 
+    @Autowired
+    private ChatPetLevelService chatPetLevelService;
+
     /**
      * 生成流水基础方法
      * @param chatPetId     宠物id
@@ -97,7 +100,8 @@ public class ChatPetExpFlowService {
         Integer chatPetId = chatPet.getId();
 
         Float experience = chatPet.getExperience();
-        vo.setExperience(experience);
+        Integer level = chatPetLevelService.calculateLevel(experience);
+        vo.setLevel(level);
 
         List<ChatPetExpFlowResp> chatPetExpFlowList = this.getChatPetExpFlowList(chatPetId);
         vo.setFlows(chatPetExpFlowList);
