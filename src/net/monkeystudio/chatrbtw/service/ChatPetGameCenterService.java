@@ -56,7 +56,7 @@ public class ChatPetGameCenterService {
 
         List<ChatPetMiniGameResp> chatPetMiniGameRespList = new ArrayList<>();
 
-        List<WxMiniGame> miniGameInfoList = wxMiniGameService.getMiniGameInfoList();
+        List<WxMiniGame> miniGameInfoList = wxMiniGameService.getOnlineMiniGameList();
         for (WxMiniGame item : miniGameInfoList){
             ChatPetMiniGameResp chatPetMiniGameResp = new ChatPetMiniGameResp();
             BeanUtils.copyProperties(item,chatPetMiniGameResp);

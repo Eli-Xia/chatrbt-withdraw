@@ -60,7 +60,7 @@ public class WxMiniGameService {
      * @return
      */
     public List<Integer> getWxMiniGameIds(){
-        List<WxMiniGame> wxMiniGameList = this.getMiniGameInfoList();
+        List<WxMiniGame> wxMiniGameList = this.getOnlineMiniGameList();
         List<Integer> ids = wxMiniGameList.stream().map(obj -> obj.getId()).collect(Collectors.toList());
         return ids;
     }
@@ -147,12 +147,20 @@ public class WxMiniGameService {
         return resps;
     }
 
+    /**
+     * 获取上线的小游戏列表
+     * @return
+     */
+    public List<WxMiniGame> getOnlineMiniGameList(){
+        return wxMiniGameMapper.selectOnlineGameList();
+    }
+
 
     /**
      * 游戏中心展示列表
      * @return
      */
-    public List<WxMiniGame> getMiniGameInfoList(){
+    /*public List<WxMiniGame> getMiniGameInfoList(){
         List<WxMiniGame> wxMiniGameList = this.getWxMiniGameList();
 
         Iterator<WxMiniGame> iterator = wxMiniGameList.iterator();
@@ -170,7 +178,7 @@ public class WxMiniGameService {
         }
         return wxMiniGameList;
 
-    }
+    }*/
 
     /**
      * 判断上线时间是否正确,

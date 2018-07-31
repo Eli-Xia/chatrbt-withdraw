@@ -44,6 +44,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
 
         Integer wxFanId = this.getWxFanIdByRequest(request);
         if(wxFanId == null){
+            Log.d(" ============= run here ===============");
             returnErrorResponse(response,respHelper.failed("not registered"));
             return false;
         }
