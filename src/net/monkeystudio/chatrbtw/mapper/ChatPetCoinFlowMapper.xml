@@ -45,5 +45,17 @@
     SELECT <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/>
   </select>
 
+  <select id="countPeriodTotalAmount" resultType="java.lang.Float">
+    SELECT sum(amount) FROM e_chat_pet_coin_flow
+    <where>
+      <if test="startTime != null">
+        and create_time &gt;= #{startTime}
+      </if>
+      <if test="endTime != null">
+        and create_time &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
 
 </mapper>

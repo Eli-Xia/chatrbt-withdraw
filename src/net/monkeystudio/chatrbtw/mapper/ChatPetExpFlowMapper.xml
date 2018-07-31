@@ -42,6 +42,22 @@
     limit #{startIndex}, #{pageSize}
   </select>
 
+  <select id="selectByActionType" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM e_chat_pet_exp_flow WHERE exp_action_type = #{actionType}
+  </select>
+
+  <select id="countPeriodTotalAmount" resultType="java.lang.Float">
+    SELECT sum(amount) FROM e_chat_pet_exp_flow
+    <where>
+      <if test="startTime != null">
+        and create_time &gt;= #{startTime}
+      </if>
+      <if test="endTime != null">
+        and create_time &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
 
 
 </mapper>
