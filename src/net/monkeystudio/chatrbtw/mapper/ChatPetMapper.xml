@@ -162,6 +162,11 @@
         SELECT SUM(coin)  FROM e_chat_pet where chat_pet_type = #{chatPetType}
     </select>
 
+    <select id="countTotalExperience" parameterType="java.lang.Integer" resultType="java.lang.Double">
+        SELECT SUM(experience)  FROM e_chat_pet where chat_pet_type = #{chatPetType}
+    </select>
+
+
 
     <update id="increaseMoney" parameterType="map">
         update

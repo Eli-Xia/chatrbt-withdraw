@@ -1071,6 +1071,10 @@ public class ChatPetService {
     }
 
 
+    public Double countTotalExperience(Integer chatPetType){
+        return chatPetMapper.countTotalExperience(chatPetType);
+    }
+
     /**
      * 粉丝id
      * @param wxFanId

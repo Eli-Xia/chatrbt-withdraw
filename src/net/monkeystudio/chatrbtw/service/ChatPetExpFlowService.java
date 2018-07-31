@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
@@ -72,7 +73,7 @@ public class ChatPetExpFlowService {
      * 每日登录流水,经验值+XX
      */
     public void dailyLoginFlow(Integer chaPetId,Float experience){
-        String note = "每日登录" + ArithmeticUtils.keep2DecimalPlace(experience);
+        String note = "每日登录,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
         this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.DAILY_LOGIN,note,experience);
     }
 
@@ -102,6 +103,18 @@ public class ChatPetExpFlowService {
         vo.setFlows(chatPetExpFlowList);
 
         return vo;
+    }
+
+    /**
+     * 总经验值
+     * @return
+     */
+    public Float getTotalAmountByYesterday(){
+        Date yesterday = CommonUtils.dateOffset(new Date(), -1);
+
+        Date endTime = CommonUtils.dateEndTime(yesterday);
+
+        return chatPetExpFlowMapper.countPeriodTotalAmount(null, endTime);
     }
 
 }

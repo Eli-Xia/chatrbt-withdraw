@@ -20,6 +20,15 @@ public class ChatPetCountService {
     @Autowired
     private ChatPetRewardService chatPetRewardService;
 
+    @Autowired
+    private ChatPetCoinFlowService chatPetCoinFlowService;
+
+    @Autowired
+    private ChatPetExpFlowService chatPetExpFlowService;
+
+    @Autowired
+    private ChatPetService chatPetService;
+
     /**
      * 获取昨日数据统计
      * @return
@@ -27,12 +36,14 @@ public class ChatPetCountService {
     public YesterdayStatistic getYesterdayStatistic(){
         YesterdayStatistic yesterdayStatistic = new YesterdayStatistic();
         //总经验值
-        Float totalExp = chatPetRewardService.getTotalGoldAmountByChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
-        yesterdayStatistic.setTotalExperience(totalExp);
+        //Float totalExp = chatPetExpFlowService.getTotalAmountByYesterday();
+        Double totalExp = chatPetService.countTotalExperience(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+        yesterdayStatistic.setTotalExperience(totalExp.floatValue());
 
         //总猫饼数
-        Float totalCoin = chatPetRewardService.getYesterdayGoldAmountByChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
-        yesterdayStatistic.setTotalCoin(totalCoin);
+        //Float totalCoin = chatPetCoinFlowService.getTotalAmountByYesterday();
+        Double totalCoin = chatPetService.countTotalCoin(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+        yesterdayStatistic.setTotalCoin(totalCoin.floatValue());
 
         //登录人数
         Integer loginNumCount = chatPetLoginLogService.getYesterdayLoginNumCount();

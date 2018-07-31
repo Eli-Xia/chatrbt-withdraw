@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetCoinFlowMapper;
@@ -110,5 +111,17 @@ public class ChatPetCoinFlowService {
         vo.setFlows(chatPetCoinFlowList);
 
         return vo;
+    }
+
+    /**
+     * 总猫币
+     * @return
+     */
+    public Float getTotalAmountByYesterday(){
+        Date yesterday = CommonUtils.dateOffset(new Date(), -1);
+
+        Date endTime = CommonUtils.dateEndTime(yesterday);
+
+        return chatPetCoinFlowMapper.countPeriodTotalAmount(null, endTime);
     }
 }
