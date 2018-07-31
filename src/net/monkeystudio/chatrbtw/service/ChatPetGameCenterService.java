@@ -72,6 +72,11 @@ public class ChatPetGameCenterService {
 
             ChatPetPersonalMission miniGameMission = chatPetMissionPoolService.getPersonalMissionByParam(param);
 
+            //今天刚上架小游戏是没有为用户分配任务的,因此miniGameMission为null
+            if(miniGameMission == null){
+                continue;
+            }
+
             Integer state = miniGameMission.getState();
 
             if(MissionStateEnum.GOING_ON.getCode().equals(state)){
