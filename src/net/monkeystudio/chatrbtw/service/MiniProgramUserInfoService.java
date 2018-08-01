@@ -1,6 +1,5 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
@@ -14,7 +13,6 @@ import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.service.bean.miniapp.MiniProgramFanBaseInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +27,6 @@ import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author xiaxin
