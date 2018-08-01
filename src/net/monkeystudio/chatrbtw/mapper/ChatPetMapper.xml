@@ -209,4 +209,12 @@
             wx_fan_id = #{wxFanId}
         WHERE id = #{id}
     </update>
+
+    <select id="countByDate" resultType="java.lang.Integer">
+        select count(id) from e_chat_pet where create_time &gt;= #{startTime} AND create_time &lt;= #{endTime}
+    </select>
+
+    <select id="countByDateAndCoin" resultType="java.lang.Integer">
+        select count(id) from e_chat_pet where create_time &gt;= #{startTime} AND create_time &lt;= #{endTime} AND coin &gt;= 0 
+    </select>
 </mapper>

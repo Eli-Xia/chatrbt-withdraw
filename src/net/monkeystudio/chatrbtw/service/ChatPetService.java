@@ -1143,6 +1143,34 @@ public class ChatPetService {
         return moreLogList;
     }
 
+    /**
+     * 获取昨日新增宠物数量
+     * @return
+     */
+    public Integer getYesterdayAddNum(){
+        Date yesterday = CommonUtils.dateOffset(new Date(),-1);
+
+        Date startTime = CommonUtils.dateStartTime(yesterday);
+
+        Date endTime = CommonUtils.dateEndTime(yesterday);
+
+        return chatPetMapper.countByDate(startTime, endTime);
+    }
+
+    /**
+     * 昨日新增宠物中领取了猫饼的人数
+     * @return
+     */
+    public Integer getRewardNumFromYesterdayRegister(){
+        Date yesterday = CommonUtils.dateOffset(new Date(),-1);
+
+        Date startTime = CommonUtils.dateStartTime(yesterday);
+
+        Date endTime = CommonUtils.dateEndTime(yesterday);
+
+        return chatPetMapper.countByDateAndCoin(startTime, endTime);
+    }
+
     public void update(ChatPet chatPet){
         chatPetMapper.update(chatPet);
     }

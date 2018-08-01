@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.mapper;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,4 +50,8 @@ public interface ChatPetMapper {
     Integer updateWxFanId(@Param("chatPetId") Integer chatPetId,@Param("wxFanId") Integer wxFanId);
 
     Integer update(ChatPet record);
+
+    Integer countByDate(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
+
+    Integer countByDateAndCoin(@Param("startTime")Date startTime,@Param("endTime")Date endTime);
 }
