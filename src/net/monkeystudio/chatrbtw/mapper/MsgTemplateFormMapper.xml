@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.MsgTemplateFormMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.MsgTemplateForm">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="form_id" property="formId" jdbcType="VARCHAR" />
+        <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="usage_time" property="usageTime" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, form_id, wx_fan_id, state, usage_time, create_time
+    </sql>
+
+    <update id="updateState" parameterType="map" >
+        update
+            e_msg_template_form
+        set
+            state = #{state},
+            usage_time = #{usageTime}
+        where
+            id = #{id}
+    </update>
+
+    <select id="selectByWxFanIdAndCreateDate" parameterType="map" resultMap="baseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            e_msg_template_form
+        where
+            state = #{state}
+        and
+            wx_fan_id = #{wxFanId}
+        and
+            create_time  <![CDATA[  <  ]]>  #{createTime}
+        order by
+            create_time
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.MsgTemplateForm">
+         insert into
+            e_msg_template_form
+                (form_id, wx_fan_id, state, usage_time, create_time)
+         values
+            (#{formId} , #{wxFanId}  , #{state} , #{usageTime} ,#{createTime})
+    </insert>
+
+</mapper>
