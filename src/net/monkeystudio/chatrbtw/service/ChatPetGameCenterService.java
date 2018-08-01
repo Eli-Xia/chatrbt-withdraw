@@ -13,9 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author xiaxin
@@ -56,8 +54,41 @@ public class ChatPetGameCenterService {
 
         List<ChatPetMiniGameResp> chatPetMiniGameRespList = new ArrayList<>();
 
+        //上线且上架的所有小游戏list
         List<WxMiniGame> miniGameInfoList = wxMiniGameService.getOnlineMiniGameList();
+
+        //key:小游戏id value:任务对象
+        Map<Integer, ChatPetPersonalMission> todayMiniGameMissionMap = chatPetMissionPoolService.getTodayMiniGameMissionMap(chatPetId);
+
         for (WxMiniGame item : miniGameInfoList){
+            ChatPetMiniGameResp chatPetMiniGameResp = new ChatPetMiniGameResp();
+
+            BeanUtils.copyProperties(item,chatPetMiniGameResp);
+
+            Integer miniGameId = item.getId();
+
+            //今天刚上架小游戏是没有为用户分配任务
+            if(!todayMiniGameMissionMap.containsKey(miniGameId)){
+                continue;
+            }
+
+            ChatPetPersonalMission miniGameMission = todayMiniGameMissionMap.get(miniGameId);
+            //任务完成状态
+            Integer finishState = miniGameMission.getState();
+
+            if(MissionStateEnum.GOING_ON.getCode().equals(finishState)){
+                chatPetMiniGameResp.setState(MINI_GAME_MISSION_STATE_NOT_FINISH);
+
+            }else{
+                chatPetMiniGameResp.setState(MINI_GAME_MISSION_STATE_FINISH);
+            }
+
+            chatPetMiniGameRespList.add(chatPetMiniGameResp);
+        }
+
+        resp.setMiniGameList(chatPetMiniGameRespList);
+
+        /*for (WxMiniGame item : miniGameInfoList){
             ChatPetMiniGameResp chatPetMiniGameResp = new ChatPetMiniGameResp();
             BeanUtils.copyProperties(item,chatPetMiniGameResp);
 
@@ -88,7 +119,7 @@ public class ChatPetGameCenterService {
             chatPetMiniGameRespList.add(chatPetMiniGameResp);
 
         }
-        resp.setMiniGameList(chatPetMiniGameRespList);
+        resp.setMiniGameList(chatPetMiniGameRespList);*/
 
         return resp;
     }
