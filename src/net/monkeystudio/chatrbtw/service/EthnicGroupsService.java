@@ -33,6 +33,8 @@ public class EthnicGroupsService {
     public final static Integer ETHNIC_GROUPS_CODE_VALIDATED_STATUS_NOT_FOUND = 1; //找不到族群码
     public final static Integer ETHNIC_GROUPS_CODE_VALIDATED_STATUS_ACOUNT_FULL = 2; //族群码满额
 
+    private final static Integer MAX_CHILD_COUNT_4_EXP_ADDITION = 20;//儿子宠物个数上限(用于计算经验值加成)
+
 
     public final static Integer FOUDER_TYPE = 1;
     public final static Integer SECONDER_TYPE = 2;
@@ -279,6 +281,10 @@ public class EthnicGroupsService {
      */
     public BigDecimal getEthnicGroupsAdditionRadio(Integer chatPetId){
         Integer count = chatPetService.countByParentId(chatPetId);
+
+        if(count.intValue() >= MAX_CHILD_COUNT_4_EXP_ADDITION){
+            count = MAX_CHILD_COUNT_4_EXP_ADDITION;
+        }
 
         BigDecimal bigDecimal = new BigDecimal(0.01F * Float.valueOf(count));
 
