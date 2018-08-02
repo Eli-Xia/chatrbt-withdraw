@@ -21,4 +21,7 @@ public interface WxMiniGameMapper {
 
     Integer delete(Integer id);
 
+    //查询上架且上线的小游戏
+    List<WxMiniGame> selectOnlineGameList();
+
 }

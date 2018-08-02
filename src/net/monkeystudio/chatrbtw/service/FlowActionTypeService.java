@@ -12,7 +12,9 @@ public class FlowActionTypeService {
     static class CoinConsts{
         public final static Integer JOIN_AUCTION = 1;//参与竞拍
         public final static Integer FAIL_AUCTION = 2;//竞拍未中标
+        public final static Integer SUCCESS_AUCTION = 5;//竞拍中标
         public final static Integer DAILY_REWARD= 3;//等级奖励日常领取
+        public final static Integer REGISTER_REWARD= 4;//注册奖励领取
     }
 
 

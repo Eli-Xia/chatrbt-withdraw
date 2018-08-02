@@ -98,7 +98,7 @@ public class AuctionRecordService {
         chatPetLogService.saveChatPetDynamic(param);
 
         //参与竞拍猫饼流水
-        chatPetCoinFlowService.auctionFlow(chatPet.getId(),price);
+        //chatPetCoinFlowService.auctionFlow(chatPet.getId(),price);
 
         return recordId;
     }

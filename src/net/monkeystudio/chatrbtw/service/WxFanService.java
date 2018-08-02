@@ -125,14 +125,23 @@ public class WxFanService {
     }
 
     public String getWxFanCacheKey(String wxPubOriginId ,String wxFanOpenId ,Integer miniProgramId ){
-        String key = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "WxFan:" + wxFanOpenId + ":";
+        //String  = RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "WxFan:" + wxFanOpenId + ":" + "miniProgramId";
+        StringBuilder keySb = new StringBuilder();
+
+        keySb.append(RedisTypeConstants.KEY_STRING_TYPE_PREFIX);
+        keySb.append("wxFan:");
+        keySb.append(wxFanOpenId);
+        keySb.append(":");
+
         if(wxPubOriginId != null){
-            key.concat(wxPubOriginId);
+            keySb.append(wxPubOriginId);
         }
+
         if(miniProgramId != null){
-            key.concat(miniProgramId.toString());
+            keySb.append(miniProgramId.toString());
         }
-        return key;
+
+        return keySb.toString();
     }
 
     /**
@@ -268,5 +277,13 @@ public class WxFanService {
      */
     public List<WxFan> getListByMiniProgramId(Integer miniProgramId){
         return wxFanMapper.selectByMiniProgramId(miniProgramId);
+    }
+
+    /**
+     * 当wxFan不存在即wxOpenId和miniProgramId都不存在时保存
+     */
+    public Integer saveIfNotExist(WxFan wxFan) {
+        Integer count = wxFanMapper.insertIfNotExist(wxFan);
+        return count;
     }
 }

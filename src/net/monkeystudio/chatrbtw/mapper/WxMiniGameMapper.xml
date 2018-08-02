@@ -66,12 +66,19 @@
   </update>
 
   <select id="selectAll" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY create_time DESC
+    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY need_sign DESC ,online_time DESC , create_time DESC
   </select>
     
     <delete id="delete" >
         DELETE  FROM  e_wx_mini_game WHERE id = #{id}
     </delete>
 
+
+  <select id="selectOnlineGameList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game
+    WHERE shelve_state = 1 AND DATE_FORMAT(online_time,'%Y-%m-%d 00:00:00') &lt;=  NOW()
+    ORDER BY need_sign DESC ,online_time DESC , create_time DESC
+
+  </select>
 
 </mapper>

@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow;
 import net.monkeystudio.chatrbtw.mapper.ChatPetCoinFlowMapper;
@@ -29,22 +30,32 @@ public class ChatPetCoinFlowService {
      * @param chatPetId     宠物id
      * @param actionType    产生流水的动作类型
      * @param note           流水信息
+     * @param amount         变化的数额
      */
-    private void createBaseFlow(Integer chatPetId,Integer actionType,String note){
+    private void createBaseFlow(Integer chatPetId,Integer actionType,String note,Float amount){
         ChatPetCoinFlow chatPetCoinFlow = new ChatPetCoinFlow();
         chatPetCoinFlow.setNote(note);
         chatPetCoinFlow.setChatPetId(chatPetId);
         chatPetCoinFlow.setCoinActionType(actionType);
         chatPetCoinFlow.setCreateTime(new Date());
+        chatPetCoinFlow.setAmount(amount);
         chatPetCoinFlowMapper.insert(chatPetCoinFlow);
     }
 
     /**
      * 参与竞拍流水,猫饼-XX
      */
+    public void auctionSuccessFlow(Integer chaPetId,Float coin){
+        String note = "恭喜竞拍中标,消费猫饼-" + ArithmeticUtils.keep2DecimalPlace(coin);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.SUCCESS_AUCTION,note,-coin);
+    }
+
+    /**
+     * 竞拍中标,猫饼-XX
+     */
     public void auctionFlow(Integer chaPetId,Float coin){
         String note = "参与竞拍,猫饼-" + ArithmeticUtils.keep2DecimalPlace(coin);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.JOIN_AUCTION,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.JOIN_AUCTION,note,-coin);
     }
 
     /**
@@ -53,7 +64,7 @@ public class ChatPetCoinFlowService {
     public void auctionFailFlow(Integer chaPetId,Float coin){
         //String note = "竞拍未中标,退还猫饼+" + coin;
         String note = "竞拍未中标";
-        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.FAIL_AUCTION,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.FAIL_AUCTION,note,null);
     }
 
     /**
@@ -61,7 +72,16 @@ public class ChatPetCoinFlowService {
      */
     public void dailyRewardFlow(Integer chaPetId,Float coin){
         String note = "日常领取,猫饼+" + ArithmeticUtils.keep2DecimalPlace(coin);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.CoinConsts.DAILY_REWARD,note,coin);
+    }
+
+    /**
+     * 注册奖励
+     * @param chatPetId
+     */
+    public void registerRewardFlow(Integer chatPetId){
+        String note = "日常领取,猫饼+" + 0.01;
+        this.createBaseFlow(chatPetId,FlowActionTypeService.CoinConsts.REGISTER_REWARD,note,0.01F);
     }
 
     public List<ChatPetCoinFlowResp> getChatPetCoinFlowList(Integer chatPetId){
@@ -91,5 +111,17 @@ public class ChatPetCoinFlowService {
         vo.setFlows(chatPetCoinFlowList);
 
         return vo;
+    }
+
+    /**
+     * 总猫币
+     * @return
+     */
+    public Float getTotalAmountByYesterday(){
+        Date yesterday = CommonUtils.dateOffset(new Date(), -1);
+
+        Date endTime = CommonUtils.dateEndTime(yesterday);
+
+        return chatPetCoinFlowMapper.countPeriodTotalAmount(null, endTime);
     }
 }

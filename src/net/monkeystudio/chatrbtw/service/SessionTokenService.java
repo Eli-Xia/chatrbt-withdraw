@@ -4,8 +4,11 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.service.bean.sessiontoken.TokenResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author xiaxin
@@ -127,6 +130,25 @@ public class SessionTokenService {
         }
 
         return null;
+    }
+
+    /**
+     * 检查session是否有效返回TokenResult
+     * @param request
+     * @return
+     */
+    public TokenResult checkSession(HttpServletRequest request){
+        TokenResult tokenResult = new TokenResult();
+
+        String token = request.getHeader("token");
+
+        String tokenValue = this.getTokenValue(token);
+
+        if(tokenValue != null){
+            tokenResult.setValid(TokenResult.TOKEN_VALID);
+        }
+
+        return tokenResult;
     }
 
 }

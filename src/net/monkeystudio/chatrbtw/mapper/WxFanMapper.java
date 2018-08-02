@@ -21,4 +21,6 @@ public interface WxFanMapper {
 
 
     List<WxFan> selectByMiniProgramId(@Param("miniProgramId") Integer miniProgramId);
+
+    Integer insertIfNotExist(WxFan wxFan);
 }

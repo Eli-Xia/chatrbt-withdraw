@@ -5,13 +5,14 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="chat_pet_id" property="chatPetId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="REAL" />
     <result column="coin_action_type" property="coinActionType" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow" extends="BaseResultMap" >
     <result column="note" property="note" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, chat_pet_id, coin_action_type
+    id, create_time, chat_pet_id, coin_action_type,amount
   </sql>
   <sql id="Blob_Column_List" >
     note
@@ -26,14 +27,34 @@
   </select>
 
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.ChatPetCoinFlow" >
-    insert into e_chat_pet_coin_flow (id, create_time,chat_pet_id, coin_action_type,note)
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{coinActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR})
+    insert into e_chat_pet_coin_flow (id, create_time,chat_pet_id, coin_action_type,note,amount)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{chatPetId,jdbcType=INTEGER}, #{coinActionType,jdbcType=INTEGER},#{note,jdbcType=LONGVARCHAR},IFNULL(#{amount},0))
   </insert>
+
+  <update id="update">
+    update e_chat_pet_coin_flow set amount = IFNULL(#{amount},0) where id = #{id}
+  </update>
 
   <select id="selectCoinFlow" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM e_chat_pet_coin_flow WHERE chat_pet_id = #{chatPetId}
     order by create_time desc
     limit #{startIndex}, #{pageSize}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/>
+  </select>
+
+  <select id="countPeriodTotalAmount" resultType="java.lang.Float">
+    SELECT sum(amount) FROM e_chat_pet_coin_flow
+    <where>
+      <if test="startTime != null">
+        and create_time &gt;= #{startTime}
+      </if>
+      <if test="endTime != null">
+        and create_time &lt;= #{endTime}
+      </if>
+    </where>
   </select>
 
 

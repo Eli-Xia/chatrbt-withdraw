@@ -2,6 +2,7 @@ package net.monkeystudio.base.utils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,8 +83,10 @@ public class ArithmeticUtils {
     }
 
     public static String keep2DecimalPlace(Float value){
-        DecimalFormat df = new DecimalFormat("#.00");
-        String format = df.format(value);
-        return format;
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumIntegerDigits(5);
+
+        return nf.format(value);
     }
 }

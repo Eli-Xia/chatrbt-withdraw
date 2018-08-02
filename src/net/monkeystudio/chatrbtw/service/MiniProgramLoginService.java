@@ -59,6 +59,7 @@ public class MiniProgramLoginService {
      * @param jsCode
      * @return
      */
+    @Transactional
     public String loginHandle(Integer miniProgramId,String jsCode) throws BizException{
         if(miniProgramId == null){
             miniProgramId = 1;
@@ -101,7 +102,6 @@ public class MiniProgramLoginService {
      * 宠物每天第一次登录处理
      * @param chatPetId
      */
-    @Transactional
     public void dailyFirstLoginHandle(Integer chatPetId){
 
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);

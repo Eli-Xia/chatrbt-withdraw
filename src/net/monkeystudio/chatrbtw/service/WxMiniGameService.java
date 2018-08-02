@@ -1,7 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
-import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.mapper.WxMiniGameMapper;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameAdd;
@@ -39,8 +39,20 @@ public class WxMiniGameService {
     private final static Integer WX_MINI_GAME_SHELVE_STATE = 1;//小游戏上架状态
     private final static Integer WX_MINI_GAME_UNSHELVE_STATE = 0;//小游戏下架状态
 
+    public final static Integer WX_MINI_GAME_NO_SIGN = 0;//小游戏没有new
+    public final static Integer WX_MINI_GAME_NEED_SIGN = 1;//小游戏有new
+
     public List<WxMiniGame> getWxMiniGameList(){
         return wxMiniGameMapper.selectAll();
+    }
+
+    /**
+     *  年月日時分秒-"originFileName"
+     * @param originFileName  文件原來的名字
+     * @return
+     */
+    private String generateFileName(String originFileName){
+        return TimeUtil.getCurrentTimestamp() + "-" + originFileName;
     }
 
     /**
@@ -48,7 +60,7 @@ public class WxMiniGameService {
      * @return
      */
     public List<Integer> getWxMiniGameIds(){
-        List<WxMiniGame> wxMiniGameList = this.getMiniGameInfoList();
+        List<WxMiniGame> wxMiniGameList = this.getOnlineMiniGameList();
         List<Integer> ids = wxMiniGameList.stream().map(obj -> obj.getId()).collect(Collectors.toList());
         return ids;
     }
@@ -61,8 +73,8 @@ public class WxMiniGameService {
         String headImgFileName = headImg.getOriginalFilename();
         String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
 
-        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
-        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+        String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, this.generateFileName(headImgFileName));
+        String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, this.generateFileName(qrCodeImgFileName));
 
         WxMiniGame wxMiniGame = new WxMiniGame();
 
@@ -89,13 +101,13 @@ public class WxMiniGameService {
 
         if(headImg != null){
             String headImgFileName = headImg.getOriginalFilename();
-            String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, headImgFileName);
+            String headImgUploadUrl= uploadService.uploadPic(headImg, WX_MINI_GAME_HEAD_IMG_COS_PATH, this.generateFileName(headImgFileName));
             wxMiniGameById.setHeadImgUrl(headImgUploadUrl);
 
         }
         if(qrCodeImg != null){
             String qrCodeImgFileName = qrCodeImg.getOriginalFilename();
-            String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, qrCodeImgFileName);
+            String qrCodeImgUploadUrl = uploadService.uploadPic(qrCodeImg, WX_MINI_GAME_QR_CODE_IMG_COS_PATH, this.generateFileName(qrCodeImgFileName));
             wxMiniGameById.setQrCodeImgUrl(qrCodeImgUploadUrl);
 
         }
@@ -135,12 +147,20 @@ public class WxMiniGameService {
         return resps;
     }
 
+    /**
+     * 获取上线的小游戏列表
+     * @return
+     */
+    public List<WxMiniGame> getOnlineMiniGameList(){
+        return wxMiniGameMapper.selectOnlineGameList();
+    }
+
 
     /**
      * 游戏中心展示列表
      * @return
      */
-    public List<WxMiniGame> getMiniGameInfoList(){
+    /*public List<WxMiniGame> getMiniGameInfoList(){
         List<WxMiniGame> wxMiniGameList = this.getWxMiniGameList();
 
         Iterator<WxMiniGame> iterator = wxMiniGameList.iterator();
@@ -158,7 +178,7 @@ public class WxMiniGameService {
         }
         return wxMiniGameList;
 
-    }
+    }*/
 
     /**
      * 判断上线时间是否正确,

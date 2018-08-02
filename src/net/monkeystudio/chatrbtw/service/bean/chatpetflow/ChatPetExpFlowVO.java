@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ChatPetExpFlowVO {
     private List<ChatPetExpFlowResp> flows = new ArrayList<>();
-    private Float experience = 0F;
+    private Integer level;
 
     public List<ChatPetExpFlowResp> getFlows() {
         return flows;
@@ -19,11 +19,11 @@ public class ChatPetExpFlowVO {
         this.flows = flows;
     }
 
-    public Float getExperience() {
-        return experience;
+    public Integer getLevel() {
+        return level;
     }
 
-    public void setExperience(Float experience) {
-        this.experience = experience;
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }

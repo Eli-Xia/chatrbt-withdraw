@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
 import net.monkeystudio.chatrbtw.entity.ChatPetExpFlow;
@@ -27,18 +28,23 @@ public class ChatPetExpFlowService {
     @Autowired
     private ChatPetService chatPetService;
 
+    @Autowired
+    private ChatPetLevelService chatPetLevelService;
+
     /**
      * 生成流水基础方法
      * @param chatPetId     宠物id
      * @param actionType    产生流水的动作类型
      * @param note           流水信息
+     * @param amount         产生改变的数量
      */
-    private void createBaseFlow(Integer chatPetId,Integer actionType,String note){
+    private void createBaseFlow(Integer chatPetId,Integer actionType,String note,Float amount){
         ChatPetExpFlow chatPetExpFlow = new ChatPetExpFlow();
         chatPetExpFlow.setNote(note);
         chatPetExpFlow.setChatPetId(chatPetId);
         chatPetExpFlow.setExpActionType(actionType);
         chatPetExpFlow.setCreateTime(new Date());
+        chatPetExpFlow.setAmount(amount);
         chatPetExpFlowMapper.insert(chatPetExpFlow);
     }
 
@@ -47,7 +53,7 @@ public class ChatPetExpFlowService {
      */
     public void playGameFlow(Integer chaPetId,Float experience){
         String note = "体验游戏,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.PLAY_GAME,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.PLAY_GAME,note,experience);
     }
 
     /**
@@ -55,7 +61,7 @@ public class ChatPetExpFlowService {
      */
     public void wxPubSayHiFlow(Integer chaPetId,Float experience){
         String note = "完成公众号打招呼,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.WX_PUB_SAY_HI,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.WX_PUB_SAY_HI,note,experience);
     }
 
     /**
@@ -63,7 +69,7 @@ public class ChatPetExpFlowService {
      */
     public void presentCatFlow(Integer chaPetId,Float experience){
         String note = "赠送一只猫六六,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.PRESENT_A_LUCKY_CAT,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.PRESENT_A_LUCKY_CAT,note,experience);
     }
 
     /**
@@ -71,7 +77,7 @@ public class ChatPetExpFlowService {
      */
     public void dailyLoginFlow(Integer chaPetId,Float experience){
         String note = "每日登录,经验值+" + ArithmeticUtils.keep2DecimalPlace(experience);
-        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.DAILY_LOGIN,note);
+        this.createBaseFlow(chaPetId,FlowActionTypeService.ExpConsts.DAILY_LOGIN,note,experience);
     }
 
     public List<ChatPetExpFlowResp> getChatPetExpFlowList(Integer chatPetId){
@@ -94,12 +100,25 @@ public class ChatPetExpFlowService {
         Integer chatPetId = chatPet.getId();
 
         Float experience = chatPet.getExperience();
-        vo.setExperience(experience);
+        Integer level = chatPetLevelService.calculateLevel(experience);
+        vo.setLevel(level);
 
         List<ChatPetExpFlowResp> chatPetExpFlowList = this.getChatPetExpFlowList(chatPetId);
         vo.setFlows(chatPetExpFlowList);
 
         return vo;
+    }
+
+    /**
+     * 总经验值
+     * @return
+     */
+    public Float getTotalAmountByYesterday(){
+        Date yesterday = CommonUtils.dateOffset(new Date(), -1);
+
+        Date endTime = CommonUtils.dateEndTime(yesterday);
+
+        return chatPetExpFlowMapper.countPeriodTotalAmount(null, endTime);
     }
 
 }

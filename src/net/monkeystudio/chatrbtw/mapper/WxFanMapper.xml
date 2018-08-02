@@ -116,4 +116,26 @@
             mini_program_id = #{miniProgramId}
     </select>
 
+    <insert id="insertIfNotExist"  parameterType="net.monkeystudio.chatrbtw.entity.WxFan" keyProperty="id" useGeneratedKeys="true">
+        insert into e_wx_fan (id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,mini_program_id,wx_service_type)
+        SELECT
+        #{id,jdbcType=INTEGER},
+        #{nickname,jdbcType=VARCHAR},
+        #{sex,jdbcType=INTEGER},
+        #{city,jdbcType=VARCHAR},
+        #{country,jdbcType=VARCHAR},
+        #{province,jdbcType=VARCHAR},
+        #{unionId,jdbcType=VARCHAR},
+        #{subscribeTime,jdbcType=INTEGER},
+        #{wxPubOriginId,jdbcType=VARCHAR},
+        #{wxFanOpenId,jdbcType=VARCHAR},
+        #{createAt,jdbcType=INTEGER},
+        #{headImgUrl,jdbcType=VARCHAR},
+        #{miniProgramId,jdbcType=INTEGER},
+        #{wxServiceType,jdbcType=INTEGER}
+        FROM DUAL WHERE NOT EXISTS
+        (SELECT id, nickname, sex, city, country, province, union_id, subscribe_time, wx_pub_origin_id ,wx_fan_open_id,create_at,head_img_url,mini_program_id,wx_service_type
+        FROM e_wx_fan WHERE wx_fan_open_id = #{wxFanOpenId} AND mini_program_id = #{miniProgramId});
+    </insert>
+
 </mapper>

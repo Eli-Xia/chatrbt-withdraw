@@ -74,9 +74,9 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/update/fan-info", method = RequestMethod.POST)
     public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
+        miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
-        return respHelper.ok(ret);
+        return respHelper.ok();
     }
 
     //注册接口代替上面
@@ -84,9 +84,9 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public RespBase register(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        Map<String,Object> ret = miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
+        miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
-        return respHelper.ok(ret);
+        return respHelper.ok();
     }
 
 

@@ -148,4 +148,10 @@
     select count(id) from e_chat_pet_personal_mission where mission_code = 5 AND state = 3
     AND create_time &gt;= #{beginTime} AND create_time &lt;= #{endTime}
   </select>
+
+  <select id="selectMiniGameMissionMap" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM e_chat_pet_personal_mission
+    where chat_pet_id = #{chatPetId} AND mission_code = 5
+    AND create_time &gt;= #{startTime} AND create_time &lt;= #{endTime}
+  </select>
 </mapper>
