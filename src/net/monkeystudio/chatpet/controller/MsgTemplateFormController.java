@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * Created by bint on 2018/8/1.
  */
-@RequestMapping(value = "/msg-template-form")
+@RequestMapping(value = "/chat-pet/msg-template-form")
 @Controller
 public class MsgTemplateFormController extends ChatPetBaseController{
 
