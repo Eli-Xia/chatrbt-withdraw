@@ -1,10 +1,12 @@
 package net.monkeystudio.chatrbtw.mapper;
 
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface ChatPetPersonalMissionMapper {
     int deleteByPrimaryKey(Integer id);
@@ -30,4 +32,7 @@ public interface ChatPetPersonalMissionMapper {
     Integer countDayPlayGamePeople(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);//根据开始结束时间查询玩游戏人数
 
     Integer countDayPlayGameTotalAmount(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);//根据开始结束时间查询玩游戏总次数
+
+    @MapKey("wxMiniGameId")
+    Map<Integer,ChatPetPersonalMission> selectMiniGameMissionMap(@Param("chatPetId") Integer chatPetId,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
 }

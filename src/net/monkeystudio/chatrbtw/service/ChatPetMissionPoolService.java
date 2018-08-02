@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaxin
@@ -603,6 +604,20 @@ public class ChatPetMissionPoolService {
      */
     public Long getMiniGamePlayerNum(Integer miniGameId){
         return chatPetPersonalMissionMapper.countMiniGameFinishAmount(miniGameId,ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE,MissionStateEnum.FINISH_AND_AWARD.getCode());
+    }
+
+
+    /**
+     * 获取宠物今日小游戏任务map
+     * @param chatPetId : 宠物id
+     * @return   key:小游戏id  value:ChatPetPersonalMission任务对象
+     */
+    public Map<Integer,ChatPetPersonalMission> getTodayMiniGameMissionMap(Integer chatPetId){
+        Date today = new Date();
+        Date startTime = CommonUtils.dateStartTime(today);
+        Date endTime = CommonUtils.dateEndTime(today);
+
+        return chatPetPersonalMissionMapper.selectMiniGameMissionMap(chatPetId,startTime,endTime);
     }
 
 
