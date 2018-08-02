@@ -15,6 +15,8 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetappearence.ZombiesCatAppear
 import net.monkeystudio.chatrbtw.service.bean.chatpetlevel.ExperienceProgressRate;
 import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.TodayMission;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmyinfo.ChatPetDividendDetail;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmyinfo.ChatPetDividendDetailVO;
 import net.monkeystudio.wx.service.WxOauthService;
 import net.monkeystudio.wx.service.WxPubService;
 import net.monkeystudio.wx.vo.customerservice.CustomerNewsItem;
@@ -79,6 +81,12 @@ public class ChatPetService {
 
     @Autowired
     private ChatPetRewardService chatPetRewardService;
+
+    @Autowired
+    private DividendRecordService dividendRecordService;
+
+    @Autowired
+    private DividendDetailRecordService dividendDetailRecordService;
 
     @Autowired
     private RWxPubChatPetTypeService rWxPubChatPetTypeService;
@@ -1126,6 +1134,32 @@ public class ChatPetService {
         myInfo.setNickname(wxFan.getNickname());
 
         return myInfo;
+    }
+
+    /**
+     * 获取"城市分红"详情
+     * @return
+     */
+    public ChatPetDividendDetailVO getChatPetDividendDetailVO(Integer chatPetId){
+        ChatPetDividendDetailVO vo = new ChatPetDividendDetailVO();
+
+        //分红金额
+        ChatPet chatPet = this.getById(chatPetId);
+        Float money = chatPet.getMoney();
+        vo.setMoney(money);
+
+        //历史总分红金额
+        Float historyTotalDividendAmount = dividendRecordService.getHistoryTotalDividendAmount();
+        vo.setHistoryTotalDividendAmount(historyTotalDividendAmount);
+
+        //已体现金额 TODO
+        vo.setWithdrawMoney(0F);
+
+        //城市分红记录(分红+体现)
+        List<ChatPetDividendDetail> chatPetDividendDetailList = dividendDetailRecordService.getChatPetDividendDetailList(chatPetId);
+        vo.setDetails(chatPetDividendDetailList);
+
+        return vo;
     }
 
     /**

@@ -27,6 +27,7 @@ import java.util.*;
 @Service
 public class ChatPetRewardService{
 
+
     @Autowired
     private ChatPetMissionEnumService chatPetMissionEnumService;
     @Autowired
@@ -88,6 +89,9 @@ public class ChatPetRewardService{
     private final static String LEVEL_REWARD_MESSAGE_KEY = "generate_level_reward_task";
     //定时删除过时奖励
     private final static String DELETE_EXPIRE_REWARD_MESSAGE_KEY = "delete_expire_reward_task";
+    //出生奖励数量
+    private final static Integer BORN_REWARD_NUM = 5;
+
 
 
 
@@ -765,20 +769,24 @@ public class ChatPetRewardService{
     }
 
     /**
-     * 新注册用户生成0.01的金币奖励
+     * 新注册用户生成5枚0.01的金币奖励
      * @param chatPetId
      */
     public void generateRegisterReward(Integer chatPetId){
-        ChatPetRewardItem registerReward = new ChatPetRewardItem();
+        List<ChatPetRewardItem> bornRewards = new ArrayList<>();
 
-        registerReward.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
-        registerReward.setGoldValue(0.01F);
-        registerReward.setChatPetId(chatPetId);
-        registerReward.setRewardState(NOT_AWARD);
-        registerReward.setCreateTime(new Date());
+        for(int i = 0; i < BORN_REWARD_NUM; i++){
+            ChatPetRewardItem registerReward = new ChatPetRewardItem();
 
-        this.save(registerReward);
+            registerReward.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
+            registerReward.setGoldValue(0.01F);
+            registerReward.setChatPetId(chatPetId);
+            registerReward.setRewardState(NOT_AWARD);
+            registerReward.setCreateTime(new Date());
 
+            bornRewards.add(registerReward);
+        }
+        chatPetRewardItemMapper.batchInsert(bornRewards);
     }
 
     /**

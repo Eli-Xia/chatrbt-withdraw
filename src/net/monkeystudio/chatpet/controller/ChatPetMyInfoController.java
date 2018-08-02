@@ -2,8 +2,10 @@ package net.monkeystudio.chatpet.controller;
 
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.service.ChatPetService;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.MyInfo;
+import net.monkeystudio.chatrbtw.service.bean.chatpetmyinfo.ChatPetDividendDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,23 @@ public class ChatPetMyInfoController extends ChatPetBaseController{
         MyInfo myInfo = chatPetService.getMyInfo(wxFanId);
 
         return respHelper.ok(myInfo);
+    }
+
+    /**
+     * 获取"我的"信息
+     * @return
+     */
+    @RequestMapping(value = "/dividend-detail", method = RequestMethod.POST)
+    @ResponseBody
+    public RespBase getDividendDetail(){
+
+        Integer wxFanId = 146;
+
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+
+        ChatPetDividendDetailVO vo = chatPetService.getChatPetDividendDetailVO(chatPet.getId());
+
+        return respHelper.ok(vo);
     }
 }
 

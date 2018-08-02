@@ -11,4 +11,5 @@ import java.util.List;
 public interface DividendRecordMapper {
     int insert(DividendRecord dividendRecord);
     List<DividendRecord> selectByPage(@Param("startIndex") Integer startIndex , @Param("pageSize") Integer pageSize );
+    Float countTotalDividendAmount();
 }

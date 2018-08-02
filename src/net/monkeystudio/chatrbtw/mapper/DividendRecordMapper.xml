@@ -30,6 +30,10 @@
         order by create_time desc
             limit #{startIndex} , #{pageSize};
     </select>
+
+    <select id="countTotalDividendAmount" resultType="java.lang.Float">
+        SELECT sum(money) FROM e_dividend_record
+    </select>
     
     
 </mapper>

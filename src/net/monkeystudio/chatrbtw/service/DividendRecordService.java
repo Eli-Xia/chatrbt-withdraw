@@ -46,4 +46,11 @@ public class DividendRecordService {
 
         return dividendRecordRespList;
     }
+
+    /**
+     * 统计历史总分红金额
+     */
+    public Float getHistoryTotalDividendAmount(){
+        return dividendRecordMapper.countTotalDividendAmount();
+    }
 }
