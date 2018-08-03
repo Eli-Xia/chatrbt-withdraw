@@ -46,14 +46,14 @@ public class ChatPetMyInfoController extends ChatPetBaseController{
     }
 
     /**
-     * 获取"我的"信息
+     * 城市分红详情
      * @return
      */
     @RequestMapping(value = "/dividend-detail", method = RequestMethod.POST)
     @ResponseBody
     public RespBase getDividendDetail(){
 
-        Integer wxFanId = 146;
+        Integer wxFanId = this.getUserId();
 
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 

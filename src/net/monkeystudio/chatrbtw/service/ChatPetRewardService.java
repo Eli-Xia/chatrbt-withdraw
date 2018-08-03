@@ -773,21 +773,24 @@ public class ChatPetRewardService{
      * @param chatPetId
      */
     public void generateRegisterReward(Integer chatPetId){
-        List<ChatPetRewardItem> bornRewards = new ArrayList<>();
+        List<ChatPetRewardItem> rewarList = new ArrayList<>();
 
-        for(int i = 0; i < BORN_REWARD_NUM; i++){
+        for (int i = 0; i < BORN_REWARD_NUM; i++){
             ChatPetRewardItem registerReward = new ChatPetRewardItem();
 
             registerReward.setChatPetType(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT);
             registerReward.setGoldValue(0.01F);
+
             registerReward.setChatPetId(chatPetId);
             registerReward.setRewardState(NOT_AWARD);
-            registerReward.setCreateTime(new Date());
 
-            bornRewards.add(registerReward);
+            registerReward.setCreateTime(new Date());
+            rewarList.add(registerReward);
         }
-        chatPetRewardItemMapper.batchInsert(bornRewards);
+        chatPetRewardItemMapper.batchInsert(rewarList);
+
     }
+
 
     /**
      * 检查奖励是否为可领取状态
