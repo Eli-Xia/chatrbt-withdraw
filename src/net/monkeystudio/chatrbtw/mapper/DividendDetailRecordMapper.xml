@@ -22,4 +22,8 @@
         SELECT <include refid="Base_Column_List"/> FROM e_dividend_detail_record
         where chat_pet_id = #{chatPetId} limit 100
     </select>
+
+    <select id="sumTotalDividendMoneyByChatPetId" resultType="java.lang.Float">
+        select sum(money) FROM e_dividend_detail_record WHERE chat_pet_id = #{chatPetId}
+    </select>
 </mapper>

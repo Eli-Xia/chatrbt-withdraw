@@ -102,7 +102,7 @@ public class MiniProgramLoginService {
      * 宠物每天第一次登录处理
      * @param chatPetId
      */
-    public void dailyFirstLoginHandle(Integer chatPetId){
+    public void dailyFirstLoginHandle(Integer chatPetId) throws BizException{
 
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
 

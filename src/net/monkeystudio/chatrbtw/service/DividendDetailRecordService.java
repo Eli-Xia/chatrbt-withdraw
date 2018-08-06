@@ -89,6 +89,15 @@ public class DividendDetailRecordService {
 
     }
 
+    /**
+     * 根据宠物id统计总分红金额
+     * @param chatPetId
+     * @return
+     */
+    public Float getTotalDividendByChatPetId(Integer chatPetId){
+        return dividendDetailRecordMapper.sumTotalDividendMoneyByChatPetId(chatPetId);
+    }
+
 
     private ChatPetDividendDetail generateChatPetDividendDetail(DividendDetailRecord record){
         ChatPetDividendDetail chatPetDividendDetail = new ChatPetDividendDetail();

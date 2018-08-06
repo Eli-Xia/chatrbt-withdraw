@@ -48,7 +48,7 @@ public class ChatPetMissionContriller extends ChatPetBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/finish-mission", method = RequestMethod.POST)
-    public RespBase finishDailyMiniGame(@RequestParam("id") Integer wxMiniGameId){
+    public RespBase finishDailyMiniGame(@RequestParam("id") Integer wxMiniGameId) throws BizException{
 
         Integer wxFanId = this.getUserId();
 

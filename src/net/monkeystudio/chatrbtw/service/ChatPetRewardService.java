@@ -16,6 +16,7 @@ import net.monkeystudio.chatrbtw.service.bean.chatpetlog.SaveChatPetLogParam;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.MissionReward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -284,7 +285,7 @@ public class ChatPetRewardService{
      * 根据任务类型生成一个奖励
      * @param missionCode
      */
-    private void saveRewardItemByMission(Integer missionCode, Integer chatPetId, Integer chatPetPersonalMissionId){
+    public void saveRewardItemByMission(Integer missionCode, Integer chatPetId, Integer chatPetPersonalMissionId){
         ChatPetRewardItem item = new ChatPetRewardItem();
 
         ChatPet chatPet = chatPetService.getById(chatPetId);

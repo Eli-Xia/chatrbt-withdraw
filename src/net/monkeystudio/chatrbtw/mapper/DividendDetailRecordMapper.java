@@ -13,4 +13,6 @@ public interface DividendDetailRecordMapper {
 
     List<DividendDetailRecord> selectDetailRecordByChatPetId(Integer chatPetId);
 
+    Float sumTotalDividendMoneyByChatPetId(Integer chatPetId);
+
 }

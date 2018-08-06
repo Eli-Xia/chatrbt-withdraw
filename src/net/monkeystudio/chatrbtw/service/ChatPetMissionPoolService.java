@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.CommonUtils;
@@ -17,7 +18,12 @@ import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +71,9 @@ public class ChatPetMissionPoolService {
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private TransactionTemplate txTemplate;
 
     //每天只能最多完成三次邀请任务
     private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
@@ -330,7 +339,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMission(Integer inviteeWxFanId,Integer chatPetPersonalMissionId){
+    public void completeChatPetMission(Integer inviteeWxFanId,Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -349,7 +358,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMission(Integer adId,Integer inviteeWxFanId,Integer chatPetPersonalMissionId){
+    public void completeChatPetMission(Integer adId,Integer inviteeWxFanId,Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -515,8 +524,7 @@ public class ChatPetMissionPoolService {
         }
     }
 
-
-    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
+    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId){
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 
         Integer chatPetId = chatPet.getId();
@@ -524,8 +532,18 @@ public class ChatPetMissionPoolService {
         ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
 
         if(miniGameMission != null){
-            this.completeChatPetMission(miniGameMission.getId());
+            txTemplate.execute(new TransactionCallbackWithoutResult() {
+
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+                    completeChatPetMission(miniGameMission.getId());
+
+                }
+            });
+
         }
+
     }
 
 

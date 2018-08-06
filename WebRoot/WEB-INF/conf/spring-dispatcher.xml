@@ -27,7 +27,10 @@
 
 	<!--<context:component-scan base-package="net.monkeystudio.portal.controller,net.monkeystudio.admin.controller,net.monkeystudio.chatpet.controller" />-->
 
-	<context:component-scan base-package="net.monkeystudio"></context:component-scan>
+	<context:component-scan base-package="net.monkeystudio">
+		<context:exclude-filter type="regex"
+								expression="net.monkeystudio.*.contorller" />
+	</context:component-scan>
 
 	<task:annotation-driven/>
 
