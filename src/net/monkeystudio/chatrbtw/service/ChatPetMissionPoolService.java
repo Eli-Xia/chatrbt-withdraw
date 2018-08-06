@@ -374,6 +374,7 @@ public class ChatPetMissionPoolService {
      * 完成宠物任务
      * @param chatPetPersonalMissionId
      */
+    @Transactional
     public void completeChatPetMission(Integer chatPetPersonalMissionId){
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
@@ -529,18 +530,19 @@ public class ChatPetMissionPoolService {
 
         Integer chatPetId = chatPet.getId();
 
-        ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
+        ChatPetPersonalMission miniGameMission = this.getById(2462);
+        //ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
 
         if(miniGameMission != null){
-            txTemplate.execute(new TransactionCallbackWithoutResult() {
+            //txTemplate.execute(new TransactionCallbackWithoutResult() {
 
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                //@Override
+                //protected void doInTransactionWithoutResult(TransactionStatus status) {
 
                     completeChatPetMission(miniGameMission.getId());
 
-                }
-            });
+                //}
+            //});
 
         }
 
