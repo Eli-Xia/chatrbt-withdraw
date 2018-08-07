@@ -72,7 +72,7 @@ public class MiniProgramService {
 
 
     private String getMiniProgramTokenKey(Integer miniProgramId){
-        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "mini-program:accesstoken:" + String.valueOf(miniProgramId);
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "mini-program:access-token:" + String.valueOf(miniProgramId);
     }
 
 }
