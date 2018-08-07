@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by bint on 2018/7/31.
@@ -13,10 +14,12 @@ public class MsgTemplateParam {
     private String templateId;
     private String page;
 
+    private String url;
+
     @JsonProperty("form_id")
     private String formId;
 
-    private Data date;
+    private Data data;
 
     public String getTouser() {
         return touser;
@@ -50,11 +53,19 @@ public class MsgTemplateParam {
         this.formId = formId;
     }
 
-    public Data getDate() {
-        return date;
+    public Data getData() {
+        return data;
     }
 
-    public void setDate(Data date) {
-        this.date = date;
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

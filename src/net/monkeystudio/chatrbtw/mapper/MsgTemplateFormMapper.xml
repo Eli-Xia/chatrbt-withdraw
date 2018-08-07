@@ -34,7 +34,7 @@
         and
             wx_fan_id = #{wxFanId}
         and
-            create_time  <![CDATA[  <  ]]>  #{createTime}
+            create_time  <![CDATA[  >  ]]>  #{createTime}
         order by
             create_time
         limit 1

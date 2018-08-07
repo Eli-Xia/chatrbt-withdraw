@@ -3,7 +3,6 @@ package net.monkeystudio.chatrbtw.sdk.wx;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.HttpsHelper;
 import net.monkeystudio.base.utils.JsonUtil;
-import net.monkeystudio.chatrbtw.entity.MiniProgram;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.MiniProgramResponse;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.MsgTemplateParam;
@@ -35,7 +34,7 @@ public class WxMsgTemplateHelper {
      * @param wxFanId
      * @throws BizException
      */
-    public MiniProgramResponse sendTemplateMsg(Integer wxFanId,MsgTemplateParam msgTemplateParam) throws BizException {
+    public MiniProgramResponse sendTemplateMsg(Integer wxFanId ,MsgTemplateParam msgTemplateParam) throws BizException {
 
         WxFan wxFan = wxFanService.getById(wxFanId);
 
@@ -44,15 +43,14 @@ public class WxMsgTemplateHelper {
         if(miniProgramId == null){
             throw new BizException("暂只支持小程序发送消息");
         }
+
         String openId = wxFan.getWxFanOpenId();
 
         msgTemplateParam.setTouser(openId);
 
-        MiniProgram miniProgram = miniProgramService.getById(miniProgramId);
+        String accessToken = miniProgramService.getAcceessToken(miniProgramId);
 
-        String accessToken = wxAuthApiService.getAuthorizerAccessToken(miniProgram.getAppId());
-
-        String url = WxApiUrlUtil.getSendMessageUrl(accessToken);
+        String url = WxApiUrlUtil.getSendTemplateUrl(accessToken);
         String jsonStr = JsonUtil.toJSon(msgTemplateParam);
         String response = HttpsHelper.postJsonByStr(url, jsonStr);
 

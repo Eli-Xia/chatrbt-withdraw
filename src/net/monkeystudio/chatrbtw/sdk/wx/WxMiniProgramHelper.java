@@ -8,8 +8,10 @@ import net.monkeystudio.base.utils.JsonUtil;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.MiniProgram;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.MiniProgramAccessToken;
 import net.monkeystudio.chatrbtw.service.MiniProgramService;
 import net.monkeystudio.wx.utils.WxApiUrlUtil;
+import net.monkeystudio.wx.vo.thirtparty.ComponentAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,5 +70,20 @@ public class WxMiniProgramHelper {
         return loginVerifyInfo;
     }
 
+    /**
+     * 得到小程序的accessToken
+     * @param appId
+     * @param appScrect
+     * @return
+     */
+    public MiniProgramAccessToken getAccessToken(String appId ,String appScrect){
 
+        String url = WxApiUrlUtil.getMiniProgramFetchAccessToken(appId, appScrect);
+
+        String response = HttpsHelper.get(url);
+
+        MiniProgramAccessToken miniProgramAccessToken = JsonUtil.readValue(response, MiniProgramAccessToken.class);
+
+        return miniProgramAccessToken;
+    }
 }

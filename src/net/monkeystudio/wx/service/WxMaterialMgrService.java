@@ -2,6 +2,11 @@ package net.monkeystudio.wx.service;
 
 import java.util.*;
 
+import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.utils.CommonUtils;
+import net.monkeystudio.wx.utils.WxApiUrlUtil;
+import net.monkeystudio.wx.vo.material.BatchGetMaterial;
+import net.monkeystudio.wx.vo.material.BatchMaterialNews;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -195,40 +200,40 @@ public class WxMaterialMgrService {
 //		return resp;
 //	}
 	
-//	/**
-//	 * 取永久素材列表
-//	 * @param wxPubOriginId
-//	 * @throws BizException 
-//	 */
-//	public BatchMaterialNews getWxPubNewsMaterials(String wxPubOriginId, int page) throws BizException{
-//		
-//		Log.d("Query material, wxPubOriginId=" + wxPubOriginId + ",page=" + page);
-//		
-//		String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);//在redis里面获取 appid
-//		String accessToken = wxAuthApiService.getAuthorizerAccessToken(wxPubAppId);
-//		String getMaterialListUrl = WxApiUrlUtil.getFetchMaterialInfoListUrl(accessToken);
-//		
-//		BatchGetMaterial req = new BatchGetMaterial();
-//		req.setType("news");
-//		Integer offset = CommonUtils.page2startIndex(page, PAGE_SIZE);
-//		req.setOffset(offset);
-//		req.setCount(PAGE_SIZE);
-//		
-//		String jsonStr = JsonUtil.toJSon(req);
-//		String response = HttpsHelper.postJsonByStr(getMaterialListUrl,jsonStr);
-//		if ( response.indexOf("errcode") >= 0 ){
-//			throw new BizException("Query materials error, response:" + response);
-//		}
-//		
-//		BatchMaterialNews materials = JsonUtil.readValue(response, BatchMaterialNews.class);
-//		if ( materials == null ){
-//			Log.e("Query material failed, parse result error.");
-//			throw new BizException("Query material failed, parse result error");
-//		}
-//		
-//		Log.d("Query material result:" + JsonUtil.toJSon(materials));
-//		return materials;
-//	}
+	/**
+	 * 取永久素材列表
+	 * @param wxPubOriginId
+	 * @throws BizException
+	 */
+	public BatchMaterialNews getWxPubNewsMaterials(String wxPubOriginId, int page) throws BizException {
+
+		Log.d("Query material, wxPubOriginId=" + wxPubOriginId + ",page=" + page);
+
+		String wxPubAppId = wxPubService.getWxPubAppIdByOrginId(wxPubOriginId);//在redis里面获取 appid
+		String accessToken = wxAuthApiService.getAuthorizerAccessToken(wxPubAppId);
+		String getMaterialListUrl = WxApiUrlUtil.getFetchMaterialInfoListUrl(accessToken);
+
+		BatchGetMaterial req = new BatchGetMaterial();
+		req.setType("news");
+		Integer offset = CommonUtils.page2startIndex(page, 100);
+		req.setOffset(0);
+		req.setCount(100);
+
+		String jsonStr = JsonUtil.toJSon(req);
+		String response = HttpsHelper.postJsonByStr(getMaterialListUrl,jsonStr);
+		if ( response.indexOf("errcode") >= 0 ){
+			throw new BizException("Query materials error, response:" + response);
+		}
+
+		BatchMaterialNews materials = JsonUtil.readValue(response, BatchMaterialNews.class);
+		if ( materials == null ){
+			Log.e("Query material failed, parse result error.");
+			throw new BizException("Query material failed, parse result error");
+		}
+
+		Log.d("Query material result:" + JsonUtil.toJSon(materials));
+		return materials;
+	}
 	
 	/**
 	 * 获取公众号素材news列表

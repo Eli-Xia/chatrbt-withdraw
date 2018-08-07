@@ -9,6 +9,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMsgTemplateHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Data;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Keyword;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.MsgTemplateParam;
 import net.monkeystudio.chatrbtw.service.bean.dividendrecord.DividendQueueValueVO;
 import net.monkeystudio.chatrbtw.utils.BigDecimalUtil;
@@ -49,6 +50,10 @@ public class DividendService {
 
     @Autowired
     private WxFanService wxFanService;
+
+
+    @Autowired
+    private MsgTemplateService msgTemplateService;
 
 
     /**
@@ -96,10 +101,12 @@ public class DividendService {
 
         ChatPet chatPet = chatPetService.getById(chatPetId);
 
+        Integer wxFanId = chatPet.getWxFanId();
+
         //如果分红不为0,则发送消息通知
         if(money.floatValue() != 0F){
 
-            this.sendMsg(chatPet.getWxFanId());
+            this.sendMsg(wxFanId);
         }
 
 
@@ -214,7 +221,7 @@ public class DividendService {
 
     }
 
-    private void sendMsg(Integer wxFanId){
+    public void sendMsg(Integer wxFanId){
 
         MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
 
@@ -227,6 +234,7 @@ public class DividendService {
 
         //如果没有可用的消息表单,则返回
         if(msgTemplateForm == null){
+            Log.d("wxFanId [?] msgTemplateForm is null " ,String.valueOf(wxFanId));
             return ;
         }
 
@@ -234,10 +242,20 @@ public class DividendService {
 
         msgTemplateParam.setFormId(msgTemplateForm.getFormId());
 
-        data.setKeyword1("猫六六乐园城市分红");
-        data.setKeyword2("城市分红已到账，快查查又收到多少money吧！");
-        msgTemplateParam.setDate(data);
+        Keyword keyword1 = new Keyword();
+        keyword1.setValue("猫六六乐园城市分红");
+        data.setKeyword1(keyword1);
 
+        Keyword keyword2 = new Keyword();
+        keyword2.setValue("城市分红已到账，快查查又收到多少money吧！");
+        data.setKeyword2(keyword2);
+
+        msgTemplateParam.setData(data);
+
+        MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
+        msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
+
+        msgTemplateParam.setPage("/pages/dividend/dividend");
 
         try {
             wxMsgTemplateHelper.sendTemplateMsg(wxFanId,msgTemplateParam);
