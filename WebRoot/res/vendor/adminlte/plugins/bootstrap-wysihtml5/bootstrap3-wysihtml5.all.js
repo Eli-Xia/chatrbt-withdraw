@@ -7835,7 +7835,7 @@ wysihtml5.dom.isLoadedImage = function (node) {
                                     this.map[row][col].el.setAttribute('colspan', colspan);
                                 }
                             } else {
-                                // transfer content
+                                // transfers content
                                 if (!(/^\s*<br\/?>\s*$/.test(this.map[row][col].el.innerHTML.toLowerCase()))) {
                                     this.map[this.idx_start.row][this.idx_start.col].el.innerHTML += ' ' + this.map[row][col].el.innerHTML;
                                 }
