@@ -371,7 +371,6 @@ public class ChatPetMissionPoolService {
      * 完成宠物任务
      * @param chatPetPersonalMissionId
      */
-    @Transactional
     public void completeChatPetMission(Integer chatPetPersonalMissionId){
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
