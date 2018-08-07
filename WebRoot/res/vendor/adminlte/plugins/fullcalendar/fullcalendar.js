@@ -216,7 +216,7 @@ fc.datepickerLang = function(langCode, dpLangCode, dpOptions) {
 	// get the FullCalendar internal option hash for this language. create if necessary
 	var fcOptions = langOptionHash[langCode] || (langOptionHash[langCode] = {});
 
-	// transfer some simple options from datepicker to fc
+	// transfers some simple options from datepicker to fc
 	fcOptions.isRTL = dpOptions.isRTL;
 	fcOptions.weekNumberTitle = dpOptions.weekHeader;
 

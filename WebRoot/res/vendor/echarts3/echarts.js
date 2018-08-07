@@ -39811,7 +39811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        });
 
-	        // Beyond transfer, additional features should be added to `cloneShallow`.
+	        // Beyond transfers, additional features should be added to `cloneShallow`.
 	        mainData.wrapMethod('cloneShallow', zrUtil.curry(cloneShallowInjection, opt));
 
 	        // Only mainData trigger change, because struct.update may trigger
