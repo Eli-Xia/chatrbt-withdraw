@@ -23,6 +23,11 @@ public class WxApiUrlUtil {
 
     private static final String CODE_2_SESSION_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=#{app_id}&secret=#{secret}&js_code=#{js_code}&grant_type=authorization_code";
 
+    //发送模版消息
+    private static final String SEND_TEMPLATE_URL = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=#{accessToken}";
+
+    private static final String MINI_PROGRAM_FETCH_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=#{appId}&secret=#{appSecret}";
+
     public static String getSendMessageUrl(String accessToken){
         return SEND_MESSAGE_URL.replace("#{ACCESS_TOKEN}", accessToken);
     }
@@ -67,6 +72,15 @@ public class WxApiUrlUtil {
     }
 
     /**
+     * 发送模版消息
+     * @param accessToken
+     * @return
+     */
+    public static String getSendTemplateUrl(String accessToken){
+        return SEND_TEMPLATE_URL.replace("#{accessToken}", accessToken);
+    }
+
+    /**
      * 获取二维码URL
      * @return
      */
@@ -86,6 +100,19 @@ public class WxApiUrlUtil {
         url = url.replace("#{app_id}",appId);
         url = url.replace("#{secret}",secret);
         url = url.replace("#{js_code}",code);
+        return url;
+    }
+
+    /**
+     * 获取小程序的accessToken的url
+     * @param appId
+     * @param appSecret
+     * @return
+     */
+    public static String getMiniProgramFetchAccessToken(String appId ,String appSecret){
+        String url = MINI_PROGRAM_FETCH_ACCESS_TOKEN.replace("#{appId}", appId);
+        url = url.replace("#{appSecret}", appSecret);
+
         return url;
     }
 

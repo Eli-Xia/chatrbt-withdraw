@@ -15,6 +15,7 @@ public class ChatPetInfo {
     private Integer tempAppearance;
     private String appearanceUrl;
     private OwnerInfo ownerInfo;
+    private Float money = 0F;
 
     private String ownerId;
     private String geneticCode;
@@ -39,6 +40,14 @@ public class ChatPetInfo {
     private List<ChatPetGoldItem> goldItems = new ArrayList<>();
 
     private MagicCoinCount magicCoinCount;
+
+    public Float getMoney() {
+        return money;
+    }
+
+    public void setMoney(Float money) {
+        this.money = money;
+    }
 
     public Integer getOwerWxFanId() {
         return owerWxFanId;

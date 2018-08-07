@@ -1,13 +1,16 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.base.utils.Log;
-import net.monkeystudio.chatrbtw.entity.ChatPet;
-import net.monkeystudio.chatrbtw.entity.DividendDetailRecord;
-import net.monkeystudio.chatrbtw.entity.DividendRecord;
+import net.monkeystudio.chatrbtw.entity.*;
+import net.monkeystudio.chatrbtw.sdk.wx.WxMsgTemplateHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Data;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Keyword;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.MsgTemplateParam;
 import net.monkeystudio.chatrbtw.service.bean.dividendrecord.DividendQueueValueVO;
 import net.monkeystudio.chatrbtw.utils.BigDecimalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,19 @@ public class DividendService {
 
     @Autowired
     private TaskExecutor taskExecutor;
+
+    @Autowired
+    private WxMsgTemplateHelper wxMsgTemplateHelper;
+
+    @Autowired
+    private MsgTemplateFormService msgTemplateFormService;
+
+    @Autowired
+    private WxFanService wxFanService;
+
+
+    @Autowired
+    private MsgTemplateService msgTemplateService;
 
 
     /**
@@ -81,6 +97,18 @@ public class DividendService {
         dividendDetailRecord.setCreateTime(new Date());
 
         dividendDetailRecordService.save(dividendDetailRecord);
+
+
+        ChatPet chatPet = chatPetService.getById(chatPetId);
+
+        Integer wxFanId = chatPet.getWxFanId();
+
+        //如果分红不为0,则发送消息通知
+        if(money.floatValue() != 0F){
+
+            this.sendMsg(wxFanId);
+        }
+
 
     }
 
@@ -193,5 +221,46 @@ public class DividendService {
 
     }
 
+    public void sendMsg(Integer wxFanId){
 
+        MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
+
+        Data data = new Data();
+
+        WxFan wxFan = wxFanService.getById(wxFanId);
+        msgTemplateParam.setTouser(wxFan.getWxFanOpenId());
+
+        MsgTemplateForm msgTemplateForm = msgTemplateFormService.getEnable(wxFanId);
+
+        //如果没有可用的消息表单,则返回
+        if(msgTemplateForm == null){
+            Log.d("wxFanId [?] msgTemplateForm is null " ,String.valueOf(wxFanId));
+            return ;
+        }
+
+        msgTemplateFormService.updateState(msgTemplateForm.getId());
+
+        msgTemplateParam.setFormId(msgTemplateForm.getFormId());
+
+        Keyword keyword1 = new Keyword();
+        keyword1.setValue("猫六六乐园城市分红");
+        data.setKeyword1(keyword1);
+
+        Keyword keyword2 = new Keyword();
+        keyword2.setValue("城市分红已到账，快查查又收到多少money吧！");
+        data.setKeyword2(keyword2);
+
+        msgTemplateParam.setData(data);
+
+        MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
+        msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
+
+        msgTemplateParam.setPage("/pages/dividend/dividend");
+
+        try {
+            wxMsgTemplateHelper.sendTemplateMsg(wxFanId,msgTemplateParam);
+        } catch (BizException e) {
+            Log.e(e);
+        }
+    }
 }

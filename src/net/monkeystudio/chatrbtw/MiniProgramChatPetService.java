@@ -110,6 +110,10 @@ public class MiniProgramChatPetService {
         Float experience = chatPet.getExperience();
         chatPetBaseInfo.setExperience(experience);
 
+        //宠物分红
+        Float money = chatPet.getMoney();
+        chatPetBaseInfo.setMoney(money);
+
         //经验条进度
         ExperienceProgressRate experienceProgressRate = chatPetLevelService.getProgressRate(experience);
         chatPetBaseInfo.setExperienceProgressRate(experienceProgressRate);

@@ -18,12 +18,9 @@ import net.monkeystudio.wx.service.WxPubService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -525,25 +522,22 @@ public class ChatPetMissionPoolService {
         }
     }
 
-    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId){
+
+    @Transactional
+    public void finishDailyMiniGameMission(Integer wxFanId ,Integer wxMiniGameId) {
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 
         Integer chatPetId = chatPet.getId();
 
-        ChatPetPersonalMission miniGameMission = this.getById(2462);
-        //ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
+        ChatPetPersonalMission miniGameMission = this.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE, wxMiniGameId);
 
         if(miniGameMission != null){
             //txTemplate.execute(new TransactionCallbackWithoutResult() {
-
                 //@Override
                 //protected void doInTransactionWithoutResult(TransactionStatus status) {
-
-                    completeChatPetMission(miniGameMission.getId());
-
-                //}
+            //}
             //});
-
+            completeChatPetMission(miniGameMission.getId());
         }
 
     }

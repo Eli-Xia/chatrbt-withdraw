@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.MsgTemplateMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.MsgTemplate">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+        <result column="mini_program_id" property="miniProgramId" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, template_id, mini_program_id, remark, code
+    </sql>
+
+    <select id="selectByMiniProgramIdAndCode" resultMap="baseResultMap" parameterType="map">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            e_msg_template
+        WHERE
+            code = #{code}
+        AND
+            mini_program_id = #{miniProgramId}
+    </select>
+
+</mapper>
