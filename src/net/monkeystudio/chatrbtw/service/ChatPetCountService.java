@@ -57,6 +57,14 @@ public class ChatPetCountService {
         Integer yesterPlayGameTotalAmount = chatPetMissionPoolService.getYesterPlayGameTotalAmount();
         yesterdayStatistic.setPlayGameTotalCount(yesterPlayGameTotalAmount);
 
+        //昨日领取宠物人数
+        Integer yesterdayAddNum = chatPetService.getYesterdayAddNum();
+        yesterdayStatistic.setAddChatPetNum(yesterdayAddNum);
+
+        //昨日领取宠物人数中领取过奖励人数
+        Integer rewardNumFromYesterdayRegister = chatPetService.getRewardNumFromYesterdayRegister();
+        yesterdayStatistic.setReceiveCoinNum(rewardNumFromYesterdayRegister);
+
         return yesterdayStatistic;
     }
 

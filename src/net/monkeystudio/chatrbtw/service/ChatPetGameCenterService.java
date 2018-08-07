@@ -67,7 +67,7 @@ public class ChatPetGameCenterService {
 
             Integer miniGameId = item.getId();
 
-            //今天刚上架小游戏是没有为用户分配任务
+            //今天新上架小游戏还未给用户分配任务
             if(!todayMiniGameMissionMap.containsKey(miniGameId)){
                 continue;
             }

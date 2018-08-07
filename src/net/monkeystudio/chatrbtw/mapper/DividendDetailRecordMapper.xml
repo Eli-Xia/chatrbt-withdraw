@@ -17,4 +17,9 @@
             values
                 (#{chatPetId}, #{createTime}, #{dividendId}, #{money})
     </insert>
+
+    <select id="selectDetailRecordByChatPetId" resultMap="baseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM e_dividend_detail_record
+        where chat_pet_id = #{chatPetId} limit 100
+    </select>
 </mapper>

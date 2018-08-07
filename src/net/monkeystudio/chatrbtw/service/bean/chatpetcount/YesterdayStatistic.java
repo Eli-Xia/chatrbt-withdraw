@@ -9,6 +9,24 @@ public class YesterdayStatistic {
     private Integer loginNum;
     private Integer playGameNum;
     private Integer playGameTotalCount;
+    private Integer addChatPetNum;
+    private Integer receiveCoinNum;
+
+    public Integer getAddChatPetNum() {
+        return addChatPetNum;
+    }
+
+    public void setAddChatPetNum(Integer addChatPetNum) {
+        this.addChatPetNum = addChatPetNum;
+    }
+
+    public Integer getReceiveCoinNum() {
+        return receiveCoinNum;
+    }
+
+    public void setReceiveCoinNum(Integer receiveCoinNum) {
+        this.receiveCoinNum = receiveCoinNum;
+    }
 
     public Float getTotalExperience() {
         return totalExperience;
