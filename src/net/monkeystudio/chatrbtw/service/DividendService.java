@@ -269,6 +269,10 @@ public class DividendService {
         msgTemplateParam.setData(data);
 
         MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
+
+        if(msgTemplate == null){
+            return ;
+        }
         msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
 
         msgTemplateParam.setPage("/pages/dividend/dividend");

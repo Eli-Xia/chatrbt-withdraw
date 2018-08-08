@@ -60,7 +60,7 @@ public class MiniProgramService {
 
     private String getAccessTokenFromCache(Integer miniProgramId){
         String key = this.getMiniProgramTokenKey(miniProgramId);
-        String acceessToken = redisCacheTemplate.getObject(key);
+        String acceessToken = redisCacheTemplate.getString(key);
 
         return acceessToken;
     }
