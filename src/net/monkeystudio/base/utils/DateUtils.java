@@ -161,4 +161,35 @@ public class DateUtils {
         return time;
     }
 
+    /**
+     * 是否为昨天
+     * 即从昨天零时零分到今日零时零分
+     * @param date
+     * @return
+     */
+    public static Boolean isYesterday(Date date){
+        Date currentDate = new Date();
+
+        Date currentDateBegin = getBeginDate(currentDate);
+
+        Date yesterdayBegin = getYesterday(currentDateBegin);
+
+        if(date.before(currentDateBegin) && date.after(yesterdayBegin)){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public static void main(String[] args) {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(2018,7,7,12,1);
+
+        Date date = calendar.getTime();
+
+        System.out.println(isYesterday(date));
+    }
+
 }
