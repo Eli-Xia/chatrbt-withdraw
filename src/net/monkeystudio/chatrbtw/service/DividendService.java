@@ -5,6 +5,7 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMsgTemplateHelper;
@@ -55,6 +56,8 @@ public class DividendService {
     @Autowired
     private MsgTemplateService msgTemplateService;
 
+    private final static Float FIRST_DAY_INIT_MONEY = 0.01F;
+
 
     /**
      * 分红队列消耗
@@ -67,8 +70,10 @@ public class DividendService {
 
         String dividendQuqueValue = list.get(1);
 
+        //解析出数据
         DividendQueueValueVO dividendQueueValueVO = this.paraseDividendQuqueValue(dividendQuqueValue);
 
+        //计算应得的钱
         Double totalCoin = dividendQueueValueVO.getTotalCoin();
         BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
 
@@ -83,7 +88,17 @@ public class DividendService {
 
         moneyBD = BigDecimalUtil.dealDecimalPoint(moneyBD, 2);
 
+        //如果钱为0，则判断是否为昨天新注册用户
         Float money = moneyBD.floatValue();
+        if(money.floatValue() == 0f){
+            ChatPet chatPet = chatPetService.getById(dividendQueueValueVO.getChatPetId());
+            Date createTime = chatPet.getCreateTime();
+
+            //如果是昨天新注册用户，则分发0.01
+            if(DateUtils.isYesterday(createTime)){
+                money = FIRST_DAY_INIT_MONEY;
+            }
+        }
 
         Integer chatPetId = dividendQueueValueVO.getChatPetId();
 
