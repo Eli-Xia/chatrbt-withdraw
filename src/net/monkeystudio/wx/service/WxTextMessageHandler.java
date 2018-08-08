@@ -14,7 +14,6 @@ import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.WxPubHelper;
 import net.monkeystudio.chatrbtw.service.*;
 import net.monkeystudio.chatrbtw.service.bean.asksearch.AskSearchVo;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.chatrbtw.service.bean.chatrobot.resp.ChatRobotInfoResp;
 import net.monkeystudio.chatrbtw.service.bean.wxmessage.ReplyMessage;
 import net.monkeystudio.wx.controller.bean.TextMsgRec;
@@ -180,7 +179,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
                 ChatPetPersonalMission signInMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_SIGN_IN_CODE);
                 if(signInMission != null){
-                    chatPetMissionPoolService.completeChatPetMission(signInMission.getId());
+                    chatPetMissionPoolService.completeChatPetMissionTx(signInMission.getId());
                 }
 
                 //资讯任务广告推送

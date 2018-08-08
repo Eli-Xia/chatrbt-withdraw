@@ -1,7 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.base.utils.XmlUtil;
@@ -10,7 +9,6 @@ import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.EthnicGroups;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.SubscribeEvent;
-import net.monkeystudio.chatrbtw.service.bean.chatpetmission.CompleteMissionParam;
 import net.monkeystudio.wx.controller.bean.TextMsgRes;
 import net.monkeystudio.wx.mp.aes.XMLParse;
 import net.monkeystudio.wx.service.WxPubService;
@@ -127,7 +125,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(parentId, ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
                             if(inviteMission != null){
-                                chatPetMissionPoolService.completeChatPetMission(childChatPet.getWxFanId(),inviteMission.getId());
+                                chatPetMissionPoolService.completeChatPetMissionTx(childChatPet.getWxFanId(),inviteMission.getId());
                             }
                         }
 

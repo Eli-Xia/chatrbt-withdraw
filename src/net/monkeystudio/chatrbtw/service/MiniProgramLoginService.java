@@ -132,7 +132,7 @@ public class MiniProgramLoginService {
 
             //登录任务完成
             ChatPetPersonalMission loginMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE);
-            chatPetMissionPoolService.completeChatPetMission(loginMission.getId());
+            chatPetMissionPoolService.completeChatPetMissionTx(loginMission.getId());
 
 
             //派发邀请任务
