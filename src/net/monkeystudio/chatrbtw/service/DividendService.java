@@ -88,10 +88,12 @@ public class DividendService {
 
         moneyBD = BigDecimalUtil.dealDecimalPoint(moneyBD, 2);
 
+
         //如果钱为0，则判断是否为昨天新注册用户
+        Integer chatPetId = dividendQueueValueVO.getChatPetId();
         Float money = moneyBD.floatValue();
         if(money.floatValue() == 0f){
-            ChatPet chatPet = chatPetService.getById(dividendQueueValueVO.getChatPetId());
+            ChatPet chatPet = chatPetService.getById(chatPetId);
             Date createTime = chatPet.getCreateTime();
 
             //如果是昨天新注册用户，则分发0.01
@@ -100,11 +102,11 @@ public class DividendService {
             }
         }
 
-        Integer chatPetId = dividendQueueValueVO.getChatPetId();
-
+        //进行发红
         chatPetService.increaseMoney(chatPetId, money);
 
 
+        //添加分红详细记录
         DividendDetailRecord dividendDetailRecord = new DividendDetailRecord();
         dividendDetailRecord.setChatPetId(chatPetId);
         dividendDetailRecord.setMoney(money);
@@ -112,7 +114,6 @@ public class DividendService {
         dividendDetailRecord.setCreateTime(new Date());
 
         dividendDetailRecordService.save(dividendDetailRecord);
-
 
         ChatPet chatPet = chatPetService.getById(chatPetId);
 
@@ -258,11 +259,11 @@ public class DividendService {
         msgTemplateParam.setFormId(msgTemplateForm.getFormId());
 
         Keyword keyword1 = new Keyword();
-        keyword1.setValue("猫六六乐园城市分红");
+        keyword1.setValue("小游戏又上新啦");
         data.setKeyword1(keyword1);
 
         Keyword keyword2 = new Keyword();
-        keyword2.setValue("城市分红已到账，快查查又收到多少money吧！");
+        keyword2.setValue("城市分红已到账，快去查查看！");
         data.setKeyword2(keyword2);
 
         msgTemplateParam.setData(data);
