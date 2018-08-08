@@ -64,7 +64,7 @@
    <!-- <context:component-scan base-package="net.monkeystudio"/>-->
 
     <!-- 开启事务注解驱动 -->
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <tx:annotation-driven transaction-manager="transactionManager" mode="aspectj"/>
 
     <!-- 事务管理器 -->
     <bean id="transactionManager"
@@ -75,6 +75,15 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation" value="/WEB-INF/conf/mybatis-config.xml"></property>
         <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+        <bean class="org.springframework.transaction.aspectj.AnnotationTransactionAspect" factory-method="aspectOf">
+        <property name="transactionManager" ref="transactionManager" />
+        </bean>
+
+    <bean id="txTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="isolationLevelName" value="ISOLATION_READ_COMMITTED" />
+        <property name="transactionManager" ref="transactionManager" />
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

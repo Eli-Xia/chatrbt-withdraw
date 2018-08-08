@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
@@ -52,7 +53,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
     private final static String SUBSCRIBE_EVENT = "subscribe";
     private final static String SCAN_EVENT = "scan";
 
-    public String handleEvent(String content) {
+    public String handleEvent(String content) throws BizException{
         String eventType = this.judgeEventType(content);
 
         eventType = eventType.toLowerCase();

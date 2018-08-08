@@ -1149,8 +1149,9 @@ public class ChatPetService {
         vo.setMoney(money);
 
         //历史总分红金额
-        Float historyTotalDividendAmount = dividendRecordService.getHistoryTotalDividendAmount();
-        vo.setHistoryTotalDividendAmount(historyTotalDividendAmount);
+        //Float historyTotalDividendAmount = dividendRecordService.getHistoryTotalDividendAmount();
+        Float totalDividendByChatPetId = dividendDetailRecordService.getTotalDividendByChatPetId(chatPetId);
+        vo.setHistoryTotalDividendAmount(totalDividendByChatPetId);
 
         //已体现金额 TODO
         vo.setWithdrawMoney(0F);

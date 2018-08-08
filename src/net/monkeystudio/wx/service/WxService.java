@@ -38,7 +38,11 @@ public class WxService {
 		}
 
 		if(MessageTypeConstants.EVENT.equals(dataType)){
-			xmlStr = wxEventMessageHandler.handleEvent(content);
+			try {
+				xmlStr = wxEventMessageHandler.handleEvent(content);
+			} catch (BizException e) {
+				Log.e(e);
+			}
 		}
 
 		if(MessageTypeConstants.TEXT.equals(dataType)){
