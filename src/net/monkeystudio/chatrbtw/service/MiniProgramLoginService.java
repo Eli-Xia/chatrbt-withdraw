@@ -66,6 +66,7 @@ public class MiniProgramLoginService {
      * @param wxFanId
      * @throws BizException
      */
+    @Transactional
     public void login(Integer wxFanId) throws BizException {
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 
@@ -89,6 +90,7 @@ public class MiniProgramLoginService {
      * @param unionId
      * @throws BizException
      */
+    @Transactional
     public void register(Integer parentFanId, String openId, String unionId) throws BizException {
         //新增用户
         WxFan wxFan = new WxFan();
@@ -102,7 +104,7 @@ public class MiniProgramLoginService {
         //当不存在于数据库时保存
         wxFanService.saveIfNotExist(wxFan);
 
-        //获取刚save的wxFan的id值
+        //获取刚insert的wxFan的id
         Integer wxFanId = wxFan.getId();
 
         //生成宠物
