@@ -164,7 +164,7 @@ public class MiniProgramUserInfoService {
 
                         if (inviteMission != null) {
                             //父亲宠物完成邀请任务
-                            chatPetMissionPoolService.completeChatPetMissionTx(wxFanId, inviteMission.getId());
+                            chatPetMissionPoolService.completeChatPetMission(wxFanId, inviteMission.getId());
                         }
                     }
 

@@ -125,7 +125,7 @@ public class WxEventMessageHandler extends WxBaseMessageHandler {
                             ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(parentId, ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
 
                             if(inviteMission != null){
-                                chatPetMissionPoolService.completeChatPetMissionTx(childChatPet.getWxFanId(),inviteMission.getId());
+                                chatPetMissionPoolService.completeChatPetMission(childChatPet.getWxFanId(),inviteMission.getId());
                             }
                         }
 

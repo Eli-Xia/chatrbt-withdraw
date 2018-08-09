@@ -109,7 +109,7 @@ public class ChatPetMissionPoolService {
                         ChatPetPersonalMission searchMission = getChatPetOngoingMissionByMissionType(chatPet.getId(), ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE);
 
                         try {
-                            completeChatPetMissionTx(adId,null,searchMission.getId());
+                            completeChatPetMission(adId,null,searchMission.getId());
                         }catch (Exception e){
                             Log.e(e);
                         }
@@ -336,7 +336,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMissionTx(Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
+    public void completeChatPetMission(Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -344,7 +344,7 @@ public class ChatPetMissionPoolService {
         chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
         this.update(chatPetPersonalMission);
 
-        this.completeChatPetMissionTx(chatPetPersonalMissionId);
+        this.completeChatPetMission(chatPetPersonalMissionId);
     }
 
     /**
@@ -355,7 +355,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMissionTx(Integer adId, Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
+    public void completeChatPetMission(Integer adId, Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -364,7 +364,7 @@ public class ChatPetMissionPoolService {
         chatPetPersonalMission.setInviteeWxFanId(inviteeWxFanId);
         this.update(chatPetPersonalMission);
 
-        this.completeChatPetMissionTx(chatPetPersonalMissionId);
+        this.completeChatPetMission(chatPetPersonalMissionId);
     }
 
 
@@ -374,7 +374,7 @@ public class ChatPetMissionPoolService {
      * @param chatPetPersonalMissionId
      */
     @Transactional
-    public void completeChatPetMissionTx(Integer chatPetPersonalMissionId){
+    public void completeChatPetMission(Integer chatPetPersonalMissionId){
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
         if(chatPetPersonalMission == null) return;
@@ -539,7 +539,7 @@ public class ChatPetMissionPoolService {
                 //protected void doInTransactionWithoutResult(TransactionStatus status) {
             //}
             //});
-            completeChatPetMissionTx(miniGameMission.getId());
+            completeChatPetMission(miniGameMission.getId());
         }
 
     }
@@ -756,7 +756,7 @@ public class ChatPetMissionPoolService {
      * 完成宠物任务
      * @param
      */
-    /*public void completeChatPetMissionTx(CompleteMissionParam completeMissionParam){
+    /*public void completeChatPetMission(CompleteMissionParam completeMissionParam){
         //查询当前任务记录查询对象
         ChatPetPersonalMission chatPetPersonalMission = null;
 

@@ -179,7 +179,7 @@ public class WxTextMessageHandler extends WxBaseMessageHandler{
 
                 ChatPetPersonalMission signInMission = chatPetMissionPoolService.getChatPetOngoingMissionByMissionType(chatPetId, ChatPetMissionEnumService.DAILY_SIGN_IN_CODE);
                 if(signInMission != null){
-                    chatPetMissionPoolService.completeChatPetMissionTx(signInMission.getId());
+                    chatPetMissionPoolService.completeChatPetMission(signInMission.getId());
                 }
 
                 //资讯任务广告推送
