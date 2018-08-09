@@ -219,9 +219,10 @@ public class DateUtils {
 
         Date threeeDayBefore = getYesterday(twoDayBefore);
 
-        if(date.before(threeeDayBefore) && date.after(twoDayBefore)){
+        if(date.before(twoDayBefore) && date.after(threeeDayBefore)){
             return true;
         }
+
 
         return false;
     }

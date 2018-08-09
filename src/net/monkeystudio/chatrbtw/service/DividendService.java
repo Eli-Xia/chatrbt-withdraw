@@ -76,6 +76,10 @@ public class DividendService {
         //解析出数据
         DividendQueueValueVO dividendQueueValueVO = this.paraseDividendQuqueValue(dividendQuqueValue);
 
+        this.dividendMoney(dividendQueueValueVO);
+    }
+
+    public void dividendMoney(DividendQueueValueVO dividendQueueValueVO){
         //计算应得的钱
         Double totalCoin = dividendQueueValueVO.getTotalCoin();
         BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
@@ -137,8 +141,6 @@ public class DividendService {
         if(money.floatValue() != 0F){
             this.sendMsg(wxFanId);
         }
-
-
     }
 
 
@@ -171,7 +173,7 @@ public class DividendService {
      * @param dividendQuqueValue
      * @return
      */
-    private DividendQueueValueVO paraseDividendQuqueValue(String dividendQuqueValue){
+    public DividendQueueValueVO paraseDividendQuqueValue(String dividendQuqueValue){
 
         DividendQueueValueVO dividendQueueValueVO = new DividendQueueValueVO();
 
@@ -250,7 +252,7 @@ public class DividendService {
 
     }
 
-    public void sendMsg(Integer wxFanId){
+    private void sendMsg(Integer wxFanId){
 
         MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
 
