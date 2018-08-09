@@ -97,6 +97,25 @@
     </update>
 
 
+
+    <update id="updateBySyn" parameterType="net.monkeystudio.chatrbtw.entity.WxFan">
+        update e_wx_fan set
+        nickname = #{nickname},
+        sex = #{sex},
+        city = #{city},
+        country = #{country},
+        province = #{province},
+        union_id = #{unionId},
+        subscribe_time = #{subscribeTime},
+        wx_pub_origin_id = #{ wxPubOriginId},
+        wx_fan_open_id = #{wxFanOpenId},
+        head_img_url = #{headImgUrl},
+        mini_program_id = #{miniProgramId},
+        wx_service_type = #{wxServiceType}
+        where id = #{id} and nickname is null
+    </update>
+
+
     <select id="selectListByWxPubOriginId" parameterType="java.lang.String" resultMap="baseResultMap">
         select
             <include refid="Base_Column_List"></include>

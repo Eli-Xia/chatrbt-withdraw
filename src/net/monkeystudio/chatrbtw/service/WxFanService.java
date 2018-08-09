@@ -282,8 +282,28 @@ public class WxFanService {
     /**
      * 当wxFan不存在即wxOpenId和miniProgramId都不存在时保存
      */
-    public Integer saveIfNotExist(WxFan wxFan) {
+    public void saveIfNotExist(WxFan wxFan) throws BizException{
         Integer count = wxFanMapper.insertIfNotExist(wxFan);
-        return count;
+
+        if(count == 0){
+            throw new BizException("乐观锁失败");
+        }
+
+        this.setWxFanCache(null,wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
+    }
+
+    /**
+     * 同步更新
+     * @param wxFan
+     * @return
+     */
+    public void updateBySyn(WxFan wxFan) throws BizException{
+        Integer count = wxFanMapper.updateBySyn(wxFan);
+
+        if(count == 0){
+            throw new BizException("乐观锁失败");
+        }
+
+        this.setWxFanCache(null,wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
     }
 }
