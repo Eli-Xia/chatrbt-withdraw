@@ -34,6 +34,7 @@ public class AppConstants {
 
 
 	//操作日志标签
+	public final static String OP_LOG_TAG_A_MINIGAME = "A_OP_MINIGAME";//admin后台小游戏相关操作
 	public final static String OP_LOG_TAG_P_LOGIN = "P_LOGIN";
 	public final static String OP_LOG_TAG_A_LOGIN = "A_LOGIN";
 	public final static String OP_LOG_TAG_S_MATERIALS_UPDATE = "S_MAT_UPDATE";

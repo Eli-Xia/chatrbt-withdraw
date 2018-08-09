@@ -535,7 +535,6 @@ public class ChatPetMissionPoolService {
             //});
             completeChatPetMission(miniGameMission.getId());
         }
-
     }
 
 
