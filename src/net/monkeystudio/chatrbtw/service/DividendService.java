@@ -79,7 +79,7 @@ public class DividendService {
         this.dividendMoney(dividendQueueValueVO);
     }
 
-    public void dividendMoney(DividendQueueValueVO dividendQueueValueVO){
+    private void dividendMoney(DividendQueueValueVO dividendQueueValueVO){
         //计算应得的钱
         Double totalCoin = dividendQueueValueVO.getTotalCoin();
         BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
@@ -173,7 +173,7 @@ public class DividendService {
      * @param dividendQuqueValue
      * @return
      */
-    public DividendQueueValueVO paraseDividendQuqueValue(String dividendQuqueValue){
+    private DividendQueueValueVO paraseDividendQuqueValue(String dividendQuqueValue){
 
         DividendQueueValueVO dividendQueueValueVO = new DividendQueueValueVO();
 
