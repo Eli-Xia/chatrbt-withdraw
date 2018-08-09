@@ -181,6 +181,51 @@ public class DateUtils {
         return false;
     }
 
+    /**
+     * 是否为前天
+     * @param date
+     * @return
+     */
+    public static Boolean isTowDayBefore(Date date){
+        Date currentDate = new Date();
+
+        Date currentDateBegin = getBeginDate(currentDate);
+
+        Date yesterdayBegin = getYesterday(currentDateBegin);
+
+        Date twoDayBefore = getYesterday(yesterdayBegin);
+
+        if(date.before(yesterdayBegin) && date.after(twoDayBefore)){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * 是否为大前天
+     * @param date
+     * @return
+     */
+    public static Boolean isThreeDayBefore(Date date){
+        Date currentDate = new Date();
+
+        Date currentDateBegin = getBeginDate(currentDate);
+
+        Date yesterdayBegin = getYesterday(currentDateBegin);
+
+        Date twoDayBefore = getYesterday(yesterdayBegin);
+
+        Date threeeDayBefore = getYesterday(twoDayBefore);
+
+        if(date.before(twoDayBefore) && date.after(threeeDayBefore)){
+            return true;
+        }
+
+
+        return false;
+    }
 
     public static void main(String[] args) {
         Calendar calendar = Calendar.getInstance();

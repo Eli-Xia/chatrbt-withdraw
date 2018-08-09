@@ -9,6 +9,7 @@ import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMsgTemplateHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.MiniProgramResponse;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Data;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Keyword;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.MsgTemplateParam;
@@ -57,6 +58,8 @@ public class DividendService {
     private MsgTemplateService msgTemplateService;
 
     private final static Float FIRST_DAY_INIT_MONEY = 0.01F;
+    private final static Float SECOND_DAY_INIT_MONEY = 0.03F;
+    private final static Float THIRD_DAY_INIT_MONEY = 0.05F;
 
 
     /**
@@ -73,6 +76,10 @@ public class DividendService {
         //解析出数据
         DividendQueueValueVO dividendQueueValueVO = this.paraseDividendQuqueValue(dividendQuqueValue);
 
+        this.dividendMoney(dividendQueueValueVO);
+    }
+
+    private void dividendMoney(DividendQueueValueVO dividendQueueValueVO){
         //计算应得的钱
         Double totalCoin = dividendQueueValueVO.getTotalCoin();
         BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
@@ -100,6 +107,17 @@ public class DividendService {
             if(DateUtils.isYesterday(createTime)){
                 money = FIRST_DAY_INIT_MONEY;
             }
+
+            //如果是前天注册用户
+            if(DateUtils.isTowDayBefore(createTime)){
+                money = SECOND_DAY_INIT_MONEY;
+            }
+
+            //如果是大前天注册用户
+            if(DateUtils.isThreeDayBefore(createTime)){
+                money = THIRD_DAY_INIT_MONEY;
+            }
+
         }
 
         //进行发红
@@ -121,11 +139,8 @@ public class DividendService {
 
         //如果分红不为0,则发送消息通知
         if(money.floatValue() != 0F){
-
             this.sendMsg(wxFanId);
         }
-
-
     }
 
 
@@ -237,7 +252,7 @@ public class DividendService {
 
     }
 
-    public void sendMsg(Integer wxFanId){
+    private void sendMsg(Integer wxFanId){
 
         MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
 
@@ -275,10 +290,14 @@ public class DividendService {
         }
         msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
 
-        msgTemplateParam.setPage("/pages/dividend/dividend");
+        msgTemplateParam.setPage("pages/home/home");
 
         try {
-            wxMsgTemplateHelper.sendTemplateMsg(wxFanId,msgTemplateParam);
+            MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
+
+            if(!"0".equals(miniProgramResponse.getErrCode())){
+                Log.e(miniProgramResponse.toString());
+            }
         } catch (BizException e) {
             Log.e(e);
         }
