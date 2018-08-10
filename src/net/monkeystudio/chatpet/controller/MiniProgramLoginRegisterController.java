@@ -60,9 +60,9 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     }
 
     @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public RespBase miniAppLogin(@RequestParam(value = "programId",required = false)Integer miniProgramId,@RequestParam("code")String code) throws BizException{
-        String token = miniProgramLoginService.loginHandle(miniProgramId,code);
+    @RequestMapping(value = "/login-or-register", method = RequestMethod.POST)
+    public RespBase miniAppLogin(@RequestParam(value = "parentFanId",required = false)Integer parentFanId,@RequestParam(value = "programId",required = false)Integer miniProgramId,@RequestParam("code")String code) throws BizException{
+        String token = miniProgramLoginService.loginHandle(parentFanId,miniProgramId,code);
 
         Map<String,String> result = new HashMap<>();
         result.put("token",token);
@@ -74,12 +74,11 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
     @RequestMapping(value = "/update/fan-info", method = RequestMethod.POST)
     public RespBase miniAppUserInfo(@RequestBody MiniAppUserInfoReq req) throws Exception{
 
-        miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
-
+        miniProgramUserInfoService.reviseUserInfo(req.getMiniProgramId(),req.getEncryptedData(),req.getIv(),req.getCode());
         return respHelper.ok();
     }
 
-    //注册接口代替上面
+    /*//注册接口代替上面
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public RespBase register(@RequestBody MiniAppUserInfoReq req) throws Exception{
@@ -87,7 +86,7 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
         miniProgramUserInfoService.getUserInfoAndRegister(req.getParentFanId(),req.getEncryptedData(),req.getIv());
 
         return respHelper.ok();
-    }
+    }*/
 
 
 }

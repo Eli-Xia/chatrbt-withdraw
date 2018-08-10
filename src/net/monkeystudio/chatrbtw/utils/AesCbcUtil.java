@@ -20,6 +20,7 @@ import java.security.spec.InvalidParameterSpecException;
  * AES-128是jdk自动生成的“密钥”。
  */
 public class AesCbcUtil {
+
     static {
         //BouncyCastle是一个开源的加解密解决方案，主页在http://www.bouncycastle.org/
         Security.addProvider(new BouncyCastleProvider());
@@ -83,3 +84,4 @@ public class AesCbcUtil {
         return null;
     }
 }
+

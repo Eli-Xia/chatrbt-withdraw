@@ -6,10 +6,13 @@ import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
+import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.chatrbtw.MiniProgramChatPetService;
 import net.monkeystudio.chatrbtw.entity.ChatPet;
 import net.monkeystudio.chatrbtw.entity.ChatPetLoginLog;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.WxFan;
+import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMiniProgramHelper;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.miniapp.LoginVerifyInfo;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
@@ -50,71 +53,162 @@ public class MiniProgramLoginService {
     @Autowired
     private ChatPetLoginLogService chatPetLoginLogService;
 
+    @Autowired
+    private MiniProgramChatPetService miniProgramChatPetService;
+
+    @Autowired
+    private ChatPetRewardService chatPetRewardService;
+
 
     /**
-     * key: token
-     * value:   miniprogramId:openId:sessionKey
-     * 登陆处理
-     * @param miniProgramId : 小程序id
-     * @param jsCode
-     * @return
+     * 登陆
+     *
+     * @param wxFanId
+     * @throws BizException
      */
     @Transactional
-    public String loginHandle(Integer miniProgramId,String jsCode) throws BizException{
-        if(miniProgramId == null){
+    public void login(Integer wxFanId) throws BizException {
+        ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
+
+        if (chatPet != null) {
+            this.dailyFirstLoginHandle(chatPet.getId());
+
+            //登录记录
+            ChatPetLoginLog chatPetLoginLog = new ChatPetLoginLog();
+            chatPetLoginLog.setLoginTime(new Date());
+            chatPetLoginLog.setWxFanId(wxFanId);
+            chatPetLoginLogService.save(chatPetLoginLog);
+        }
+    }
+
+
+    /**
+     * 注册
+     *
+     * @param parentFanId
+     * @param openId
+     * @param unionId
+     * @throws BizException
+     */
+    @Transactional
+    public void register(Integer parentFanId, String openId, String unionId) throws BizException {
+        //新增用户
+        WxFan wxFan = new WxFan();
+
+        wxFan.setWxFanOpenId(openId);
+        wxFan.setUnionId(unionId);
+        wxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
+        wxFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
+        wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
+
+        //当不存在于数据库时保存
+        wxFanService.saveIfNotExist(wxFan);
+
+        //获取刚insert的wxFan的id
+        Integer wxFanId = wxFan.getId();
+
+        //生成宠物
+        //如果是通过分享卡注册的宠物,父亲完成赠送猫六六任务,获得奖励
+        Integer chatPetId = null;
+
+        if (parentFanId == null) {
+
+            chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, null);
+
+        } else {
+
+            ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
+
+            Integer parentId = parentChatPet.getId();
+
+            chatPetId = miniProgramChatPetService.generateChatPet(wxFanId, ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT, parentId);
+
+            //如果父亲宠物当天邀请任务未完成
+            ChatPetPersonalMission chatPetPersonalMissionParam = new ChatPetPersonalMission();
+            chatPetPersonalMissionParam.setState(MissionStateEnum.GOING_ON.getCode());
+            chatPetPersonalMissionParam.setMissionCode(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE);
+            chatPetPersonalMissionParam.setCreateTime(DateUtils.getBeginDate(new Date()));
+            chatPetPersonalMissionParam.setChatPetId(parentId);
+
+            ChatPetPersonalMission inviteMission = chatPetMissionPoolService.getPersonalMissionByParam(chatPetPersonalMissionParam);
+
+            if (inviteMission != null) {
+                //父亲宠物完成邀请任务
+                chatPetMissionPoolService.completeChatPetMission(wxFanId, inviteMission.getId());
+            }
+        }
+
+        //新注册用户生成0.01猫币奖励
+        chatPetRewardService.generateRegisterReward(chatPetId);
+
+        //第一次登录任务数据准备
+        this.dailyFirstLoginHandle(chatPetId);
+
+        //登录记录
+        ChatPetLoginLog chatPetLoginLog = new ChatPetLoginLog();
+        chatPetLoginLog.setLoginTime(new Date());
+        chatPetLoginLog.setWxFanId(wxFan.getId());
+        chatPetLoginLogService.save(chatPetLoginLog);
+    }
+
+
+    /**
+     * 登陆注册入口方法
+     * @param parentFanId:父亲粉丝id
+     * @param miniProgramId:小程序id
+     * @param jsCode:前端传过来的jsCode
+     * @return:用户会话token
+     * @throws BizException
+     */
+    public String loginHandle(Integer parentFanId, Integer miniProgramId, String jsCode) throws BizException {
+        if (miniProgramId == null) {
             miniProgramId = 1;
         }
-        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId,jsCode);
+        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId, jsCode);
+
+        String unionId = loginVerifyInfo.getUnionId();
 
         String openId = loginVerifyInfo.getOpneId();
-        Log.i("========== mini login openid = {?} ============",openId);
 
         String sessionKey = loginVerifyInfo.getSessionKey();
-        Log.i("=========== mini login sessionKey = {?}===========",sessionKey);
 
         String token = CommonUtils.randomUUID();
-        Log.i("=========== mini login generate token = {?}===========",token);
 
-        sessionTokenService.saveToken(token,miniProgramId,openId,sessionKey);
+        sessionTokenService.saveToken(token, miniProgramId, openId, sessionKey);
 
         //非注册登录
         WxFan wxFan = wxFanService.getWxFan(openId, miniProgramId);
 
-        if(wxFan != null){
-            ChatPet chatPet = chatPetService.getByWxFanId(wxFan.getId());
-
-            if(chatPet != null){
-                this.dailyFirstLoginHandle(chatPet.getId());
-
-                //登录记录
-                ChatPetLoginLog chatPetLoginLog = new ChatPetLoginLog();
-                chatPetLoginLog.setLoginTime(new Date());
-                chatPetLoginLog.setWxFanId(wxFan.getId());
-                chatPetLoginLogService.save(chatPetLoginLog);
-            }
+        if (wxFan == null) {
+            this.register(parentFanId, openId, unionId);
+        } else {
+            this.login(wxFan.getId());
         }
 
         return token;
     }
 
 
+
+
     /**
      * 宠物每天第一次登录处理
+     *
      * @param chatPetId
      */
-    public void dailyFirstLoginHandle(Integer chatPetId) throws BizException{
+    public void dailyFirstLoginHandle(Integer chatPetId) throws BizException {
 
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
 
         Long loginCount = redisCacheTemplate.incr(cacheKey);
 
-        if(loginCount.intValue() == 1){
+        if (loginCount.intValue() == 1) {
 
             redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
             List<Integer> wxMiniGameIds = wxMiniGameService.getWxMiniGameIds();
 
-            for (Integer id:wxMiniGameIds){
+            for (Integer id : wxMiniGameIds) {
 
                 DispatchMissionParam diapatchMiniGameMissionParam = new DispatchMissionParam();
                 diapatchMiniGameMissionParam.setChatPetId(chatPetId);
@@ -146,10 +240,11 @@ public class MiniProgramLoginService {
 
     /**
      * 获取小程序用户每天登录次数缓存key
+     *
      * @param chatPetId
      * @return
      */
-    private String getFanDailyLoginCountCacheKey(Integer chatPetId){
+    private String getFanDailyLoginCountCacheKey(Integer chatPetId) {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
 
