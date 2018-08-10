@@ -230,7 +230,11 @@ public class WxFanService {
     }
 
     public Integer update(WxFan wxFan) {
-        return wxFanMapper.update(wxFan);
+        Integer count =  wxFanMapper.update(wxFan);
+
+        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
+
+        return count;
     }
 
     public boolean isFans(String wxPubOriginId ,String wxFanOpenId){
@@ -289,21 +293,7 @@ public class WxFanService {
             throw new BizException("乐观锁失败");
         }
 
-        this.setWxFanCache(null,wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
+        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
     }
 
-    /**
-     * 同步更新
-     * @param wxFan
-     * @return
-     */
-    public void updateBySyn(WxFan wxFan) throws BizException{
-        Integer count = wxFanMapper.updateBySyn(wxFan);
-
-        if(count == 0){
-            throw new BizException("乐观锁失败");
-        }
-
-        this.setWxFanCache(null,wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
-    }
 }

@@ -27,14 +27,134 @@ public class MiniProgramUserInfoService {
     @Autowired
     private WxMiniProgramHelper wxMiniProgramHelper;
 
+
+
     /**
-     * 点击分享卡注册,携带parentFanId
-     * 获取用户信息及注册
-     * 注册完成之后也就是当天的第一次登录
+     * 完善用户信息
+     * @param miniProgramId:小程序id
+     * @param encryptedData:加密信息
+     * @param iv:偏移量
+     * @param code:jsCode,用于登陆
+     * @throws BizException
+     */
+    public void reviseUserInfo(Integer miniProgramId, String encryptedData, String iv, String code) throws BizException{
+        if(miniProgramId == null){
+            miniProgramId = 1;
+        }
+
+        MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.decodeUserInfo(miniProgramId, encryptedData, iv, code);
+
+        WxFan wxFan = wxFanService.getWxFan(miniProgramFanBaseInfo.getOpenId(), miniProgramId);
+
+        //更新老数据
+        if(wxFan != null){
+
+            BeanUtils.copyProperties(miniProgramFanBaseInfo,wxFan);
+            wxFan.setWxFanOpenId(miniProgramFanBaseInfo.getOpenId());
+            //update
+            wxFanService.update(wxFan);
+
+            //缓存
+            wxFanService.setWxFanCache(null,miniProgramFanBaseInfo.getOpenId(),miniProgramId,wxFan);
+        }
+    }
+
+
+    /**
+     * 解密用户敏感数据
      *
+     * @param encryptedData 用户信息加密数据
+     * @param iv            加密算法的初始向量,用于解密
+     * @param code          用于登陆
+     * @return:用户信息
+     */
+    public MiniProgramFanBaseInfo decodeUserInfo(Integer miniProgramId, String encryptedData, String iv, String code) throws BizException {
+        //1-登陆
+        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId, code);
+
+        String openId = loginVerifyInfo.getOpneId();
+
+        String sessionKey = loginVerifyInfo.getSessionKey();
+
+        String token = CommonUtils.randomUUID();
+
+        sessionTokenService.saveToken(token, miniProgramId, openId, sessionKey);
+
+
+        //2-解密用户信息加密串
+        try {
+            String result = AesCbcUtil.decrypt(encryptedData, sessionKey, iv, "UTF-8");
+
+            if (null != result && result.length() > 0) {
+                MiniProgramFanBaseInfo miniProgramFanBaseInfo = JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
+
+                return miniProgramFanBaseInfo;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+}
+
+
+    /**
+     * 解密小程序用户信息
+     *
+     * @param encryptedData
      * @param iv
+     * @param sessionKey
+     * @return
      * @throws Exception
      */
+//    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String encryptedData, String iv, String sessionKey) throws Exception {
+//        // 被加密的数据
+//        byte[] dataByte = Base64.decode(encryptedData);
+//        // 加密秘钥
+//        byte[] keyByte = Base64.decode(sessionKey);
+//        // 偏移量
+//        byte[] ivByte = Base64.decode(iv);
+//
+//        try {
+//            // 如果密钥不足16位，那么就补足.  这个if 中的内容很重要
+//            int base = 16;
+//            if (keyByte.length % base != 0) {
+//                int groups = keyByte.length / base + (keyByte.length % base != 0 ? 1 : 0);
+//                byte[] temp = new byte[groups * base];
+//                Arrays.fill(temp, (byte) 0);
+//                System.arraycopy(keyByte, 0, temp, 0, keyByte.length);
+//                keyByte = temp;
+//            }
+//            // 初始化
+//            Security.addProvider(new BouncyCastleProvider());
+//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+//            SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
+//            AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
+//            parameters.init(new IvParameterSpec(ivByte));
+//            cipher.init(Cipher.DECRYPT_MODE, spec, parameters);// 初始化
+//            byte[] resultByte = cipher.doFinal(dataByte);
+//            if (null != resultByte && resultByte.length > 0) {
+//                String result = new String(resultByte, "UTF-8");
+//                System.out.println(result);
+//                return JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
+//            }
+//        } catch (Exception e) {
+//            Log.e(e);
+//        }
+//        return null;
+//    }
+
+/**
+ * 点击分享卡注册,携带parentFanId
+ * 获取用户信息及注册
+ * 注册完成之后也就是当天的第一次登录
+ *
+ * @param iv
+ * @throws Exception
+ */
 
     /*@Transactional
     public void getUserInfoAndRegister(Integer parentFanId, String encryptedData, String iv) throws Exception {
@@ -154,121 +274,4 @@ public class MiniProgramUserInfoService {
             }
         }
     }*/
-
-    /**
-     * 完善用户信息
-     * @param miniProgramId:小程序id
-     * @param encryptedData:加密信息
-     * @param iv:偏移量
-     * @param code:jsCode,用于登陆
-     * @throws BizException
-     */
-    public void reviseUserInfo(Integer miniProgramId, String encryptedData, String iv, String code) throws BizException{
-        if(miniProgramId == null){
-            miniProgramId = 1;
-        }
-
-        MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.decodeUserInfo(miniProgramId, encryptedData, iv, code);
-
-        WxFan wxFan = wxFanService.getWxFan(miniProgramFanBaseInfo.getOpenId(), miniProgramId);
-
-        //更新老数据
-        if(wxFan != null){
-            //update db
-            BeanUtils.copyProperties(miniProgramFanBaseInfo,wxFan);
-            wxFan.setWxFanOpenId(miniProgramFanBaseInfo.getOpenId());
-            wxFanService.updateBySyn(wxFan);
-
-            //更新缓存
-            wxFanService.setWxFanCache(null,miniProgramFanBaseInfo.getOpenId(),miniProgramId,wxFan);
-        }
-    }
-
-
-    /**
-     * 解密用户敏感数据
-     *
-     * @param encryptedData 用户信息加密数据
-     * @param iv            加密算法的初始向量,用于解密
-     * @param code          用于登陆
-     * @return:用户信息
-     */
-    public MiniProgramFanBaseInfo decodeUserInfo(Integer miniProgramId, String encryptedData, String iv, String code) throws BizException {
-        //1-登陆
-        LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId, code);
-
-        String openId = loginVerifyInfo.getOpneId();
-
-        String sessionKey = loginVerifyInfo.getSessionKey();
-
-        String token = CommonUtils.randomUUID();
-
-        sessionTokenService.saveToken(token, miniProgramId, openId, sessionKey);
-
-
-        //2-解密用户信息加密串
-        try {
-            String result = AesCbcUtil.decrypt(encryptedData, sessionKey, iv, "UTF-8");
-
-            if (null != result && result.length() > 0) {
-                MiniProgramFanBaseInfo miniProgramFanBaseInfo = JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
-
-                return miniProgramFanBaseInfo;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-
-}
-
-
-    /**
-     * 解密小程序用户信息
-     *
-     * @param encryptedData
-     * @param iv
-     * @param sessionKey
-     * @return
-     * @throws Exception
-     */
-//    public MiniProgramFanBaseInfo getMiniProgramFanBaseInfo(String encryptedData, String iv, String sessionKey) throws Exception {
-//        // 被加密的数据
-//        byte[] dataByte = Base64.decode(encryptedData);
-//        // 加密秘钥
-//        byte[] keyByte = Base64.decode(sessionKey);
-//        // 偏移量
-//        byte[] ivByte = Base64.decode(iv);
-//
-//        try {
-//            // 如果密钥不足16位，那么就补足.  这个if 中的内容很重要
-//            int base = 16;
-//            if (keyByte.length % base != 0) {
-//                int groups = keyByte.length / base + (keyByte.length % base != 0 ? 1 : 0);
-//                byte[] temp = new byte[groups * base];
-//                Arrays.fill(temp, (byte) 0);
-//                System.arraycopy(keyByte, 0, temp, 0, keyByte.length);
-//                keyByte = temp;
-//            }
-//            // 初始化
-//            Security.addProvider(new BouncyCastleProvider());
-//            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
-//            SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
-//            AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
-//            parameters.init(new IvParameterSpec(ivByte));
-//            cipher.init(Cipher.DECRYPT_MODE, spec, parameters);// 初始化
-//            byte[] resultByte = cipher.doFinal(dataByte);
-//            if (null != resultByte && resultByte.length > 0) {
-//                String result = new String(resultByte, "UTF-8");
-//                System.out.println(result);
-//                return JsonUtil.readValue(result, MiniProgramFanBaseInfo.class);
-//            }
-//        } catch (Exception e) {
-//            Log.e(e);
-//        }
-//        return null;
-//    }
 
