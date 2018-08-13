@@ -67,13 +67,12 @@ public class MiniProgramLoginService {
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId,jsCode);
 
         String openId = loginVerifyInfo.getOpneId();
-        Log.i("========== mini login openid = {?} ============",openId);
 
         String sessionKey = loginVerifyInfo.getSessionKey();
-        Log.i("=========== mini login sessionKey = {?}===========",sessionKey);
 
         String token = CommonUtils.randomUUID();
-        Log.i("=========== mini login generate token = {?}===========",token);
+
+        Log.i("==> mini login : openid = {?} , session_key = {?} , token = {?} ",openId,sessionKey,token);
 
         sessionTokenService.saveToken(token,miniProgramId,openId,sessionKey);
 
