@@ -69,9 +69,6 @@ public class ChatPetMissionPoolService {
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
 
-    @Autowired
-    private TransactionTemplate txTemplate;
-
     //每天只能最多完成三次邀请任务
     private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
 
@@ -541,7 +538,6 @@ public class ChatPetMissionPoolService {
             //});
             completeChatPetMission(miniGameMission.getId());
         }
-
     }
 
 

@@ -5,9 +5,11 @@ import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
 import net.monkeystudio.base.service.TaskExecutor;
 import net.monkeystudio.base.utils.ArithmeticUtils;
+import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.sdk.wx.WxMsgTemplateHelper;
+import net.monkeystudio.chatrbtw.sdk.wx.bean.MiniProgramResponse;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Data;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.Keyword;
 import net.monkeystudio.chatrbtw.sdk.wx.bean.msgtemplate.MsgTemplateParam;
@@ -55,6 +57,10 @@ public class DividendService {
     @Autowired
     private MsgTemplateService msgTemplateService;
 
+    private final static Float FIRST_DAY_INIT_MONEY = 0.01F;
+    private final static Float SECOND_DAY_INIT_MONEY = 0.03F;
+    private final static Float THIRD_DAY_INIT_MONEY = 0.05F;
+
 
     /**
      * 分红队列消耗
@@ -67,8 +73,14 @@ public class DividendService {
 
         String dividendQuqueValue = list.get(1);
 
+        //解析出数据
         DividendQueueValueVO dividendQueueValueVO = this.paraseDividendQuqueValue(dividendQuqueValue);
 
+        this.dividendMoney(dividendQueueValueVO);
+    }
+
+    private void dividendMoney(DividendQueueValueVO dividendQueueValueVO){
+        //计算应得的钱
         Double totalCoin = dividendQueueValueVO.getTotalCoin();
         BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
 
@@ -83,13 +95,36 @@ public class DividendService {
 
         moneyBD = BigDecimalUtil.dealDecimalPoint(moneyBD, 2);
 
-        Float money = moneyBD.floatValue();
 
+        //如果钱为0，则判断是否为昨天新注册用户
         Integer chatPetId = dividendQueueValueVO.getChatPetId();
+        Float money = moneyBD.floatValue();
+        if(money.floatValue() == 0f){
+            ChatPet chatPet = chatPetService.getById(chatPetId);
+            Date createTime = chatPet.getCreateTime();
 
+            //如果是昨天新注册用户，则分发0.01
+            if(DateUtils.isYesterday(createTime)){
+                money = FIRST_DAY_INIT_MONEY;
+            }
+
+            //如果是前天注册用户
+            if(DateUtils.isTowDayBefore(createTime)){
+                money = SECOND_DAY_INIT_MONEY;
+            }
+
+            //如果是大前天注册用户
+            if(DateUtils.isThreeDayBefore(createTime)){
+                money = THIRD_DAY_INIT_MONEY;
+            }
+
+        }
+
+        //进行发红
         chatPetService.increaseMoney(chatPetId, money);
 
 
+        //添加分红详细记录
         DividendDetailRecord dividendDetailRecord = new DividendDetailRecord();
         dividendDetailRecord.setChatPetId(chatPetId);
         dividendDetailRecord.setMoney(money);
@@ -98,18 +133,14 @@ public class DividendService {
 
         dividendDetailRecordService.save(dividendDetailRecord);
 
-
         ChatPet chatPet = chatPetService.getById(chatPetId);
 
         Integer wxFanId = chatPet.getWxFanId();
 
         //如果分红不为0,则发送消息通知
         if(money.floatValue() != 0F){
-
             this.sendMsg(wxFanId);
         }
-
-
     }
 
 
@@ -221,7 +252,7 @@ public class DividendService {
 
     }
 
-    public void sendMsg(Integer wxFanId){
+    private void sendMsg(Integer wxFanId){
 
         MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
 
@@ -243,22 +274,30 @@ public class DividendService {
         msgTemplateParam.setFormId(msgTemplateForm.getFormId());
 
         Keyword keyword1 = new Keyword();
-        keyword1.setValue("猫六六乐园城市分红");
+        keyword1.setValue("小游戏又上新啦");
         data.setKeyword1(keyword1);
 
         Keyword keyword2 = new Keyword();
-        keyword2.setValue("城市分红已到账，快查查又收到多少money吧！");
+        keyword2.setValue("城市分红已到账，快去查查看！");
         data.setKeyword2(keyword2);
 
         msgTemplateParam.setData(data);
 
         MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
+
+        if(msgTemplate == null){
+            return ;
+        }
         msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
 
-        msgTemplateParam.setPage("/pages/dividend/dividend");
+        msgTemplateParam.setPage("pages/home/home");
 
         try {
-            wxMsgTemplateHelper.sendTemplateMsg(wxFanId,msgTemplateParam);
+            MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
+
+            if(!"0".equals(miniProgramResponse.getErrCode())){
+                Log.e(miniProgramResponse.toString());
+            }
         } catch (BizException e) {
             Log.e(e);
         }

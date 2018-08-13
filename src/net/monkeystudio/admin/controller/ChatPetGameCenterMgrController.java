@@ -7,8 +7,10 @@ import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.RespHelper;
+import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.service.ChatPetGameCenterService;
+import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.WxMiniGameService;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameAdd;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameResp;
@@ -37,6 +39,8 @@ public class ChatPetGameCenterMgrController extends BaseController{
     private ChatPetGameCenterService chatPetGameCenterService;
     @Autowired
     private WxMiniGameService wxMiniGameService;
+    @Autowired
+    private OpLogService opLogService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -65,7 +69,9 @@ public class ChatPetGameCenterMgrController extends BaseController{
         AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
         BeanUtils.copyProperties(req,adminMiniGameAdd);
 
-        wxMiniGameService.save(adminMiniGameAdd);
+        Integer addMiniGameId = wxMiniGameService.save(adminMiniGameAdd);
+
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户新增id为" + addMiniGameId + "的小游戏" );
 
         return respHelper.ok();
     }
@@ -80,6 +86,8 @@ public class ChatPetGameCenterMgrController extends BaseController{
         }
 
         wxMiniGameService.delete(id);
+
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户删除id为" + id + "的小游戏" );
 
         return respHelper.ok();
     }
@@ -104,6 +112,8 @@ public class ChatPetGameCenterMgrController extends BaseController{
         BeanUtils.copyProperties(updateMiniGameReq,adminMiniGameUpdate);
 
         wxMiniGameService.update(adminMiniGameUpdate);
+
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户编辑id为" + updateMiniGameReq.getId() + "的小游戏" );
 
         return respHelper.ok();
     }
@@ -138,6 +148,8 @@ public class ChatPetGameCenterMgrController extends BaseController{
         }
 
         wxMiniGameService.unshelve(id);
+
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户下架id为" + id + "的小游戏" );
 
         return respHelper.ok();
     }

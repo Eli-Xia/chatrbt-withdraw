@@ -65,7 +65,12 @@ public class WxMiniGameService {
         return ids;
     }
 
-    public void save(AdminMiniGameAdd adminMiniGameAdd){
+    /**
+     * 保存小游戏
+     * @param adminMiniGameAdd
+     * @return:新增小游戏主键id
+     */
+    public Integer save(AdminMiniGameAdd adminMiniGameAdd){
 
         MultipartFile headImg = adminMiniGameAdd.getHeadImg();
         MultipartFile qrCodeImg = adminMiniGameAdd.getQrCodeImg();
@@ -85,6 +90,8 @@ public class WxMiniGameService {
         wxMiniGame.setCreateTime(new Date());
 
         wxMiniGameMapper.insert(wxMiniGame);
+
+        return wxMiniGame.getId();
     }
 
     public void delete(Integer wxMiniGameId){

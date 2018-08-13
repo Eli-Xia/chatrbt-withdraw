@@ -61,7 +61,7 @@
     </bean>
 
     <!-- 设置使用注解的类所在的jar包 ,把标记了@Controller注解的类转换为bean-->
-   <!-- <context:component-scan base-package="net.monkeystudio"/>-->
+    <!-- <context:component-scan base-package="net.monkeystudio"/>-->
 
     <!-- 开启事务注解驱动 -->
     <tx:annotation-driven transaction-manager="transactionManager" mode="aspectj"/>
@@ -148,7 +148,3 @@
         </property>
     </bean>
 </beans>
-
-
-
-

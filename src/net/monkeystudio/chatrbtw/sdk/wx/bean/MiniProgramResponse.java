@@ -28,4 +28,12 @@ public class MiniProgramResponse {
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg;
     }
+
+    @Override
+    public String toString() {
+        return "MiniProgramResponse{" +
+                "errCode='" + errCode + '\'' +
+                ", errMsg='" + errMsg + '\'' +
+                '}';
+    }
 }

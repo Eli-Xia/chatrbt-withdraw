@@ -21,6 +21,6 @@ public class MsgTemplateService {
 
 
     public static class Constants{
-        public static final Integer DIVIDEND_MSG_CODE = 1;
+        public static final Integer DIVIDEND_MSG_CODE = 2;
     }
 }

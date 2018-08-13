@@ -27,7 +27,7 @@
     delete from e_wx_mini_game
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
+  <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame" keyProperty="id" useGeneratedKeys="true">
     insert into e_wx_mini_game (
     id,
     nickname,
