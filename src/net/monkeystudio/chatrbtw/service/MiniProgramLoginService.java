@@ -3,6 +3,8 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.redis.RedisCacheTemplate;
 import net.monkeystudio.base.redis.constants.RedisTypeConstants;
+import net.monkeystudio.base.service.CfgService;
+import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.Log;
@@ -59,6 +61,8 @@ public class MiniProgramLoginService {
     @Autowired
     private ChatPetRewardService chatPetRewardService;
 
+    @Autowired
+    private CfgService cfgService;
 
     /**
      * 登陆
@@ -100,6 +104,8 @@ public class MiniProgramLoginService {
         wxFan.setCreateAt(TimeUtil.getCurrentTimestamp());
         wxFan.setMiniProgramId(wxFanService.LUCK_CAT_MINI_APP_ID);
         wxFan.setWxServiceType(wxFanService.WX_SERVICE_TYPE_MINI_APP);
+        wxFan.setHeadImgUrl(this.getDefaultHeadImgUrl());
+        wxFan.setNickname(this.getDefaultNickname());
 
         //当不存在于数据库时保存
         wxFanService.saveIfNotExist(wxFan);
@@ -174,6 +180,8 @@ public class MiniProgramLoginService {
 
         String token = CommonUtils.randomUUID();
 
+        Log.i("==> mini login : openid = {?} , session_key = {?} , token = {?} ",openId,sessionKey,token);
+
         sessionTokenService.saveToken(token, miniProgramId, openId, sessionKey);
 
         //非注册登录
@@ -247,6 +255,23 @@ public class MiniProgramLoginService {
     private String getFanDailyLoginCountCacheKey(Integer chatPetId) {
         return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "miniAppFanDailyLoginCount:" + chatPetId;
     }
+
+    /**
+     * 获取猫六六用户默认昵称
+     * @return
+     */
+    private String getDefaultNickname(){
+        return cfgService.get(GlobalConfigConstants.LUCKY_CAT_DEFAULT_NICKNAME_KEY);
+    }
+
+    /**
+     * 获取猫六六用户默认昵称
+     * @return
+     */
+    private String getDefaultHeadImgUrl(){
+        return cfgService.get(GlobalConfigConstants.LUCKY_CAT_DEFAULT_HEADIMG_URL_KEY);
+    }
+
 
 
 }

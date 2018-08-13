@@ -44,7 +44,6 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
 
         Integer wxFanId = this.getWxFanIdByRequest(request);
         if(wxFanId == null){
-            Log.d(" ============= run here ===============");
             returnErrorResponse(response,respHelper.failed("not registered"));
             return false;
         }
@@ -75,7 +74,7 @@ public class ChatPetLoginCheckInteceptor implements HandlerInterceptor {
 
     private Boolean isLogin(HttpServletRequest request){
         String sessionToken = request.getHeader("token");
-        Log.i("========= session token = {?} ==========",sessionToken);
+        Log.d(" ==>chat pet interceptor : session token = {?} ",sessionToken);
 
         if(StringUtil.isEmpty(sessionToken)){
             //公众号登录

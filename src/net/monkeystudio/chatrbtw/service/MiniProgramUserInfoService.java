@@ -158,8 +158,7 @@ public class MiniProgramUserInfoService {
 
     /*@Transactional
     public void getUserInfoAndRegister(Integer parentFanId, String encryptedData, String iv) throws Exception {
-        Log.i("================== encryptedData = {?} , iv = {?} =================", encryptedData, iv);
-        //Map<String, Object> ret = new HashMap<>();//注册wxFan及chatPet,返回对应id
+        Log.d("==>  encryptedData = {?} , iv = {?} , parentFanId = {?} ", encryptedData, iv , parentFanId == null ? "" : parentFanId.toString());
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -173,7 +172,7 @@ public class MiniProgramUserInfoService {
 
             Integer miniProgramId = sessionTokenService.getMiniProgramIdFromTokenVal(token);
 
-            Log.i("mini user info : openId = {?} , sessionKey = {?} , miniProgramId = {?}", openId, sessionKey, miniProgramId.toString());
+            Log.i("==> mini user info register : openId = {?} , sessionKey = {?} , miniProgramId = {?}", openId, sessionKey, miniProgramId.toString());
 
             MiniProgramFanBaseInfo miniProgramFanBaseInfo = this.getMiniProgramFanBaseInfo(encryptedData, iv, sessionKey);
 
@@ -267,8 +266,6 @@ public class MiniProgramUserInfoService {
                     chatPetLoginLog.setWxFanId(wxFan.getId());
                     chatPetLoginLogService.save(chatPetLoginLog);
 
-                    //ret.put("chatPetId", chatPetId);
-                    //ret.put("wxFanId", wxFanId);
 
                 }
             }

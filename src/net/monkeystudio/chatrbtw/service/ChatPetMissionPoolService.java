@@ -809,21 +809,22 @@ public class ChatPetMissionPoolService {
     }*/
 
     //aspectJ事务测试
-    @Transactional
+    //@Transactional
     public void test1(){
-        ChatPetPersonalMission copy = this.getById(2462);
-        ChatPetPersonalMission target = new ChatPetPersonalMission();
-        target.setState(1000);
-        BeanUtils.copyProperties(copy,target);
-
-        target.setId(null);
-        this.save(target);
+//        ChatPetPersonalMission copy = this.getById(2462);
+//        ChatPetPersonalMission target = new ChatPetPersonalMission();
+//        target.setState(1000);
+//        BeanUtils.copyProperties(copy,target);
+//
+//        target.setId(null);
+//        this.save(target);
+        System.out.println(1);
 
         test2();
     }
 
     @Transactional
-    public void test2(){
+    private void test2(){
         ChatPetPersonalMission copy = this.getById(2462);
         ChatPetPersonalMission target = new ChatPetPersonalMission();
         target.setState(100);
