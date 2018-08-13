@@ -333,7 +333,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMission(Integer inviteeWxFanId,Integer chatPetPersonalMissionId) throws BizException{
+    public void completeChatPetMission(Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -352,7 +352,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMission(Integer adId,Integer inviteeWxFanId,Integer chatPetPersonalMissionId) throws BizException{
+    public void completeChatPetMission(Integer adId, Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -364,10 +364,13 @@ public class ChatPetMissionPoolService {
         this.completeChatPetMission(chatPetPersonalMissionId);
     }
 
+
+
     /**
      * 完成宠物任务
      * @param chatPetPersonalMissionId
      */
+    @Transactional
     public void completeChatPetMission(Integer chatPetPersonalMissionId){
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
 
@@ -747,7 +750,7 @@ public class ChatPetMissionPoolService {
     /**
      * completeMissionParam
      * 完成宠物任务
-     * @param completeMissionParam  完成任务参数
+     * @param
      */
     /*public void completeChatPetMission(CompleteMissionParam completeMissionParam){
         //查询当前任务记录查询对象
@@ -804,6 +807,35 @@ public class ChatPetMissionPoolService {
 
         }
     }*/
+
+    //aspectJ事务测试
+    //@Transactional
+    public void test1(){
+//        ChatPetPersonalMission copy = this.getById(2462);
+//        ChatPetPersonalMission target = new ChatPetPersonalMission();
+//        target.setState(1000);
+//        BeanUtils.copyProperties(copy,target);
+//
+//        target.setId(null);
+//        this.save(target);
+        System.out.println(1);
+
+        test2();
+    }
+
+    @Transactional
+    private void test2(){
+        ChatPetPersonalMission copy = this.getById(2462);
+        ChatPetPersonalMission target = new ChatPetPersonalMission();
+        target.setState(100);
+        BeanUtils.copyProperties(copy,target);
+
+        target.setId(null);
+        this.save(target);
+
+        int i = 1 / 0;
+
+    }
 
 
 }
