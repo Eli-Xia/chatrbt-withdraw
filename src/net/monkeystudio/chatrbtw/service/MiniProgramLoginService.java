@@ -204,7 +204,8 @@ public class MiniProgramLoginService {
      *
      * @param chatPetId
      */
-    public void dailyFirstLoginHandle(Integer chatPetId) throws BizException {
+    @Transactional
+    public void dailyFirstLoginHandle(Integer chatPetId) {
 
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
 
