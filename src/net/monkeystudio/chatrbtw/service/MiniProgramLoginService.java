@@ -160,11 +160,12 @@ public class MiniProgramLoginService {
 
     /**
      * 登陆注册入口方法
+     *
      * @param parentFanId:父亲粉丝id
      * @param miniProgramId:小程序id
      * @param jsCode:前端传过来的jsCode
-     * @return:用户会话token
      * @throws BizException
+     * @return:用户会话token
      */
     public String loginHandle(Integer parentFanId, Integer miniProgramId, String jsCode) throws BizException {
         if (miniProgramId == null) {
@@ -180,7 +181,7 @@ public class MiniProgramLoginService {
 
         String token = CommonUtils.randomUUID();
 
-        Log.i("==> mini login : openid = {?} , session_key = {?} , token = {?} ",openId,sessionKey,token);
+        Log.i("==> mini login : openid = {?} , session_key = {?} , token = {?} ", openId, sessionKey, token);
 
         sessionTokenService.saveToken(token, miniProgramId, openId, sessionKey);
 
@@ -197,11 +198,8 @@ public class MiniProgramLoginService {
     }
 
 
-
-
     /**
      * 宠物每天第一次登录处理
-     *
      * @param chatPetId
      */
     @Transactional
@@ -209,9 +207,10 @@ public class MiniProgramLoginService {
 
         String cacheKey = this.getFanDailyLoginCountCacheKey(chatPetId);
 
-        Long loginCount = redisCacheTemplate.incr(cacheKey);
+        Long loginCount = redisCacheTemplate.incr(cacheKey);//登陆次数
 
-        if (loginCount.intValue() == 1) {
+        //是否为第一次派发
+        if (this.isFirstDispatch(chatPetId,loginCount)) {
 
             redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
@@ -247,6 +246,29 @@ public class MiniProgramLoginService {
         }
     }
 
+
+    /**
+     * 判断是否为第一次派发任务
+     * 依据: (登陆次数缓存) loginCount == 1   ||  (loginCount > 1 && notDispatch)
+     *
+     * @param chatPetId:宠物id
+     * @param loginCount:缓存登陆次数
+     * @return
+     */
+    private Boolean isFirstDispatch(Integer chatPetId,Long loginCount) {
+        Boolean isFirstDispatch = false;
+
+        if (loginCount == 1) {
+            isFirstDispatch = true;
+        }
+
+        if (!chatPetMissionPoolService.isDispatchMission(chatPetId)) {
+            isFirstDispatch = true;
+        }
+
+        return isFirstDispatch;
+    }
+
     /**
      * 获取小程序用户每天登录次数缓存key
      *
@@ -259,20 +281,21 @@ public class MiniProgramLoginService {
 
     /**
      * 获取猫六六用户默认昵称
+     *
      * @return
      */
-    private String getDefaultNickname(){
+    private String getDefaultNickname() {
         return cfgService.get(GlobalConfigConstants.LUCKY_CAT_DEFAULT_NICKNAME_KEY);
     }
 
     /**
      * 获取猫六六用户默认昵称
+     *
      * @return
      */
-    private String getDefaultHeadImgUrl(){
+    private String getDefaultHeadImgUrl() {
         return cfgService.get(GlobalConfigConstants.LUCKY_CAT_DEFAULT_HEADIMG_URL_KEY);
     }
-
 
 
 }

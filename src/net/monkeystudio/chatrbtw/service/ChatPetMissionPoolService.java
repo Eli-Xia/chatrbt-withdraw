@@ -497,6 +497,32 @@ public class ChatPetMissionPoolService {
     }
 
     /**
+     * 判断是否为猫分配当日任务
+     * @param chatPetId
+     * @return
+     */
+    public Boolean isDispatchMission(Integer chatPetId){
+
+        Integer count = null;
+
+        String countStr = redisCacheTemplate.getString(this.getChatPetDispatchMissionCountKey(chatPetId));
+
+        if(countStr == null){
+            Date today = new Date();
+            count = chatPetPersonalMissionMapper.countTodayDispatchMission(CommonUtils.dateStartTime(today), CommonUtils.dateEndTime(today), chatPetId);
+        }else{
+            count = Integer.parseInt(countStr);
+        }
+
+        return count.intValue() > 0;
+    }
+
+    private String getChatPetDispatchMissionCountKey(Integer chatPetId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "dispatchMissionCount:" + chatPetId;
+    }
+
+
+    /**
      * 判断游戏任务是否已经完成
      * @param wxFanId
      * @param wxMiniGameId
