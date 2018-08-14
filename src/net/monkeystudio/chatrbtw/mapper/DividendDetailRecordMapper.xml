@@ -24,6 +24,6 @@
     </select>
 
     <select id="sumTotalDividendMoneyByChatPetId" resultType="java.lang.Float">
-        select sum(money) FROM e_dividend_detail_record WHERE chat_pet_id = #{chatPetId}
+        select IFNULL(sum(money),0) FROM e_dividend_detail_record WHERE chat_pet_id = #{chatPetId}
     </select>
 </mapper>

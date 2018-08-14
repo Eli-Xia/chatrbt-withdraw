@@ -71,7 +71,7 @@ public class MiniProgramLoginService {
      * @throws BizException
      */
     @Transactional
-    public void login(Integer wxFanId) throws BizException {
+    public void login(Integer wxFanId) {
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
 
         if (chatPet != null) {
@@ -200,6 +200,7 @@ public class MiniProgramLoginService {
 
     /**
      * 宠物每天第一次登录处理
+     *
      * @param chatPetId
      */
     @Transactional
@@ -210,7 +211,7 @@ public class MiniProgramLoginService {
         Long loginCount = redisCacheTemplate.incr(cacheKey);//登陆次数
 
         //是否为第一次派发
-        if (this.isFirstDispatch(chatPetId,loginCount)) {
+        if (this.isFirstDispatch(chatPetId, loginCount)) {
 
             redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
@@ -255,7 +256,7 @@ public class MiniProgramLoginService {
      * @param loginCount:缓存登陆次数
      * @return
      */
-    private Boolean isFirstDispatch(Integer chatPetId,Long loginCount) {
+    private Boolean isFirstDispatch(Integer chatPetId, Long loginCount) {
         Boolean isFirstDispatch = false;
 
         if (loginCount == 1) {
