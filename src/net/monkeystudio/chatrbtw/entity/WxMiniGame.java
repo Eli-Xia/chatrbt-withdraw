@@ -15,6 +15,42 @@ public class WxMiniGame {
     private Date onlineTime;//上线时间
     private Date createTime;
     private Integer shelveState;//上下架状态
+    private Boolean isHandpicked;//是否为精选编辑 对象类型兼容现有数据null
+    private String coverImgUrl;
+    private String appId;
+    private Float starNum;
+
+    public Boolean isHandpicked() {
+        return isHandpicked;
+    }
+
+    public void setHandpicked(Boolean handpicked) {
+        isHandpicked = handpicked;
+    }
+
+    public String getCoverImgUrl() {
+        return coverImgUrl;
+    }
+
+    public void setCoverImgUrl(String coverImgUrl) {
+        this.coverImgUrl = coverImgUrl;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public Float getStarNum() {
+        return starNum;
+    }
+
+    public void setStarNum(Float starNum) {
+        this.starNum = starNum;
+    }
 
     public Integer getShelveState() {
         return shelveState;

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.RMiniGameTagMapper" >
+    <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.RMiniGameTag" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="mini_game_id" property="miniGameId" jdbcType="INTEGER" />
+        <result column="tag_id" property="tagId" jdbcType="INTEGER" />
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from `r_mini_game_tag`
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RMiniGameTag" useGeneratedKeys="true" keyProperty="id" >
+    insert into `r_mini_game_tag` (mini_game_id, tag_id)
+    values (#{miniGameId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RMiniGameTag" >
+    update `r_mini_game_tag`
+    set mini_game_id = #{miniGameId,jdbcType=INTEGER},
+      tag_id = #{tagId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, mini_game_id, tag_id
+    from `r_mini_game_tag`
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap" >
+    select id, mini_game_id, tag_id
+    from `r_mini_game_tag`
+  </select>
+
+    <delete id="deleteTagsByMiniGameId" parameterType="java.lang.Integer" >
+    delete from `r_mini_game_tag`
+    where mini_game_id = #{miniGameId}
+  </delete>
+
+
+    <insert id="saveTagsForMiniGame" parameterType="map" useGeneratedKeys="true" >
+        insert into r_mini_game_tag (mini_game_id,tag_id)
+        values
+        <foreach collection="tagIds" item="item" index="index" separator=",">
+            (#{miniGameId}, #{item})
+        </foreach>
+    </insert>
+</mapper>

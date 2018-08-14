@@ -2,7 +2,9 @@ package net.monkeystudio.chatrbtw.service.bean.gamecenter;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author xiaxin
@@ -11,10 +13,55 @@ public class AdminMiniGameUpdate {
     private Integer id;
     private MultipartFile headImg;
     private MultipartFile qrCodeImg;
+    private MultipartFile coverImg;
     private String nickname;
     private Integer needSign;
     private Integer openType;
     private Date onlineTime;
+    private Boolean isHandpicked;
+    private Float starNum = 2F;
+    private List<Integer> tagIdList = new ArrayList<>();
+    private String appId;
+
+    public MultipartFile getCoverImg() {
+        return coverImg;
+    }
+
+    public void setCoverImg(MultipartFile coverImg) {
+        this.coverImg = coverImg;
+    }
+
+    public Boolean getHandpicked() {
+        return isHandpicked;
+    }
+
+    public void setHandpicked(Boolean handpicked) {
+        isHandpicked = handpicked;
+    }
+
+    public Float getStarNum() {
+        return starNum;
+    }
+
+    public void setStarNum(Float starNum) {
+        this.starNum = starNum;
+    }
+
+    public List<Integer> getTagIdList() {
+        return tagIdList;
+    }
+
+    public void setTagIdList(List<Integer> tagIdList) {
+        this.tagIdList = tagIdList;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
 
     public Integer getId() {
         return id;

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.MiniGameTagMapper" >
+    <resultMap id="BaseResultMap" type="net.monkeystudio.chatrbtw.entity.MiniGameTag" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    id, name
+  </sql>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from `e_mini_game_tag`
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.MiniGameTag" useGeneratedKeys="true" keyProperty="id" >
+    insert into `e_mini_game_tag` (name)
+    values (#{name,jdbcType=VARCHAR})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.MiniGameTag" >
+    update `e_mini_game_tag`
+    set name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, name
+    from `e_mini_game_tag`
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name
+    from `e_mini_game_tag`
+  </select>
+
+    <select id="selectTagsByMiniGameId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    SELECT t.id,t.name
+    FROM e_mini_game_tag t  JOIN r_wx_pub_tag tr
+    ON  t.id = tr.tag_id
+    WHERE tr.wx_pub_id = #{wxPubId}
+  </select>
+
+    <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"></include>
+        from
+        e_mini_game_tag
+        limit
+        #{startIndex},#{pageSize}
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+    select
+    count(id)
+    from
+    e_mini_game_tag
+  </select>
+
+
+</mapper>

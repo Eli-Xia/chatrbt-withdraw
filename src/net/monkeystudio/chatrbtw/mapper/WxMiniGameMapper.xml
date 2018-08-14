@@ -11,10 +11,14 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="online_time" property="onlineTime" jdbcType="TIMESTAMP" />
     <result column="shelve_state" jdbcType="INTEGER" property="shelveState" />
+    <result column="cover_img_url" jdbcType="VARCHAR" property="coverImgUrl" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="star_num" jdbcType="REAL" property="starNum" />
+    <result column="is_handpicked" jdbcType="BIT" property="headImgUrl" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time,shelve_state
+    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time,shelve_state,cover_img_url,app_id,star_num,is_handpicked
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -37,7 +41,11 @@
     open_type,
     create_time,
     online_time,
-    shelve_state
+    shelve_state,
+    cover_img_url,
+    app_id,
+    star_num,
+    is_handpicked
     )
     values 
     	(#{id,jdbcType=INTEGER}, 
@@ -48,7 +56,11 @@
          #{openType},
          #{createTime},
          #{onlineTime},
-         #{shelveState}
+         #{shelveState},
+         #{coverImgUrl},
+         #{appId},
+         #{starNum},
+         IFNULL(#{isHandpicked},0)
          )
   </insert>
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
@@ -61,7 +73,11 @@
       open_type = #{openType},
       create_time = #{createTime},
       online_time = #{onlineTime},
-      shelve_state = #{shelveState}
+      shelve_state = #{shelveState},
+      cover_img_url = #{coverImgUrl},
+      app_id = #{appId},
+      star_num = #{starNum},
+      is_handpicked = IFNULL(#{isHandpicked},0)
     where id = #{id,jdbcType=INTEGER}
   </update>
 

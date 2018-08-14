@@ -6,6 +6,7 @@ import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
@@ -50,11 +51,20 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
+        if(req.getHandpicked() == null){
+            respHelper.failed("编辑精选未选择");
+        }
+        if(ListUtil.isEmpty(req.getTagIdList())){
+            respHelper.failed("小游戏标签未选择");
+        }
         if(req.getHeadImg() == null){
-            respHelper.failed("小游戏头像不能为空");
+            respHelper.failed("小游戏头像未上传");
         }
         if(req.getQrCodeImg() == null){
-            respHelper.failed("小游戏二维码不能为空");
+            respHelper.failed("小游戏二维码未上传");
+        }
+        if(req.getHandpicked() && req.getCoverImg() == null){
+            respHelper.failed("小游戏封面未上传");
         }
         if(req.getNickname() == null){
             respHelper.failed("小游戏名称不能为空");
@@ -94,26 +104,44 @@ public class ChatPetGameCenterMgrController extends BaseController{
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase update(UpdateMiniGameReq updateMiniGameReq){
+    public RespBase update(UpdateMiniGameReq req){
 
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
         }
 
-        if(updateMiniGameReq.getNickname() == null){
+        if(req.getHandpicked() == null){
+            respHelper.failed("编辑精选未选择");
+        }
+        if(ListUtil.isEmpty(req.getTagIdList())){
+            respHelper.failed("小游戏标签未选择");
+        }
+        if(req.getHeadImg() == null){
+            respHelper.failed("小游戏头像未上传");
+        }
+        if(req.getQrCodeImg() == null){
+            respHelper.failed("小游戏二维码未上传");
+        }
+        if(req.getHandpicked() && req.getCoverImg() == null){
+            respHelper.failed("小游戏封面未上传");
+        }
+        if(req.getNickname() == null){
             respHelper.failed("小游戏名称不能为空");
         }
-        if(updateMiniGameReq.getOnlineTime() == null){
+        if(req.getOnlineTime() == null){
             respHelper.failed("需要填写小游戏上线时间");
+        }
+        if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
+            respHelper.failed("上线时间不可为设置当天,至少明天");
         }
 
         AdminMiniGameUpdate adminMiniGameUpdate = new AdminMiniGameUpdate();
-        BeanUtils.copyProperties(updateMiniGameReq,adminMiniGameUpdate);
+        BeanUtils.copyProperties(req,adminMiniGameUpdate);
 
         wxMiniGameService.update(adminMiniGameUpdate);
 
-        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户编辑id为" + updateMiniGameReq.getId() + "的小游戏" );
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户编辑id为" + req.getId() + "的小游戏" );
 
         return respHelper.ok();
     }
