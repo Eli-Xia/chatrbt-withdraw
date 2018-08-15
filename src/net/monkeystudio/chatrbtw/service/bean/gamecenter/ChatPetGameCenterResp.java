@@ -9,6 +9,15 @@ import java.util.List;
 public class ChatPetGameCenterResp {
     private List<ChatPetCenterStallResp> chatPetCenterStallList = new ArrayList<>();
     private List<ChatPetMiniGameResp> miniGameList = new ArrayList<>();
+    private Integer owerWxFanId;//拥有宠物的粉丝的id
+
+    public Integer getOwerWxFanId() {
+        return owerWxFanId;
+    }
+
+    public void setOwerWxFanId(Integer owerWxFanId) {
+        this.owerWxFanId = owerWxFanId;
+    }
 
     public List<ChatPetCenterStallResp> getChatPetCenterStallList() {
         return chatPetCenterStallList;
