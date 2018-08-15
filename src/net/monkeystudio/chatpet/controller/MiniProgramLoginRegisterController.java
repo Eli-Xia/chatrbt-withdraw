@@ -61,7 +61,7 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
 
     @ResponseBody
     @RequestMapping(value = "/login-or-register", method = RequestMethod.POST)
-    public RespBase miniAppLogin(@RequestParam(value = "parentFanId",required = false)String parentFanId,@RequestParam(value = "programId",required = false)String miniProgramId,@RequestParam("code")String code) throws BizException{
+    public RespBase miniAppLogin(@RequestParam(value = "parentFanId",required = false)Integer parentFanId,@RequestParam(value = "programId",required = false)Integer miniProgramId,@RequestParam("code")String code) throws BizException{
         String token = miniProgramLoginService.loginHandle(parentFanId,miniProgramId,code);
 
         Map<String,String> result = new HashMap<>();

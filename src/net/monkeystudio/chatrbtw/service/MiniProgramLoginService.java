@@ -95,7 +95,7 @@ public class MiniProgramLoginService {
      * @throws BizException
      */
     @Transactional
-    public void register(String parentFanId, String openId, String unionId) throws BizException {
+    public void register(Integer parentFanId, String openId, String unionId) throws BizException {
         //新增用户
         WxFan wxFan = new WxFan();
 
@@ -123,7 +123,7 @@ public class MiniProgramLoginService {
 
         } else {
 
-            ChatPet parentChatPet = chatPetService.getByWxFanId(Integer.parseInt(parentFanId));
+            ChatPet parentChatPet = chatPetService.getByWxFanId(parentFanId);
 
             Integer parentId = parentChatPet.getId();
 
@@ -162,15 +162,14 @@ public class MiniProgramLoginService {
      * 登陆注册入口方法
      *
      * @param parentFanId:父亲粉丝id
-     * @param miniProgramIdStr:小程序id字符串
+     * @param miniProgramId:小程序id
      * @param jsCode:前端传过来的jsCode
      * @throws BizException
      * @return:用户会话token
      */
-    public String loginHandle(String parentFanId, String miniProgramIdStr, String jsCode) throws BizException {
-        Integer miniProgramId = null;
+    public String loginHandle(Integer parentFanId, Integer miniProgramId, String jsCode) throws BizException {
 
-        if (miniProgramIdStr == null) {
+        if (miniProgramId == null) {
             miniProgramId = 1;
         }
         LoginVerifyInfo loginVerifyInfo = wxMiniProgramHelper.fetchLoginVerifyInfo(miniProgramId, jsCode);
