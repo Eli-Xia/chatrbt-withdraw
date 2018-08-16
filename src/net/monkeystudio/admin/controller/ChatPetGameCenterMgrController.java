@@ -114,15 +114,6 @@ public class ChatPetGameCenterMgrController extends BaseController{
         if(ListUtil.isEmpty(req.getTagIdList())){
             return respHelper.failed("小游戏标签未选择");
         }
-        if(req.getHeadImg() == null){
-            return respHelper.failed("小游戏头像未上传");
-        }
-        if(req.getQrCodeImg() == null){
-            return respHelper.failed("小游戏二维码未上传");
-        }
-        if(req.getIsHandpicked() && req.getCoverImg() == null){
-            return respHelper.failed("小游戏封面未上传");
-        }
         if(req.getNickname() == null){
             return respHelper.failed("小游戏名称不能为空");
         }
