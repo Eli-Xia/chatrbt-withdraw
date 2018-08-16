@@ -168,6 +168,7 @@ public class MiniProgramLoginService {
      * @return:用户会话token
      */
     public String loginHandle(Integer parentFanId, Integer miniProgramId, String jsCode) throws BizException {
+
         if (miniProgramId == null) {
             miniProgramId = 1;
         }

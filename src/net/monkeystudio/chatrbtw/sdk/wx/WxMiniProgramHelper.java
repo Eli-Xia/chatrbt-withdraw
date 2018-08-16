@@ -46,7 +46,7 @@ public class WxMiniProgramHelper {
      * @return
      */
     public LoginVerifyInfo fetchLoginVerifyInfo(Integer miniProgramId,String jsCode) throws BizException{
-        Log.d("================= jsCode = {?} =================",jsCode);
+        Log.d("==> fetchLoginVerifyInfo : jsCode = {?} ",jsCode);
         MiniProgram miniProgram = miniProgramService.getById(miniProgramId);
         String appId = miniProgram.getAppId();
         String appSecret = miniProgram.getAppSecret();
@@ -59,12 +59,12 @@ public class WxMiniProgramHelper {
             throw new BizException("小程序登录校验失败");
         }
 
-        Log.d("================= fetchMiniAppLoginVerifyInfo response = {?} ===================",response);
+        Log.d("==> fetchLoginVerifyInfo : response = {?} ",response);
 
         LoginVerifyInfo loginVerifyInfo = JsonUtil.readValue(response, LoginVerifyInfo.class);
 
         if(loginVerifyInfo != null){
-            Log.d("============ LoginVerifyInfo:  sessionkey = {?} , openid = {?} =============",loginVerifyInfo.getSessionKey(),loginVerifyInfo.getOpneId());
+            Log.d("==> fetchLoginVerifyInfo:  session_key = {?} , openid = {?} ",loginVerifyInfo.getSessionKey(),loginVerifyInfo.getOpneId());
         }
 
         return loginVerifyInfo;
