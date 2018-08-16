@@ -13,6 +13,7 @@ import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.service.ChatPetGameCenterService;
 import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.WxMiniGameService;
+import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGame;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameAdd;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameResp;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameUpdate;
@@ -51,29 +52,29 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
-        if(req.getHandpicked() == null){
-            respHelper.failed("编辑精选未选择");
+        if(req.getIsHandpicked() == null){
+            return respHelper.failed("编辑精选未选择");
         }
         if(ListUtil.isEmpty(req.getTagIdList())){
-            respHelper.failed("小游戏标签未选择");
+            return respHelper.failed("小游戏标签未选择");
         }
         if(req.getHeadImg() == null){
-            respHelper.failed("小游戏头像未上传");
+            return respHelper.failed("小游戏头像未上传");
         }
         if(req.getQrCodeImg() == null){
-            respHelper.failed("小游戏二维码未上传");
+            return respHelper.failed("小游戏二维码未上传");
         }
-        if(req.getHandpicked() && req.getCoverImg() == null){
-            respHelper.failed("小游戏封面未上传");
+        if(req.getIsHandpicked() && req.getCoverImg() == null){
+            return respHelper.failed("小游戏封面未上传");
         }
         if(req.getNickname() == null){
-            respHelper.failed("小游戏名称不能为空");
+            return respHelper.failed("小游戏名称不能为空");
         }
         if(req.getOnlineTime() == null){
-            respHelper.failed("需要填写小游戏上线时间");
+            return respHelper.failed("需要填写小游戏上线时间");
         }
         if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
-            respHelper.failed("上线时间不可为设置当天,至少明天");
+            return respHelper.failed("上线时间不可为设置当天,至少明天");
         }
 
         AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
@@ -111,29 +112,29 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
-        if(req.getHandpicked() == null){
-            respHelper.failed("编辑精选未选择");
+        if(req.getIsHandpicked() == null){
+            return respHelper.failed("编辑精选未选择");
         }
         if(ListUtil.isEmpty(req.getTagIdList())){
-            respHelper.failed("小游戏标签未选择");
+            return respHelper.failed("小游戏标签未选择");
         }
         if(req.getHeadImg() == null){
-            respHelper.failed("小游戏头像未上传");
+            return respHelper.failed("小游戏头像未上传");
         }
         if(req.getQrCodeImg() == null){
-            respHelper.failed("小游戏二维码未上传");
+            return respHelper.failed("小游戏二维码未上传");
         }
-        if(req.getHandpicked() && req.getCoverImg() == null){
-            respHelper.failed("小游戏封面未上传");
+        if(req.getIsHandpicked() && req.getCoverImg() == null){
+            return respHelper.failed("小游戏封面未上传");
         }
         if(req.getNickname() == null){
-            respHelper.failed("小游戏名称不能为空");
+            return respHelper.failed("小游戏名称不能为空");
         }
         if(req.getOnlineTime() == null){
-            respHelper.failed("需要填写小游戏上线时间");
+            return respHelper.failed("需要填写小游戏上线时间");
         }
         if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
-            respHelper.failed("上线时间不可为设置当天,至少明天");
+            return respHelper.failed("上线时间不可为设置当天,至少明天");
         }
 
         AdminMiniGameUpdate adminMiniGameUpdate = new AdminMiniGameUpdate();
@@ -155,9 +156,9 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
-        WxMiniGame wxMiniGame = wxMiniGameService.getById(id);
+        AdminMiniGame adminMiniGame = wxMiniGameService.getAdminGameById(id);
 
-        return respHelper.ok(wxMiniGame);
+        return respHelper.ok(adminMiniGame);
     }
 
     /**
@@ -190,7 +191,6 @@ public class ChatPetGameCenterMgrController extends BaseController{
         if ( userId == null ){
             return respHelper.nologin();
         }
-
 
         List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespList();
 
