@@ -117,7 +117,6 @@ public class DividendService {
             if(DateUtils.isThreeDayBefore(createTime)){
                 money = THIRD_DAY_INIT_MONEY;
             }
-
         }
 
         //进行发红
@@ -278,7 +277,7 @@ public class DividendService {
         data.setKeyword1(keyword1);
 
         Keyword keyword2 = new Keyword();
-        keyword2.setValue("奖励金已到账 请查收");
+        keyword2.setValue("奖励金已到账，请查收！");
         data.setKeyword2(keyword2);
 
         msgTemplateParam.setData(data);
