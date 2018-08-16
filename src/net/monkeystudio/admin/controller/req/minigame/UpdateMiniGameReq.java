@@ -49,11 +49,11 @@ public class UpdateMiniGameReq {
         this.tagIdList = tagIdList;
     }
 
-    public Boolean getHandpicked() {
+    public Boolean getIsHandpicked() {
         return isHandpicked;
     }
 
-    public void setHandpicked(Boolean handpicked) {
+    public void setIsHandpicked(Boolean handpicked) {
         isHandpicked = handpicked;
     }
 

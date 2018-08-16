@@ -45,4 +45,8 @@ public class RMiniGameTagService {
 
         this.saveTagsForMinigame(tagIdList,miniGameId);
     }
+
+    public List<Integer> getTagListByMiniGameId(Integer miniGameId){
+        return rMiniGameTagMapper.selectTagListByMiniGameId(miniGameId);
+    }
 }

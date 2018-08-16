@@ -19,4 +19,6 @@ public interface RMiniGameTagMapper {
     Integer deleteTagsByMiniGameId(Integer miniGameId);
 
     Integer saveTagsForMiniGame(@Param("miniGameId") Integer miniGameId, @Param("tagIds") List<Integer> tagIds);
+
+    List<Integer> selectTagListByMiniGameId(Integer miniGameId);
 }

@@ -20,11 +20,11 @@ public class WxMiniGame {
     private String appId;
     private Float starNum;
 
-    public Boolean isHandpicked() {
+    public Boolean getIsHandpicked() {
         return isHandpicked;
     }
 
-    public void setHandpicked(Boolean handpicked) {
+    public void setIsHandpicked(Boolean handpicked) {
         isHandpicked = handpicked;
     }
 

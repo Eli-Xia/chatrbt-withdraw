@@ -4,6 +4,7 @@ import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.mapper.WxMiniGameMapper;
+import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGame;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameAdd;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameResp;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameUpdate;
@@ -94,10 +95,12 @@ public class WxMiniGameService {
         wxMiniGame.setQrCodeImgUrl(qrCodeImgUploadUrl);
         wxMiniGame.setShelveState(WX_MINI_GAME_SHELVE_STATE);//默认为上架状态
         wxMiniGame.setCreateTime(new Date());
-        wxMiniGame.setHandpicked(adminMiniGameAdd.getHandpicked());
+        wxMiniGame.setIsHandpicked(adminMiniGameAdd.getIsHandpicked());
         wxMiniGame.setStarNum(adminMiniGameAdd.getStarNum());
         wxMiniGame.setAppId(adminMiniGameAdd.getAppId());
         wxMiniGame.setCoverImgUrl(coverImgUploadUrl);
+
+        wxMiniGameMapper.insert(wxMiniGame);
 
         return wxMiniGame.getId();
     }
@@ -120,8 +123,10 @@ public class WxMiniGameService {
         wxMiniGame.setQrCodeImgUrl(qrCodeImgUploadUrl);
         wxMiniGame.setShelveState(WX_MINI_GAME_SHELVE_STATE);//默认为上架状态
         wxMiniGame.setCreateTime(new Date());
-        wxMiniGame.setHandpicked(adminMiniGameAdd.getHandpicked());
+        wxMiniGame.setIsHandpicked(adminMiniGameAdd.getIsHandpicked());
         wxMiniGame.setStarNum(adminMiniGameAdd.getStarNum());
+
+        wxMiniGameMapper.insert(wxMiniGame);
 
         return wxMiniGame.getId();
     }
@@ -134,7 +139,7 @@ public class WxMiniGameService {
      */
     @Transactional
     public Integer save(AdminMiniGameAdd adminMiniGameAdd) {
-        Boolean isHandpicked = adminMiniGameAdd.getHandpicked();
+        Boolean isHandpicked = adminMiniGameAdd.getIsHandpicked();
 
         Integer addMinigameId = null;
 
@@ -228,7 +233,7 @@ public class WxMiniGameService {
      */
     @Transactional
     public void update(AdminMiniGameUpdate adminMiniGameUpdate) {
-        Boolean isHandpicked = adminMiniGameUpdate.getHandpicked();
+        Boolean isHandpicked = adminMiniGameUpdate.getIsHandpicked();
 
         if (isHandpicked) {
             this.updateForHandpicked(adminMiniGameUpdate);
@@ -241,6 +246,20 @@ public class WxMiniGameService {
 
     public WxMiniGame getById(Integer miniGameId) {
         return wxMiniGameMapper.selectByPrimaryKey(miniGameId);
+    }
+
+    public AdminMiniGame getAdminGameById(Integer miniGameId){
+        WxMiniGame wxMiniGame = this.getById(miniGameId);
+
+        AdminMiniGame adminMiniGame = new AdminMiniGame();
+
+        BeanUtils.copyProperties(wxMiniGame,adminMiniGame);
+
+        //根据小游戏id获取其标签集
+        List<Integer> tagList = rMiniGameTagService.getTagListByMiniGameId(miniGameId);
+        adminMiniGame.setTagIdList(tagList);
+
+        return adminMiniGame;
     }
 
     /**
@@ -316,14 +335,12 @@ public class WxMiniGameService {
         Boolean ret = false;
 
         //上线当天0点
-        Date online = DateUtils.getBeginDate(onlineTime);
-        long onlineTimeStamp = online.getTime();
+        Date onlineDate = DateUtils.getBeginDate(onlineTime);
 
         //设置当天23点59分59秒
-        Date todayEndTime = DateUtils.getEndDate(new Date());
-        long todayTimeStamp = todayEndTime.getTime();
+        Date today = DateUtils.getEndDate(new Date());
 
-        if (onlineTimeStamp > todayTimeStamp) {
+        if (onlineDate.compareTo(today) > 0) {
             ret = true;
         }
 

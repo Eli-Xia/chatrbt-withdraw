@@ -43,4 +43,8 @@
             (#{miniGameId}, #{item})
         </foreach>
     </insert>
+
+    <select id="selectTagListByMiniGameId" resultType ="java.lang.Integer">
+        select tag_id from r_mini_game_tag where mini_game_id = #{miniGameId}
+    </select>
 </mapper>
