@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
@@ -170,7 +171,16 @@ public class WxMiniGameService {
     private void updateForHandpicked(AdminMiniGameUpdate adminMiniGameUpdate) {
         WxMiniGame wxMiniGame = this.getById(adminMiniGameUpdate.getId());
 
-        BeanUtils.copyProperties(adminMiniGameUpdate, wxMiniGame);
+
+        Date onlineTime = CommonUtils.dateStartTime(wxMiniGame.getOnlineTime());
+        Date nowTime = new Date();
+
+        //未上线可编辑时间,已上线可编辑
+        if(nowTime.compareTo(onlineTime) < 0){
+            BeanUtils.copyProperties(adminMiniGameUpdate, wxMiniGame);
+        }else{
+            BeanUtils.copyProperties(adminMiniGameUpdate, wxMiniGame , "onlineTime");
+        }
 
         MultipartFile headImg = adminMiniGameUpdate.getHeadImg();
         MultipartFile qrCodeImg = adminMiniGameUpdate.getQrCodeImg();
@@ -273,7 +283,7 @@ public class WxMiniGameService {
         wxMiniGameMapper.updateByPrimaryKey(wxMiniGame);
     }
 
-    public List<AdminMiniGameResp> getAdminMiniGameRespList() {
+    /*public List<AdminMiniGameResp> getAdminMiniGameRespList() {
 
         List<AdminMiniGameResp> resps = new ArrayList<>();
 
@@ -289,6 +299,35 @@ public class WxMiniGameService {
         }
 
         return resps;
+    }*/
+
+    /**
+     * 小游戏后台分页列表
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public List<AdminMiniGameResp> getAdminMiniGameRespListByPage(Integer page,Integer pageSize){
+        Integer startIndex = CommonUtils.page2startIndex(page, pageSize);
+
+        List<AdminMiniGameResp> resps = new ArrayList<>();
+
+        List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectByPage(startIndex,pageSize);
+
+        for (WxMiniGame item : wxMiniGames) {
+            AdminMiniGameResp resp = new AdminMiniGameResp();
+            BeanUtils.copyProperties(item, resp);
+            //查询这个游戏历史完成任务的数量
+            Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
+            resp.setPlayerNum(miniGamePlayerNum);
+            resps.add(resp);
+        }
+
+        return resps;
+    }
+
+    public Integer getCount(){
+        return wxMiniGameMapper.count();
     }
 
     /**
@@ -346,4 +385,7 @@ public class WxMiniGameService {
 
         return ret;
     }
+
+
+
 }

@@ -84,6 +84,12 @@
   <select id="selectAll" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY need_sign DESC ,online_time DESC , create_time DESC
   </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY need_sign DESC ,online_time DESC , create_time DESC
+    limit
+    #{startIndex},#{pageSize}
+  </select>
     
     <delete id="delete" >
         DELETE  FROM  e_wx_mini_game WHERE id = #{id}
@@ -95,6 +101,10 @@
     WHERE shelve_state = 1 AND DATE_FORMAT(online_time,'%Y-%m-%d 00:00:00') &lt;=  NOW()
     ORDER BY need_sign DESC ,online_time DESC , create_time DESC
 
+  </select>
+
+  <select id="count" resultType="java.lang.Integer">
+    select count(id) FROM  e_wx_mini_game
   </select>
 
 </mapper>

@@ -1,5 +1,6 @@
 package net.monkeystudio.admin.controller;
 
+import net.monkeystudio.admin.controller.req.QueryMiniGameList;
 import net.monkeystudio.admin.controller.req.minigame.AddMiniGameReq;
 import net.monkeystudio.admin.controller.req.minigame.UpdateMiniGameReq;
 import net.monkeystudio.base.controller.BaseController;
@@ -17,10 +18,7 @@ import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameUpdate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -117,12 +115,6 @@ public class ChatPetGameCenterMgrController extends BaseController{
         if(req.getNickname() == null){
             return respHelper.failed("小游戏名称不能为空");
         }
-        if(req.getOnlineTime() == null){
-            return respHelper.failed("需要填写小游戏上线时间");
-        }
-        if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
-            return respHelper.failed("上线时间不可为设置当天,至少明天");
-        }
 
         AdminMiniGameUpdate adminMiniGameUpdate = new AdminMiniGameUpdate();
         BeanUtils.copyProperties(req,adminMiniGameUpdate);
@@ -172,16 +164,29 @@ public class ChatPetGameCenterMgrController extends BaseController{
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase list(HttpServletRequest request){
+    public RespBase list(HttpServletRequest request, @RequestBody QueryMiniGameList queryMiniGameList){
 
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
         }
 
-        List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespList();
+        Integer page = queryMiniGameList.getPage();
+        Integer pageSize = queryMiniGameList.getPageSize();
 
-        return respHelper.ok(resps);
+        if ( page == null || page < 1 ){
+            return respHelper.cliParamError("page error.");
+        }
+
+        if ( pageSize == null || pageSize < 1 ){
+            return respHelper.cliParamError("pageSize error.");
+        }
+
+        List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespListByPage(page,pageSize);
+
+        Integer total = wxMiniGameService.getCount();
+
+        return respHelper.ok(resps,total);
     }
 
 
