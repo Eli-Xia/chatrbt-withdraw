@@ -212,7 +212,7 @@ public class MiniProgramLoginService {
         Long loginCount = redisCacheTemplate.incr(cacheKey);//登陆次数
 
         //是否为第一次派发
-        if (this.isFirstDispatch(chatPetId, loginCount)) {
+        if (loginCount.intValue() == 1) {
 
             redisCacheTemplate.expire(cacheKey, DateUtils.getCacheSeconds());
             //派发小游戏点击任务
