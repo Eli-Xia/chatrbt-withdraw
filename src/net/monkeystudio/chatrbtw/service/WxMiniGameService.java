@@ -214,7 +214,15 @@ public class WxMiniGameService {
     private void updateForNotHandpicked(AdminMiniGameUpdate adminMiniGameUpdate) {
         WxMiniGame wxMiniGame = this.getById(adminMiniGameUpdate.getId());
 
-        BeanUtils.copyProperties(adminMiniGameUpdate, wxMiniGame);
+        Date onlineTime = CommonUtils.dateStartTime(wxMiniGame.getOnlineTime());
+        Date nowTime = new Date();
+
+        //未上线可编辑时间,已上线可编辑
+        if(nowTime.compareTo(onlineTime) < 0){
+            BeanUtils.copyProperties(adminMiniGameUpdate, wxMiniGame);
+        }else{
+            BeanUtils.copyProperties(adminMiniGameUpdate, wxMiniGame , "onlineTime");
+        }
 
         MultipartFile headImg = adminMiniGameUpdate.getHeadImg();
         MultipartFile qrCodeImg = adminMiniGameUpdate.getQrCodeImg();
