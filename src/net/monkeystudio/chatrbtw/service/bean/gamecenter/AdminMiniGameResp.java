@@ -14,6 +14,15 @@ public class AdminMiniGameResp {
     private Integer shelveState;
     private Long playerNum;
     private String nickname;
+    private Boolean isHandpicked;
+
+    public Boolean getIsHandpicked() {
+        return isHandpicked;
+    }
+
+    public void setIsHandpicked(Boolean handpicked) {
+        isHandpicked = handpicked;
+    }
 
     public String getNickname() {
         return nickname;

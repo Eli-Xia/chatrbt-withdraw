@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.mapper;
 
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,9 +20,14 @@ public interface WxMiniGameMapper {
 
     List<WxMiniGame> selectAll();
 
+    List<WxMiniGame> selectByPage(@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
+
+    Integer count();
+
     Integer delete(Integer id);
 
     //查询上架且上线的小游戏
     List<WxMiniGame> selectOnlineGameList();
+
 
 }

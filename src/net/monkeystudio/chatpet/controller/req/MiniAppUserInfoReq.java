@@ -4,26 +4,25 @@ package net.monkeystudio.chatpet.controller.req;
  * @author xiaxin
  */
 public class MiniAppUserInfoReq {
-    private String rawData;
     private String encryptedData;
     private String iv;
-    private String signature;
-    private Integer parentFanId;
+    private Integer miniProgramId;
+    private String code;
 
-    public Integer getParentFanId() {
-        return parentFanId;
+    public String getCode() {
+        return code;
     }
 
-    public void setParentFanId(Integer parentFanId) {
-        this.parentFanId = parentFanId;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getRawData() {
-        return rawData;
+    public Integer getMiniProgramId() {
+        return miniProgramId;
     }
 
-    public void setRawData(String rawData) {
-        this.rawData = rawData;
+    public void setMiniProgramId(Integer miniProgramId) {
+        this.miniProgramId = miniProgramId;
     }
 
     public String getEncryptedData() {
@@ -42,11 +41,4 @@ public class MiniAppUserInfoReq {
         this.iv = iv;
     }
 
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
 }

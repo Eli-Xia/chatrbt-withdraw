@@ -19,7 +19,7 @@ public class ChatPetAuctionItemListResp {
     private Date bidTime;
     private Float bidPrice;
     private Date dealTime;
-    private Float dealPrice;
+    private Float dealPrice = 0F;
     private Boolean isWinner;
 
     public Float getDealPrice() {

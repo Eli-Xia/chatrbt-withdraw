@@ -37,5 +37,11 @@ public class GlobalConfigConstants {
     //微赞用户id
     public final static String WEIZAN_USER_ID_KEY = "WEIZAN_USER_ID";
 
+    //猫六六用户默认头像
+    public final static String LUCKY_CAT_DEFAULT_HEADIMG_URL_KEY = "LUCKY_CAT_DEFAULT_HEADIMG_URL";
+
+    //猫六六用户默认昵称
+    public final static String LUCKY_CAT_DEFAULT_NICKNAME_KEY = "LUCKY_CAT_DEFAULT_NICKNAME";
+
 
 }

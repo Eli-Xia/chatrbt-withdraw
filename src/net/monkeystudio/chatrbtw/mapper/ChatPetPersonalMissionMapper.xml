@@ -154,4 +154,8 @@
     where chat_pet_id = #{chatPetId} AND mission_code = 5
     AND create_time &gt;= #{startTime} AND create_time &lt;= #{endTime}
   </select>
+  
+  <select id="countTodayDispatchMission" resultType="java.lang.Integer">
+    select count(id) from e_chat_pet_personal_mission where chat_pet_id = #{chatPetId} and create_time &gt;= #{startTime} and create_time &lt;= #{endTime}
+  </select>
 </mapper>

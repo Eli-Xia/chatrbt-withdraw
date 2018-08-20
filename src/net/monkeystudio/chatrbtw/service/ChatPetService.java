@@ -857,8 +857,8 @@ public class ChatPetService {
             chatPetExperinceRankItem.setLevel(level);
 
             String wxFanOpenId = chatPet.getWxFanOpenId();
-            String wxPubOriginId = chatPet.getWxPubOriginId();
-            WxFan wxFan = wxFanService.getWxFan(wxPubOriginId, wxFanOpenId);
+            Integer miniProgramId = WxFanService.LUCK_CAT_MINI_APP_ID;
+            WxFan wxFan = wxFanService.getWxFan(wxFanOpenId,miniProgramId);
 
             //粉丝头像
             String headImgUrl = wxFan.getHeadImgUrl();

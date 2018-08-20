@@ -49,6 +49,9 @@ public class ChatPetGameCenterService {
         ChatPet chatPet = chatPetService.getByWxFanId(wxFanId);
         Integer chatPetId = chatPet.getId();
 
+        //resp set wxFanId
+        resp.setOwerWxFanId(chatPet.getWxFanId());
+
         List<ChatPetCenterStallResp> chatPetCenterStallInfoList = this.getChatPetCenterStallInfoList(chatPetId);
         resp.setChatPetCenterStallList(chatPetCenterStallInfoList);
 

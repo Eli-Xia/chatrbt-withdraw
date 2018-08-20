@@ -32,7 +32,7 @@
     </select>
 
     <select id="countTotalDividendAmount" resultType="java.lang.Float">
-        SELECT sum(money) FROM e_dividend_record
+        SELECT IFNULL(sum(money),0) FROM e_dividend_record
     </select>
     
     

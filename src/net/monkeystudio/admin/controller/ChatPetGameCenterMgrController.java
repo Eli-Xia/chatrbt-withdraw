@@ -1,28 +1,26 @@
 package net.monkeystudio.admin.controller;
 
+import net.monkeystudio.admin.controller.req.QueryMiniGameList;
 import net.monkeystudio.admin.controller.req.minigame.AddMiniGameReq;
 import net.monkeystudio.admin.controller.req.minigame.UpdateMiniGameReq;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
-import net.monkeystudio.base.utils.CommonUtils;
-import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.RespHelper;
-import net.monkeystudio.chatrbtw.entity.WxMiniGame;
+import net.monkeystudio.chatrbtw.AppConstants;
 import net.monkeystudio.chatrbtw.service.ChatPetGameCenterService;
+import net.monkeystudio.chatrbtw.service.OpLogService;
 import net.monkeystudio.chatrbtw.service.WxMiniGameService;
+import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGame;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameAdd;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameResp;
 import net.monkeystudio.chatrbtw.service.bean.gamecenter.AdminMiniGameUpdate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +35,8 @@ public class ChatPetGameCenterMgrController extends BaseController{
     private ChatPetGameCenterService chatPetGameCenterService;
     @Autowired
     private WxMiniGameService wxMiniGameService;
+    @Autowired
+    private OpLogService opLogService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -46,26 +46,37 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
+        if(req.getIsHandpicked() == null){
+            return respHelper.failed("编辑精选未选择");
+        }
+        if(ListUtil.isEmpty(req.getTagIdList())){
+            return respHelper.failed("小游戏标签未选择");
+        }
         if(req.getHeadImg() == null){
-            respHelper.failed("小游戏头像不能为空");
+            return respHelper.failed("小游戏头像未上传");
         }
         if(req.getQrCodeImg() == null){
-            respHelper.failed("小游戏二维码不能为空");
+            return respHelper.failed("小游戏二维码未上传");
+        }
+        if(req.getIsHandpicked() && req.getCoverImg() == null){
+            return respHelper.failed("小游戏封面未上传");
         }
         if(req.getNickname() == null){
-            respHelper.failed("小游戏名称不能为空");
+            return respHelper.failed("小游戏名称不能为空");
         }
         if(req.getOnlineTime() == null){
-            respHelper.failed("需要填写小游戏上线时间");
+            return respHelper.failed("需要填写小游戏上线时间");
         }
         if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
-            respHelper.failed("上线时间不可为设置当天,至少明天");
+            return respHelper.failed("上线时间不可为设置当天,至少明天");
         }
 
         AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
         BeanUtils.copyProperties(req,adminMiniGameAdd);
 
-        wxMiniGameService.save(adminMiniGameAdd);
+        Integer addMiniGameId = wxMiniGameService.save(adminMiniGameAdd);
+
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户新增id为" + addMiniGameId + "的小游戏" );
 
         return respHelper.ok();
     }
@@ -81,29 +92,36 @@ public class ChatPetGameCenterMgrController extends BaseController{
 
         wxMiniGameService.delete(id);
 
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户删除id为" + id + "的小游戏" );
+
         return respHelper.ok();
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase update(UpdateMiniGameReq updateMiniGameReq){
+    public RespBase update(UpdateMiniGameReq req){
 
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
         }
 
-        if(updateMiniGameReq.getNickname() == null){
-            respHelper.failed("小游戏名称不能为空");
+        if(req.getIsHandpicked() == null){
+            return respHelper.failed("编辑精选未选择");
         }
-        if(updateMiniGameReq.getOnlineTime() == null){
-            respHelper.failed("需要填写小游戏上线时间");
+        if(ListUtil.isEmpty(req.getTagIdList())){
+            return respHelper.failed("小游戏标签未选择");
+        }
+        if(req.getNickname() == null){
+            return respHelper.failed("小游戏名称不能为空");
         }
 
         AdminMiniGameUpdate adminMiniGameUpdate = new AdminMiniGameUpdate();
-        BeanUtils.copyProperties(updateMiniGameReq,adminMiniGameUpdate);
+        BeanUtils.copyProperties(req,adminMiniGameUpdate);
 
         wxMiniGameService.update(adminMiniGameUpdate);
+
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户编辑id为" + req.getId() + "的小游戏" );
 
         return respHelper.ok();
     }
@@ -117,9 +135,9 @@ public class ChatPetGameCenterMgrController extends BaseController{
             return respHelper.nologin();
         }
 
-        WxMiniGame wxMiniGame = wxMiniGameService.getById(id);
+        AdminMiniGame adminMiniGame = wxMiniGameService.getAdminGameById(id);
 
-        return respHelper.ok(wxMiniGame);
+        return respHelper.ok(adminMiniGame);
     }
 
     /**
@@ -139,22 +157,41 @@ public class ChatPetGameCenterMgrController extends BaseController{
 
         wxMiniGameService.unshelve(id);
 
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户下架id为" + id + "的小游戏" );
+
         return respHelper.ok();
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase list(HttpServletRequest request){
+    public RespBase list(HttpServletRequest request, @RequestBody QueryMiniGameList queryMiniGameList){
 
         Integer userId = getUserId();
         if ( userId == null ){
             return respHelper.nologin();
         }
 
+        Integer page = queryMiniGameList.getPage();
+        Integer pageSize = queryMiniGameList.getPageSize();
 
-        List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespList();
+        if ( page == null || page < 1 ){
+            return respHelper.cliParamError("page error.");
+        }
 
-        return respHelper.ok(resps);
+        if ( pageSize == null || pageSize < 1 ){
+            return respHelper.cliParamError("pageSize error.");
+        }
+
+        List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespListByPage(page,pageSize);
+
+        Integer total = wxMiniGameService.getCount();
+
+        return respHelper.ok(resps,total);
     }
+
+
+
+
+
 
 }

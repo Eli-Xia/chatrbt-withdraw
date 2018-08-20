@@ -69,9 +69,6 @@ public class ChatPetMissionPoolService {
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
 
-    @Autowired
-    private TransactionTemplate txTemplate;
-
     //每天只能最多完成三次邀请任务
     private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
 
@@ -336,7 +333,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMission(Integer inviteeWxFanId,Integer chatPetPersonalMissionId) throws BizException{
+    public void completeChatPetMission(Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -355,7 +352,7 @@ public class ChatPetMissionPoolService {
      * @param inviteeWxFanId    :被邀请人wxFanId
      * @param chatPetPersonalMissionId  :任务记录id
      */
-    public void completeChatPetMission(Integer adId,Integer inviteeWxFanId,Integer chatPetPersonalMissionId) throws BizException{
+    public void completeChatPetMission(Integer adId, Integer inviteeWxFanId, Integer chatPetPersonalMissionId) throws BizException{
         ChatPetPersonalMission chatPetPersonalMission = this.getById(chatPetPersonalMissionId);
         if(chatPetPersonalMission == null) return;
 
@@ -366,6 +363,8 @@ public class ChatPetMissionPoolService {
 
         this.completeChatPetMission(chatPetPersonalMissionId);
     }
+
+
 
     /**
      * 完成宠物任务
@@ -497,6 +496,32 @@ public class ChatPetMissionPoolService {
     }
 
     /**
+     * 判断是否为猫分配当日任务
+     * @param chatPetId
+     * @return
+     */
+    public Boolean isDispatchMission(Integer chatPetId){
+
+        Integer count = null;
+
+        String countStr = redisCacheTemplate.getString(this.getChatPetDispatchMissionCountKey(chatPetId));
+
+        if(countStr == null){
+            Date today = new Date();
+            count = chatPetPersonalMissionMapper.countTodayDispatchMission(CommonUtils.dateStartTime(today), CommonUtils.dateEndTime(today), chatPetId);
+        }else{
+            count = Integer.parseInt(countStr);
+        }
+
+        return count.intValue() > 0;
+    }
+
+    private String getChatPetDispatchMissionCountKey(Integer chatPetId){
+        return RedisTypeConstants.KEY_STRING_TYPE_PREFIX + "dispatchMissionCount:" + chatPetId;
+    }
+
+
+    /**
      * 判断游戏任务是否已经完成
      * @param wxFanId
      * @param wxMiniGameId
@@ -538,7 +563,6 @@ public class ChatPetMissionPoolService {
             //});
             completeChatPetMission(miniGameMission.getId());
         }
-
     }
 
 
@@ -751,7 +775,7 @@ public class ChatPetMissionPoolService {
     /**
      * completeMissionParam
      * 完成宠物任务
-     * @param completeMissionParam  完成任务参数
+     * @param
      */
     /*public void completeChatPetMission(CompleteMissionParam completeMissionParam){
         //查询当前任务记录查询对象
@@ -808,6 +832,35 @@ public class ChatPetMissionPoolService {
 
         }
     }*/
+
+    //aspectJ事务测试
+    //@Transactional
+    public void test1(){
+//        ChatPetPersonalMission copy = this.getById(2462);
+//        ChatPetPersonalMission target = new ChatPetPersonalMission();
+//        target.setState(1000);
+//        BeanUtils.copyProperties(copy,target);
+//
+//        target.setId(null);
+//        this.save(target);
+        System.out.println(1);
+
+        test2();
+    }
+
+    @Transactional
+    private void test2(){
+        ChatPetPersonalMission copy = this.getById(2462);
+        ChatPetPersonalMission target = new ChatPetPersonalMission();
+        target.setState(100);
+        BeanUtils.copyProperties(copy,target);
+
+        target.setId(null);
+        this.save(target);
+
+        int i = 1 / 0;
+
+    }
 
 
 }

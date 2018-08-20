@@ -230,7 +230,11 @@ public class WxFanService {
     }
 
     public Integer update(WxFan wxFan) {
-        return wxFanMapper.update(wxFan);
+        Integer count =  wxFanMapper.update(wxFan);
+
+        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
+
+        return count;
     }
 
     public boolean isFans(String wxPubOriginId ,String wxFanOpenId){
@@ -282,8 +286,14 @@ public class WxFanService {
     /**
      * 当wxFan不存在即wxOpenId和miniProgramId都不存在时保存
      */
-    public Integer saveIfNotExist(WxFan wxFan) {
+    public void saveIfNotExist(WxFan wxFan) throws BizException{
         Integer count = wxFanMapper.insertIfNotExist(wxFan);
-        return count;
+
+        if(count == 0){
+            throw new BizException("乐观锁失败");
+        }
+
+        this.setWxFanCache(wxFan.getWxPubOriginId(),wxFan.getWxFanOpenId(),wxFan.getMiniProgramId(),wxFan);
     }
+
 }

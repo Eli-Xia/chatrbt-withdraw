@@ -13,7 +13,7 @@ public interface WxFanMapper {
 
     Integer update(WxFan wxFan);
 
-    List<WxFan> select(@Param("wxPubOriginId") String wxPubOriginId , @Param("wxFanOpenId")  String wxFanOpenId,@Param("miniProgramId")Integer miniProgramId);
+    List<WxFan> select(@Param("wxPubOriginId") String wxPubOriginId, @Param("wxFanOpenId") String wxFanOpenId, @Param("miniProgramId") Integer miniProgramId);
 
     WxFan selectById(Integer id);
 
@@ -23,4 +23,6 @@ public interface WxFanMapper {
     List<WxFan> selectByMiniProgramId(@Param("miniProgramId") Integer miniProgramId);
 
     Integer insertIfNotExist(WxFan wxFan);
+
+    Integer updateBySyn(WxFan wxFan);
 }

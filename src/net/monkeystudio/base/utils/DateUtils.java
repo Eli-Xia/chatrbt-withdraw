@@ -161,4 +161,80 @@ public class DateUtils {
         return time;
     }
 
+    /**
+     * 是否为昨天
+     * 即从昨天零时零分到今日零时零分
+     * @param date
+     * @return
+     */
+    public static Boolean isYesterday(Date date){
+        Date currentDate = new Date();
+
+        Date currentDateBegin = getBeginDate(currentDate);
+
+        Date yesterdayBegin = getYesterday(currentDateBegin);
+
+        if(date.before(currentDateBegin) && date.after(yesterdayBegin)){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否为前天
+     * @param date
+     * @return
+     */
+    public static Boolean isTowDayBefore(Date date){
+        Date currentDate = new Date();
+
+        Date currentDateBegin = getBeginDate(currentDate);
+
+        Date yesterdayBegin = getYesterday(currentDateBegin);
+
+        Date twoDayBefore = getYesterday(yesterdayBegin);
+
+        if(date.before(yesterdayBegin) && date.after(twoDayBefore)){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * 是否为大前天
+     * @param date
+     * @return
+     */
+    public static Boolean isThreeDayBefore(Date date){
+        Date currentDate = new Date();
+
+        Date currentDateBegin = getBeginDate(currentDate);
+
+        Date yesterdayBegin = getYesterday(currentDateBegin);
+
+        Date twoDayBefore = getYesterday(yesterdayBegin);
+
+        Date threeeDayBefore = getYesterday(twoDayBefore);
+
+        if(date.before(twoDayBefore) && date.after(threeeDayBefore)){
+            return true;
+        }
+
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(2018,7,7,12,1);
+
+        Date date = calendar.getTime();
+
+        System.out.println(isYesterday(date));
+    }
+
 }

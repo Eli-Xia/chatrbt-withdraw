@@ -103,7 +103,7 @@ public class DividendDetailRecordService {
         ChatPetDividendDetail chatPetDividendDetail = new ChatPetDividendDetail();
 
         Float money = record.getMoney();
-        chatPetDividendDetail.setNote("分红+" + ArithmeticUtils.keep2DecimalPlace(money));
+        chatPetDividendDetail.setNote("奖励金+" + ArithmeticUtils.keep2DecimalPlace(money));
         chatPetDividendDetail.setCreateTime(record.getCreateTime());
 
         return chatPetDividendDetail;

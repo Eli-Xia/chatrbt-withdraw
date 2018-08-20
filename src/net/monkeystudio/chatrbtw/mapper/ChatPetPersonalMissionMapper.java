@@ -23,16 +23,18 @@ public interface ChatPetPersonalMissionMapper {
 
     ChatPetPersonalMission selectByParam(ChatPetPersonalMission param);
 
-    Integer countByChatPetIdAndAdId(@Param("chatPetId")Integer chatPetId,@Param("adId")Integer adId);
+    Integer countByChatPetIdAndAdId(@Param("chatPetId") Integer chatPetId, @Param("adId") Integer adId);
 
-    Integer countDispatchMissionAmountByMissionCode(@Param("chatPetId")Integer chatPetId,@Param("missionCode")Integer missionCode,@Param("createTime")Date createTime);
+    Integer countDispatchMissionAmountByMissionCode(@Param("chatPetId") Integer chatPetId, @Param("missionCode") Integer missionCode, @Param("createTime") Date createTime);
 
-    Long countMiniGameFinishAmount(@Param("miniGameId") Integer miniGameId,@Param("missionCode")Integer missionCode,@Param("state")Integer state);
+    Long countMiniGameFinishAmount(@Param("miniGameId") Integer miniGameId, @Param("missionCode") Integer missionCode, @Param("state") Integer state);
 
-    Integer countDayPlayGamePeople(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);//根据开始结束时间查询玩游戏人数
+    Integer countDayPlayGamePeople(@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);//根据开始结束时间查询玩游戏人数
 
-    Integer countDayPlayGameTotalAmount(@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);//根据开始结束时间查询玩游戏总次数
+    Integer countDayPlayGameTotalAmount(@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);//根据开始结束时间查询玩游戏总次数
 
     @MapKey("wxMiniGameId")
-    Map<Integer,ChatPetPersonalMission> selectMiniGameMissionMap(@Param("chatPetId") Integer chatPetId,@Param("startTime") Date startTime,@Param("endTime") Date endTime);
+    Map<Integer, ChatPetPersonalMission> selectMiniGameMissionMap(@Param("chatPetId") Integer chatPetId, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    Integer countTodayDispatchMission(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("chatPetId") Integer chatPetId);//查询宠物当天派发任务数量
 }
