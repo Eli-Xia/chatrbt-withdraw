@@ -82,11 +82,11 @@
   </update>
 
   <select id="selectAll" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY need_sign DESC ,online_time DESC , create_time DESC
+    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY id DESC
   </select>
 
   <select id="selectByPage" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY need_sign DESC ,online_time DESC , create_time DESC
+    SELECT <include refid="Base_Column_List"/> FROM  e_wx_mini_game  ORDER BY id DESC
     limit
     #{startIndex},#{pageSize}
   </select>
