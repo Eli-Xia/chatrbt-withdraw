@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -76,6 +77,25 @@ public class JsonUtil {
     public static String toJson(Map<String,String> map){
         JSONObject json = JSONObject.fromObject(map);
         return json.toString();
+    }
+
+    /**
+     * json string 转换为 map 对象
+     * @param json
+     * @return
+     */
+    public static Map<String,String> jsonToMap(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Map<String,String> map = new HashMap<>();
+
+        try{
+            map = mapper.readValue(json, new TypeReference<HashMap<String,String>>(){});
+            System.out.println(map);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return map;
     }
 
 }

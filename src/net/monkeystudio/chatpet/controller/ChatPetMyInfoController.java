@@ -61,6 +61,24 @@ public class ChatPetMyInfoController extends ChatPetBaseController{
 
         return respHelper.ok(vo);
     }
-}
 
+    /**
+     * 提现接口
+     * @return
+     */
+    @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+    @ResponseBody
+    public RespBase moneyWithdraw(){
+        /*
+        * 1,提现的金额需要大于100
+        * 2,userid判断用户是否可以进行提现
+        *   2.1:chatpet的money要大于等于提现的金额   在update的时候去做控制  怎么做呢???  update money 和 update coin
+        *
+        * */
+
+        return respHelper.ok();
+    }
+
+
+}
 
