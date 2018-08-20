@@ -5,28 +5,30 @@
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="mini_game_id" property="miniGameId" jdbcType="INTEGER" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
+        <result column="handpicked" property="handpicked" jdbcType="BIT"/>
     </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from `r_mini_game_tag`
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RMiniGameTag" useGeneratedKeys="true" keyProperty="id" >
-    insert into `r_mini_game_tag` (mini_game_id, tag_id)
-    values (#{miniGameId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER})
+    insert into `r_mini_game_tag` (mini_game_id, tag_id, handpicked)
+    values (#{miniGameId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}, #{handpicked})
   </insert>
     <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RMiniGameTag" >
     update `r_mini_game_tag`
     set mini_game_id = #{miniGameId,jdbcType=INTEGER},
-      tag_id = #{tagId,jdbcType=INTEGER}
+      tag_id = #{tagId,jdbcType=INTEGER},
+      handpicked = #{handpicked}
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, mini_game_id, tag_id
+    select id, mini_game_id, tag_id , handpicked
     from `r_mini_game_tag`
     where id = #{id,jdbcType=INTEGER}
   </select>
     <select id="selectAll" resultMap="BaseResultMap" >
-    select id, mini_game_id, tag_id
+    select id, mini_game_id, tag_id , handpicked
     from `r_mini_game_tag`
   </select>
 
@@ -37,7 +39,7 @@
 
 
     <insert id="saveTagsForMiniGame" parameterType="map" useGeneratedKeys="true" >
-        insert into r_mini_game_tag (mini_game_id,tag_id)
+        insert into r_mini_game_tag (mini_game_id,tag_id,handpicked)
         values
         <foreach collection="tagIds" item="item" index="index" separator=",">
             (#{miniGameId}, #{item})
@@ -46,5 +48,17 @@
 
     <select id="selectTagListByMiniGameId" resultType ="java.lang.Integer">
         select tag_id from r_mini_game_tag where mini_game_id = #{miniGameId}
+    </select>
+
+    <select id="selectMiniGameIdsByParam" resultType="java.lang.Integer">
+      select id from r_mini_game_tag
+        <where>
+            <if test="tagId != null">
+                and tag_id = #{tagId}
+            </if>
+            <if test="handpicked != null">
+                and handpicked = #{handpicked}
+            </if>
+        </where>
     </select>
 </mapper>

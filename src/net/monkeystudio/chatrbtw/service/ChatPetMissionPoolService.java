@@ -10,6 +10,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
+import net.monkeystudio.chatrbtw.mapper.bean.chatpetpersonalmission.MiniGameMissionState;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.MissionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
@@ -656,6 +657,14 @@ public class ChatPetMissionPoolService {
         Date endTime = CommonUtils.dateEndTime(today);
 
         return chatPetPersonalMissionMapper.selectMiniGameMissionMap(chatPetId,startTime,endTime);
+    }
+
+    public Map<Integer,MiniGameMissionState> getTodayMiniGameMissionStateMap(Integer chatPetId){
+        Date today = new Date();
+        Date startTime = CommonUtils.dateStartTime(today);
+        Date endTime = CommonUtils.dateEndTime(today);
+
+        return chatPetPersonalMissionMapper.selectMiniGameMissionStateMap(chatPetId, startTime, endTime);
     }
 
 

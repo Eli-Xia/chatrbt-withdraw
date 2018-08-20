@@ -7,6 +7,16 @@ public class RMiniGameTag {
 
     private Integer tagId;
 
+    private Boolean handpicked;
+
+    public Boolean getHandpicked() {
+        return handpicked;
+    }
+
+    public void setHandpicked(Boolean handpicked) {
+        this.handpicked = handpicked;
+    }
+
     public Integer getId() {
         return id;
     }
