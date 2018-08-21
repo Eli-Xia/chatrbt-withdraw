@@ -1,6 +1,11 @@
 package net.monkeystudio.chatrbtw.entity;
 
-public class MiniGameTag {
+import java.io.Serializable;
+
+public class MiniGameTag implements Serializable {
+
+    private static final long serialVersionUID = -6333745050289784907L;
+
     private Integer id;
 
     private String name;

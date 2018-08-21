@@ -362,27 +362,13 @@ public class WxMiniGameService {
         return ret;
     }
 
-    //当参数太长的时候说明有烂代码的wei'dao
-    public List<MiniGameVO> getMinigameVOListByPage(Integer startIndex,Integer pageSize,Integer chatPetId,Boolean handpicked){
-        List<WxMiniGame> wxMiniGames = null;
-
-        if(handpicked){
-            wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex,pageSize);
-        }else{
-
-        }
-    }
-
-
     /**
-     * 场景:小程序小游戏分类页面
-     * 精选编辑游戏分页列表
+     * 得到MiniGameVOList
+     * @param wxMiniGames:小游戏集合
+     * @param chatPetId:宠物id
+     * @return
      */
-    public List<MiniGameVO> getHandpickedMinigameListVOByPage(Integer page, Integer pageSize, Integer chatPetId) {
-        Integer startIndex = CommonUtils.page2startIndex(page, pageSize);
-
-        List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex, pageSize);
-
+    private List<MiniGameVO> generateMiniGameVOList(List<WxMiniGame> wxMiniGames, Integer chatPetId) {
         Map<Integer, MiniGameMissionState> map = chatPetMissionPoolService.getTodayMiniGameMissionStateMap(chatPetId);
 
         List<MiniGameVO> miniGameVOList = new ArrayList<>();
@@ -419,16 +405,26 @@ public class WxMiniGameService {
         return miniGameVOList;
     }
 
+
+    /**
+     * 场景:小程序小游戏分类页面
+     * 精选编辑游戏分页列表
+     */
+    public List<MiniGameVO> getHandpickedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer chatPetId) {
+
+        List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex, pageSize);
+
+        return this.generateMiniGameVOList(wxMiniGames,chatPetId);
+
+    }
+
     /**
      * 场景:小程序小游戏分类页面
      * 根据标签分类获取小游戏分页列表
      *
-     * @param page
-     * @param pageSize
      * @param tagId:标签id
      */
-    public void getClassifiedMinigameListVOByPage(Integer page, Integer pageSize, Integer tagId, Integer chatPetId) {
-        Integer startIndex = CommonUtils.page2startIndex(page, pageSize);
+    public List<MiniGameVO> getClassifiedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer tagId, Integer chatPetId) {
 
         //根据标签id获取小游戏id集合
         List<Integer> minigameIds = rMiniGameTagService.getMinigameIdsByParam(tagId, null);
@@ -436,8 +432,7 @@ public class WxMiniGameService {
         //根据小游戏id集合获取分页数据
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectPageInList(minigameIds, startIndex, pageSize);
 
-
-
+        return this.generateMiniGameVOList(wxMiniGames,chatPetId);
     }
 
 
