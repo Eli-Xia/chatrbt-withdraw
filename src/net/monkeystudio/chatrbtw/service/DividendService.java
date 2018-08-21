@@ -289,7 +289,7 @@ public class DividendService {
         }
         msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
 
-        msgTemplateParam.setPage("pages/home/home");
+        msgTemplateParam.setPage("pages/task/task");
 
         try {
             MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
