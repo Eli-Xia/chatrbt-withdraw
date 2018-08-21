@@ -1,9 +1,11 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
+import net.monkeystudio.chatrbtw.entity.RMiniGameTag;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.WxMiniGameMapper;
@@ -160,7 +162,20 @@ public class WxMiniGameService {
         }
 
         //给minigame分配标签
-        rMiniGameTagService.saveTagsForMinigame(adminMiniGameAdd.getTagIdList(), addMinigameId, isHandpicked);
+        List<Integer> tagIdList = adminMiniGameAdd.getTagIdList();
+
+        List<RMiniGameTag> rMiniGameTagList = new ArrayList<>();
+
+        for (Integer tagId : tagIdList) {
+            RMiniGameTag rMiniGameTag = new RMiniGameTag();
+            BeanUtils.copyProperties(adminMiniGameAdd, rMiniGameTag);
+            rMiniGameTag.setMiniGameId(addMinigameId);
+            rMiniGameTag.setShelveState(WX_MINI_GAME_SHELVE_STATE);
+            rMiniGameTag.setTagId(tagId);
+            rMiniGameTagList.add(rMiniGameTag);
+        }
+
+        rMiniGameTagService.saveTagsForMinigame(rMiniGameTagList);
 
         return addMinigameId;
     }
@@ -257,8 +272,8 @@ public class WxMiniGameService {
      *
      * @param adminMiniGameUpdate
      */
-    @Transactional
-    public void update(AdminMiniGameUpdate adminMiniGameUpdate) {
+    @Transactional(rollbackFor = Exception.class)
+    public void update(AdminMiniGameUpdate adminMiniGameUpdate) throws BizException {
         Boolean isHandpicked = adminMiniGameUpdate.getIsHandpicked();
 
         if (isHandpicked) {
@@ -267,7 +282,24 @@ public class WxMiniGameService {
             this.updateForNotHandpicked(adminMiniGameUpdate);
         }
 
-        rMiniGameTagService.updateTagsForMinigame(adminMiniGameUpdate.getTagIdList(), adminMiniGameUpdate.getId(), isHandpicked);
+        Integer wxMiniGameId = adminMiniGameUpdate.getId();
+        WxMiniGame wxMiniGame = this.getById(wxMiniGameId);
+
+        //给minigame分配标签
+        List<Integer> tagIdList = adminMiniGameUpdate.getTagIdList();
+
+        //组装小游戏和标签关系对象集合
+        List<RMiniGameTag> rMiniGameTagList = new ArrayList<>();
+
+        for (Integer tagId : tagIdList) {
+            RMiniGameTag rMiniGameTag = new RMiniGameTag();
+            BeanUtils.copyProperties(wxMiniGame, rMiniGameTag);
+            rMiniGameTag.setMiniGameId(wxMiniGameId);
+            rMiniGameTag.setTagId(tagId);
+            rMiniGameTagList.add(rMiniGameTag);
+        }
+
+        rMiniGameTagService.updateTagsForMinigame(wxMiniGameId, rMiniGameTagList);
     }
 
     public WxMiniGame getById(Integer miniGameId) {
@@ -364,6 +396,7 @@ public class WxMiniGameService {
 
     /**
      * 得到MiniGameVOList
+     *
      * @param wxMiniGames:小游戏集合
      * @param chatPetId:宠物id
      * @return
@@ -409,30 +442,38 @@ public class WxMiniGameService {
     /**
      * 场景:小程序小游戏分类页面
      * 精选编辑游戏分页列表
+     *
+     * @param startIndex:分页
+     * @param pageSize:分页
+     * @Param chatPetId:宠物id,用于查询游戏人物完成状态
      */
     public List<MiniGameVO> getHandpickedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer chatPetId) {
 
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex, pageSize);
 
-        return this.generateMiniGameVOList(wxMiniGames,chatPetId);
+        return this.generateMiniGameVOList(wxMiniGames, chatPetId);
 
     }
 
     /**
+     * TODO:是否有必要把参数换成查询对象
      * 场景:小程序小游戏分类页面
      * 根据标签分类获取小游戏分页列表
      *
-     * @param tagId:标签id
+     * @param startIndex:分页
+     * @param pageSize:分页
+     * @param tagId:标签id,用于查询分页数据
+     * @Param chatPetId:宠物id,用于查询游戏人物完成状态
      */
     public List<MiniGameVO> getClassifiedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer tagId, Integer chatPetId) {
 
-        //根据标签id获取小游戏id集合
-        List<Integer> minigameIds = rMiniGameTagService.getMinigameIdsByParam(tagId, null);
+        //获取分页后的小游戏id集合
+        List<Integer> minigameIds = rMiniGameTagService.getMiniGameIdListByPage(startIndex, pageSize, tagId);
 
-        //根据小游戏id集合获取分页数据
-        List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectPageInList(minigameIds, startIndex, pageSize);
+        //根据小游戏id集合获取完整对象数据
+        List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectByIds(minigameIds);
 
-        return this.generateMiniGameVOList(wxMiniGames,chatPetId);
+        return this.generateMiniGameVOList(wxMiniGames, chatPetId);
     }
 
 
@@ -446,36 +487,6 @@ public class WxMiniGameService {
         return appId == null ? WX_MINI_GAME_REDIRECT_QRCODE : WX_MINI_GAME_REDIRECT_CLICK;
     }
 
-    //在分页的小游戏展示中, 需要获取到用户的完成状态.   获取到用户今天已经分配到的任务里面   小游戏id和任务状态传递过来. 传递过来又如何了嘛... 这样放到内存的数据就小了,不需要占据这么大的空间...
-    public void getAds() {
-        //key:小游戏id value:任务对象
-//        Map<Integer, ChatPetPersonalMission> todayMiniGameMissionMap = chatPetMissionPoolService.getTodayMiniGameMissionMap(chatPetId);
-//
-//        for (WxMiniGame item : miniGameInfoList){
-//            ChatPetMiniGameResp chatPetMiniGameResp = new ChatPetMiniGameResp();
-//
-//            BeanUtils.copyProperties(item,chatPetMiniGameResp);
-//
-//            Integer miniGameId = item.getId();
-//
-//            //今天新上架小游戏还未给用户分配任务
-//            if(!todayMiniGameMissionMap.containsKey(miniGameId)){
-//                continue;
-//            }
-//
-//            ChatPetPersonalMission miniGameMission = todayMiniGameMissionMap.get(miniGameId);
-//            //任务完成状态
-//            Integer finishState = miniGameMission.getState();
-//
-//            if(MissionStateEnum.GOING_ON.getCode().equals(finishState)){
-//                chatPetMiniGameResp.setState(MINI_GAME_MISSION_STATE_NOT_FINISH);
-//
-//            }else{
-//                chatPetMiniGameResp.setState(MINI_GAME_MISSION_STATE_FINISH);
-//            }
-//
-//            chatPetMiniGameRespList.add(chatPetMiniGameResp);
-    }
 }
 
 

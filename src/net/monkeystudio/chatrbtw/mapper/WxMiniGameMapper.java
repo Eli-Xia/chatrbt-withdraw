@@ -31,8 +31,8 @@ public interface WxMiniGameMapper {
 
     List<WxMiniGame> selectHandpickedByPage(@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
 
-    //根据小游戏id集合,获取分页集合
-    List<WxMiniGame> selectPageInList(@Param("ids") List<Integer> ids, @Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
+    //根据小游戏id集合查询对象集合
+    List<WxMiniGame> selectByIds(@Param("ids") List<Integer> ids);
 
 
 }

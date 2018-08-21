@@ -1,5 +1,7 @@
 package net.monkeystudio.chatrbtw.entity;
 
+import java.util.Date;
+
 public class RMiniGameTag {
     private Integer id;
 
@@ -7,14 +9,34 @@ public class RMiniGameTag {
 
     private Integer tagId;
 
-    private Boolean handpicked;
+    private Date onlineTime;
 
-    public Boolean getHandpicked() {
-        return handpicked;
+    private Integer needSign;
+
+    private Integer shelveState;
+
+    public Date getOnlineTime() {
+        return onlineTime;
     }
 
-    public void setHandpicked(Boolean handpicked) {
-        this.handpicked = handpicked;
+    public void setOnlineTime(Date onlineTime) {
+        this.onlineTime = onlineTime;
+    }
+
+    public Integer getNeedSign() {
+        return needSign;
+    }
+
+    public void setNeedSign(Integer needSign) {
+        this.needSign = needSign;
+    }
+
+    public Integer getShelveState() {
+        return shelveState;
+    }
+
+    public void setShelveState(Integer shelveState) {
+        this.shelveState = shelveState;
     }
 
     public Integer getId() {

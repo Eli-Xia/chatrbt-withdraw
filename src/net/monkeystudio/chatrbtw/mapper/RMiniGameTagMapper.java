@@ -1,6 +1,8 @@
 package net.monkeystudio.chatrbtw.mapper;
 
+import net.monkeystudio.chatrbtw.entity.MiniGameTag;
 import net.monkeystudio.chatrbtw.entity.RMiniGameTag;
+import net.monkeystudio.chatrbtw.mapper.bean.minigame.MiniGameIdsQueryObject;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,9 +20,9 @@ public interface RMiniGameTagMapper {
 
     Integer deleteTagsByMiniGameId(Integer miniGameId);
 
-    Integer saveTagsForMiniGame(@Param("miniGameId") Integer miniGameId, @Param("tagIds") List<Integer> tagIds, @Param("handpicked") Boolean handpicked);
+    Integer batchInsert(List<RMiniGameTag> list);
 
     List<Integer> selectTagListByMiniGameId(Integer miniGameId);
 
-    List<Integer> selectMiniGameIdsByParam(RMiniGameTag param);
+    List<Integer> selectMiniGameIdList(@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize, @Param("tagId") Integer tagId);
 }
