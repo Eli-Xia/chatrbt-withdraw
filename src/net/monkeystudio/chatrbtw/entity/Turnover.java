@@ -1,7 +1,6 @@
 package net.monkeystudio.chatrbtw.entity;
 
 import java.util.Date;
-
 //表名e_turnover
 public class Turnover {
 
@@ -68,4 +67,5 @@ public class Turnover {
     public void setSourceId(Integer sourceId) {
         this.sourceId = sourceId;
     }
+
 }

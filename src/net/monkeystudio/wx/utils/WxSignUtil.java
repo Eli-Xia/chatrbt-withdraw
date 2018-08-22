@@ -28,6 +28,7 @@ public class WxSignUtil {
             }
         }
         //sb.append("key=" + weixinConstant.KEY);//注：key为商户平台设置的密钥key,放到globalConfig中即可.
+        //String sign = MD5.encode(sb.toString()).toUpperCase();
         String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
         return sign;
     }
