@@ -416,7 +416,7 @@ public class WxMiniGameService {
 
                 //小游戏完成状态
                 Integer state = map.get(miniGameId).getState();
-                if (MissionStateEnum.FINISH_AND_AWARD.equals(state)) {
+                if (MissionStateEnum.FINISH_AND_AWARD.getCode().equals(state)) {
                     vo.setState(MINI_GAME_MISSION_STATE_FINISH);
                 } else {
                     vo.setState(MINI_GAME_MISSION_STATE_NOT_FINISH);
