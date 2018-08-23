@@ -353,6 +353,10 @@ public class WxMiniGameService {
             //查询这个游戏历史完成任务的数量
             Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
             resp.setPlayerNum(miniGamePlayerNum);
+
+            //小游戏跳转方式
+            Integer redirectType = this.getMinigameRedirectType(item.getAppId());
+            resp.setRedirectType(redirectType);
             resps.add(resp);
         }
 

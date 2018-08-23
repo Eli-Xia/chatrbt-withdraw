@@ -15,6 +15,15 @@ public class AdminMiniGameResp {
     private Long playerNum;
     private String nickname;
     private Boolean isHandpicked;
+    private Integer redirectType;
+
+    public Integer getRedirectType() {
+        return redirectType;
+    }
+
+    public void setRedirectType(Integer redirectType) {
+        this.redirectType = redirectType;
+    }
 
     public Boolean getIsHandpicked() {
         return isHandpicked;
