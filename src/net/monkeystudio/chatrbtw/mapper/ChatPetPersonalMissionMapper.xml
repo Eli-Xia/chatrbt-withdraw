@@ -12,6 +12,12 @@
     <result column="invitee_wx_fan_id" property="inviteeWxFanId" jdbcType="INTEGER" />
     <result column="wx_mini_game_id" property="wxMiniGameId" jdbcType="INTEGER" />
   </resultMap>
+
+  <resultMap id="MiniGameMissionStateResultMap" type="net.monkeystudio.chatrbtw.mapper.bean.chatpetpersonalmission.MiniGameMissionState">
+    <result column="wx_mini_game_id" property="wxMiniGameId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+
   <sql id="Base_Column_List" >
     id, mission_code, ad_id, chat_pet_id, create_time,
     state, finish_time,invitee_wx_fan_id,wx_mini_game_id
@@ -157,5 +163,11 @@
   
   <select id="countTodayDispatchMission" resultType="java.lang.Integer">
     select count(id) from e_chat_pet_personal_mission where chat_pet_id = #{chatPetId} and create_time &gt;= #{startTime} and create_time &lt;= #{endTime}
+  </select>
+  
+  <select id="selectMiniGameMissionStateMap" resultMap="MiniGameMissionStateResultMap">
+    select state,wx_mini_game_id from e_chat_pet_personal_mission
+    where chat_pet_id = #{chatPetId} AND mission_code = 5
+    AND create_time &gt;= #{startTime} AND create_time &lt;= #{endTime}
   </select>
 </mapper>

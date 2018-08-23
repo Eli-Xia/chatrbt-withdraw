@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.mapper;
 
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
+import net.monkeystudio.chatrbtw.mapper.bean.chatpetpersonalmission.MiniGameMissionState;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
@@ -37,4 +38,7 @@ public interface ChatPetPersonalMissionMapper {
     Map<Integer, ChatPetPersonalMission> selectMiniGameMissionMap(@Param("chatPetId") Integer chatPetId, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     Integer countTodayDispatchMission(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("chatPetId") Integer chatPetId);//查询宠物当天派发任务数量
+
+    @MapKey("wxMiniGameId")
+    Map<Integer,MiniGameMissionState> selectMiniGameMissionStateMap(@Param("chatPetId") Integer chatPetId, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

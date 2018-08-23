@@ -5,28 +5,40 @@
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="mini_game_id" property="miniGameId" jdbcType="INTEGER" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
+        <result column="shelve_state" property="shelveState" jdbcType="INTEGER"/>
+        <result column="need_sign" property="needSign" jdbcType="INTEGER"/>
+        <result column="online_time" property="onlineTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <sql id="Base_Column_List" >
+      id, mini_game_id, tag_id , shelve_state,need_sign,online_time
+    </sql>
+
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from `r_mini_game_tag`
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.RMiniGameTag" useGeneratedKeys="true" keyProperty="id" >
-    insert into `r_mini_game_tag` (mini_game_id, tag_id)
-    values (#{miniGameId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER})
+    insert into `r_mini_game_tag` (mini_game_id, tag_id, shelve_state,need_sign,online_time)
+    values (#{miniGameId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}, #{shelveState}, #{needSign}, #{onlineTime})
   </insert>
     <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.RMiniGameTag" >
     update `r_mini_game_tag`
     set mini_game_id = #{miniGameId,jdbcType=INTEGER},
-      tag_id = #{tagId,jdbcType=INTEGER}
+      tag_id = #{tagId,jdbcType=INTEGER},
+      shelve_state = #{shelveState},
+      need_sign = #{needSign},
+      online_time = #{onlineTime}
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, mini_game_id, tag_id
+    select <include refid="Base_Column_List"/>
     from `r_mini_game_tag`
     where id = #{id,jdbcType=INTEGER}
   </select>
     <select id="selectAll" resultMap="BaseResultMap" >
-    select id, mini_game_id, tag_id
+    select <include refid="Base_Column_List"/>
     from `r_mini_game_tag`
   </select>
 
@@ -36,15 +48,34 @@
   </delete>
 
 
-    <insert id="saveTagsForMiniGame" parameterType="map" useGeneratedKeys="true" >
-        insert into r_mini_game_tag (mini_game_id,tag_id)
+    <insert id="batchInsert" parameterType="map" useGeneratedKeys="true" >
+        insert into r_mini_game_tag (mini_game_id,tag_id,shelve_state,need_sign,online_time)
         values
-        <foreach collection="tagIds" item="item" index="index" separator=",">
-            (#{miniGameId}, #{item})
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.miniGameId}, #{item.tagId} ,#{item.shelveState},#{item.needSign},#{item.onlineTime})
         </foreach>
     </insert>
 
     <select id="selectTagListByMiniGameId" resultType ="java.lang.Integer">
         select tag_id from r_mini_game_tag where mini_game_id = #{miniGameId}
+    </select>
+
+    <select id="selectMiniGameIdsByParam" resultType="java.lang.Integer">
+      select id from r_mini_game_tag
+        <where>
+            <if test="tagId != null">
+                and tag_id = #{tagId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMiniGameIdList" resultType="java.lang.Integer">
+        select
+          mini_game_id
+        from r_mini_game_tag
+        where tag_id = #{tagId} and shelve_state = 1 and DATE_FORMAT(online_time,'%Y-%m-%d 00:00:00') &lt;= NOW()
+        ORDER BY need_sign DESC ,online_time DESC
+        limit
+        #{startIndex},#{pageSize}
     </select>
 </mapper>
