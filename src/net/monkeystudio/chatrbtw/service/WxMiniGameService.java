@@ -3,6 +3,7 @@ package net.monkeystudio.chatrbtw.service;
 import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
+import net.monkeystudio.base.utils.StringUtil;
 import net.monkeystudio.base.utils.TimeUtil;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.RMiniGameTag;
@@ -479,12 +480,12 @@ public class WxMiniGameService {
 
     /**
      * 获取小游戏的跳转方式 扫码玩或者直接玩
-     *
+     * 带appId:直接跳转  empty:直接跳转
      * @param appId:小游戏appId
      * @return 0:扫码跳转 1:直接跳转
      */
     private Integer getMinigameRedirectType(String appId) {
-        return appId == null ? WX_MINI_GAME_REDIRECT_QRCODE : WX_MINI_GAME_REDIRECT_CLICK;
+        return StringUtil.isEmpty(appId) ? WX_MINI_GAME_REDIRECT_QRCODE : WX_MINI_GAME_REDIRECT_CLICK;
     }
 
 }
