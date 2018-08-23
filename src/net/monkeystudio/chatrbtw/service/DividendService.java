@@ -283,23 +283,23 @@ public class DividendService {
 
         msgTemplateParam.setData(data);
 
-        MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
+    MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
 
         if(msgTemplate == null){
-            return ;
-        }
+        return ;
+    }
         msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
 
-        msgTemplateParam.setPage("pages/home/home");
+        msgTemplateParam.setPage("pages/task/task");
 
         try {
-            MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
+        MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
 
-            if(!"0".equals(miniProgramResponse.getErrCode())){
-                Log.e(miniProgramResponse.toString());
-            }
-        } catch (BizException e) {
-            Log.e(e);
+        if(!"0".equals(miniProgramResponse.getErrCode())){
+            Log.e(miniProgramResponse.toString());
         }
+    } catch (BizException e) {
+        Log.e(e);
     }
+}
 }
