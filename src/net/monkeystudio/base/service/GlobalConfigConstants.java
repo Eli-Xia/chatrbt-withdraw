@@ -43,5 +43,16 @@ public class GlobalConfigConstants {
     //猫六六用户默认昵称
     public final static String LUCKY_CAT_DEFAULT_NICKNAME_KEY = "LUCKY_CAT_DEFAULT_NICKNAME";
 
+    //商户appid
+    public final static String MCH_APPID_KEY = "MCH_APPID";
+
+    //商户id
+    public final static String MCHID_KEY = "MCHID";
+
+    //证书路径
+    public final static String CERT_PATH_KEY = "CERT_PATH_KEY";
+
+    //签名算法秘钥
+    public final static String SIGN_KEY_KEY = "SIGN_KEY";
 
 }
