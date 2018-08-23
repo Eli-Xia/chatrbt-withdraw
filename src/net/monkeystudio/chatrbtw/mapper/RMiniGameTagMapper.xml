@@ -69,7 +69,7 @@
         </where>
     </select>
 
-    <select id="selectMiniGameIdList" resultMap="BaseResultMap">
+    <select id="selectMiniGameIdList" resultType="java.lang.Integer">
         select
           mini_game_id
         from r_mini_game_tag
