@@ -140,6 +140,8 @@
 			<mvc:exclude-mapping path="/chat-pet/pet/home-page" />
 			<mvc:exclude-mapping path="/chat-pet/pet/login" />
 			<mvc:exclude-mapping path="/chat-pet/pet/logout" />
+			<mvc:exclude-mapping path="/chat-pet/temp-count/click-game" />
+			<mvc:exclude-mapping path="/chat-pet/temp-count/click-more" />
 			<bean class="net.monkeystudio.chatpet.controller.interceptor.ChatPetLoginCheckInteceptor"></bean>
 		</mvc:interceptor>
 
