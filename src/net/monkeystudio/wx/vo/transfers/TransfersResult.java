@@ -1,6 +1,5 @@
 package net.monkeystudio.wx.vo.transfers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 public class TransfersResult {

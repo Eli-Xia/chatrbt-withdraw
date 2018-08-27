@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.UserIdempotentMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.BizAccount">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        `id`,  `amount`
+    </sql>
+
+    <insert id="insert">
+      insert into `e_biz_account` (id,amount)
+      values (#{id}  , #{amount})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.BizAccount" >
+        update `e_biz_account`
+        set
+          amount = #{amount}
+        where id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select <include refid="Base_Column_List"/>
+        from `e_biz_account`
+        where id = #{id}
+    </select>
+
+
+</mapper>

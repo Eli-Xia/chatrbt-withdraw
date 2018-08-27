@@ -50,7 +50,7 @@ public class GlobalConfigConstants {
     public final static String MCHID_KEY = "MCHID";
 
     //证书路径
-    public final static String CERT_PATH_KEY = "CERT_PATH_KEY";
+    public final static String CERT_PATH_KEY = "CERT_PATH";
 
     //签名算法秘钥
     public final static String SIGN_KEY_KEY = "SIGN_KEY";
