@@ -15,7 +15,7 @@
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="star_num" jdbcType="REAL" property="starNum"/>
         <result column="is_handpicked" jdbcType="BIT" property="isHandpicked"/>
-        <result column="player_num" jdbcType="LONG" property="playerNum"/>
+        <result column="player_num" jdbcType="BIGINT" property="playerNum"/>
     </resultMap>
 
     <sql id="Base_Column_List">
