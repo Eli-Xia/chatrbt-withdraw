@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +56,9 @@ public class WxMiniGameService {
     //小程序游戏
     private final static Integer MINI_GAME_MISSION_STATE_NOT_FINISH = 0;//小游戏任务完成状态 未完成
     private final static Integer MINI_GAME_MISSION_STATE_FINISH = 1;//已完成
+
+    //玩游戏人数每次加11
+    public final static Long PLAYER_NUM_FACTOR = 11L;
 
     public List<WxMiniGame> getWxMiniGameList() {
         return wxMiniGameMapper.selectAll();
@@ -111,6 +111,7 @@ public class WxMiniGameService {
         wxMiniGame.setStarNum(adminMiniGameAdd.getStarNum());
         wxMiniGame.setAppId(adminMiniGameAdd.getAppId());
         wxMiniGame.setCoverImgUrl(coverImgUploadUrl);
+        wxMiniGame.setPlayerNum(this.createRandPlayNum());
 
         wxMiniGameMapper.insert(wxMiniGame);
 
@@ -137,6 +138,7 @@ public class WxMiniGameService {
         wxMiniGame.setCreateTime(new Date());
         wxMiniGame.setIsHandpicked(adminMiniGameAdd.getIsHandpicked());
         wxMiniGame.setStarNum(adminMiniGameAdd.getStarNum());
+        wxMiniGame.setPlayerNum(this.createRandPlayNum());
 
         wxMiniGameMapper.insert(wxMiniGame);
 
@@ -435,7 +437,7 @@ public class WxMiniGameService {
                 //玩游戏人数
                 Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
                 Integer playerNum = miniGamePlayerNum.intValue() + 5000;
-                vo.setPlayerNum(playerNum);
+                //vo.setPlayerNum(playerNum);
 
                 miniGameVOList.add(vo);
             }
@@ -490,6 +492,24 @@ public class WxMiniGameService {
      */
     private Integer getMinigameRedirectType(String appId) {
         return StringUtil.isEmpty(appId) ? WX_MINI_GAME_REDIRECT_QRCODE : WX_MINI_GAME_REDIRECT_CLICK;
+    }
+
+    /**
+     * 玩游戏人数
+     * @return
+     */
+    private Long createRandPlayNum(){
+        Random random = new Random();
+        Integer randInt = random.nextInt(100) + 1;
+        return randInt.longValue();
+    }
+
+    /**
+     * 更新小游戏在玩人数
+     * @param miniGameId
+     */
+    public void updatePlayerNum(Integer miniGameId){
+        wxMiniGameMapper.updatePlayerNum(miniGameId,PLAYER_NUM_FACTOR);
     }
 
 }

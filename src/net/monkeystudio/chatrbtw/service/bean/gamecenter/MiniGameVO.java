@@ -9,7 +9,7 @@ public class MiniGameVO {
     private Integer needSign;
     private Integer state;//小游戏完成状态
     private Float starNum = 4F;
-    private Integer playerNum;
+    private Long playerNum;
     private Integer redirectType;//跳转方式 0:扫码 1:点击
     private String appId;
 
@@ -77,11 +77,11 @@ public class MiniGameVO {
         this.starNum = starNum;
     }
 
-    public Integer getPlayerNum() {
+    public Long getPlayerNum() {
         return playerNum;
     }
 
-    public void setPlayerNum(Integer playerNum) {
+    public void setPlayerNum(Long playerNum) {
         this.playerNum = playerNum;
     }
 
