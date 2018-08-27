@@ -23,60 +23,60 @@ import java.util.List;
 @RequestMapping(value = "/chat-pet/mini-game")
 public class ChatPetMiniGameController extends ChatPetBaseController {
 
-    @Autowired
-    private RespHelper respHelper;
-
-    @Autowired
-    private WxMiniGameService wxMiniGameService;
-
-    @Autowired
-    private ChatPetService chatPetService;
-
-    @Autowired
-    private MiniGameTagService miniGameTagService;
-
-
-    @ResponseBody
-    @RequestMapping(value = "/handpicked", method = RequestMethod.POST)
-    public RespBase getHandpickedMiniGameVOList(@RequestBody QueryMiniGameReq queryMiniGameReq) {
-        Integer fanId = getUserId();
-
-        Integer startIndex = queryMiniGameReq.getStartIndex();
-
-        Integer pageSize = queryMiniGameReq.getPageSize();
-
-        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
-
-        List<MiniGameVO> vos = wxMiniGameService.getHandpickedMinigameListVOByPage(startIndex, pageSize, chatPet.getId());
-
-        return respHelper.ok(vos);
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/by-tag", method = RequestMethod.POST)
-    public RespBase getClassifiedMiniGameVOList(@RequestBody QueryMiniGameReq queryMiniGameReq) {
-        Integer fanId = getUserId();
-
-        Integer startIndex = queryMiniGameReq.getStartIndex();
-
-        Integer pageSize = queryMiniGameReq.getPageSize();
-
-        Integer tagId = queryMiniGameReq.getTagId();
-
-        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
-
-        List<MiniGameVO> vos = wxMiniGameService.getClassifiedMinigameListVOByPage(startIndex, pageSize, tagId, chatPet.getId());
-
-        return respHelper.ok(vos);
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/tags", method = RequestMethod.POST)
-    public RespBase getMinigameTags(HttpServletRequest request) {
-        Integer fanId = getUserId();
-
-        List<MiniGameTag> miniGameTagList = miniGameTagService.getMiniGameTagList();
-
-        return respHelper.ok(miniGameTagList);
-    }
+//    @Autowired
+//    private RespHelper respHelper;
+//
+//    @Autowired
+//    private WxMiniGameService wxMiniGameService;
+//
+//    @Autowired
+//    private ChatPetService chatPetService;
+//
+//    @Autowired
+//    private MiniGameTagService miniGameTagService;
+//
+//
+//    @ResponseBody
+//    @RequestMapping(value = "/handpicked", method = RequestMethod.POST)
+//    public RespBase getHandpickedMiniGameVOList(@RequestBody QueryMiniGameReq queryMiniGameReq) {
+//        Integer fanId = getUserId();
+//
+//        Integer startIndex = queryMiniGameReq.getStartIndex();
+//
+//        Integer pageSize = queryMiniGameReq.getPageSize();
+//
+//        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
+//
+//        List<MiniGameVO> vos = wxMiniGameService.getHandpickedMinigameListVOByPage(startIndex, pageSize, chatPet.getId());
+//
+//        return respHelper.ok(vos);
+//    }
+//
+//    @ResponseBody
+//    @RequestMapping(value = "/by-tag", method = RequestMethod.POST)
+//    public RespBase getClassifiedMiniGameVOList(@RequestBody QueryMiniGameReq queryMiniGameReq) {
+//        Integer fanId = getUserId();
+//
+//        Integer startIndex = queryMiniGameReq.getStartIndex();
+//
+//        Integer pageSize = queryMiniGameReq.getPageSize();
+//
+//        Integer tagId = queryMiniGameReq.getTagId();
+//
+//        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
+//
+//        List<MiniGameVO> vos = wxMiniGameService.getClassifiedMinigameListVOByPage(startIndex, pageSize, tagId, chatPet.getId());
+//
+//        return respHelper.ok(vos);
+//    }
+//
+//    @ResponseBody
+//    @RequestMapping(value = "/tags", method = RequestMethod.POST)
+//    public RespBase getMinigameTags(HttpServletRequest request) {
+//        Integer fanId = getUserId();
+//
+//        List<MiniGameTag> miniGameTagList = miniGameTagService.getMiniGameTagList();
+//
+//        return respHelper.ok(miniGameTagList);
+//    }
 }
