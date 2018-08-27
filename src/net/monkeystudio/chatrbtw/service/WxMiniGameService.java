@@ -500,7 +500,7 @@ public class WxMiniGameService {
      */
     private Long createRandPlayNum(){
         Random random = new Random();
-        Integer randInt = random.nextInt(100) + 1;
+        Integer randInt = random.nextInt(99) + 1;
         return randInt.longValue();
     }
 
