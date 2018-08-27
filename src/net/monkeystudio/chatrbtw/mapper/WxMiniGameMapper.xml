@@ -140,7 +140,7 @@
     </select>
 
     <update id="updatePlayerNum" >
-        update e_wx_mini_game set player_num = player_num + #{factor}
+        update e_wx_mini_game set player_num = player_num + #{factor} where id = #{id}
     </update>
 
 </mapper>
