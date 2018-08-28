@@ -1,6 +1,5 @@
 package net.monkeystudio.chatrbtw.mapper;
 
-import net.monkeystudio.chatrbtw.entity.Account;
 import net.monkeystudio.chatrbtw.entity.BizAccount;
 
 /**
@@ -9,7 +8,9 @@ import net.monkeystudio.chatrbtw.entity.BizAccount;
 public interface BizAccountMapper {
     Integer insert(BizAccount record);
 
-    Account selectByPrimaryKey(Integer id);
+    BizAccount selectByPrimaryKey(Integer id);
 
     Integer updateByPrimaryKey(BizAccount record);
+
+    BizAccount selectForUpdate(Integer id);
 }

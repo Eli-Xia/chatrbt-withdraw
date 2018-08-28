@@ -3,19 +3,19 @@ package net.monkeystudio.chatrbtw.entity;
 //表名e_user_idempotent
 public class UserIdempotent {
     private Integer id;
-    private Integer userId;
+    private Integer wxFanId;
     private Integer state;
 
     public Integer getId() {
         return id;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getWxFanId() {
+        return wxFanId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setWxFanId(Integer wxFanId) {
+        this.wxFanId = wxFanId;
     }
 
     public void setId(Integer id) {

@@ -12,4 +12,8 @@ public interface UserIdempotentMapper {
 
     int updateState(@Param("id") Integer id, @Param("state") Integer state);
 
+    UserIdempotent selectByPrimaryKey(Integer id);
+
+    Integer updateByPrimaryKey(Integer id);
+
 }

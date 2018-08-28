@@ -3,11 +3,11 @@
 <mapper namespace="net.monkeystudio.chatrbtw.mapper.UserIdempotentMapper">
     <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.UserIdempotent">
         <result column="id" property="id" jdbcType="INTEGER" />
-        <result column="user_id" property="userid" jdbcType="INTEGER" />
+        <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
         <result column="state" property="state" jdbcType="INTEGER" />
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `state`, `create_time`
+        `id`, `state`,`wx_fan_id`
     </sql>
 
     <update id="updateState" >
@@ -18,20 +18,28 @@
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.UserIdempotent" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
-            e_user_idempotent (`state`, `user_id`)
+            e_user_idempotent (`state`, `wx_fan_id`)
         SELECT
-            #{state} , #{userId}
+            #{state} , #{wxFanId}
         FROM DUAL WHERE NOT EXISTS  (
             SELECT
-                `state`, `user_id`
+                `state`, `wx_fan_id`
             FROM
                 e_user_idempotent
             WHERE
                 `state` = #{state}
             AND
-                `user_id` = #{userId}
+                `wx_fan_id` = #{wxFanId}
         )
     </insert>
+    
+    <select id="selectByPrimaryKey" resultMap="baseResultMap">
+        select <include refid="Base_Column_List"/> from e_user_idempotent where id = #{id} for update
+    </select>
+
+    <update id="updateByPrimaryKey">
+        update e_user_idempotent set state = 3 where id = #{id}
+    </update>
 
 
 </mapper>

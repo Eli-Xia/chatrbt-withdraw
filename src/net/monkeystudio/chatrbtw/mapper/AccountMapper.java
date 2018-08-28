@@ -11,4 +11,6 @@ public interface AccountMapper {
     Account selectByPrimaryKey(Integer id);
 
     Integer updateByPrimaryKey(Account record);
+
+    Account selectForUpdate(Integer id);
 }
