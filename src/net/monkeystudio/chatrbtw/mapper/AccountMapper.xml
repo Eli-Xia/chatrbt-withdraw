@@ -10,9 +10,9 @@
         `id`, `wx_fan_id`, `amount`
     </sql>
 
-    <insert id="insert">
-      insert into `e_account` (id,wx_fan_id,amount)
-      values (#{id} , #{wxFanId} , #{amount})
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Account" keyProperty="id" useGeneratedKeys="true">
+      insert into `e_account` (wx_fan_id,amount)
+      values (#{wxFanId} , #{amount})
     </insert>
 
     <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.Account" >

@@ -12,9 +12,9 @@
         `id`, `biz_account_id`, `amount` , `action_type` , `create_time`
     </sql>
 
-    <insert id="insert">
-      insert into `e_account_flow` (id,biz_account_id,amount,action_type,create_time)
-      values (#{id} , #{bizAccountId} , #{amount} , #{actionType} , #{createTime})
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.BizAccountFlow" keyProperty="id" useGeneratedKeys="true">
+      insert into `e_biz_account_flow` (biz_account_id,amount,action_type,create_time)
+      values (#{bizAccountId} , #{amount} , #{actionType} , #{createTime})
     </insert>
 
 

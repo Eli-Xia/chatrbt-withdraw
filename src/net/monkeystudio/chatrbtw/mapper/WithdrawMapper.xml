@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.WithdrawMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.Withdraw">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
+        <result column="account_flow_id" property="accountFlowId" jdbcType="INTEGER" />
+        <result column="mch_trade_no" property="mchTradeNo" jdbcType="VARCHAR" />
+        <result column="wx_payment_no" property="wxPaymentNo" jdbcType="VARCHAR" />
+        <result column="error_code" property="errorCode" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="payment_time" property="paymentTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        `id`, `wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`
+    </sql>
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Withdraw" keyProperty="id" useGeneratedKeys="true">
+      insert into `e_withdraw` (`wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`)
+      values (#{wxFanId},#{accountFlowId},#{mchTradeNo},#{wxPaymentNo},#{errorCode}, #{createTime},#{paymentTime})
+    </insert>
+    
+    <update id="update">
+        update e_withdraw set
+        `wx_fan_id` = #{wxFanId},
+        `account_flow_id` = #{accountFlowId},
+        `mch_trade_no` = #{mchTradeNo},
+        `wx_payment_no` = #{wxPaymentNo},
+        `error_code` = #{errorCode},
+        `create_time` = #{createTime},
+        `payment_time`= #{paymentTime}
+    </update>
+
+
+</mapper>

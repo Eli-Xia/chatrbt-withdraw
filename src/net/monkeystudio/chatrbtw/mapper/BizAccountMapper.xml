@@ -9,9 +9,9 @@
         `id`,  `amount`
     </sql>
 
-    <insert id="insert">
-      insert into `e_biz_account` (id,amount)
-      values (#{id}  , #{amount})
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.BizAccount" keyProperty="id" useGeneratedKeys="true">
+      insert into `e_biz_account` (amount)
+      values (#{amount})
     </insert>
 
     <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.BizAccount" >
