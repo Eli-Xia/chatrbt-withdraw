@@ -1,10 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.utils.CommonUtils;
-import net.monkeystudio.base.utils.DateUtils;
-import net.monkeystudio.base.utils.StringUtil;
-import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.RMiniGameTag;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
@@ -409,6 +406,7 @@ public class WxMiniGameService {
      * @return
      */
     private List<MiniGameVO> generateMiniGameVOList(List<WxMiniGame> wxMiniGames, Integer chatPetId) {
+        Long start = System.currentTimeMillis() /1000;
         Map<Integer, MiniGameMissionState> map = chatPetMissionPoolService.getTodayMiniGameMissionStateMap(chatPetId);
 
         List<MiniGameVO> miniGameVOList = new ArrayList<>();
@@ -435,13 +433,14 @@ public class WxMiniGameService {
                 vo.setRedirectType(redirectType);
 
                 //玩游戏人数
-                Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
-                Integer playerNum = miniGamePlayerNum.intValue() + 5000;
+                //Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
+                //Integer playerNum = miniGamePlayerNum.intValue() + 5000;
                 //vo.setPlayerNum(playerNum);
 
                 miniGameVOList.add(vo);
             }
         }
+        Long end = System.currentTimeMillis() / 1000;
         return miniGameVOList;
     }
 
@@ -475,10 +474,15 @@ public class WxMiniGameService {
     public List<MiniGameVO> getClassifiedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer tagId, Integer chatPetId) {
 
         //获取分页后的小游戏id集合
+        Long start1 = System.currentTimeMillis()/1000;
         List<Integer> minigameIds = rMiniGameTagService.getMiniGameIdListByPage(startIndex, pageSize, tagId);
-
+        Long end1 = System.currentTimeMillis()/1000;
+        Log.i("获取分页后的小游戏id方法执行了{?}秒",String.valueOf(end1 - start1));
         //根据小游戏id集合获取完整对象数据
+        Long start2 = System.currentTimeMillis()/1000;
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectByIds(minigameIds);
+        Long end2 = System.currentTimeMillis()/1000;
+        Log.i("根据小游戏id获取List<agme>方法执行了{?}秒",String.valueOf(end2 - start2));
 
         return this.generateMiniGameVOList(wxMiniGames, chatPetId);
     }
