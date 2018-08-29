@@ -10,20 +10,26 @@ public class BizAccountService {
     @Autowired
     private BizAccountMapper bizAccountMapper;
 
+    //系统账户id为1
+    private static final Integer BIZ_ACCOUNT_ID = 1;
+
     /**
      * 悲观锁获取账户
-     * @param id
+     *
+     * @param
      * @return
      */
-    public BizAccount getByPessimisticLock(Integer id){
-        return bizAccountMapper.selectForUpdate(id);
+    public BizAccount getByPessimisticLock() {
+        return bizAccountMapper.selectForUpdate(BIZ_ACCOUNT_ID);
     }
 
-    public BizAccount getById(Integer id){
-        return bizAccountMapper.selectByPrimaryKey(id);
+    public BizAccount getBizAccount() {
+        return bizAccountMapper.selectByPrimaryKey(BIZ_ACCOUNT_ID);
     }
 
-    public Integer update(BizAccount bizAccount){
+    public Integer update(BizAccount bizAccount) {
         return bizAccountMapper.updateByPrimaryKey(bizAccount);
     }
+
+
 }

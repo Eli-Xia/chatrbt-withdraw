@@ -30,7 +30,7 @@
     </select>
     
     <select id="selectForUpdate" resultMap="baseResultMap" >
-        select <include refid="Base_Column_List"/> from e_account where id = #{id} for update
+        select <include refid="Base_Column_List"/> from e_account where id = #{fanId} for update
     </select>
 
 

@@ -13,4 +13,5 @@ public interface BizAccountMapper {
     Integer updateByPrimaryKey(BizAccount record);
 
     BizAccount selectForUpdate(Integer id);
+
 }

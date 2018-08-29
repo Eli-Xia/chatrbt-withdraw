@@ -13,11 +13,11 @@ public class AccountService {
 
     /**
      * 悲观锁查询账户
-     * @param id
+     * @param wxFanId:粉丝id
      * @return
      */
-    public Account getByPessimisticLock(Integer id){
-        return accountMapper.selectForUpdate(id);
+    public Account getByPessimisticLock(Integer wxFanId){
+        return accountMapper.selectForUpdate(wxFanId);
     }
 
     public Account getById(Integer id){

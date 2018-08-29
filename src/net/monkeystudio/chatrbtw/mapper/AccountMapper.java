@@ -12,5 +12,5 @@ public interface AccountMapper {
 
     Integer updateByPrimaryKey(Account record);
 
-    Account selectForUpdate(Integer id);
+    Account selectForUpdate(Integer fanId);
 }
