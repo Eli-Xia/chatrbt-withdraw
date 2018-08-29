@@ -35,15 +35,17 @@ public class ChatPetController extends ChatPetBaseController{
     @Autowired
     private RespHelper respHelper;
 
-    @ResponseBody
-    @RequestMapping(value = "/more-log", method = RequestMethod.POST)
-    public RespBase getMoreLog(@RequestBody MoreLogReq moreLogReq){
-        Integer fanId = getUserId();
+//    @ResponseBody
+//    @RequestMapping(value = "/more-log", method = RequestMethod.POST)
+//    public RespBase getMoreLog(@RequestBody MoreLogReq moreLogReq){
+//        Integer fanId = getUserId();
+//
+//        List<PetLogResp> list = chatPetService.getChatPetLogAfterMore(fanId, moreLogReq.getPageSize());
+//
+//        return respHelper.ok(list);
+//    }
 
-        List<PetLogResp> list = chatPetService.getChatPetLogAfterMore(fanId, moreLogReq.getPageSize());
 
-        return respHelper.ok(list);
-    }
 
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.POST)
