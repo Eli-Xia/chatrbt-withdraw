@@ -377,7 +377,7 @@ public class WxMiniGameService {
 
 
     /**
-     * 判断上线时间是否正确,
+     * 判断上线时间是否正确
      *
      * @param onlineTime
      * @return
@@ -504,7 +504,7 @@ public class WxMiniGameService {
      */
     private Long createRandPlayNum(){
         Random random = new Random();
-        Integer randInt = random.nextInt(99) + 1;
+        Integer randInt = random.nextInt(5000) + 7000;
         return randInt.longValue();
     }
 
