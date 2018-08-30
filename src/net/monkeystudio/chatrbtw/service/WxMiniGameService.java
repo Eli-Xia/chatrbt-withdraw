@@ -457,6 +457,10 @@ public class WxMiniGameService {
 
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex, pageSize);
 
+        if(ListUtil.isEmpty(wxMiniGames)){
+            return Collections.EMPTY_LIST;
+        }
+
         return this.generateMiniGameVOList(wxMiniGames, chatPetId);
 
     }
