@@ -41,8 +41,8 @@ public class AccountFlowService {
      */
     public void withdrawFlow(Integer accountId, BigDecimal amount) {
         AccountFlow accountFlow = new AccountFlow();
-        accountFlow.setAccountId(accountId);
         accountFlow.setAmount(amount);
+        accountFlow.setAccountId(accountId);
         accountFlow.setCreateTime(new Date());
         accountFlow.setActionType(Constant.WITHDRAW);
         accountFlowMapper.insert(accountFlow);

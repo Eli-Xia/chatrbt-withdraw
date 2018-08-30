@@ -4,6 +4,7 @@ import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
 import net.monkeystudio.base.utils.MD5Util;
 import net.monkeystudio.wx.vo.transfers.Transfer;
+import net.monkeystudio.wx.vo.transfers.TransfersResult;
 import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -70,6 +71,10 @@ public class WxTransferKitService {
         config = RequestConfig.custom().setConnectTimeout(30000).setSocketTimeout(60000).build();//timeunit : seconds
     }
 
+    public TransfersResult transfer(String mchTradeNo,Integer amount,String openId){
+        Transfer transfer = new Transfer();
+        return null;
+    }
 
 
     /**

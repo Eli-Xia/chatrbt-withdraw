@@ -8,13 +8,16 @@ import net.monkeystudio.chatrbtw.UserContext;
 import net.monkeystudio.chatrbtw.entity.Account;
 import net.monkeystudio.chatrbtw.entity.BizAccount;
 import net.monkeystudio.chatrbtw.entity.Withdraw;
+import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.WithdrawMapper;
 import net.monkeystudio.wx.service.WxTransferKitService;
+import net.monkeystudio.wx.vo.transfers.TransfersResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
@@ -42,6 +45,9 @@ public class WithdrawService {
 
     @Autowired
     private UserIdempotentService userIdempotentService;
+
+    @Autowired
+    private WxFanService wxFanService;
 
     @Autowired
     private TransactionTemplate txTemplate;
@@ -114,24 +120,35 @@ public class WithdrawService {
         record.setCreateTime(new Date());
         record.setAmount(amount);
         record.setWxFanId(fanId);
-        record.setMchTradeNo(this.createMchTradeNo(account.getId()));
+
+        String mchTradeNo = this.createMchTradeNo(account.getId());
+        record.setMchTradeNo(mchTradeNo);
 
         Integer withdrawId = this.save(record);
 
-        txTemplate.execute(new TransactionCallback<Object>() {
-
+        //在一个事务当中进行
+        txTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            public Object doInTransaction(TransactionStatus status) {
-                Object result = null;
-                try {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                //用户账户扣款
+                account.setAmount(account.getAmount().subtract(amount));
+                accountService.update(account);
 
-                } catch (Exception e) {
-                    status.setRollbackOnly();
-                    result = false;
-                    System.out.println("Transfer Error!");
-                }
+                //生成用户扣款流水
+                accountFlowService.withdrawFlow(account.getId(),amount);
 
-                return result;
+                //公司账户扣款
+                bizAccount.setAmount(bizAccount.getAmount().subtract(amount));
+                bizAccountService.update(bizAccount);
+
+                //生成公司扣款流水
+                bizAccountFlowService.transferFlow(BizAccountService.BIZ_ACCOUNT_ID,amount);
+
+                //调用企业付款api进行付款
+                WxFan wxFan = wxFanService.getById(fanId);
+                String openId = wxFan.getWxFanOpenId();
+                TransfersResult transfersResult = wxTransferKitService.transfer(mchTradeNo, amount.intValue() * 100, openId);
+                //根据返回值是否正常来判断
             }
         });
 

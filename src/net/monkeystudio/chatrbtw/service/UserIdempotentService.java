@@ -6,14 +6,19 @@ import net.monkeystudio.chatrbtw.entity.UserIdempotent;
 import net.monkeystudio.chatrbtw.mapper.UserIdempotentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Created by bint on 2018/8/13.
  */
 @Service
 public class UserIdempotentService {
-
+    @Autowired
+    private TransactionTemplate txTemplate;
     @Autowired
     private UserIdempotentMapper userIdempotentMapper;
 
@@ -58,6 +63,19 @@ public class UserIdempotentService {
         Thread.sleep(15000);
         System.err.println(333);
     }
+
+    public void test3(){
+        txTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                add(2);
+                add(3);
+                int i = 1 / 0;
+            }
+        });
+    }
+
+
 
     @Transactional
     public void test2() throws Exception{

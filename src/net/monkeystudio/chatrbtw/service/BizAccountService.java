@@ -11,7 +11,7 @@ public class BizAccountService {
     private BizAccountMapper bizAccountMapper;
 
     //系统账户id为1
-    private static final Integer BIZ_ACCOUNT_ID = 1;
+    public static final Integer BIZ_ACCOUNT_ID = 1;
 
     /**
      * 悲观锁获取账户
