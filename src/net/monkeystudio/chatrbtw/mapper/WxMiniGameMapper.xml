@@ -137,6 +137,10 @@
         <foreach collection = "ids" item = "id" index = "index" open = "(" close = ")" separator = ",">
             #{id}
         </foreach>
+        order by field (id ,
+        <foreach collection = "ids" item = "id" index = "index" open = "" close = ")" separator = ",">
+            #{id}
+        </foreach>
     </select>
 
     <update id="updatePlayerNum" >
