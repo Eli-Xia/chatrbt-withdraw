@@ -455,6 +455,10 @@ public class WxMiniGameService {
 
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex, pageSize);
 
+        if(ListUtil.isEmpty(wxMiniGames)){
+            return Collections.EMPTY_LIST;
+        }
+
         return this.generateMiniGameVOList(wxMiniGames, chatPetId);
 
     }
@@ -474,6 +478,9 @@ public class WxMiniGameService {
         //获取分页后的小游戏id集合
         List<Integer> minigameIds = rMiniGameTagService.getMiniGameIdListByPage(startIndex, pageSize, tagId);
 
+        if(ListUtil.isEmpty(minigameIds)){
+            return Collections.EMPTY_LIST;
+        }
         //根据小游戏id集合获取完整对象数据
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectByIds(minigameIds);
 
