@@ -70,6 +70,9 @@ public class ChatPetMissionPoolService {
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
 
+    @Autowired
+    private WxMiniGameService wxMiniGameService;
+
     //每天只能最多完成三次邀请任务
     private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
 
@@ -564,6 +567,9 @@ public class ChatPetMissionPoolService {
             //}
             //});
             completeChatPetMission(miniGameMission.getId());
+
+            //更新小游戏在玩人数
+            wxMiniGameService.updatePlayerNum(wxMiniGameId);
         }
     }
 

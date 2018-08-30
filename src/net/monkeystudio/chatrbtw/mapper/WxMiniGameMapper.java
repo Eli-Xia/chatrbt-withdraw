@@ -34,5 +34,6 @@ public interface WxMiniGameMapper {
     //根据小游戏id集合查询对象集合
     List<WxMiniGame> selectByIds(@Param("ids") List<Integer> ids);
 
+    Integer updatePlayerNum(@Param("id") Integer id, @Param("factor") Long factor);
 
 }

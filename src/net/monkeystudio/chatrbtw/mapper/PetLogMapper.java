@@ -13,9 +13,9 @@ public interface PetLogMapper {
 
     PetLog selectByPrimaryKey(Integer id);
 
-    List<PetLog> selectDailyPetLog(@Param("chatPetId") Integer chatPetId, @Param("beginTime")Date beginDate, @Param("endTime") Date endDate);
+    List<PetLog> selectDailyPetLog(@Param("chatPetId") Integer chatPetId, @Param("beginTime") Date beginDate, @Param("endTime") Date endDate);
 
     int batchInsert(List<PetLog> pls);
 
-    List<PetLog> selectPetLog(@Param("startIndex")Integer startIndex,@Param("pageSize")Integer pageSize,@Param("chatPetId")Integer chatPetId);
+    List<PetLog> selectPetLog(@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize, @Param("chatPetId") Integer chatPetId);
 }

@@ -1,10 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.exception.BizException;
-import net.monkeystudio.base.utils.CommonUtils;
-import net.monkeystudio.base.utils.DateUtils;
-import net.monkeystudio.base.utils.StringUtil;
-import net.monkeystudio.base.utils.TimeUtil;
+import net.monkeystudio.base.utils.*;
 import net.monkeystudio.chatrbtw.entity.ChatPetPersonalMission;
 import net.monkeystudio.chatrbtw.entity.RMiniGameTag;
 import net.monkeystudio.chatrbtw.entity.WxMiniGame;
@@ -18,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +53,9 @@ public class WxMiniGameService {
     //小程序游戏
     private final static Integer MINI_GAME_MISSION_STATE_NOT_FINISH = 0;//小游戏任务完成状态 未完成
     private final static Integer MINI_GAME_MISSION_STATE_FINISH = 1;//已完成
+
+    //玩游戏人数每次加11
+    public final static Long PLAYER_NUM_FACTOR = 11L;
 
     public List<WxMiniGame> getWxMiniGameList() {
         return wxMiniGameMapper.selectAll();
@@ -111,6 +108,7 @@ public class WxMiniGameService {
         wxMiniGame.setStarNum(adminMiniGameAdd.getStarNum());
         wxMiniGame.setAppId(adminMiniGameAdd.getAppId());
         wxMiniGame.setCoverImgUrl(coverImgUploadUrl);
+        wxMiniGame.setPlayerNum(this.createRandPlayNum());
 
         wxMiniGameMapper.insert(wxMiniGame);
 
@@ -137,6 +135,7 @@ public class WxMiniGameService {
         wxMiniGame.setCreateTime(new Date());
         wxMiniGame.setIsHandpicked(adminMiniGameAdd.getIsHandpicked());
         wxMiniGame.setStarNum(adminMiniGameAdd.getStarNum());
+        wxMiniGame.setPlayerNum(this.createRandPlayNum());
 
         wxMiniGameMapper.insert(wxMiniGame);
 
@@ -378,7 +377,7 @@ public class WxMiniGameService {
 
 
     /**
-     * 判断上线时间是否正确,
+     * 判断上线时间是否正确
      *
      * @param onlineTime
      * @return
@@ -407,6 +406,7 @@ public class WxMiniGameService {
      * @return
      */
     private List<MiniGameVO> generateMiniGameVOList(List<WxMiniGame> wxMiniGames, Integer chatPetId) {
+        Long start = System.currentTimeMillis() /1000;
         Map<Integer, MiniGameMissionState> map = chatPetMissionPoolService.getTodayMiniGameMissionStateMap(chatPetId);
 
         List<MiniGameVO> miniGameVOList = new ArrayList<>();
@@ -433,13 +433,14 @@ public class WxMiniGameService {
                 vo.setRedirectType(redirectType);
 
                 //玩游戏人数
-                Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
-                Integer playerNum = miniGamePlayerNum.intValue() + 5000;
-                vo.setPlayerNum(playerNum);
+                //Long miniGamePlayerNum = chatPetMissionPoolService.getMiniGamePlayerNum(item.getId());
+                //Integer playerNum = miniGamePlayerNum.intValue() + 5000;
+                //vo.setPlayerNum(playerNum);
 
                 miniGameVOList.add(vo);
             }
         }
+        Long end = System.currentTimeMillis() / 1000;
         return miniGameVOList;
     }
 
@@ -473,10 +474,15 @@ public class WxMiniGameService {
     public List<MiniGameVO> getClassifiedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer tagId, Integer chatPetId) {
 
         //获取分页后的小游戏id集合
+        Long start1 = System.currentTimeMillis()/1000;
         List<Integer> minigameIds = rMiniGameTagService.getMiniGameIdListByPage(startIndex, pageSize, tagId);
-
+        Long end1 = System.currentTimeMillis()/1000;
+        Log.i("获取分页后的小游戏id方法执行了{?}秒",String.valueOf(end1 - start1));
         //根据小游戏id集合获取完整对象数据
+        Long start2 = System.currentTimeMillis()/1000;
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectByIds(minigameIds);
+        Long end2 = System.currentTimeMillis()/1000;
+        Log.i("根据小游戏id获取List<agme>方法执行了{?}秒",String.valueOf(end2 - start2));
 
         return this.generateMiniGameVOList(wxMiniGames, chatPetId);
     }
@@ -490,6 +496,24 @@ public class WxMiniGameService {
      */
     private Integer getMinigameRedirectType(String appId) {
         return StringUtil.isEmpty(appId) ? WX_MINI_GAME_REDIRECT_QRCODE : WX_MINI_GAME_REDIRECT_CLICK;
+    }
+
+    /**
+     * 玩游戏人数
+     * @return
+     */
+    private Long createRandPlayNum(){
+        Random random = new Random();
+        Integer randInt = random.nextInt(5000) + 7000;
+        return randInt.longValue();
+    }
+
+    /**
+     * 更新小游戏在玩人数
+     * @param miniGameId
+     */
+    public void updatePlayerNum(Integer miniGameId){
+        wxMiniGameMapper.updatePlayerNum(miniGameId,PLAYER_NUM_FACTOR);
     }
 
 }
