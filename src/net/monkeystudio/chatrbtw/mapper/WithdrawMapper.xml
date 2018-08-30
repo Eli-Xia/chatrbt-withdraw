@@ -10,14 +10,15 @@
         <result column="error_code" property="errorCode" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="payment_time" property="paymentTime" jdbcType="TIMESTAMP" />
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`
+        `id`, `wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`,`amount`
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Withdraw" keyProperty="id" useGeneratedKeys="true">
-      insert into `e_withdraw` (`wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`)
-      values (#{wxFanId},#{accountFlowId},#{mchTradeNo},#{wxPaymentNo},#{errorCode}, #{createTime},#{paymentTime})
+      insert into `e_withdraw` (`wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`,`amount`)
+      values (#{wxFanId},#{accountFlowId},#{mchTradeNo},#{wxPaymentNo},#{errorCode}, #{createTime},#{paymentTime},#{amount})
     </insert>
     
     <update id="update">
@@ -28,8 +29,22 @@
         `wx_payment_no` = #{wxPaymentNo},
         `error_code` = #{errorCode},
         `create_time` = #{createTime},
-        `payment_time`= #{paymentTime}
+        `payment_time`= #{paymentTime},
+        `amount` = #{amount}
     </update>
+
+    <select id="sumByWxFanIdAndDate" resultType="java.math.BigDecimal">
+        select sum(amount) from e_withdraw where wx_fan_id = #{wxFanId} and create_time &gt;= #{beginTime}
+    </select>
+    
+    <select id="countByWxFanIdAndDate" resultType="java.lang.Integer">
+        select count(id) from e_withdraw where wx_fan_id = #{wxFanId} and create_time &gt;= #{beginTime}
+    </select>
+
+    <select id="selectLastPayTime" resultType="java.util.Date">
+        select payment_time from e_withdraw where wx_fan_id = #{wxFanId} and create_time &gt;= #{brginTime} and payment_time is not null
+        order by payment_time DESC LIMIT 1
+    </select>
 
 
 </mapper>

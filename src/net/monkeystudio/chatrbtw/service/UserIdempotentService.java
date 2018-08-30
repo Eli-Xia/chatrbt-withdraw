@@ -1,6 +1,7 @@
 package net.monkeystudio.chatrbtw.service;
 
 import net.monkeystudio.base.exception.BizException;
+import net.monkeystudio.base.exception.TBizException;
 import net.monkeystudio.chatrbtw.entity.UserIdempotent;
 import net.monkeystudio.chatrbtw.mapper.UserIdempotentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class UserIdempotentService {
     @Autowired
     private UserIdempotentMapper userIdempotentMapper;
 
-    public Integer add(Integer fanId) throws BizException {
+    public Integer add(Integer fanId) throws TBizException {
         UserIdempotent userIdempotent = new UserIdempotent();
         userIdempotent.setWxFanId(fanId);
 
@@ -25,7 +26,7 @@ public class UserIdempotentService {
         Integer result = userIdempotentMapper.insert(userIdempotent);
 
         if(result.intValue() == 0){
-            throw new BizException("请勿重复提交");
+            throw new TBizException("请勿重复提交");
         }
 
         return userIdempotent.getId();
@@ -50,7 +51,7 @@ public class UserIdempotentService {
     public void test() throws Exception{
         try{
             this.add(1);
-        }catch (BizException e){
+        }catch (TBizException e){
             System.err.println(111);
         }
         System.err.println(222);

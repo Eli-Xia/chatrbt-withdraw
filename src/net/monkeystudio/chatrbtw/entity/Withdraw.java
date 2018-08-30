@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -14,6 +15,15 @@ public class Withdraw {
     private String errorCode;
     private Date createTime;
     private Date paymentTime;
+    private BigDecimal amount;
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
     public Integer getId() {
         return id;
