@@ -476,6 +476,9 @@ public class WxMiniGameService {
         //获取分页后的小游戏id集合
         Long start1 = System.currentTimeMillis()/1000;
         List<Integer> minigameIds = rMiniGameTagService.getMiniGameIdListByPage(startIndex, pageSize, tagId);
+        if(ListUtil.isEmpty(minigameIds)){
+            return Collections.EMPTY_LIST;
+        }
         Long end1 = System.currentTimeMillis()/1000;
         Log.i("获取分页后的小游戏id方法执行了{?}秒",String.valueOf(end1 - start1));
         //根据小游戏id集合获取完整对象数据
