@@ -406,7 +406,6 @@ public class WxMiniGameService {
      * @return
      */
     private List<MiniGameVO> generateMiniGameVOList(List<WxMiniGame> wxMiniGames, Integer chatPetId) {
-        Long start = System.currentTimeMillis() /1000;
         Map<Integer, MiniGameMissionState> map = chatPetMissionPoolService.getTodayMiniGameMissionStateMap(chatPetId);
 
         List<MiniGameVO> miniGameVOList = new ArrayList<>();
@@ -440,7 +439,6 @@ public class WxMiniGameService {
                 miniGameVOList.add(vo);
             }
         }
-        Long end = System.currentTimeMillis() / 1000;
         return miniGameVOList;
     }
 
@@ -456,6 +454,10 @@ public class WxMiniGameService {
     public List<MiniGameVO> getHandpickedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer chatPetId) {
 
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectHandpickedByPage(startIndex, pageSize);
+
+        if(ListUtil.isEmpty(wxMiniGames)){
+            return Collections.EMPTY_LIST;
+        }
 
         return this.generateMiniGameVOList(wxMiniGames, chatPetId);
 
@@ -474,15 +476,13 @@ public class WxMiniGameService {
     public List<MiniGameVO> getClassifiedMinigameListVOByPage(Integer startIndex, Integer pageSize, Integer tagId, Integer chatPetId) {
 
         //获取分页后的小游戏id集合
-        Long start1 = System.currentTimeMillis()/1000;
         List<Integer> minigameIds = rMiniGameTagService.getMiniGameIdListByPage(startIndex, pageSize, tagId);
-        Long end1 = System.currentTimeMillis()/1000;
-        Log.i("获取分页后的小游戏id方法执行了{?}秒",String.valueOf(end1 - start1));
+
+        if(ListUtil.isEmpty(minigameIds)){
+            return Collections.EMPTY_LIST;
+        }
         //根据小游戏id集合获取完整对象数据
-        Long start2 = System.currentTimeMillis()/1000;
         List<WxMiniGame> wxMiniGames = wxMiniGameMapper.selectByIds(minigameIds);
-        Long end2 = System.currentTimeMillis()/1000;
-        Log.i("根据小游戏id获取List<agme>方法执行了{?}秒",String.valueOf(end2 - start2));
 
         return this.generateMiniGameVOList(wxMiniGames, chatPetId);
     }
