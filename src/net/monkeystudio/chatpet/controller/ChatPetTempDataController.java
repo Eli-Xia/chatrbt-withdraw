@@ -36,7 +36,6 @@ public class ChatPetTempDataController {
     @ResponseBody
     @RequestMapping(value = "/click-more" , method = RequestMethod.POST)
     public RespBase clickMore(){
-
         tempDataService.increaseClickMore();
 
         return respHelper.ok();

@@ -830,6 +830,11 @@ public class ChatPetService {
 
 
         Integer experienceAddition = this.countByParentId(chatPetId);
+
+        if(experienceAddition > 20){
+            experienceAddition = 20;
+        }
+
         chatPetExperinceRank.setExperienceAddition(experienceAddition);
 
         return chatPetExperinceRank;
