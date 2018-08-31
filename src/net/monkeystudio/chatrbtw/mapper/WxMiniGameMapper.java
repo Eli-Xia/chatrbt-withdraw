@@ -29,5 +29,11 @@ public interface WxMiniGameMapper {
     //查询上架且上线的小游戏
     List<WxMiniGame> selectOnlineGameList();
 
+    List<WxMiniGame> selectHandpickedByPage(@Param("startIndex") Integer startIndex, @Param("pageSize") Integer pageSize);
+
+    //根据小游戏id集合查询对象集合
+    List<WxMiniGame> selectByIds(@Param("ids") List<Integer> ids);
+
+    Integer updatePlayerNum(@Param("id") Integer id, @Param("factor") Long factor);
 
 }

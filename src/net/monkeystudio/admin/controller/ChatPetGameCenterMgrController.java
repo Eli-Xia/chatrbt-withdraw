@@ -5,6 +5,7 @@ import net.monkeystudio.admin.controller.req.minigame.AddMiniGameReq;
 import net.monkeystudio.admin.controller.req.minigame.UpdateMiniGameReq;
 import net.monkeystudio.base.controller.BaseController;
 import net.monkeystudio.base.controller.bean.RespBase;
+import net.monkeystudio.base.exception.BizException;
 import net.monkeystudio.base.utils.ListUtil;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.AppConstants;
@@ -28,7 +29,7 @@ import java.util.List;
  */
 @RequestMapping(value = "/admin/chat-pet/game-center")
 @Controller
-public class ChatPetGameCenterMgrController extends BaseController{
+public class ChatPetGameCenterMgrController extends BaseController {
     @Autowired
     private RespHelper respHelper;
     @Autowired
@@ -40,98 +41,98 @@ public class ChatPetGameCenterMgrController extends BaseController{
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase add(AddMiniGameReq req){
+    public RespBase add(AddMiniGameReq req) {
         Integer userId = getUserId();
-        if ( userId == null ){
+        if (userId == null) {
             return respHelper.nologin();
         }
 
-        if(req.getIsHandpicked() == null){
+        if (req.getIsHandpicked() == null) {
             return respHelper.failed("编辑精选未选择");
         }
-        if(ListUtil.isEmpty(req.getTagIdList())){
+        if (ListUtil.isEmpty(req.getTagIdList())) {
             return respHelper.failed("小游戏标签未选择");
         }
-        if(req.getHeadImg() == null){
+        if (req.getHeadImg() == null) {
             return respHelper.failed("小游戏头像未上传");
         }
-        if(req.getQrCodeImg() == null){
+        if (req.getQrCodeImg() == null) {
             return respHelper.failed("小游戏二维码未上传");
         }
-        if(req.getIsHandpicked() && req.getCoverImg() == null){
+        if (req.getIsHandpicked() && req.getCoverImg() == null) {
             return respHelper.failed("小游戏封面未上传");
         }
-        if(req.getNickname() == null){
+        if (req.getNickname() == null) {
             return respHelper.failed("小游戏名称不能为空");
         }
-        if(req.getOnlineTime() == null){
+        if (req.getOnlineTime() == null) {
             return respHelper.failed("需要填写小游戏上线时间");
         }
-        if(!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())){
+        if (!wxMiniGameService.isOnlineTimeValid(req.getOnlineTime())) {
             return respHelper.failed("上线时间不可为设置当天,至少明天");
         }
 
         AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
-        BeanUtils.copyProperties(req,adminMiniGameAdd);
+        BeanUtils.copyProperties(req, adminMiniGameAdd);
 
         Integer addMiniGameId = wxMiniGameService.save(adminMiniGameAdd);
 
-        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户新增id为" + addMiniGameId + "的小游戏" );
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户新增id为" + addMiniGameId + "的小游戏");
 
         return respHelper.ok();
     }
 
     @RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase delete(HttpServletRequest request, @PathVariable("id")Integer id){
+    public RespBase delete(HttpServletRequest request, @PathVariable("id") Integer id) {
 
         Integer userId = getUserId();
-        if ( userId == null ){
+        if (userId == null) {
             return respHelper.nologin();
         }
 
         wxMiniGameService.delete(id);
 
-        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户删除id为" + id + "的小游戏" );
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户删除id为" + id + "的小游戏");
 
         return respHelper.ok();
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase update(UpdateMiniGameReq req){
+    public RespBase update(UpdateMiniGameReq req) throws BizException {
 
         Integer userId = getUserId();
-        if ( userId == null ){
+        if (userId == null) {
             return respHelper.nologin();
         }
 
-        if(req.getIsHandpicked() == null){
+        if (req.getIsHandpicked() == null) {
             return respHelper.failed("编辑精选未选择");
         }
-        if(ListUtil.isEmpty(req.getTagIdList())){
+        if (ListUtil.isEmpty(req.getTagIdList())) {
             return respHelper.failed("小游戏标签未选择");
         }
-        if(req.getNickname() == null){
+        if (req.getNickname() == null) {
             return respHelper.failed("小游戏名称不能为空");
         }
 
         AdminMiniGameUpdate adminMiniGameUpdate = new AdminMiniGameUpdate();
-        BeanUtils.copyProperties(req,adminMiniGameUpdate);
+        BeanUtils.copyProperties(req, adminMiniGameUpdate);
 
         wxMiniGameService.update(adminMiniGameUpdate);
 
-        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户编辑id为" + req.getId() + "的小游戏" );
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户编辑id为" + req.getId() + "的小游戏");
 
         return respHelper.ok();
     }
 
     @RequestMapping(value = "/{id}/get", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase getById(HttpServletRequest request, @PathVariable("id")Integer id){
+    public RespBase getById(HttpServletRequest request, @PathVariable("id") Integer id) {
 
         Integer userId = getUserId();
-        if ( userId == null ){
+        if (userId == null) {
             return respHelper.nologin();
         }
 
@@ -142,56 +143,53 @@ public class ChatPetGameCenterMgrController extends BaseController{
 
     /**
      * 下架
+     *
      * @param request
      * @param id
      * @return
      */
     @RequestMapping(value = "/{id}/unshelve", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase unshelve(HttpServletRequest request, @PathVariable("id")Integer id){
+    public RespBase unshelve(HttpServletRequest request, @PathVariable("id") Integer id) {
 
         Integer userId = getUserId();
-        if ( userId == null ){
+        if (userId == null) {
             return respHelper.nologin();
         }
 
         wxMiniGameService.unshelve(id);
 
-        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户下架id为" + id + "的小游戏" );
+        opLogService.userOper(userId, AppConstants.OP_LOG_TAG_A_MINIGAME, "id为" + userId + "的用户下架id为" + id + "的小游戏");
 
         return respHelper.ok();
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
-    public RespBase list(HttpServletRequest request, @RequestBody QueryMiniGameList queryMiniGameList){
+    public RespBase list(HttpServletRequest request, @RequestBody QueryMiniGameList queryMiniGameList) {
 
         Integer userId = getUserId();
-        if ( userId == null ){
+        if (userId == null) {
             return respHelper.nologin();
         }
 
         Integer page = queryMiniGameList.getPage();
         Integer pageSize = queryMiniGameList.getPageSize();
 
-        if ( page == null || page < 1 ){
+        if (page == null || page < 1) {
             return respHelper.cliParamError("page error.");
         }
 
-        if ( pageSize == null || pageSize < 1 ){
+        if (pageSize == null || pageSize < 1) {
             return respHelper.cliParamError("pageSize error.");
         }
 
-        List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespListByPage(page,pageSize);
+        List<AdminMiniGameResp> resps = wxMiniGameService.getAdminMiniGameRespListByPage(page, pageSize);
 
         Integer total = wxMiniGameService.getCount();
 
-        return respHelper.ok(resps,total);
+        return respHelper.ok(resps, total);
     }
-
-
-
-
 
 
 }

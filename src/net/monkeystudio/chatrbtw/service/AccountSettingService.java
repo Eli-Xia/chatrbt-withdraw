@@ -228,7 +228,6 @@ public class AccountSettingService {
     }
 
 
-
     public void handleSensitivePic(Integer userId,HttpServletResponse response){
 
         InputStream is = this.getPicInputStream(userId);

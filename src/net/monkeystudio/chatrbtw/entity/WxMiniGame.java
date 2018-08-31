@@ -19,6 +19,15 @@ public class WxMiniGame {
     private String coverImgUrl;
     private String appId;
     private Float starNum;
+    private Long playerNum;
+
+    public Long getPlayerNum() {
+        return playerNum;
+    }
+
+    public void setPlayerNum(Long playerNum) {
+        this.playerNum = playerNum;
+    }
 
     public Boolean getIsHandpicked() {
         return isHandpicked;

@@ -1,5 +1,6 @@
 package net.monkeystudio.chatrbtw.service;
 
+import net.monkeystudio.admin.controller.UserController;
 import net.monkeystudio.base.utils.ArithmeticUtils;
 import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.DateUtils;
@@ -87,19 +88,20 @@ public class ChatPetLogService {
 
     /**
      * 获取今日宠物日志
+     *
      * @param chatPetId 宠物id
      * @return
      */
-    public List<PetLogResp> getDailyPetLogList(Integer chatPetId){
+    public List<PetLogResp> getDailyPetLogList(Integer chatPetId) {
         Date date = new Date();
         Date beginDate = DateUtils.getBeginDate(date);
         Date endDate = DateUtils.getEndDate(date);
 
-        List<PetLog> pls = petLogMapper.selectDailyPetLog(chatPetId,beginDate,endDate);
+        List<PetLog> pls = petLogMapper.selectDailyPetLog(chatPetId, beginDate, endDate);
 
         List<PetLogResp> resps = new ArrayList<>();
 
-        for(PetLog petLog:pls){
+        for (PetLog petLog : pls) {
             PetLogResp petLogResp = new PetLogResp();
             petLogResp.setCreateTime(petLog.getCreateTime());
             petLogResp.setContent(petLog.getContent());
@@ -111,10 +113,10 @@ public class ChatPetLogService {
     }
 
 
-    public List<PetLogResp> getMoreLogList(Integer chatPetId,Integer pageSize){
+    public List<PetLogResp> getMoreLogList(Integer chatPetId, Integer pageSize) {
         List<PetLog> petLogs = petLogMapper.selectPetLog(0, pageSize, chatPetId);
         List<PetLogResp> resps = new ArrayList<>();
-        for(int i = 0; i < petLogs.size(); i++){
+        for (int i = 0; i < petLogs.size(); i++) {
             PetLogResp resp = new PetLogResp();
             resp.setContent(petLogs.get(i).getContent());
             resp.setCreateTime(petLogs.get(i).getCreateTime());
@@ -122,6 +124,22 @@ public class ChatPetLogService {
             resps.add(resp);
         }
         return resps;
+    }
+
+    public List<PetLogResp> getMoreLogs(Integer startIndex, Integer pageSize, Integer fanId) {
+        ChatPet chatPet = chatPetService.getByWxFanId(fanId);
+        List<PetLog> petLogs = petLogMapper.selectPetLog(0, pageSize, chatPet.getId());
+        List<PetLogResp> resps = new ArrayList<>();
+        for (int i = 0; i < petLogs.size(); i++) {
+            PetLogResp resp = new PetLogResp();
+            resp.setContent(petLogs.get(i).getContent());
+            resp.setCreateTime(petLogs.get(i).getCreateTime());
+            resp.setId(i + 1);
+            resps.add(resp);
+        }
+        return resps;
+
+
     }
 
 
@@ -163,37 +181,37 @@ public class ChatPetLogService {
     /**
      * 保存宠物动态
      */
-    public void saveChatPetDynamic(SaveChatPetLogParam param){
+    public void saveChatPetDynamic(SaveChatPetLogParam param) {
         Integer chatPetLogType = param.getChatPetLogType();
-        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_BORN.equals(chatPetLogType)){
+        if (ChatPetLogTypeService.CHAT_PET_LOG_TYPE_BORN.equals(chatPetLogType)) {
             Integer chatPetId = param.getChatPetId();
             this.savePetBornLog(chatPetId);
         }
 
-        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_LEVEL_REWARD.equals(chatPetLogType)){
+        if (ChatPetLogTypeService.CHAT_PET_LOG_TYPE_LEVEL_REWARD.equals(chatPetLogType)) {
             Integer chatPetRewardItemId = param.getChatPetRewardItemId();
             this.saveLevelRewardLog(chatPetRewardItemId);
         }
 
-        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_JOIN_AUTION.equals(chatPetLogType)){
+        if (ChatPetLogTypeService.CHAT_PET_LOG_TYPE_JOIN_AUTION.equals(chatPetLogType)) {
             Integer chatPetId = param.getChatPetId();
             this.saveJoinAuctionLog(chatPetId);
         }
 
-        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_AUTION_SUCCESS.equals(chatPetLogType)){
+        if (ChatPetLogTypeService.CHAT_PET_LOG_TYPE_AUTION_SUCCESS.equals(chatPetLogType)) {
             Integer chatPetId = param.getChatPetId();
             this.saveAuctionSuccessLog(chatPetId);
         }
 
-        if(ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD.equals(chatPetLogType)){
+        if (ChatPetLogTypeService.CHAT_PET_LOG_TYPE_MISSION_REWARD.equals(chatPetLogType)) {
             Integer chatPetRewardItemId = param.getChatPetRewardItemId();
             Integer chatPetId = param.getChatPetId();
 
             ChatPet chatPet = chatPetService.getById(chatPetId);
             Integer chatPetType = chatPet.getChatPetType();
 
-            if(ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.equals(chatPetType)){
-                this.saveLuckyCatMissionLog(chatPetRewardItemId,param.getUpgrade());
+            if (ChatPetTypeService.CHAT_PET_TYPE_LUCKY_CAT.equals(chatPetType)) {
+                this.saveLuckyCatMissionLog(chatPetRewardItemId, param.getUpgrade());
             }/*else{
                 this.savePetLog4MissionReward(chatPetRewardItemId,param.getUpgrade());
             }*/
@@ -201,13 +219,13 @@ public class ChatPetLogService {
     }
 
 
-
     /**
      * 保存招财猫任务日志
+     *
      * @param chatPetRewardItemId
      * @param isUpgrade
      */
-    public void saveLuckyCatMissionLog(Integer chatPetRewardItemId,Boolean isUpgrade){
+    public void saveLuckyCatMissionLog(Integer chatPetRewardItemId, Boolean isUpgrade) {
 
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
@@ -221,32 +239,32 @@ public class ChatPetLogService {
         PetLog addExperienceLog = new PetLog();
         addExperienceLog.setChatPetId(chatPetId);
 
-        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)){
+        if (ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode)) {
             addExperienceLog.setContent("完成公众号打招呼,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
-        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        if (ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)) {
             addExperienceLog.setContent("赠送一只猫六六,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
-        if(ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)){
+        if (ChatPetMissionEnumService.DAILY_PLAY_MINI_GAME_CODE.equals(missionCode)) {
             addExperienceLog.setContent("体验游戏,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
-        if(ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)){
+        if (ChatPetMissionEnumService.DAILY_LOGIN_MINI_PROGRAM_CODE.equals(missionCode)) {
             addExperienceLog.setContent("每日登录,经验值+" + displayExpStr);
             addExperienceLog.setCreateTime(new Date());
             this.savePetLog(addExperienceLog);
         }
 
         //升级日志
-        if(isUpgrade!=null && isUpgrade){
+        if (isUpgrade != null && isUpgrade) {
 
             ChatPet chatPet = chatPetService.getById(chatPetId);
             Integer level = chatPetLevelService.calculateLevel(chatPet.getExperience());
@@ -263,7 +281,7 @@ public class ChatPetLogService {
     /**
      * 参加竞标日志
      */
-    private void saveJoinAuctionLog(Integer chatPetId){
+    private void saveJoinAuctionLog(Integer chatPetId) {
         PetLog joinAuctionLog = new PetLog();
 
         joinAuctionLog.setContent("参与竞拍活动");
@@ -276,8 +294,8 @@ public class ChatPetLogService {
     /**
      * 竞标成功日志
      */
-    public void saveAuctionSuccessLog(Integer chatPetId){
-        PetLog auctionSuccessLog= new PetLog();
+    public void saveAuctionSuccessLog(Integer chatPetId) {
+        PetLog auctionSuccessLog = new PetLog();
 
         auctionSuccessLog.setContent("恭喜你中标啦");
         auctionSuccessLog.setCreateTime(new Date());
@@ -286,7 +304,7 @@ public class ChatPetLogService {
         this.savePetLog(auctionSuccessLog);
     }
 
-    private void savePetLog4MissionReward(Integer chatPetRewardItemId,Boolean isUpgrade){
+    private void savePetLog4MissionReward(Integer chatPetRewardItemId, Boolean isUpgrade) {
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         Integer chatPetPersonalMissionId = item.getMissionItemId();
@@ -309,7 +327,7 @@ public class ChatPetLogService {
         petLog1.setCreateTime(new Date());
         this.savePetLog(petLog1);
 
-        if(isUpgrade){
+        if (isUpgrade) {
             Integer level = chatPetLevelService.calculateLevel(experience);
 
             PetLog petLog2 = new PetLog();
@@ -323,10 +341,11 @@ public class ChatPetLogService {
 
     /**
      * 根据任务记录id获取记录在宠物日志中的任务完成信息
+     *
      * @param chatPetPersonalMissionId
      * @return
      */
-    private String getPetLogMissionNameByChatPetPersonalMissionId(Integer chatPetPersonalMissionId){
+    private String getPetLogMissionNameByChatPetPersonalMissionId(Integer chatPetPersonalMissionId) {
         StringBuilder sb = new StringBuilder();
 
         ChatPetPersonalMission chatPetPersonalMission = chatPetMissionPoolService.getById(chatPetPersonalMissionId);
@@ -338,13 +357,13 @@ public class ChatPetLogService {
 //            sb.append("完成" + ChatPetMissionNoUtil.getMissionNo(createTime) + missionName);
 //        }
 
-        if(ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)){
+        if (ChatPetMissionEnumService.INVITE_FRIENDS_MISSION_CODE.equals(missionCode)) {
             Integer inviteeWxFanId = chatPetPersonalMission.getInviteeWxFanId();
             WxFan wxFan = wxFanService.getById(inviteeWxFanId);
             sb.append("邀请" + wxFan.getNickname() + "加入");
         }
 
-        if(ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)){
+        if (ChatPetMissionEnumService.DAILY_CHAT_MISSION_CODE.equals(missionCode) || ChatPetMissionEnumService.SEARCH_NEWS_MISSION_CODE.equals(missionCode)) {
             sb.append(missionName);
         }
 
@@ -438,14 +457,15 @@ public class ChatPetLogService {
     /**
      * TODO
      * 保存宠物日志
+     *
      * @param petLog
      */
-    public void savePetLog(PetLog petLog){
+    public void savePetLog(PetLog petLog) {
         petLogMapper.insert(petLog);
     }
 
     //每日可领取奖励日志
-    private void saveLevelRewardLog(Integer chatPetRewardItemId){
+    private void saveLevelRewardLog(Integer chatPetRewardItemId) {
         ChatPetRewardItem item = chatPetRewardService.getChatPetRewardItemById(chatPetRewardItemId);
         Integer chatPetId = item.getChatPetId();
         //金币名称
@@ -461,7 +481,7 @@ public class ChatPetLogService {
         //this.savePetLog(pl);
     }
 
-    private void savePetBornLog(Integer chatPetId){
+    private void savePetBornLog(Integer chatPetId) {
         PetLog pl = new PetLog();
 
         pl.setContent("我出生啦!!");
@@ -470,8 +490,6 @@ public class ChatPetLogService {
 
         this.savePetLog(pl);
     }
-
-
 
 
 }

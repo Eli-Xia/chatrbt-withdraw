@@ -10,6 +10,7 @@ import net.monkeystudio.base.utils.Log;
 import net.monkeystudio.chatrbtw.entity.*;
 import net.monkeystudio.chatrbtw.enums.mission.MissionStateEnum;
 import net.monkeystudio.chatrbtw.mapper.ChatPetPersonalMissionMapper;
+import net.monkeystudio.chatrbtw.mapper.bean.chatpetpersonalmission.MiniGameMissionState;
 import net.monkeystudio.chatrbtw.sdk.wx.WxCustomerHelper;
 import net.monkeystudio.chatrbtw.service.bean.chatpet.MissionItem;
 import net.monkeystudio.chatrbtw.service.bean.chatpetmission.DispatchMissionParam;
@@ -68,6 +69,9 @@ public class ChatPetMissionPoolService {
 
     @Autowired
     private ChatPetTypeConfigService chatPetTypeConfigService;
+
+    @Autowired
+    private WxMiniGameService wxMiniGameService;
 
     //每天只能最多完成三次邀请任务
     private static final Integer DAILY_INVITE_MISSION_MAX_TIME = 3;
@@ -562,6 +566,9 @@ public class ChatPetMissionPoolService {
             //}
             //});
             completeChatPetMission(miniGameMission.getId());
+
+            //更新小游戏在玩人数
+            wxMiniGameService.updatePlayerNum(wxMiniGameId);
         }
     }
 
@@ -655,6 +662,14 @@ public class ChatPetMissionPoolService {
         Date endTime = CommonUtils.dateEndTime(today);
 
         return chatPetPersonalMissionMapper.selectMiniGameMissionMap(chatPetId,startTime,endTime);
+    }
+
+    public Map<Integer,MiniGameMissionState> getTodayMiniGameMissionStateMap(Integer chatPetId){
+        Date today = new Date();
+        Date startTime = CommonUtils.dateStartTime(today);
+        Date endTime = CommonUtils.dateEndTime(today);
+
+        return chatPetPersonalMissionMapper.selectMiniGameMissionStateMap(chatPetId, startTime, endTime);
     }
 
 
@@ -834,15 +849,15 @@ public class ChatPetMissionPoolService {
     }*/
 
     //aspectJ事务测试
-    //@Transactional
+    @Transactional
     public void test1(){
-//        ChatPetPersonalMission copy = this.getById(2462);
-//        ChatPetPersonalMission target = new ChatPetPersonalMission();
-//        target.setState(1000);
-//        BeanUtils.copyProperties(copy,target);
-//
-//        target.setId(null);
-//        this.save(target);
+        ChatPetPersonalMission copy = this.getById(2462);
+        ChatPetPersonalMission target = new ChatPetPersonalMission();
+        target.setState(1000);
+        BeanUtils.copyProperties(copy,target);
+
+        target.setId(null);
+        this.save(target);
         System.out.println(1);
 
         test2();
