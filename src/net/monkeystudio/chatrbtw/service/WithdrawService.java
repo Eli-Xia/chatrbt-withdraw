@@ -11,6 +11,7 @@ import net.monkeystudio.chatrbtw.entity.Withdraw;
 import net.monkeystudio.chatrbtw.entity.WxFan;
 import net.monkeystudio.chatrbtw.mapper.WithdrawMapper;
 import net.monkeystudio.wx.service.WxTransferKitService;
+import net.monkeystudio.wx.vo.transfers.Transfer;
 import net.monkeystudio.wx.vo.transfers.TransfersResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,29 +29,38 @@ public class WithdrawService {
     @Autowired
     private WithdrawMapper withdrawMapper;
 
+
     @Autowired
     private AccountService accountService;
+
 
     @Autowired
     private BizAccountService bizAccountService;
 
+
     @Autowired
     private AccountFlowService accountFlowService;
+
 
     @Autowired
     private BizAccountFlowService bizAccountFlowService;
 
+
     @Autowired
     private WxTransferKitService wxTransferKitService;
+
 
     @Autowired
     private UserIdempotentService userIdempotentService;
 
+
     @Autowired
     private WxFanService wxFanService;
 
+
     @Autowired
     private TransactionTemplate txTemplate;
+
 
     private static class Const {
         //当天提现最大限额500
@@ -59,6 +69,28 @@ public class WithdrawService {
         private final static Integer MAX_COUNT = 3;
         //提现最小时间间隔15S
         private final static Long MIN_INTERVAL = 15000L;
+        //企业付款失败
+        private final static Integer TRANSFER_RESULT_FAIL = 0;
+        //企业付款成功
+        private final static Integer TRANSFER_RESULT_SUCCESS = 1;
+        //企业付款充实
+        private final static Integer TRANSFER_RESULT_RETRY = 2;
+    }
+
+    /**
+     * 企业付款结果类型  成功 失败 重试
+     * @param resultCode
+     * @param errorCode
+     * @return
+     */
+    private Integer getTransferResultType(String resultCode,String errorCode){
+        if("SUCCESS".equals(resultCode)){
+            return Const.TRANSFER_RESULT_SUCCESS;
+        }
+        if("FAIL".equals(resultCode) && "SYSTEMERROR".equals(errorCode)){
+            return Const.TRANSFER_RESULT_RETRY;
+        }
+        else return Const.TRANSFER_RESULT_FAIL;
     }
 
 
@@ -67,9 +99,11 @@ public class WithdrawService {
         return withdraw.getId();
     }
 
+
     public void update(Withdraw withdraw) {
         withdrawMapper.update(withdraw);
     }
+
 
     public Withdraw getById(Integer id) {
         return withdrawMapper.selectByPrimaryKey(id);
@@ -77,11 +111,22 @@ public class WithdrawService {
 
 
     /**
-     * 提现操作方法
+     * 提现
+     *
+     *
+     *             是否已经存在一个提现的流程
+     *             1,提现金额最小金额100
+     *             2,提现金额上限
+     *             3,单个用户单日限额多少?500
+     *             4,单个用户每天最多可以付款的次数? (微信可以设置)3
+     *             5,付款时间间隔不得低于15S 15
+     *             6,提现金额需要大于100?
+     *             7,系统账户余额 > 提现金额 >= 用户账户余额 >= 100 ?
+     *             8,当系统金额小于设定的阈值后是否需要发送邮件提醒?? no
      *
      * @param amount:提现金额
      */
-    public void operate(BigDecimal amount) throws TBizException {
+    public void withdraw(BigDecimal amount) throws TBizException {
         Integer fanId = UserContext.getFanId();
 
         Account account = accountService.getByPessimisticLock(fanId);
@@ -112,7 +157,7 @@ public class WithdrawService {
             throw new TBizException("当日提现次数已满");
         }
 
-        //提现相关操作
+        //LOCK
         Integer lockId = userIdempotentService.add(fanId);
 
         //生成提现记录
@@ -126,7 +171,7 @@ public class WithdrawService {
 
         Integer withdrawId = this.save(record);
 
-        //在一个事务当中进行
+        //开启事务
         txTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -135,51 +180,80 @@ public class WithdrawService {
                 accountService.update(account);
 
                 //生成用户扣款流水
-                accountFlowService.withdrawFlow(account.getId(),amount);
+                accountFlowService.withdrawFlow(account.getId(), amount);
 
                 //公司账户扣款
                 bizAccount.setAmount(bizAccount.getAmount().subtract(amount));
                 bizAccountService.update(bizAccount);
 
                 //生成公司扣款流水
-                bizAccountFlowService.transferFlow(BizAccountService.BIZ_ACCOUNT_ID,amount);
+                bizAccountFlowService.transferFlow(BizAccountService.BIZ_ACCOUNT_ID, amount);
 
-                //调用企业付款api进行付款
                 WxFan wxFan = wxFanService.getById(fanId);
                 String openId = wxFan.getWxFanOpenId();
-                TransfersResult transfersResult = wxTransferKitService.transfer(mchTradeNo, amount.intValue() * 100, openId);
-                //根据返回值是否正常来判断
+
+
+                //调用微信企业付款,若返回"系统繁忙"需要使用相同的订单号重复调用,限制3次
+                String resultCode = "FAIL";//返回码
+                String errorCode = "SYSTEMERROR";//错误码
+                TransfersResult result = null;//结果
+                int count = 0;//重复次数
+
+                //重试
+                while(count < 3){
+                    if(!Const.TRANSFER_RESULT_RETRY.equals(getTransferResultType(resultCode,errorCode))){
+                        break;
+                    }
+                    result = wxTransferKitService.transfer(mchTradeNo, amount.intValue() * 100, openId);
+
+                    resultCode = result.getResultCode();
+
+                    errorCode = result.getErrCode();
+
+                    count ++;
+                }
+
+                //付款失败
+                if(Const.TRANSFER_RESULT_FAIL.equals(getTransferResultType(resultCode,errorCode))){
+
+                    throw new TBizException("付款失败,错误代码:{?}" + errorCode);//抛出异常让事务回滚
+                }
+
+
+                //付款成功
+                if(Const.TRANSFER_RESULT_SUCCESS.equals(getTransferResultType(resultCode,errorCode))){
+
+                    if(mchTradeNo.equals(result.getPartnerTradeNo())){
+
+                        Withdraw updateWd = getById(withdrawId);
+
+                        updateWd.setWxPaymentNo(result.getPaymentNo());
+
+                        updateWd.setPaymentTime(CommonUtils.string2Date(result.getPaymentTime(),"yyyy-MM-dd HH:mm:ss"));
+
+                        update(updateWd);
+                    }
+                }
             }
         });
 
+        //UNLOCK
+        userIdempotentService.unlock(lockId);
 
-        
-
-
-        /*
-            是否已经存在一个提现的流程
-            1,提现金额最小金额100
-            2,提现金额上限
-            3,单个用户单日限额多少?500
-            4,单个用户每天最多可以付款的次数? (微信可以设置)3
-            5,付款时间间隔不得低于15S 15
-            6,提现金额需要大于100?
-            7,系统账户余额 > 提现金额 >= 用户账户余额 >= 100 ?
-            8,当系统金额小于设定的阈值后是否需要发送邮件提醒?? no*/
     }
+
 
 
     /**
      * 生成系统订单号
+     *
      * @param accountId:账户id
      * @return
      */
-    private String createMchTradeNo(Integer accountId){
+    private String createMchTradeNo(Integer accountId) {
         String noPrefix = CommonUtils.dateFormat(new Date(), "yyyyMMddHHmmss");
         return noPrefix + accountId;
     }
-
-
 
 
     /**

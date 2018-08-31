@@ -12,7 +12,6 @@ public class Withdraw {
     private Integer accountFlowId;
     private String mchTradeNo;
     private String wxPaymentNo;
-    private String errorCode;
     private Date createTime;
     private Date paymentTime;
     private BigDecimal amount;
@@ -63,14 +62,6 @@ public class Withdraw {
 
     public void setWxPaymentNo(String wxPaymentNo) {
         this.wxPaymentNo = wxPaymentNo;
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
     }
 
     public Date getCreateTime() {

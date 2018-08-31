@@ -7,18 +7,17 @@
         <result column="account_flow_id" property="accountFlowId" jdbcType="INTEGER" />
         <result column="mch_trade_no" property="mchTradeNo" jdbcType="VARCHAR" />
         <result column="wx_payment_no" property="wxPaymentNo" jdbcType="VARCHAR" />
-        <result column="error_code" property="errorCode" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="payment_time" property="paymentTime" jdbcType="TIMESTAMP" />
         <result column="amount" property="amount" jdbcType="DECIMAL"/>
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`,`amount`
+        `id`, `wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`create_time`,`payment_time`,`amount`
     </sql>
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.Withdraw" keyProperty="id" useGeneratedKeys="true">
-      insert into `e_withdraw` (`wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`error_code`,`create_time`,`payment_time`,`amount`)
-      values (#{wxFanId},#{accountFlowId},#{mchTradeNo},#{wxPaymentNo},#{errorCode}, #{createTime},#{paymentTime},#{amount})
+      insert into `e_withdraw` (`wx_fan_id` ,`account_flow_id`,`mch_trade_no`,`wx_payment_no`,`create_time`,`payment_time`,`amount`)
+      values (#{wxFanId},#{accountFlowId},#{mchTradeNo},#{wxPaymentNo}, #{createTime},#{paymentTime},#{amount})
     </insert>
     
     <update id="update">
@@ -27,7 +26,6 @@
         `account_flow_id` = #{accountFlowId},
         `mch_trade_no` = #{mchTradeNo},
         `wx_payment_no` = #{wxPaymentNo},
-        `error_code` = #{errorCode},
         `create_time` = #{createTime},
         `payment_time`= #{paymentTime},
         `amount` = #{amount}
