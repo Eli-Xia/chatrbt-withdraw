@@ -157,6 +157,7 @@ public class WithdrawService {
             throw new TBizException("当日提现次数已满");
         }
 
+        //FIXME 最前面
         //LOCK
         Integer lockId = userIdempotentService.add(fanId);
 
@@ -177,6 +178,8 @@ public class WithdrawService {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 //用户账户扣款
                 account.setAmount(account.getAmount().subtract(amount));
+
+                //FIXME decrease 要做检验，是否扣款成功
                 accountService.update(account);
 
                 //生成用户扣款流水
@@ -184,6 +187,8 @@ public class WithdrawService {
 
                 //公司账户扣款
                 bizAccount.setAmount(bizAccount.getAmount().subtract(amount));
+
+                //FIXME decrease
                 bizAccountService.update(bizAccount);
 
                 //生成公司扣款流水
@@ -194,16 +199,20 @@ public class WithdrawService {
 
 
                 //调用微信企业付款,若返回"系统繁忙"需要使用相同的订单号重复调用,限制3次
+                //FIXME 全局变量
                 String resultCode = "FAIL";//返回码
                 String errorCode = "SYSTEMERROR";//错误码
                 TransfersResult result = null;//结果
                 int count = 0;//重复次数
 
                 //重试
+                //FIXME 全局变量
                 while(count < 3){
                     if(!Const.TRANSFER_RESULT_RETRY.equals(getTransferResultType(resultCode,errorCode))){
                         break;
                     }
+
+                    //企业付款
                     result = wxTransferKitService.transfer(mchTradeNo, amount.intValue() * 100, openId);
 
                     resultCode = result.getResultCode();
@@ -214,6 +223,7 @@ public class WithdrawService {
                 }
 
                 //付款失败
+                //FIXME 如果未认证必然被锁
                 if(Const.TRANSFER_RESULT_FAIL.equals(getTransferResultType(resultCode,errorCode))){
 
                     throw new TBizException("付款失败,错误代码:{?}" + errorCode);//抛出异常让事务回滚
@@ -246,7 +256,7 @@ public class WithdrawService {
 
     /**
      * 生成系统订单号
-     *
+     * FIXME 纳秒
      * @param accountId:账户id
      * @return
      */
