@@ -19,6 +19,15 @@ public class AdminMiniGame {
     private String appId;
     private Float starNum = 2F;
     private List<Integer> tagIdList = new ArrayList<>();
+    private String article;
+
+    public String getArticle() {
+        return article;
+    }
+
+    public void setArticle(String article) {
+        this.article = article;
+    }
 
     public Integer getId() {
         return id;
