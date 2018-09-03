@@ -23,6 +23,14 @@ public class AdminMiniGameAdd {
     private String appId;
     private String articleUrl;
 
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
+
     public Boolean getHandpicked() {
         return isHandpicked;
     }

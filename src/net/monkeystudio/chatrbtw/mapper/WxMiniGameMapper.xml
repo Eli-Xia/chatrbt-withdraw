@@ -87,7 +87,7 @@
       app_id = #{appId},
       star_num = #{starNum},
       is_handpicked = IFNULL(#{isHandpicked},0),
-      player_num = IFNULL(#{playerNum},0)
+      player_num = IFNULL(#{playerNum},0),
       article_url = #{articleUrl}
     where id = #{id,jdbcType=INTEGER}
   </update>

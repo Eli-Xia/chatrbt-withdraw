@@ -23,6 +23,15 @@ public class AddMiniGameReq {
     private MultipartFile coverImg;
     private String appId;
     private Boolean isHandpicked;
+    private String articleUrl;
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
 
     public Boolean getIsHandpicked() {
         return isHandpicked;
