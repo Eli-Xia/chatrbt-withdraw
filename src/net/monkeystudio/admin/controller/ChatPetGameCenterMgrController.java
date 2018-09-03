@@ -72,8 +72,7 @@ public class ChatPetGameCenterMgrController extends BaseController {
             return respHelper.failed("上线时间不可为设置当天,至少明天");
         }
 
-        AdminMiniGameAdd adminMiniGameAdd = new AdminMiniGameAdd();
-        BeanUtils.copyProperties(req, adminMiniGameAdd);
+        AdminMiniGameAdd adminMiniGameAdd = net.monkeystudio.base.utils.BeanUtils.copyBean(req, AdminMiniGameAdd.class);
 
         Integer addMiniGameId = wxMiniGameService.save(adminMiniGameAdd);
 
