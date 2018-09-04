@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.BannerAdMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.BannerAd">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="ad_url" property="adUrl" jdbcType="VARCHAR" />
+        <result column="online_time" property="onlineTime" jdbcType="TIMESTAMP" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, ad_url, online_time, state, create_time, click_count
+    </sql>
+
+    <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.BannerAd" >
+        update e_banner_ad set
+            ad_url = #{adUrl},
+            online_time = #{onlineTime},
+            state = #{state}
+        WHERE
+            id = #{id}
+    </update>
+
+    <select id="selectByOnlineTime" parameterType="map" resultMap="baseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            e_banner_ad
+        WHERE
+        online_time &lt;=  #{onlineTime}
+        AND
+        state = #{state}
+    </select>
+
+
+    <select id="selectByPage" parameterType="map" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_banner_ad
+        limit #{startIndex} ,#{pageSize}
+    </select>
+
+    <select id="selectById" parameterType="map" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_banner_ad
+        WHERE
+        id = #{id}
+    </select>
+
+    <update id="increaseClickCount" parameterType="map">
+        UPDATE e_banner_ad set click_count  = IFNULL(click_count,0) + #{change} where id = #{id}
+    </update>
+
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.BannerAd">
+        INSERT INTO e_banner_ad ( ad_url, online_time, state, create_time) VALUES (
+            #{adUrl},
+            #{onlineTime},
+            #{state},
+            #{createTime}
+        )
+    </insert>
+</mapper>
