@@ -22,6 +22,15 @@ public class AdminMiniGameUpdate {
     private Float starNum = 2F;
     private List<Integer> tagIdList = new ArrayList<>();
     private String appId;
+    private String articleUrl;
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
 
     public MultipartFile getCoverImg() {
         return coverImg;

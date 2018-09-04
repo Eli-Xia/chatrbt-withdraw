@@ -12,6 +12,15 @@ public class MiniGameVO {
     private Long playerNum;
     private Integer redirectType;//跳转方式 0:扫码 1:点击
     private String appId;
+    private String articleUrl;
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
 
     public Integer getId() {
         return id;

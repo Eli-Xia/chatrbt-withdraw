@@ -21,6 +21,23 @@ public class AdminMiniGameAdd {
     private List<Integer> tagIdList = new ArrayList<>();
     private Boolean isHandpicked;
     private String appId;
+    private String articleUrl;
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
+
+    public Boolean getHandpicked() {
+        return isHandpicked;
+    }
+
+    public void setHandpicked(Boolean handpicked) {
+        isHandpicked = handpicked;
+    }
 
     public MultipartFile getCoverImg() {
         return coverImg;

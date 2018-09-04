@@ -20,6 +20,23 @@ public class WxMiniGame {
     private String appId;
     private Float starNum;
     private Long playerNum;
+    private String articleUrl;
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
+
+    public Boolean getHandpicked() {
+        return isHandpicked;
+    }
+
+    public void setHandpicked(Boolean handpicked) {
+        isHandpicked = handpicked;
+    }
 
     public Long getPlayerNum() {
         return playerNum;

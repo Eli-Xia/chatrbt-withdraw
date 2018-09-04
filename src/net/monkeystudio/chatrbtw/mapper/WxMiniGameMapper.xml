@@ -16,12 +16,13 @@
         <result column="star_num" jdbcType="REAL" property="starNum"/>
         <result column="is_handpicked" jdbcType="BIT" property="isHandpicked"/>
         <result column="player_num" jdbcType="BIGINT" property="playerNum"/>
+        <result column="article_url" jdbcType="VARCHAR" property="articleUrl"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time,shelve_state,cover_img_url,app_id,star_num,is_handpicked
-    ,player_num
-</sql>
+    id, nickname ,head_img_url ,qr_code_img_url,need_sign,open_type,create_time,online_time,shelve_state,cover_img_url,app_id,star_num,is_handpicked,player_num,article_url
+    </sql>
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -32,7 +33,8 @@
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from e_wx_mini_game
     where id = #{id,jdbcType=INTEGER}
-  </delete>
+   </delete>
+
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame" keyProperty="id"
             useGeneratedKeys="true">
     insert into e_wx_mini_game (
@@ -49,7 +51,8 @@
     app_id,
     star_num,
     is_handpicked,
-    player_num
+    player_num,
+    article_url
     )
     values 
     	(#{id,jdbcType=INTEGER}, 
@@ -65,7 +68,8 @@
          #{appId},
          #{starNum},
          IFNULL(#{isHandpicked},0),
-         IFNULL(#{playerNum},0)
+         IFNULL(#{playerNum},0),
+         #{articleUrl}
          )
   </insert>
     <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.WxMiniGame">
@@ -83,7 +87,8 @@
       app_id = #{appId},
       star_num = #{starNum},
       is_handpicked = IFNULL(#{isHandpicked},0),
-      player_num = IFNULL(#{playerNum},0)
+      player_num = IFNULL(#{playerNum},0),
+      article_url = #{articleUrl}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

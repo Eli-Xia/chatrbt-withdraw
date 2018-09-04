@@ -49,7 +49,6 @@ public class WxMiniGameService {
     private final static Integer WX_MINI_GAME_REDIRECT_QRCODE = 0;//扫码跳转
     private final static Integer WX_MINI_GAME_REDIRECT_CLICK = 1;//点击跳转
 
-
     //小程序游戏
     private final static Integer MINI_GAME_MISSION_STATE_NOT_FINISH = 0;//小游戏任务完成状态 未完成
     private final static Integer MINI_GAME_MISSION_STATE_FINISH = 1;//已完成

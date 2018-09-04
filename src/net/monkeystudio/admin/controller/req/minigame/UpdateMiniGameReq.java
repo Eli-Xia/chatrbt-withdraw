@@ -24,6 +24,15 @@ public class UpdateMiniGameReq {
     private List<Integer> tagIdList = new ArrayList<>();
     private Boolean isHandpicked;
     private String appId;
+    private String articleUrl;
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
 
     public MultipartFile getCoverImg() {
         return coverImg;
