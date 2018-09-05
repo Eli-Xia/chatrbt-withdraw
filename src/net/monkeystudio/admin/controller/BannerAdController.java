@@ -50,6 +50,14 @@ public class BannerAdController {
         return respHelper.ok();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/get", method = RequestMethod.POST)
+    public RespBase get(@RequestBody IdReq idReq){
+
+        BannerAd bannerAd = bannerAdService.getById(idReq.getId());
+        return respHelper.ok(bannerAd);
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/update", method = RequestMethod.POST)

@@ -69,7 +69,7 @@ public class BannerAdService {
         return this.update(bannerAd);
     }
 
-    private BannerAd getById(Integer id){
+    public BannerAd getById(Integer id){
         return bannerAdMapper.selectById(id);
     }
 
