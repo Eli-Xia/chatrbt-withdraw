@@ -10,6 +10,7 @@ import net.monkeystudio.admin.controller.resp.ad.AdMgrListResp;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.Ad;
 import net.monkeystudio.chatrbtw.service.AdService;
+import net.monkeystudio.chatrbtw.service.bean.UploadFile;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdDistribute2WxPubConfirmReq;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdDistribute2WxPubResp;
 import net.monkeystudio.chatrbtw.service.bean.ad.AdUpdateReq;
@@ -135,6 +136,8 @@ public class AdController extends BaseController {
 
         return respHelper.ok(null);
     }
+
+
 
 
 
