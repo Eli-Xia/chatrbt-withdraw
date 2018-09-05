@@ -10,6 +10,24 @@ public class BannerAd {
     private Integer state;
     private Date createTime;
     private Integer clickCount;
+    private String imgUrl;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public Integer getClickCount() {
         return clickCount;

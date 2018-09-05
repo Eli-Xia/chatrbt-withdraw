@@ -37,6 +37,7 @@ public class BannerAdService {
 
         bannerAd.setCreateTime(new Date());
         bannerAd.setState(AD_SHELVE_STATE);
+        bannerAd.setClickCount(0);
 
         return this.save(bannerAd);
     }

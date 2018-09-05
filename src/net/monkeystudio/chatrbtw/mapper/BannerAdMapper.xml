@@ -8,16 +8,20 @@
         <result column="state" property="state" jdbcType="INTEGER" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+        <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
     </resultMap>
     <sql id="Base_Column_List" >
-        id, ad_url, online_time, state, create_time, click_count
+        `id`, `ad_url`, `online_time`, `state`, `create_time`, `click_count` ,`img_url`,`name`
     </sql>
 
     <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.BannerAd" >
         update e_banner_ad set
-            ad_url = #{adUrl},
-            online_time = #{onlineTime},
-            state = #{state}
+            `ad_url` = #{adUrl},
+            `online_time` = #{onlineTime},
+            `state` = #{state},
+            `name` = #{name},
+            `img_url` = #{imgUrl}
         WHERE
             id = #{id}
     </update>
@@ -57,11 +61,13 @@
 
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.BannerAd">
-        INSERT INTO e_banner_ad ( ad_url, online_time, state, create_time) VALUES (
+        INSERT INTO e_banner_ad ( `ad_url`, `online_time`, `state`, `create_time` ,`img_url`,`name` ) VALUES (
             #{adUrl},
             #{onlineTime},
             #{state},
-            #{createTime}
+            #{createTime},
+            #{imgUrl},
+            #{name}
         )
     </insert>
 </mapper>

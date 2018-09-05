@@ -12,7 +12,7 @@ import java.util.List;
 public interface BannerAdMapper {
     List<BannerAd> selectByOnlineTime(@Param("onlineTime") Date onlineTime ,@Param("state") Integer state );
 
-    List<BannerAd> selectByPage(@Param("page") Integer page ,@Param("pageSize") Integer pageSize);
+    List<BannerAd> selectByPage(@Param("startIndex") Integer startIndex ,@Param("pageSize") Integer pageSize );
 
     BannerAd selectById(Integer id);
 

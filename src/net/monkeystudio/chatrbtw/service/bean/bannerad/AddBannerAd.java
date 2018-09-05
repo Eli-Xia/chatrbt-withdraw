@@ -8,7 +8,16 @@ import java.util.Date;
 public class AddBannerAd {
     private String adUrl;
     private Date onlineTime;
-    private Date createTime;
+    private String name;
+    private String imgUrl;
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public String getAdUrl() {
         return adUrl;
@@ -26,11 +35,11 @@ public class AddBannerAd {
         this.onlineTime = onlineTime;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getName() {
+        return name;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setName(String name) {
+        this.name = name;
     }
 }
