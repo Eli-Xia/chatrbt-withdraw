@@ -27,7 +27,7 @@ public class DividendMsgService {
         DividendMsg dm = this.getById(id);
         dm.setDescription(desc);
         dm.setContent(content);
-        dividendMsgMapper.insert(dm);
+        dividendMsgMapper.updateByPrimaryKey(dm);
     }
 
     public DividendMsg getById(Integer id) {

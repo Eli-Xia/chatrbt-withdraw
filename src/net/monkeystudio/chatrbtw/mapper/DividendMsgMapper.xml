@@ -20,7 +20,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.DividendMsg" >
-    insert into e_bank (content,description)
+    insert into e_dividend_msg (content,description)
     values (#{content,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="net.monkeystudio.chatrbtw.entity.DividendMsg" >
