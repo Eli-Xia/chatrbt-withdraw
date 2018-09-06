@@ -60,6 +60,14 @@
     </update>
 
 
+
+    <select id="countAll" parameterType="map" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        e_banner_ad
+    </select>
+
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.BannerAd">
         INSERT INTO e_banner_ad ( `ad_url`, `online_time`, `state`, `create_time` ,`img_url`,`name` ) VALUES (
             #{adUrl},

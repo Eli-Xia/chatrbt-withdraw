@@ -21,4 +21,6 @@ public interface BannerAdMapper {
     int update(BannerAd bannerAd);
 
     int increaseClickCount(@Param("id") Integer id ,@Param("change") Integer change);
+
+    int countAll();
 }
