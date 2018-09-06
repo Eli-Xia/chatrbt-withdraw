@@ -6,6 +6,7 @@ import net.monkeystudio.base.controller.bean.req.ListPaginationReq;
 import net.monkeystudio.base.utils.RespHelper;
 import net.monkeystudio.chatrbtw.entity.BannerAd;
 import net.monkeystudio.chatrbtw.service.BannerAdService;
+import net.monkeystudio.chatrbtw.service.bean.UploadFile;
 import net.monkeystudio.chatrbtw.service.bean.bannerad.AddBannerAd;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -76,5 +77,19 @@ public class BannerAdController {
         bannerAdService.unshelve(id);
 
         return respHelper.ok();
+    }
+
+    /**
+     * 上传展示图片
+     * @param uploadFile
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public RespBase addAuctionItem(UploadFile uploadFile){
+
+        String url = bannerAdService.uploadPic(uploadFile.getMultipartFile());
+
+        return respHelper.ok(url);
     }
 }
