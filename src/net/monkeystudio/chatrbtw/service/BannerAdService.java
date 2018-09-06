@@ -82,6 +82,11 @@ public class BannerAdService {
         return this.update(bannerAd);
     }
 
+
+    public Integer countAll(){
+        return bannerAdMapper.countAll();
+    }
+
     public BannerAd getById(Integer id){
         return bannerAdMapper.selectById(id);
     }

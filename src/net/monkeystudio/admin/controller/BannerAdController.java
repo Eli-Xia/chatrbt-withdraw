@@ -39,7 +39,10 @@ public class BannerAdController {
 
         List<BannerAd> bannerAdList = bannerAdService.getPage(startIndex, pageSize);
 
-        return respHelper.ok(bannerAdList);
+        Integer countAll = bannerAdService.countAll();
+
+
+        return respHelper.ok(bannerAdList, countAll);
     }
 
 
