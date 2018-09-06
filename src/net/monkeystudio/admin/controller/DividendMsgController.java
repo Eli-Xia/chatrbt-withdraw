@@ -48,7 +48,7 @@ public class DividendMsgController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/get", method = RequestMethod.POST)
     @ResponseBody
     public RespBase getById(HttpServletRequest request, @PathVariable("id") Integer id) {
 
