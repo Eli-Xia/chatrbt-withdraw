@@ -50,7 +50,11 @@ public class DividendRecordController extends BaseController {
             return respHelper.failed("该宠物类型不支持分红");
         }
 
-        dividendService.dividend(dividend.getTotalMoney(),dividend.getChatPetType());
+        if(dividend.getDividendMsgId() == null){
+            return respHelper.failed("请选择消息模板");
+        }
+
+        dividendService.dividend(dividend.getTotalMoney(),dividend.getChatPetType(),dividend.getDividendMsgId());
         return respHelper.ok();
     }
 
