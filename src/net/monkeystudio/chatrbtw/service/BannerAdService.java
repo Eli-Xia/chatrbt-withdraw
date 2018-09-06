@@ -6,6 +6,7 @@ import net.monkeystudio.chatrbtw.mapper.BannerAdMapper;
 import net.monkeystudio.chatrbtw.service.bean.bannerad.AddBannerAd;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -19,12 +20,24 @@ public class BannerAdService {
     @Autowired
     private BannerAdMapper bannerAdMapper;
 
+    @Autowired
+    private UploadService uploadService;
+
     public List<BannerAd> getShowBannerAd(){
         return bannerAdMapper.selectByOnlineTime(new Date(), AD_SHELVE_STATE);
     }
 
     public List<BannerAd> getPage(Integer startIndex ,Integer pageSize){
         return bannerAdMapper.selectByPage(startIndex, pageSize);
+    }
+
+    /**
+     * 上传图片
+     * @param multipartFile
+     * @return
+     */
+    public String uploadPic(MultipartFile multipartFile ){
+        return uploadService.uploadPic(multipartFile, DIRCTORY_NAME ,String.valueOf(System.currentTimeMillis()));
     }
 
     /**
@@ -85,4 +98,5 @@ public class BannerAdService {
 
     private final static Integer AD_SHELVE_STATE = 1;
     private final static Integer AD_UNSHELVE_STATE = 0;
+    private final static String DIRCTORY_NAME = "/chat_pet/ad_banner";
 }
