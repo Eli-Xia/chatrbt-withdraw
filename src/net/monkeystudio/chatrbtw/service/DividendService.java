@@ -138,11 +138,9 @@ public class DividendService {
 
         Integer wxFanId = chatPet.getWxFanId();
 
-        Integer dividendMsgId = dividendQueueValueVO.getDividendMsgId();
-
         //如果分红不为0,则发送消息通知
         if(money.floatValue() != 0F){
-            this.sendMsg(wxFanId,dividendMsgId);
+            this.sendMsg(wxFanId);
         }
     }
 
@@ -200,9 +198,6 @@ public class DividendService {
         Integer DividendRecordId = Integer.valueOf(valueArray[5]);
         dividendQueueValueVO.setDividendRecordId(DividendRecordId);
 
-        Integer dividendMsgId = Integer.valueOf(valueArray[6]);
-        dividendQueueValueVO.setDividendMsgId(dividendMsgId);
-
         return dividendQueueValueVO;
 
     }
@@ -214,7 +209,7 @@ public class DividendService {
      * @param chatPetType
      * @return
      */
-    public void dividend(Float totalMoney ,Integer chatPetType,Integer dividendMsgId){
+    public void dividend(Float totalMoney ,Integer chatPetType){
 
         //保存分红记录
         DividendRecord dividendRecord = new DividendRecord();
@@ -238,7 +233,7 @@ public class DividendService {
                 Integer dividendRecordId = dividendRecord.getId();
 
                 for(ChatPet chatPet : chatPetList){
-                    String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getCoin() , totalCoin,dividendRecordId,dividendMsgId);
+                    String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getCoin() , totalCoin,dividendRecordId);
                     redisCacheTemplate.lpush(key,value);
                 }
             }
@@ -246,19 +241,19 @@ public class DividendService {
     }
 
 
-    private String getDividendQuqueValue(Float totalMoney,Integer chatPetType , Integer chatPetId ,Float experience , Double totalCoin ,Integer dividendRecordId,Integer dividendMsgId){
+    private String getDividendQuqueValue(Float totalMoney,Integer chatPetType , Integer chatPetId ,Float experience , Double totalCoin ,Integer dividendRecordId){
 
         String moneyStr = String.valueOf(totalMoney);
 
         String experienceStr = String.valueOf(experience);
 
-        String value = chatPetType + ":" + moneyStr + ":" + chatPetId + ":" + experienceStr + ":" + totalCoin + ":" + dividendRecordId + ":" + dividendMsgId;
+        String value = chatPetType + ":" + moneyStr + ":" + chatPetId + ":" + experienceStr + ":" + totalCoin + ":" + dividendRecordId ;
 
         return value;
 
     }
 
-    private void sendMsg(Integer wxFanId,Integer dividendMsgId){
+    private void sendMsg(Integer wxFanId){
 
         MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
 
@@ -279,14 +274,12 @@ public class DividendService {
 
         msgTemplateParam.setFormId(msgTemplateForm.getFormId());
 
-        DividendMsg dividendMsg = dividendMsgService.getById(dividendMsgId);
-
         Keyword keyword1 = new Keyword();
-        keyword1.setValue(dividendMsg.getContent());
+        keyword1.setValue("工作又卡壳了?来一把小游戏放松一下");
         data.setKeyword1(keyword1);
 
         Keyword keyword2 = new Keyword();
-        keyword2.setValue(dividendMsg.getDescription());
+        keyword2.setValue("奖励金已到账,请查收!");
         data.setKeyword2(keyword2);
 
         msgTemplateParam.setData(data);
