@@ -279,13 +279,6 @@ public class DividendService {
 
         msgTemplateParam.setFormId(msgTemplateForm.getFormId());
 
-//        Keyword keyword1 = new Keyword();
-//        keyword1.setValue("工作又卡壳了？来一把小游戏放松一下！");
-//        data.setKeyword1(keyword1);
-//
-//        Keyword keyword2 = new Keyword();
-//        keyword2.setValue("奖励金已到账，请查收！");
-//        data.setKeyword2(keyword2);
         DividendMsg dividendMsg = dividendMsgService.getById(dividendMsgId);
 
         Keyword keyword1 = new Keyword();
