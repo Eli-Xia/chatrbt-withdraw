@@ -31,7 +31,7 @@
   </update>
 
   <select id="selectAll" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> FROM  e_dividend_msg
+    select <include refid="Base_Column_List"/> FROM  e_dividend_msg order by id desc
   </select>
   
 </mapper>
