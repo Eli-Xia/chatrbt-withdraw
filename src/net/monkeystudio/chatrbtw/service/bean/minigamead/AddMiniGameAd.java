@@ -4,6 +4,15 @@ public class AddMiniGameAd {
     private String bgImgUrl;
     private String qrCodeImgUrl;
     private String appId;
+    private String gameUrl;
+
+    public String getGameUrl() {
+        return gameUrl;
+    }
+
+    public void setGameUrl(String gameUrl) {
+        this.gameUrl = gameUrl;
+    }
 
     public String getBgImgUrl() {
         return bgImgUrl;

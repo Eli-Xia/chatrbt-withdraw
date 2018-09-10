@@ -6,6 +6,15 @@ public class MiniGameAd {
     private String qrCodeImgUrl;
     private String appId;
     private Integer state;
+    private String gameUrl;
+
+    public String getGameUrl() {
+        return gameUrl;
+    }
+
+    public void setGameUrl(String gameUrl) {
+        this.gameUrl = gameUrl;
+    }
 
     public Integer getId() {
         return id;

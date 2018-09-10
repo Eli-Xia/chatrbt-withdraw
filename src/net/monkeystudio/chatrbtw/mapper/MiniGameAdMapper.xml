@@ -6,10 +6,11 @@
         <result column="bg_img_url" property="bgImgUrl" jdbcType="VARCHAR" />
         <result column="qr_code_img_url" property="qrCodeImgUrl" jdbcType="VARCHAR" />
         <result column="app_id" property="appId" jdbcType="VARCHAR" />
+        <result column="game_url" property="gameUrl" jdbcType="VARCHAR" />
         <result column="state" property="state" jdbcType="INTEGER" />
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `bg_img_url`, `qr_code_img_url`, `state`, `app_id`
+        `id`, `bg_img_url`, `qr_code_img_url`, `state`, `app_id`,`game_url`
     </sql>
 
     <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.MiniGameAd" >
@@ -17,7 +18,8 @@
             `bg_img_url` = #{bgImgUrl},
             `qr_code_img_url` = #{qrCodeImgUrl},
             `state` = #{state},
-            `app_id` = #{appId}
+            `app_id` = #{appId},
+            `game_url` = #{gameUrl}
         WHERE
             id = #{id}
     </update>
@@ -35,11 +37,12 @@
 
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.MiniGameAd">
-        INSERT INTO e_mini_game_ad ( `bg_img_url`, `qr_code_img_url`, `state`, `app_id` ) VALUES (
+        INSERT INTO e_mini_game_ad ( `bg_img_url`, `qr_code_img_url`, `state`, `app_id` , `game_url`) VALUES (
             #{bgImgUrl},
             #{qrCodeImgUrl},
             #{state},
-            #{appId}
+            #{appId},
+            #{gameUrl}
         )
     </insert>
 
