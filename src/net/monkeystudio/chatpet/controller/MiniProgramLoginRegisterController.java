@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,6 +88,14 @@ public class MiniProgramLoginRegisterController extends ChatPetBaseController{
 
         return respHelper.ok();
     }*/
+
+    @ResponseBody
+    @RequestMapping(value = "/timeout", method = RequestMethod.POST)
+    public RespBase test(HttpServletRequest request) throws Exception{
+        Thread.sleep(10000);
+
+        return respHelper.ok("test end...");
+    }
 
 
 }

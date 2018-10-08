@@ -14,6 +14,15 @@ public class DividendQueueValueVO {
     private Double totalCoin;
     private Float money;
     private Integer dividendRecordId;
+    private Integer dividendMsgId;
+
+    public Integer getDividendMsgId() {
+        return dividendMsgId;
+    }
+
+    public void setDividendMsgId(Integer dividendMsgId) {
+        this.dividendMsgId = dividendMsgId;
+    }
 
     public Integer getChatPetType() {
         return chatPetType;

@@ -7,6 +7,15 @@ public class Dividend {
 
     private Integer chatPetType;
     private Float totalMoney;
+    private Integer dividendMsgId;
+
+    public Integer getDividendMsgId() {
+        return dividendMsgId;
+    }
+
+    public void setDividendMsgId(Integer dividendMsgId) {
+        this.dividendMsgId = dividendMsgId;
+    }
 
     public Integer getChatPetType() {
         return chatPetType;

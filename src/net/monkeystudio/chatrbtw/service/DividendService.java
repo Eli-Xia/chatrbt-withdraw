@@ -53,6 +53,8 @@ public class DividendService {
     @Autowired
     private WxFanService wxFanService;
 
+    @Autowired
+    private DividendMsgService dividendMsgService;
 
     @Autowired
     private MsgTemplateService msgTemplateService;
@@ -64,12 +66,13 @@ public class DividendService {
 
     /**
      * 分红队列消耗
+     *
      * @return
      */
-    public void dividendQuqueConsume(){
+    public void dividendQuqueConsume() {
         String key = this.getDividendQuqueKey();
 
-        List<String> list = redisCacheTemplate.brpop(0,key);
+        List<String> list = redisCacheTemplate.brpop(0, key);
 
         String dividendQuqueValue = list.get(1);
 
@@ -79,7 +82,7 @@ public class DividendService {
         this.dividendMoney(dividendQueueValueVO);
     }
 
-    private void dividendMoney(DividendQueueValueVO dividendQueueValueVO){
+    private void dividendMoney(DividendQueueValueVO dividendQueueValueVO) {
         //计算应得的钱
         Double totalCoin = dividendQueueValueVO.getTotalCoin();
         BigDecimal totalExperienceBD = new BigDecimal(totalCoin);
@@ -99,22 +102,22 @@ public class DividendService {
         //如果钱为0，则判断是否为昨天新注册用户
         Integer chatPetId = dividendQueueValueVO.getChatPetId();
         Float money = moneyBD.floatValue();
-        if(money.floatValue() == 0f){
+        if (money.floatValue() == 0f) {
             ChatPet chatPet = chatPetService.getById(chatPetId);
             Date createTime = chatPet.getCreateTime();
 
             //如果是昨天新注册用户，则分发0.01
-            if(DateUtils.isYesterday(createTime)){
+            if (DateUtils.isYesterday(createTime)) {
                 money = FIRST_DAY_INIT_MONEY;
             }
 
             //如果是前天注册用户
-            if(DateUtils.isTowDayBefore(createTime)){
+            if (DateUtils.isTowDayBefore(createTime)) {
                 money = SECOND_DAY_INIT_MONEY;
             }
 
             //如果是大前天注册用户
-            if(DateUtils.isThreeDayBefore(createTime)){
+            if (DateUtils.isThreeDayBefore(createTime)) {
                 money = THIRD_DAY_INIT_MONEY;
             }
         }
@@ -136,26 +139,27 @@ public class DividendService {
 
         Integer wxFanId = chatPet.getWxFanId();
 
+        Integer dividendMsgId = dividendQueueValueVO.getDividendMsgId();
+
         //如果分红不为0,则发送消息通知
-        if(money.floatValue() != 0F){
-            this.sendMsg(wxFanId);
+        if (money.floatValue() != 0F) {
+            this.sendMsg(wxFanId, dividendMsgId);
         }
     }
 
 
-
-    private String getDividendQuqueKey(){
+    private String getDividendQuqueKey() {
         String key = RedisTypeConstants.KEY_LIST_TYPE_PREFIX + "dividend-quque";
         return key;
     }
 
 
-    public void listenDividendQuque(){
+    public void listenDividendQuque() {
         //起一条独立的线程去监听
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while (true) {
                     dividendQuqueConsume();
                 }
             }
@@ -169,10 +173,11 @@ public class DividendService {
 
     /**
      * 解析分红队列的值
+     *
      * @param dividendQuqueValue
      * @return
      */
-    private DividendQueueValueVO paraseDividendQuqueValue(String dividendQuqueValue){
+    private DividendQueueValueVO paraseDividendQuqueValue(String dividendQuqueValue) {
 
         DividendQueueValueVO dividendQueueValueVO = new DividendQueueValueVO();
 
@@ -196,6 +201,9 @@ public class DividendService {
         Integer DividendRecordId = Integer.valueOf(valueArray[5]);
         dividendQueueValueVO.setDividendRecordId(DividendRecordId);
 
+        Integer dividendMsgId = Integer.valueOf(valueArray[6]);
+        dividendQueueValueVO.setDividendMsgId(dividendMsgId);
+
         return dividendQueueValueVO;
 
     }
@@ -203,11 +211,12 @@ public class DividendService {
 
     /**
      * 分红
+     *
      * @param totalMoney
      * @param chatPetType
      * @return
      */
-    public void dividend(Float totalMoney ,Integer chatPetType){
+    public void dividend(Float totalMoney, Integer chatPetType, Integer dividendMsgId) {
 
         //保存分红记录
         DividendRecord dividendRecord = new DividendRecord();
@@ -230,28 +239,28 @@ public class DividendService {
                 String key = getDividendQuqueKey();
                 Integer dividendRecordId = dividendRecord.getId();
 
-                for(ChatPet chatPet : chatPetList){
-                    String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getCoin() , totalCoin,dividendRecordId);
-                    redisCacheTemplate.lpush(key,value);
+                for (ChatPet chatPet : chatPetList) {
+                    String value = getDividendQuqueValue(totalMoney, chatPetType, chatPet.getId(), chatPet.getCoin(), totalCoin, dividendRecordId, dividendMsgId);
+                    redisCacheTemplate.lpush(key, value);
                 }
             }
         });
     }
 
 
-    private String getDividendQuqueValue(Float totalMoney,Integer chatPetType , Integer chatPetId ,Float experience , Double totalCoin ,Integer dividendRecordId){
+    private String getDividendQuqueValue(Float totalMoney, Integer chatPetType, Integer chatPetId, Float experience, Double totalCoin, Integer dividendRecordId, Integer dividendMsgId) {
 
         String moneyStr = String.valueOf(totalMoney);
 
         String experienceStr = String.valueOf(experience);
 
-        String value = chatPetType + ":" + moneyStr + ":" + chatPetId + ":" + experienceStr + ":" + totalCoin + ":" + dividendRecordId;
+        String value = chatPetType + ":" + moneyStr + ":" + chatPetId + ":" + experienceStr + ":" + totalCoin + ":" + dividendRecordId + ":" + dividendMsgId;
 
         return value;
 
     }
 
-    private void sendMsg(Integer wxFanId){
+    private void sendMsg(Integer wxFanId, Integer dividendMsgId) {
 
         MsgTemplateParam msgTemplateParam = new MsgTemplateParam();
 
@@ -263,42 +272,46 @@ public class DividendService {
         MsgTemplateForm msgTemplateForm = msgTemplateFormService.getEnable(wxFanId);
 
         //如果没有可用的消息表单,则返回
-        if(msgTemplateForm == null){
-            Log.d("wxFanId [?] msgTemplateForm is null " ,String.valueOf(wxFanId));
-            return ;
+        if (msgTemplateForm == null) {
+            Log.d("wxFanId [?] msgTemplateForm is null ", String.valueOf(wxFanId));
+            return;
         }
 
         msgTemplateFormService.updateState(msgTemplateForm.getId());
 
         msgTemplateParam.setFormId(msgTemplateForm.getFormId());
 
+        DividendMsg dividendMsg = dividendMsgService.getById(dividendMsgId);
+        String content = dividendMsg.getContent();
+        String desc = dividendMsg.getDescription();
+
         Keyword keyword1 = new Keyword();
-        keyword1.setValue("工作又卡壳了？来一把小游戏放松一下！");
+        keyword1.setValue(content);
         data.setKeyword1(keyword1);
 
         Keyword keyword2 = new Keyword();
-        keyword2.setValue("奖励金已到账，请查收！");
+        keyword2.setValue(desc);
         data.setKeyword2(keyword2);
 
         msgTemplateParam.setData(data);
 
-    MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
+        MsgTemplate msgTemplate = msgTemplateService.getByMiniProgramIdAndCode(wxFan.getMiniProgramId(), MsgTemplateService.Constants.DIVIDEND_MSG_CODE);
 
-        if(msgTemplate == null){
-        return ;
-    }
+        if (msgTemplate == null) {
+            return;
+        }
         msgTemplateParam.setTemplateId(msgTemplate.getTemplateId());
 
         msgTemplateParam.setPage("pages/task/task");
 
         try {
-        MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
+            MiniProgramResponse miniProgramResponse = wxMsgTemplateHelper.sendTemplateMsg(wxFanId, msgTemplateParam);
 
-        if(!"0".equals(miniProgramResponse.getErrCode())){
-            Log.e(miniProgramResponse.toString());
+            if (!"0".equals(miniProgramResponse.getErrCode())) {
+                Log.e(miniProgramResponse.toString());
+            }
+        } catch (BizException e) {
+            Log.e(e);
         }
-    } catch (BizException e) {
-        Log.e(e);
     }
-}
 }

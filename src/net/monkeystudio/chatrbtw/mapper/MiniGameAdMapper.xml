@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > 
+<mapper namespace="net.monkeystudio.chatrbtw.mapper.MiniGameAdMapper">
+    <resultMap id="baseResultMap" type="net.monkeystudio.chatrbtw.entity.MiniGameAd">
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="bg_img_url" property="bgImgUrl" jdbcType="VARCHAR" />
+        <result column="qr_code_img_url" property="qrCodeImgUrl" jdbcType="VARCHAR" />
+        <result column="app_id" property="appId" jdbcType="VARCHAR" />
+        <result column="game_url" property="gameUrl" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        `id`, `bg_img_url`, `qr_code_img_url`, `state`, `app_id`,`game_url`
+    </sql>
+
+    <update id="update" parameterType="net.monkeystudio.chatrbtw.entity.MiniGameAd" >
+        update e_mini_game_ad set
+            `bg_img_url` = #{bgImgUrl},
+            `qr_code_img_url` = #{qrCodeImgUrl},
+            `state` = #{state},
+            `app_id` = #{appId},
+            `game_url` = #{gameUrl}
+        WHERE
+            id = #{id}
+    </update>
+
+
+    <select id="selectById" parameterType="map" resultMap="baseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        e_mini_game_ad
+        WHERE
+        id = #{id}
+    </select>
+
+
+
+    <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.MiniGameAd">
+        INSERT INTO e_mini_game_ad ( `bg_img_url`, `qr_code_img_url`, `state`, `app_id` , `game_url`) VALUES (
+            #{bgImgUrl},
+            #{qrCodeImgUrl},
+            #{state},
+            #{appId},
+            #{gameUrl}
+        )
+    </insert>
+
+
+    <select id="selectAll" resultMap="baseResultMap">
+        select <include refid="Base_Column_List"/> from e_mini_game_ad
+    </select>
+</mapper>
