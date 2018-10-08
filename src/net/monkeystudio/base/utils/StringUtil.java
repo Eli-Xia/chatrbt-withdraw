@@ -1,5 +1,7 @@
 package net.monkeystudio.base.utils;
 
+import org.springframework.util.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -71,9 +73,15 @@ public class StringUtil {
         return body.toString();
     }
 
-
-    public static void main(String[] args) {
-
-
+    /**
+     * 分割字符串
+     * @param str:原字符串
+     * @param delimiter:分割符
+     * @return
+     */
+    public static String[] delimite(String str,String delimiter){
+        return StringUtils.delimitedListToStringArray(str,delimiter);
     }
+
+
 }

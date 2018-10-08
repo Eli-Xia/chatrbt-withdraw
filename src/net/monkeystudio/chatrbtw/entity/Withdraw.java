@@ -15,6 +15,24 @@ public class Withdraw {
     private Date createTime;
     private Date paymentTime;
     private BigDecimal amount;
+    private String errorCode;
+    private Integer state;
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
 
     public BigDecimal getAmount() {
         return amount;

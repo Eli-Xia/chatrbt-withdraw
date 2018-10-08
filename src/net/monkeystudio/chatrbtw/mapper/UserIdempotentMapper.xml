@@ -5,9 +5,10 @@
         <result column="id" property="id" jdbcType="INTEGER" />
         <result column="wx_fan_id" property="wxFanId" jdbcType="INTEGER" />
         <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List" >
-        `id`, `state`,`wx_fan_id`
+        `id`, `state`,`wx_fan_id` , `create_time`
     </sql>
 
     <update id="updateState" >
@@ -18,12 +19,12 @@
 
     <insert id="insert" parameterType="net.monkeystudio.chatrbtw.entity.UserIdempotent" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
-            e_user_idempotent (`state`, `wx_fan_id`)
+            e_user_idempotent (`state`, `wx_fan_id`,`create_time`)
         SELECT
-            #{state} , #{wxFanId}
+            #{state} , #{wxFanId} , #{createTime}
         FROM DUAL WHERE NOT EXISTS  (
             SELECT
-                `state`, `wx_fan_id`
+                `state`, `wx_fan_id`,`create_time`
             FROM
                 e_user_idempotent
             WHERE

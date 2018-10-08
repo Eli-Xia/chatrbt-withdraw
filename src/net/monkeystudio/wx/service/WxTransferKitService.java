@@ -2,7 +2,9 @@ package net.monkeystudio.wx.service;
 
 import net.monkeystudio.base.service.CfgService;
 import net.monkeystudio.base.service.GlobalConfigConstants;
+import net.monkeystudio.base.utils.CommonUtils;
 import net.monkeystudio.base.utils.MD5Util;
+import net.monkeystudio.base.utils.XmlBeanUtil;
 import net.monkeystudio.wx.vo.transfers.Transfer;
 import net.monkeystudio.wx.vo.transfers.TransfersResult;
 import org.apache.commons.codec.Charsets;
@@ -26,7 +28,7 @@ import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.InetAddress;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.util.*;
@@ -55,6 +57,16 @@ public class WxTransferKitService {
     //指定读取证书格式为PKCS12
     private final static String CEART_MODE = "PKCS12";
 
+    //生成随机字符串的基础字符
+    private final static String BASE_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    //随机字符串长度
+    private final static Integer NONCE_STR_LEN = 32;
+
+    //付款描述信息
+    private final static String DESC = "提现成功";
+
+    private final static String TRANSFER_API_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";
 
     //http请求连接超时时间
     private static RequestConfig config;
@@ -63,7 +75,7 @@ public class WxTransferKitService {
     private CfgService cfgService;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         MCH_APP_ID = cfgService.get(GlobalConfigConstants.MCH_APPID_KEY);
         MCH_ID = cfgService.get(GlobalConfigConstants.MCHID_KEY);
         CERT_PATH = cfgService.get(GlobalConfigConstants.CERT_PATH_KEY);
@@ -71,17 +83,46 @@ public class WxTransferKitService {
         config = RequestConfig.custom().setConnectTimeout(30000).setSocketTimeout(60000).build();//timeunit : seconds
     }
 
-    public TransfersResult transfer(String mchTradeNo,Integer amount,String openId){
+    /**
+     * 企业付款
+     * @param mchTradeNo:系统生成订单号
+     * @param amount:付款金额 单位:分
+     * @param openId:用户openid
+     * @return
+     * @throws Exception
+     */
+    public TransfersResult transfer(String mchTradeNo, Integer amount, String openId) throws Exception{
         Transfer transfer = new Transfer();
-        return null;
+
+        transfer.setPartnerTradeNo(mchTradeNo);
+        transfer.setOpenid(openId);
+        transfer.setMchid(MCH_ID);
+        transfer.setMchAppid(MCH_APP_ID);
+        transfer.setDesc(DESC);
+        transfer.setAmount(amount);
+
+        String nonceStr = CommonUtils.getRandomString(BASE_STR, NONCE_STR_LEN);
+        transfer.setNonceStr(nonceStr);
+
+        InetAddress address = InetAddress.getLocalHost();
+        String hostAddress = address.getHostAddress();
+        transfer.setSpbillCreateIp(hostAddress);
+
+        String sign = this.createSign(CHARSET, transfer);
+        transfer.setSign(sign);
+
+        String xmlStr = XmlBeanUtil.toXml(transfer);
+        String result = this.doPost(TRANSFER_API_URL, xmlStr);
+
+        TransfersResult transfersResult = XmlBeanUtil.toBeanWithCData(result, TransfersResult.class);
+
+        return transfersResult;
     }
 
 
     /**
-     * @param characterEncoding
-     *            编码格式
-     * @param transfer
-     *            请求参数
+     * @param characterEncoding 编码格式
+     * @param transfer          请求参数
      * @return
      */
     public String createSign(String characterEncoding, Transfer transfer) {
@@ -118,11 +159,11 @@ public class WxTransferKitService {
         StringBuffer sb = new StringBuffer();
         Set es = signParams.entrySet();//所有参与传参的参数按照accsii排序（升序）
         Iterator it = es.iterator();
-        while(it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            String k = (String)entry.getKey();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String k = (String) entry.getKey();
             Object v = entry.getValue();
-            if(null != v && !"".equals(v)
+            if (null != v && !"".equals(v)
                     && !"sign".equals(k) && !"key".equals(k)) {
                 sb.append(k + "=" + v + "&");
             }
@@ -134,17 +175,11 @@ public class WxTransferKitService {
     }
 
 
-
-
-
-
-
     /**
      * post请求
-     * @param url
-     *        请求地址
-     * @param paramsXml
-     *         请求的参数xml格式
+     *
+     * @param url       请求地址
+     * @param paramsXml 请求的参数xml格式
      * @return
      */
     public String doPost(String url, String paramsXml) {
@@ -153,12 +188,10 @@ public class WxTransferKitService {
 
     /**
      * post请求
-     * @param url
-     *        请求地址
-     * @param paramsXml
-     *        请求的参数xml格式
-     * @param charset
-     *        设置编码格式
+     *
+     * @param url       请求地址
+     * @param paramsXml 请求的参数xml格式
+     * @param charset   设置编码格式
      * @return
      */
     private String doPost(String url, String paramsXml, String charset) {
@@ -195,14 +228,14 @@ public class WxTransferKitService {
                 return result;
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
-            }finally {
+            } finally {
                 response.close();
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
-        } finally{
+        } finally {
             // 关闭连接,释放资源
-            if(httpClient != null){
+            if (httpClient != null) {
                 try {
                     httpClient.close();
                 } catch (IOException e) {
@@ -214,6 +247,7 @@ public class WxTransferKitService {
 
     /**
      * 获取带证书的安全client
+     *
      * @return
      */
     private CloseableHttpClient createClient() {
@@ -229,7 +263,7 @@ public class WxTransferKitService {
                 keyStore.load(instream, MCH_ID.toCharArray());
             } catch (CertificateException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 instream.close();
             }
             // 相信自己的CA和所有自签名的证书
@@ -237,12 +271,12 @@ public class WxTransferKitService {
             // Trust own CA and all self-signed certs 加上密钥
             SSLContext sslcontext = SSLContexts
                     .custom()
-                    .loadKeyMaterial(keyStore,MCH_ID.toCharArray())
+                    .loadKeyMaterial(keyStore, MCH_ID.toCharArray())
                     .build();
             // Allow TLSv1 protocol only 指定TLS版本 (IETF Internet Enginnering TaskForce )
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                     sslcontext,
-                    new String[] { "TLSv1" }, // TLSv1 等于 SSLv3
+                    new String[]{"TLSv1"}, // TLSv1 等于 SSLv3
                     null,
                     SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
             // 设置httpclient的SSLSocketFactory
@@ -258,12 +292,7 @@ public class WxTransferKitService {
     }
 
 
-
-
-
-
-
-    public static void main(String []args){
+    public static void main(String[] args) {
         String path = Thread.currentThread().getContextClassLoader().getResource("").toString();
         System.out.println(path);
     }

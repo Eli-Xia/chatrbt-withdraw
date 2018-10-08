@@ -31,6 +31,10 @@
         select <include refid="Base_Column_List"/> from e_biz_account where id = #{id} for update
     </select>
 
+    <update id="decrease" >
+      update e_biz_account set amount = amount - #{amount} where id = #{id}
+    </update>
+
 
 
 </mapper>

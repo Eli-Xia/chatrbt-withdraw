@@ -12,6 +12,8 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Date;
+
 /**
  * Created by bint on 2018/8/13.
  */
@@ -27,6 +29,8 @@ public class UserIdempotentService {
         userIdempotent.setWxFanId(fanId);
 
         userIdempotent.setState(Contanst.LOCK_STATE);
+
+        userIdempotent.setCreateTime(new Date());
 
         Integer result = userIdempotentMapper.insert(userIdempotent);
 

@@ -63,27 +63,6 @@ public class ChatPetMyInfoController extends ChatPetBaseController{
         return respHelper.ok(vo);
     }
 
-    /**
-     * 提现
-     * @return
-     */
-    @RequestMapping(value = "/withdraw", method = RequestMethod.POST)
-    @ResponseBody
-    public RespBase withdraw(@RequestBody WithdrawReq withdrawReq){
-
-        Integer wxFanId = this.getUserId();
-
-        /*  1,提现金额最小金额100
-            2,提现金额上限
-            3,单个用户单日限额多少?500
-            4,单个用户每天最多可以付款的次数? (微信可以设置)3
-            5,付款时间间隔不得低于15S 15
-            6,提现金额需要大于100?
-            7,系统账户余额 > 提现金额 >= 用户账户余额 >= 100 ?
-            8,当系统金额小于设定的阈值后是否需要发送邮件提醒?? no*/
-
-        return respHelper.ok();
-    }
 
 
 
