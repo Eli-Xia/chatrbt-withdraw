@@ -15,7 +15,7 @@ import java.util.Map;
 
 
 /**
- * 全局配置表接口
+ * 全局配置表接口.
  * @author hebo
  *
  */
